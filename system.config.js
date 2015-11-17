@@ -1,1 +1,0 @@
-System.config({ globalEvaluationScope: false });
