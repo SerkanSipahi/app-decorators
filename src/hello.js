@@ -9,7 +9,7 @@ export default class Hello {
 	}
 	foo(){
 		return new Promise((resolve, reject) => {
-			resolve('hdello');
+			resolve('Hello');
 		});
 	}
 }

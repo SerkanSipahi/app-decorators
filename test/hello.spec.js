@@ -1,5 +1,5 @@
 
-import Hello from '../src/hello';
+import Hello from 'src/hello';
 
 describe('Hello', () => {
 
