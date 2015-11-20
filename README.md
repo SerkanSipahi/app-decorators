@@ -1,4 +1,4 @@
-#### app-decorators
+##### App Decorators
 
 ##### First thoughts:
 ```js
