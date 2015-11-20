@@ -19,7 +19,7 @@ module.exports = function (config) {
 	    ],
 		browsers: [
 			'Chrome',
-			//'Firefox',
+			'Firefox',
 		],
 		jspm: {
 		    loadFiles: ['src/**/*.js', 'test/**/*.js']

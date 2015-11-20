@@ -2,16 +2,13 @@
   "name": "app-decorators",
   "version": "1.0.0",
   "description": "-",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "src/app-decorators.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SerkanSipahi/app-decorators.git"
   },
   "author": "Serkan Sipahi",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/SerkanSipahi/app-decorators/issues"
   },
