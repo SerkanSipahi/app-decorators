@@ -25,7 +25,7 @@
     "karma-should-promised": "^1.0.0",
     "karma-should-sinon": "^1.0.0",
     "mocha": "^2.3.3",
-    "should": "^7.1.1",
+    "should": "^7.1.1"
   },
   "jspm": {
     "dependencies": {
