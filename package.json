@@ -14,28 +14,28 @@
   },
   "homepage": "https://github.com/SerkanSipahi/app-decorators#readme",
   "devDependencies": {
-    "jspm": "^0.16.15",
-    "karma": "^0.13.15",
-    "karma-jspm": "^2.0.2",
-    "karma-chrome-launcher": "^0.2.1",
-    "karma-firefox-launcher": "^0.1.7",
-    "karma-safari-launcher": "^0.1.1",
-    "karma-mocha": "^0.2.1",
-    "karma-should": "^1.0.0",
-    "karma-should-promised": "^1.0.0",
-    "karma-should-sinon": "^1.0.0",
-    "mocha": "^2.3.3",
-    "should": "^7.1.1"
+    "jspm": "0.16.15",
+    "karma": "0.13.15",
+    "karma-jspm": "2.0.2",
+    "karma-chrome-launcher": "0.2.1",
+    "karma-firefox-launcher": "0.1.7",
+    "karma-safari-launcher": "0.1.1",
+    "karma-mocha": "0.2.1",
+    "karma-should": "1.0.0",
+    "karma-should-promised": "1.0.0",
+    "karma-should-sinon": "1.0.0",
+    "mocha": "2.3.3",
+    "should": "7.1.1"
   },
   "jspm": {
     "dependencies": {
-      "es6-module-loader": "npm:es6-module-loader@^0.17.8",
-      "systemjs": "npm:systemjs@^0.19.6"
+      "es6-module-loader": "npm:es6-module-loader@0.17.8",
+      "systemjs": "npm:systemjs@0.19.6"
     },
     "devDependencies": {
-      "babel": "npm:babel-core@^5.8.24",
-      "babel-runtime": "npm:babel-runtime@^5.8.24",
-      "core-js": "npm:core-js@^1.1.4"
+      "babel": "npm:babel-core@5.8.24",
+      "babel-runtime": "npm:babel-runtime@5.8.24",
+      "core-js": "npm:core-js@1.1.4"
     }
   }
 }
