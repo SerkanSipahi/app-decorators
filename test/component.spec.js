@@ -3,27 +3,28 @@ import { component } from 'src/app-decorators';
 
 describe('@component', () => {
 
-	@component(HTMLElement)
+	@component()
 	class FooComponent {}
 
-	@component(HTMLFormElement)
+	@component(HTMLImageElement)
 	class BarComponent {}
 
-	it('should instance of HTMLElement', () => {
+	@component(HTMLFormElement)
+	class BazComponent {}
+
+	it('should instance of HTMLDivElement', () => {
 		let fooComponent = new FooComponent();
-		fooComponent.should.be.instanceOf(HTMLElement);
+		fooComponent.should.be.instanceOf(HTMLDivElement);
+	});
+
+	it('should instance of HTMLImageElement', () => {
+		let barComponent = new BarComponent();
+		barComponent.should.be.instanceOf(HTMLImageElement);
 	});
 
 	it('should instance of HTMLFormElement', () => {
-		let barComponent = new BarComponent();
-		barComponent.should.be.instanceOf(HTMLFormElement);
-	});
-
-	it('should throw an exeption', () => {
-		(function(){
-			@component()
-			class BazComponent {}
-		}).should.throw('Passed argument is undefined');;
+		let bazComponent = new BazComponent();
+		bazComponent.should.be.instanceOf(HTMLFormElement);
 	});
 
 });

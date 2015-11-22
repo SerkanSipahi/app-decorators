@@ -19,14 +19,8 @@ function inherit(Child: Funtion, Parent: Element) {
  * @param  {Any} ...args
  * @return {Function}
  */
-export default function component(Element) {
-
-	if (Element === void 0) {
-		throw Error(`Passed argument is undefined`);
+export default function component(El = HTMLDivElement) {
+	return function decorator(ComponentClass) {
+		inherit(ComponentClass, El);
 	}
-
-	return function decorator(Component) {
-		inherit(Component, Element);
-	}
-
 }
