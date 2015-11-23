@@ -13,17 +13,17 @@ describe('@component', () => {
 	class BazComponent {}
 
 	it('should instance of HTMLDivElement', () => {
-		let fooComponent = new FooComponent();
+		let fooComponent = FooComponent.instance();
 		fooComponent.should.be.instanceOf(HTMLDivElement);
 	});
 
 	it('should instance of HTMLImageElement', () => {
-		let barComponent = new BarComponent();
+		let barComponent = BarComponent.instance();
 		barComponent.should.be.instanceOf(HTMLImageElement);
 	});
 
 	it('should instance of HTMLFormElement', () => {
-		let bazComponent = new BazComponent();
+		let bazComponent = BazComponent.instance();
 		bazComponent.should.be.instanceOf(HTMLFormElement);
 	});
 
