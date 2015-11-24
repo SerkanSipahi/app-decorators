@@ -4,6 +4,7 @@ module.exports = function (config) {
 		frameworks: [
 			'jspm',
 			'mocha',
+			'sinon',
 			'should-promised',
 			'should-sinon',
 			'should',
@@ -14,6 +15,7 @@ module.exports = function (config) {
 			'karma-chrome-launcher',
 			'karma-firefox-launcher',
 			'karma-mocha',
+			'karma-sinon',
 			'karma-should',
 			'karma-jspm',
 	    ],
