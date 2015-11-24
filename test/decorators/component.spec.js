@@ -1,30 +1,31 @@
 
 import { component } from 'src/app-decorators';
 
-describe('@component', () => {
+describe('@component decorator', () => {
+
 
 	@component()
-	class FooComponent {}
+	class Foo {}
 
 	@component(HTMLImageElement)
-	class BarComponent {}
+	class Bar {}
 
 	@component(HTMLFormElement)
-	class BazComponent {}
+	class Baz {}
 
 	it('should instance of HTMLElement', () => {
-		let fooComponent = FooComponent.instance();
-		fooComponent.should.be.instanceOf(HTMLElement);
+		let foo = Foo.instance();
+		foo.should.be.instanceOf(HTMLElement);
 	});
 
 	it('should instance of HTMLImageElement', () => {
-		let barComponent = BarComponent.instance();
-		barComponent.should.be.instanceOf(HTMLImageElement);
+		let bar = Bar.instance();
+		bar.should.be.instanceOf(HTMLImageElement);
 	});
 
 	it('should instance of HTMLFormElement', () => {
-		let bazComponent = BazComponent.instance();
-		bazComponent.should.be.instanceOf(HTMLFormElement);
+		let baz = Baz.instance();
+		baz.should.be.instanceOf(HTMLFormElement);
 	});
 
 });
