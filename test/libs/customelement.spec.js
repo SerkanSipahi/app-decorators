@@ -68,4 +68,56 @@ describe('Class CustomElement', () => {
 
 	});
 
+	describe('method register passed class yellow', () => {
+
+		class Yellow {
+			createdCallback() {
+				this.$ = { createdCallback : true };
+			}
+			attachedCallback() {
+				this.$ = { attachedCallback : true }
+			}
+			attributeChangedCallback(attrName, oldVal, newVal) {
+				this.$ = {
+					attributeChangedCallback : {
+						attrName,
+						newVal,
+					}
+				}
+			}
+			detachedCallback() {
+				this.$ = { detachedCallback : true }
+			}
+		}
+
+		CustomElement.register(Yellow, HTMLFormElement);
+
+		it('should call createdCallback on creating instance', () => {
+			let yellow = Yellow.instance();
+			yellow.$.createdCallback.should.be.true();
+		});
+
+		it('should call attachedCallback on append instance to dom', () => {
+			let yellow = Yellow.instance();
+			document.body.appendChild(yellow);
+			yellow.$.attachedCallback.should.be.true();
+		});
+
+		it('should call attachedCallback on append instance to dom', () => {
+			let yellow = Yellow.instance();
+			yellow.setAttribute('fooattr', 111);
+			yellow.$.attributeChangedCallback.attrName.should.be.equal('fooattr');
+			yellow.$.attributeChangedCallback.newVal.should.be.equal('111');
+		});
+
+		it('should call detachedCallback on deleted from dom', () => {
+			let yellow = Yellow.instance();
+			document.body.appendChild(yellow);
+			yellow.classList.add('for-deleting');
+			yellow.parentNode.removeChild(yellow);
+			yellow.$.detachedCallback.should.be.true();
+		});
+
+	});
+
 });
