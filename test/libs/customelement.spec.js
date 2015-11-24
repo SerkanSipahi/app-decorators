@@ -8,7 +8,7 @@ describe('Class CustomElement', () => {
 		it('should add a component prefix by default', () => {
 			CustomElement.convertToValidComponentName('foo').should.be.equal('com-foo');
 		});
-		
+
 		it('should add a component by passed prefix', () => {
 			CustomElement.convertToValidComponentName('foo', 'x').should.be.equal('x-foo');
 		});
@@ -44,14 +44,14 @@ describe('Class CustomElement', () => {
 
 		CustomElement.register(Red);
 
-		it('should return instanceof HTMLElement', () => {
+		it('should return by default instanceof HTMLElement if no second argument passed', () => {
 			let red = Red.instance();
 			red.should.be.instanceOf(HTMLElement);
 		});
 
 	});
 
-	describe('method register passed class Green', () => {
+	describe('method register passed class Green and as second parameter HTMLFormElement', () => {
 
 		class Green {
 			foo() {}

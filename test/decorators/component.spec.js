@@ -3,7 +3,6 @@ import { component } from 'src/app-decorators';
 
 describe('@component decorator', () => {
 
-
 	@component()
 	class Foo {}
 
