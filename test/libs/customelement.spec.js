@@ -103,7 +103,7 @@ describe('Class CustomElement', () => {
 			yellow.$.attachedCallback.should.be.true();
 		});
 
-		it('should call attachedCallback on append instance to dom', () => {
+		it('should call attributeChangedCallback if set attribute', () => {
 			let yellow = Yellow.instance();
 			yellow.setAttribute('fooattr', 111);
 			yellow.$.attributeChangedCallback.attrName.should.be.equal('fooattr');
