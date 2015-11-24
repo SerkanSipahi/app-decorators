@@ -36,7 +36,7 @@ export default class CustomElement {
 		return componentTmpProto;
 	}
 
-	static convertToValidComponentName(name) {
-		return name.replace( /([a-z])([A-Z])/g, '$1-$2' ).toLowerCase();
+	static convertToValidComponentName(name, prefix = 'com') {
+		return `${prefix}-${name.toLowerCase()}`;
 	}
 }
