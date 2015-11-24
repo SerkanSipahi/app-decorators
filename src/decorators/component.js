@@ -2,7 +2,7 @@
 
 class CustomElement {
 
-	static register(ComponentClass, DOMElement) {
+	static register(ComponentClass, DOMElement = HTMLElement) {
 
 		let ComponentPrototye = CustomElement.extractPrototype(ComponentClass);
 		let componentClassName = ComponentClass.prototype.constructor.name;
@@ -48,7 +48,7 @@ class CustomElement {
  * @param  {Any} ...args
  * @return {Function}
  */
-export default function component(DOMElement = HTMLDivElement) {
+export default function component(DOMElement) {
 	return function decorator(ComponentClass) {
 		CustomElement.register(ComponentClass, DOMElement);
 	}

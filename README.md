@@ -57,3 +57,7 @@ export default class Navigation {
 }
 
 ```
+
+##### Polyfill for browser that not support custom-elements:
+
+* https://github.com/WebReflection/document-register-element

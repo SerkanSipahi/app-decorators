@@ -12,9 +12,9 @@ describe('@component', () => {
 	@component(HTMLFormElement)
 	class BazComponent {}
 
-	it('should instance of HTMLDivElement', () => {
+	it('should instance of HTMLElement', () => {
 		let fooComponent = FooComponent.instance();
-		fooComponent.should.be.instanceOf(HTMLDivElement);
+		fooComponent.should.be.instanceOf(HTMLElement);
 	});
 
 	it('should instance of HTMLImageElement', () => {

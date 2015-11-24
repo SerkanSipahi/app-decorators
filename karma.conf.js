@@ -19,10 +19,14 @@ module.exports = function (config) {
 	    ],
 		browsers: [
 			'Chrome',
-			'Firefox',
+			//'Firefox',
 		],
 		jspm: {
-		    loadFiles: ['src/**/*.js', 'test/**/*.js']
+		    loadFiles: [
+				'src/**/*.js',
+				'test/decorators/*.js',
+				'test/libs/*.js'
+			]
 		},
 		autoWatch: true,
 		singleRun: false,
