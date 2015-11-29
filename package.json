@@ -32,6 +32,7 @@
   "jspm": {
     "dependencies": {
       "es6-module-loader": "npm:es6-module-loader@0.17.8",
+      "should": "npm:should@7.1.1",
       "systemjs": "npm:systemjs@0.19.6"
     },
     "devDependencies": {
