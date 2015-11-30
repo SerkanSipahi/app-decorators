@@ -1,7 +1,7 @@
 {
   "name": "app-decorators",
   "version": "1.0.0",
-  "description": "Collection of decorators that can be used for building webapps",
+  "description": "Collection of ES7 Decorators, writtin in ES6, that can be used for building webapps",
   "main": "src/app-decorators.js",
   "repository": {
     "type": "git",
