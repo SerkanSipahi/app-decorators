@@ -21,11 +21,9 @@ export default class CustomElement {
 		let ComElement = document.registerElement(validComponentName, ConstructedClass);
 
 		// factory for creating custom element
-		(function(ComElement){
-			ComponentClass.instance = function(){
-				return new ComElement();
-			};
-		}(ComElement));
+		ComponentClass.instance = function(){
+			return new ComElement();
+		};
 	}
 
 	/**
