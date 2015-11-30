@@ -21,8 +21,16 @@ module.exports = function (config) {
 	    ],
 		browsers: [
 			'Chrome',
-			//'Firefox',
+			'FirefoxEnableWebComponents',
 		],
+		customLaunchers: {
+		    FirefoxEnableWebComponents: {
+		        base: 'Firefox',
+		        prefs: {
+		            'dom.webcomponents.enabled': true
+		        }
+		    }
+		},
 		jspm: {
 		    loadFiles: [
 				'src/**/*.js',
