@@ -1,14 +1,15 @@
 language: node_js
 node_js:
-- "4.2.1"
-- "0.12"
+  - "4.1"
+  - "4.0"
+  - "0.12"
 before_install:
-- export CHROME_BIN=chromium-browser
-- export DISPLAY=:99.0
-- sh -e /etc/init.d/xvfb start
-- npm install
-- ./node_modules/.bin/jspm config registries.github.auth $JSPM_GITHUB_AUTH_TOKEN
-- ./node_modules/.bin/jspm install
+  - "export CHROME_BIN=chromium-browser"
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - "npm install"
+  - "node_modules/.bin/jspm config registries.github.auth $JSPM_GITHUB_AUTH_TOKEN"
+  - "node_modules/.bin/jspm install"
 env:
   global:
   - secure: RzYrM0NFluB8vVWi/HksCMY7CtwlQCb2KK82GdWw6+adSSDaYIvhcTH80q2mMWaM7xkPdN0yb/xRsShAMpwAzr/FBRBJju8ia+1pGA+HeAO2ym2ySGUBZzVdXH54QTRPFAZKVfi4W6KR+0+uCXEsj65DHH89ZTi+Fmjl1YuSAM1sENFzz4FxqQvAaqBDzd/yzIUvhTE/Xg/EOdfG4KNRPTQTciTfPYlBxPtDH3ihaHgCTNKb6mlxkhVzdPz4D6BAtOGKp/nROwT0KmkFU5QOe0A1PaiKINBeLDwnMPssnjdlVcbFd6R9kLo7I/wSEZFWCmMIfTk/oyTFrBpajrxEKsZ+DBn8Qq45O1YpTpoJxVaS8KcTfAC2KRsrB/CTHsFipMVOxaVecfamX7/9uGxGwGEMBcvOWRnl7Rvd7eriPxfwKj5gAGOkM9PHYxwu659/MFi4WlkZ3iPnWgtnXng+2rY7rbP7NzpPtvpU1SbPojaektHYyjk1DwZu7M5hMmypX9SA9T50Mp4eV29TNsw1Hgvd5MvZs+xEo3x/1eTy2H6PusVncYxQv1tu8YfUOXk/i3aSCOMUL2QIUwNdr0SKt+xWIxrVcAyNRCULqCui0mo1d9xhAZbK7Kqchv9gI4FfxIsNyGQqfU2IXF+U28MwGCaw1TdZbD6C32tMqfp8Z1Q=
