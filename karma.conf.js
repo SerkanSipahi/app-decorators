@@ -1,4 +1,5 @@
 module.exports = function (config) {
+	
 	config.set({
 		basePath: './',
 		frameworks: [
@@ -29,7 +30,11 @@ module.exports = function (config) {
 		        prefs: {
 		            'dom.webcomponents.enabled': true
 		        }
-		    }
+		    },
+			Chrome_travis_ci: {
+	          base: 'Chrome',
+	          flags: ['--no-sandbox']
+		  },
 		},
 		jspm: {
 		    loadFiles: [
@@ -44,4 +49,9 @@ module.exports = function (config) {
 	    colors: true,
 	    logLevel: config.LOG_INFO,
 	});
+
+	if(process.env.TRAVIS){
+        config.browsers = ['Chrome_travis_ci'];
+    }
+
 };

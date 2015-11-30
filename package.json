@@ -13,6 +13,9 @@
     "url": "https://github.com/SerkanSipahi/app-decorators/issues"
   },
   "homepage": "https://github.com/SerkanSipahi/app-decorators#readme",
+  "scripts": {
+    "test": "node_modules/.bin/karma start karma.conf.js --single-run"
+  },
   "devDependencies": {
     "jspm": "0.16.15",
     "karma": "0.13.15",
