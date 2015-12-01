@@ -138,6 +138,38 @@ describe('Class CustomElement', () => {
 
 	});
 
+	describe('method register passed ES5 class', () => {
+
+		function Blue(){}
+		Blue.prototype.a = function(){};
+		Blue.prototype.b = function(){};
+		Blue.prototype.c = function(){};
+		Blue.prototype.createdCallback = function() {}
+		Blue.prototype.attachedCallback = function() {}
+		Blue.prototype.attributeChangedCallback = function(attrName, oldVal, newVal) {}
+		Blue.prototype.detachedCallback = function() {}
+
+		CustomElement.register(Blue);
+
+		it('should return instanceof HTMLFormElement', () => {
+			let blue = Blue.instance();
+			blue.should.be.instanceOf(HTMLElement);
+		});
+
+		it('should have properties of function Blue()', () => {
+			let blue = Blue.instance();
+			blue.should.have.property('a');
+			blue.should.have.property('b');
+			blue.should.have.property('c');
+			// webcomponents callbacks
+			blue.should.have.property('createdCallback');
+			blue.should.have.property('attachedCallback');
+			blue.should.have.property('attributeChangedCallback');
+			blue.should.have.property('detachedCallback');
+		});
+
+	});
+
 	describe('method register (integration Test) passed class yellow with many parents', () => {
 
 		class Foo {
