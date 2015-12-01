@@ -25,7 +25,7 @@ System.config({
 
 or jspm (no mapping required it do it automatically)
 ```
-jspm install npm:app-decorators //please do not use this command: see https://github.com/SerkanSipahi/app-decorators/issues/6
+jspm install npm:app-decorators
 ```
 
 ## Info
