@@ -1,6 +1,6 @@
 {
   "name": "app-decorators",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Collection of useful ES7 Decorators, writtin in ES6, that can be used for building webapps",
   "main": "src/app-decorators.js",
   "repository": {
@@ -51,6 +51,7 @@
     "sinon": "1.17.2"
   },
   "jspm": {
+    "jspmNodeConversion": false,
     "dependencies": {
       "es6-module-loader": "npm:es6-module-loader@0.17.8",
       "should": "npm:should@7.1.1",
