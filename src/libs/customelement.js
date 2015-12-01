@@ -82,7 +82,7 @@ export default class CustomElement {
 			proto = className = constructor = null;
 		}
 
-		// preparing instance and statics methods for createClass
+		// preparing instance and static methods for createClass
 		// must be refactored
 		if(constructor && proto && className !== 'Object'){
 			instanceMethods = CustomElement.extractProperties(proto, /constructor/);
