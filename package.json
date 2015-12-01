@@ -1,6 +1,6 @@
 {
   "name": "app-decorators",
-  "version": "1.0.0",
+  "version": "0.3.0",
   "description": "Collection of useful ES7 Decorators, writtin in ES6, that can be used for building webapps",
   "main": "src/app-decorators.js",
   "repository": {
@@ -16,6 +16,23 @@
   "scripts": {
     "test": "./node_modules/.bin/karma start --browsers FirefoxEnableWebComponents --single-run"
   },
+  "keywords": [
+    "es6",
+    "es7",
+    "es2015",
+    "es2016",
+    "babel",
+    "decorators",
+    "component",
+    "model",
+    "view",
+    "controller",
+    "eventlistener",
+    "router",
+    "convention",
+    "webapp",
+    "mixin"
+  ],
   "devDependencies": {
     "jspm": "0.16.15",
     "jspm-github": "0.13.9",
