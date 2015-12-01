@@ -9,13 +9,23 @@ with npm
 ```
 npm install app-decorators --save
 ```
-or jspm
-```
-jspm install npm:app-decorators
-```
 or git
 ```
 git clone https://github.com/SerkanSipahi/app-decorators.git
+```
+
+Mapping with systemjs
+```
+System.config({
+	map : {
+		"app-decorators": "node_modules/app-decorators/src/app-decorators",
+	}
+});
+```
+
+or jspm (no mapping required it do it automatically)
+```
+jspm install npm:app-decorators //please do not use this command: see https://github.com/SerkanSipahi/app-decorators/issues/6
 ```
 
 ## Info
