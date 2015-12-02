@@ -219,14 +219,22 @@ import { component, view, on } from 'app-decorators';
 @component(HTMLElement)
 class Item {
 
-    @on('click .add') addItem( self ){
+    @on('click .add') addItem( event ){
         console.log('on click .add');
     }
-    @on('click .edit') editItem( self ){
+    @on('click .edit') editItem( event ){
         console.log('on click .edit');
     }
-    @on('click .delete') deleteItem( self ){
+    @on('click .delete') deleteItem( event ){
         console.log('on click .add');
+    }
+
+    // alternate style
+    @on.click('.add') onAdd( event ){
+        console.log('on click .add');
+    }
+    @on.mouseenter('.add') onMouseenter( event ){
+        console.log('on mouseenter .add');
     }
 
 }
@@ -281,6 +289,14 @@ class Item {
         this.country = '-';
     }
 
+    // alternate style
+    @model.upate('name') onUpdateName( value ){
+        console.log('@model.update onUpdateName');
+    }
+    @model.read('name') onReadName( value ){
+        console.log('@model.read onReadName');
+    }
+
 }
 
 let item = Item.instance();
@@ -326,7 +342,7 @@ class SpecialButton {
         this.setAttribute('type', 'submit');
         this.innerHTML = 'Click me!';
     }
-    @on('submit') submit(){
+    @on.submit() onSubmit(){
         let item = this.modelpool.get('item');
         item.model.set('name', 'serkan');
     }
