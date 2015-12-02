@@ -46,7 +46,7 @@ This library can be consumed by any transpiler that supports decorators like bab
 
 ## Documentation
 
-### @component [ new ]
+### @component [ new ] (can be used)
 
 ##### Description
 ```js
@@ -314,7 +314,7 @@ item.model.set('name', 'Ayil');
 
 or with
 
-### @modelpool
+### @modelpool [ in progress/planing ]
 ```js
 
 import { component, on, modelpool } from 'app-decorators';
