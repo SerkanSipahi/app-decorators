@@ -169,8 +169,6 @@ var item = Item.instance();
 document.body.appendChild(item);
 ```
 
-## Documentation
-
 ### @view [ in progress/planing ]
 ```js
 import { component, view } from 'app-decorators';
@@ -273,7 +271,10 @@ class Item {
     @model('read:name') read( value ) {
         this.name = `${value} [ read ]`;
     }
-    @model('update:city') update( value ) {
+    @model('update:name') updateName( value ) {
+        this.name = `${value} [ update ]`;
+    }
+    @model('update:city') updateCity( value ) {
         this.city = `${value} [ update ]`;
     }
     @model('delete:country') delete( ) {
