@@ -52,12 +52,10 @@
   },
   "jspm": {
     "jspmNodeConversion": false,
-    "dependencies": {
+    "devDependencies": {
       "es6-module-loader": "npm:es6-module-loader@0.17.8",
       "should": "npm:should@7.1.1",
-      "systemjs": "npm:systemjs@0.19.6"
-    },
-    "devDependencies": {
+      "systemjs": "npm:systemjs@0.19.6",
       "babel": "npm:babel-core@5.8.24",
       "babel-runtime": "npm:babel-runtime@5.8.24",
       "core-js": "npm:core-js@1.1.4"

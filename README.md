@@ -38,25 +38,25 @@ This library can be consumed by any transpiler that supports decorators like bab
 ##### For Classes, Functions and Methods
 * [@component](#component)
 * [@view](#view) : in progress
-* [@style](#style) : in progress
 * [@on](#on) : in progress
+* [@style](#style) : in progress
 * [@model](#model) : in progress
 * [@modelpool](#modelpool) : in progress
-* [@controller](#controller) : in progress
 * [@router](#router) : in progress
 
 ## Documentation
 
-### @component
-(available at app-decorators >= v0.3)
+### @component [ new ]
 
 ##### Description
 ```js
 @component();
 class Foo {
 }
+
+let foo = Foo.instance();
 // if no Element passed default is HTMLElement
-console.log(Foo.prototype instanceof HTMLElement) // logs true
+console.log(foo instanceof HTMLElement) // logs true
 ```
 
 >"Tests success" natively (CustomElements) in Chrome 46, Firefox 42 and Opera 33
@@ -167,39 +167,186 @@ Item.prototype.detachedCallback = function() {}
 CustomElement.register(Item, HTMLElement);
 var item = Item.instance();
 document.body.appendChild(item);
-
 ```
 
 ## Documentation
 
-### @on
-(available at app-decorators >= 0.6)
+### @view [ in progress/planing ]
 ```js
-// in progress
+import { component, view } from 'app-decorators';
+
+@view(`
+    <div class="{{a}}">{{a}}</div>
+    <div class="{{b}}">{{b}}</div>
+    <div class="{{c}}">{{c}}</div>
+`)
+
+@component(HTMLElement)
+class Item {
+
+    @view.bind a;
+    @view.bind b;
+    @view.bind c = 'delete';
+
+    createdCallback(){
+        this.a = 'add';
+        this.b = 'edit';
+    }
+}
+
+let item = Item.instance();
+document.body.appendChild(item);
+```
+```html
+<body>
+    <!-- output -->
+    <com-item>
+        <div class="add">add</div>
+        <div class="edit">edit</div>
+        <div class="delete">delete</div>
+    </com-item>
+</body>
 ```
 
-### @view
-(available at app-decorators >= 1.0)
+### @on [ in progress/planing ]
 ```js
-// in progress
+import { component, view, on } from 'app-decorators';
+
+@view(`
+    <div class="add">add</div>
+    <div class="edit">edit</div>
+    <div class="delete">delete</div>
+`)
+
+@component(HTMLElement)
+class Item {
+
+    @on('click .add') addItem( self ){
+        console.log('on click .add');
+    }
+    @on('click .edit') editItem( self ){
+        console.log('on click .edit');
+    }
+    @on('click .delete') deleteItem( self ){
+        console.log('on click .add');
+    }
+
+}
+
+let item = Item.instance();
+document.body.appendChild(item);
+```
+```html
+<body>
+    <!-- output -->
+    <com-item>
+        <div class="add">add</div>
+        <div class="edit">edit</div>
+        <div class="delete">delete</div>
+    </com-item>
+</body>
 ```
 
-### @style
+### @model [ in progress/planing ]
 ```js
-// in progress
+// components/item.js
+import { component, view, model } from 'app-decorators';
+
+@view(`
+    <div class="name">{{name}}</div>
+    <div class="city">{{city}}</div>
+    <div class="country">{{country}}</div>
+`)
+
+@component(HTMLElement)
+class Item {
+
+    @model.attr @view.bind name;
+    @model.attr @view.bind city;
+    @model.attr @view.bind country = 'Turkey';
+
+    createdCallback(){
+        this.name = 'Serkan';
+        this.city = 'Istanbul';
+    }
+
+    @model('read:name') read( value ) {
+        this.name = `${value} [ read ]`;
+    }
+    @model('update:city') update( value ) {
+        this.city = `${value} [ update ]`;
+    }
+    @model('delete:country') delete( ) {
+        this.country = '-';
+    }
+
+}
+
+let item = Item.instance();
+document.body.appendChild(item);
+
+/**
+// output
+<com-item>
+    <div class="name">Serkan</div>
+    <div class="city">Istanbul</div>
+    <div class="country">Turkey</div>
+</com-item>
+ */
+
+```
+```js
+// ...somewhere in another file
+
+let item = document.querySelector('com-item');
+item.model.set('name', 'Ayil');
+
+/**
+// output
+<com-item>
+    <div class="name">Ayil [ update ]</div>
+    <div class="city">Istanbul</div>
+    <div class="country">Turkey</div>
+</com-item>
+ */
 ```
 
-### @model
-```js
-// in progress
-```
+or with
 
 ### @modelpool
 ```js
-// in progress
+
+import { component, on, modelpool } from 'app-decorators';
+
+@modelpool
+@component(HTMLButtonElement)
+class SpecialButton {
+    createdCallback(){
+        this.setAttribute('type', 'submit');
+        this.innerHTML = 'Click me!';
+    }
+    @on('submit') submit(){
+        let item = this.modelpool.get('item');
+        item.model.set('name', 'serkan');
+    }
+}
+
+/**
+// on submit
+<com-specialbutton type="submit">Click me!</specialbutton>
+
+// it changed to "serkan [ update ]"
+
+<com-item>
+    <div class="name">Serkan [ update ]</div>
+    <div class="city">Istanbul</div>
+    <div class="country">Turkey</div>
+</com-item>
+ */
+
 ```
 
-### @constroller
+### @style
 ```js
 // in progress
 ```
