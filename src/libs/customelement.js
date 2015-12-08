@@ -14,16 +14,24 @@ export default class CustomElement {
 		let componentClassName = ComponentClass.prototype.constructor.name;
 		let validComponentName = CustomElement.convertToValidComponentName(componentClassName);
 
-		let CollectionOfClasses = CustomElement.explodeByExtends(ComponentClass);
-		let ConstructedClass = CustomElement.constructDOMClass(CollectionOfClasses, DOMElement);
+		// buildComponent
+		let builtComponent = CustomElement.buildComponent(ComponentClass, DOMElement);
 
 		// register element
-		let ComElement = document.registerElement(validComponentName, ConstructedClass);
+		let ComElement = document.registerElement(validComponentName, builtComponent);
 
 		// factory for creating custom element
 		ComponentClass.instance = function(){
 			return new ComElement();
 		};
+	}
+
+	static buildComponent(ComponentClass, DOMElement){
+
+		let CollectionOfClasses = CustomElement.explodeByExtends(ComponentClass);
+		let ConstructedClass = CustomElement.constructDOMClass(CollectionOfClasses, DOMElement);
+
+		return ConstructedClass;
 	}
 
 	/**
