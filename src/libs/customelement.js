@@ -9,10 +9,9 @@ export default class CustomElement {
 	 */
 	static register(ComponentClass, DOMElement = HTMLElement) {
 
-		// preparing custom element
-		let ComponentPrototye = {};
-		let componentClassName = ComponentClass.prototype.constructor.name;
-		let validComponentName = CustomElement.convertToValidComponentName(componentClassName);
+		// extract useful properties
+		let componentClassName  = CustomElement.getClassName(ComponentClass);
+		let validComponentName  = CustomElement.convertToValidComponentName(componentClassName);
 
 		// buildComponent
 		let builtComponent = CustomElement.buildComponent(ComponentClass, DOMElement);
@@ -20,7 +19,7 @@ export default class CustomElement {
 		// register element
 		let ComElement = document.registerElement(validComponentName, builtComponent);
 
-		// factory for creating custom element
+		// create static factory method for creating dominstance
 		ComponentClass.instance = function(){
 			return new ComElement();
 		};
@@ -51,15 +50,17 @@ export default class CustomElement {
 	 */
 	static explodeByExtends(ComponentClass) {
 
-		let className = true;
+		let constructor = true;
 		let resolvedClass = ComponentClass;
 		let explodedExtends = [];
-		while(className){
+		while(constructor){
+			// resolve given class "ComponentClass" recursivly
+			// see tests for better understanding
 			resolvedClass = CustomElement.resolveClassInComponents(
-				!(2 in resolvedClass) ? resolvedClass : resolvedClass[2]
+				!(1 in resolvedClass) ? resolvedClass : resolvedClass[1]
 			);
-			className = resolvedClass[0];
-			if(!className) {
+			constructor = resolvedClass[0];
+			if(!constructor) {
 				continue;
 			}
 			explodedExtends.push(resolvedClass);
@@ -80,25 +81,22 @@ export default class CustomElement {
 		let staticMethods = [];
 
 		// resolve Class in useful components
-		// __proto__ must be refactored
-		let proto = ClassComponent.prototype || ClassComponent.__proto__ || null;
-		let className = proto !== null ? proto.constructor.name : null;
-		let constructor = proto !== null ? proto.constructor : null;
+		let prototype = CustomElement.getPrototype(ClassComponent);
+		let className = CustomElement.getClassName(ClassComponent);
+		let constructor = CustomElement.getConstructor(ClassComponent);
 
 		// if reached className is "Object" set "see inside block" to null
 		if(className === 'Object'){
-			proto = className = constructor = null;
+			prototype = className = constructor = null;
 		}
 
 		// preparing instance and static methods for createClass
-		// must be refactored
-		if(constructor && proto && className !== 'Object'){
-			instanceMethods = CustomElement.extractProperties(proto, /constructor/);
-			staticMethods = CustomElement.extractProperties(constructor, /length|name|prototype/);
+		if(constructor && prototype && className !== 'Object'){
+			instanceMethods = CustomElement.getInstanceMethods(ClassComponent);
+			staticMethods = CustomElement.getStaticMethods(ClassComponent);
 		}
 
-		return [ className, constructor, proto, instanceMethods, staticMethods ];
-		// return [ className, constructor, proto ];
+		return [ constructor, prototype, instanceMethods, staticMethods ];
 	}
 
 	/**
@@ -112,7 +110,7 @@ export default class CustomElement {
 
 		// default behavoir of function: if class without any parent class
 		let ConstructedClass = null;
-		let [ ,Constructor,,instanceMethods,staticMethods] = collection.pop();
+		let [ Constructor,, instanceMethods, staticMethods] = collection.pop();
 
 		if(Constructor && DOMElement){
 			CustomElement.inherits(Constructor, DOMElement);
@@ -125,7 +123,7 @@ export default class CustomElement {
 
 		// extended behavoir of function: if class has any parent classes
 		while(collection.length) {
-			let [ ,FirstConstructor,,instanceMethods,staticMethods] = collection.pop();
+			let [ FirstConstructor,, instanceMethods,staticMethods] = collection.pop();
 			Constructor = CustomElement.inherits(FirstConstructor, Constructor);
 			CustomElement.createClass(Constructor, instanceMethods, staticMethods);
 		}
@@ -214,6 +212,55 @@ export default class CustomElement {
 			if ("value" in descriptor) descriptor.writable = true;
 			Object.defineProperty(target, descriptor.key, descriptor);
 		}
+	}
+
+	/**
+	 * returns instance methods of a Function-Class
+	 * @param  {Object} ClassComponent
+	 * @return {Array}
+	 */
+	static getInstanceMethods(ClassComponent) {
+		let prototype = CustomElement.getPrototype(ClassComponent);
+		return CustomElement.extractProperties(prototype, /constructor/);
+	}
+
+	/**
+	 * returns static methods of a Function-Class
+	 * @param  {Function} ClassComponent
+	 * @return {Array}
+	 */
+	static getStaticMethods(ClassComponent) {
+		let constructor = CustomElement.getConstructor(ClassComponent);
+		return CustomElement.extractProperties(constructor, /length|name|prototype/);
+	}
+
+	/**
+	 * Return prototype by given Function-Class
+	 * @param  {Function} ClassComponent
+	 * @return {Object}
+	 */
+	static getPrototype(ClassComponent){
+		return ClassComponent.prototype || ClassComponent.__proto__ || null;
+	}
+
+	/**
+	 * Return classname by given Function-Class
+	 * @param  {Function} ClassComponent
+	 * @return {String}
+	 */
+	static getClassName(ClassComponent) {
+		let prototype = CustomElement.getPrototype(ClassComponent);
+		return ( prototype !== null ? prototype.constructor.name : null );
+	}
+
+	/**
+	 * Return constructor by given Function-Class
+	 * @param  {Function} ClassComponent
+	 * @return {Function}
+	 */
+	static getConstructor(ClassComponent) {
+		let prototype = CustomElement.getPrototype(ClassComponent);
+		return ( prototype !== null ? prototype.constructor : null );
 	}
 
 }
