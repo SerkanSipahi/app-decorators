@@ -97,8 +97,8 @@ let item1 = Item.instance();
 let item2 = Item.instance();
 
 // log true
-console.log(item instanceof HTMLElement);
-console.log(item instanceof Element);
+console.log(item1 instanceof HTMLElement);
+console.log(item2 instanceof Element);
 
 document.body.appendChild(item1);
 document.body.appendChild(item2);
