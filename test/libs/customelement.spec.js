@@ -14,21 +14,18 @@ describe('Class CustomElement', () => {
 			static f(){}
 		}
 
-		let [ className,
-			  constructor,
-			  proto,
-			  instanceMethods,
-		      staticMethods ] = CustomElement.resolveClassInComponents(Child);
-
 		it('should return child as constructor name', () => {
-			className.should.be.equal('Child');
+			CustomElement.getClassName(Child).should.be.equal('Child');
 		});
 
 		it('should return child constructor typeof function', () => {
-			constructor.toString().should.match(/function Child/);
+			CustomElement.getConstructor(Child).toString().should.match(/function Child/);
 		});
 
 		it('should have properties of Child', () => {
+
+			let instanceMethods = CustomElement.getInstanceMethods(Child);
+
 			// method a
 			instanceMethods[0].key.should.equal('a');
 			instanceMethods[0].value.toString().should.match(/function a/);
@@ -41,6 +38,9 @@ describe('Class CustomElement', () => {
 		});
 
 		it('should have static properties of Child', () => {
+
+			let staticMethods = CustomElement.getStaticMethods(Child);
+
 			// method d
 			staticMethods[0].key.should.equal('d');
 			staticMethods[0].value.toString().should.match(/function d/);
@@ -58,15 +58,12 @@ describe('Class CustomElement', () => {
 
 		class Child {}
 
-		let [ className,
-			  constructor,
-			  proto,
-			  instanceMethods,] = CustomElement.resolveClassInComponents(Child.prototype.__proto__);
-
 		it('passed Child.prototype.__proto__ should return null on className', () => {
+			let className = CustomElement.getClassName(Child.prototype.__proto__);
 			className === null ? true.should.be.true() : true.should.be.false()
 		});
 		it('passed Child.prototype.__proto__ should return null on constructor', () => {
+			let constructor = CustomElement.getConstructor(Child.prototype.__proto__);
 			constructor === null ? true.should.be.true() : true.should.be.false()
 		});
 	});
@@ -84,9 +81,9 @@ describe('Class CustomElement', () => {
 		});
 
 		it('should return child + parent + human separated in array', () => {
-			CollectionOfClasses[0][0].should.be.equal('Child');
-			CollectionOfClasses[1][0].should.be.equal('Parent');
-			CollectionOfClasses[2][0].should.be.equal('Human');
+			CollectionOfClasses[0][0].name.should.be.equal('Child');
+			CollectionOfClasses[1][0].name.should.be.equal('Parent');
+			CollectionOfClasses[2][0].name.should.be.equal('Human');
 		});
 
 	});
