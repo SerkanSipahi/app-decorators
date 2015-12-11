@@ -17,7 +17,9 @@ export default class CustomElement {
 		let builtComponent = CustomElement.buildComponent(ComponentClass, DOMElement);
 
 		// register element
-		let ComElement = document.registerElement(validComponentName, builtComponent);
+		let ComElement = document.registerElement(validComponentName, {
+			prototype: Object.create(builtComponent.prototype)
+		});
 
 		// create static factory method for creating dominstance
 		ComponentClass.instance = function(){
