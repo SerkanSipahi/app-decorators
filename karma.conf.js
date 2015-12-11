@@ -38,9 +38,11 @@ module.exports = function (config) {
 		},
 		jspm: {
 		    loadFiles: [
-				'src/**/*.js',
-				'test/decorators/*.js',
-				'test/libs/*.js'
+				'src/app-decorators.js',
+				'src/decorators/*.js',
+				'src/libs/*.js',
+				'test/decorators/*spec.js',
+				'test/libs/*spec.js'
 			]
 		},
 		autoWatch: true,
