@@ -54,7 +54,7 @@ This library can be consumed by any transpiler that supports decorators like bab
 class Foo {
 }
 
-let foo = Foo.instance();
+let foo = Foo.create();
 // if no Element passed default is HTMLElement
 console.log(foo instanceof HTMLElement) // logs true
 ```
@@ -89,12 +89,19 @@ class Item extends Data {
 }
 ```
 
+```js
+@component(HTMLElement)
+@component({
+	extends: 'div'
+})
+```
+
 ##### Instructions for manual instantiation:
 ```js
 
 // creating custom-element
-let item1 = Item.instance();
-let item2 = Item.instance();
+let item1 = Item.create();
+let item2 = Item.create();
 
 // log true
 console.log(item1 instanceof HTMLElement);
@@ -165,7 +172,7 @@ Item.prototype.attributeChangedCallback = function(attrName, oldVal, newVal) {}
 Item.prototype.detachedCallback = function() {}
 
 CustomElement.register(Item, HTMLElement);
-var item = Item.instance();
+var item = Item.create();
 document.body.appendChild(item);
 ```
 
@@ -192,7 +199,7 @@ class Item {
     }
 }
 
-let item = Item.instance();
+let item = Item.create();
 document.body.appendChild(item);
 ```
 ```html
@@ -239,7 +246,7 @@ class Item {
 
 }
 
-let item = Item.instance();
+let item = Item.create();
 document.body.appendChild(item);
 ```
 ```html

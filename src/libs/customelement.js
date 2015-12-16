@@ -22,7 +22,7 @@ export default class CustomElement {
 		});
 
 		// create static factory method for creating dominstance
-		ComponentClass.instance = function(){
+		ComponentClass.create = function(){
 			return new ComElement();
 		};
 	}

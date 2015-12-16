@@ -112,7 +112,7 @@ describe('Class CustomElement', () => {
 		CustomElement.register(Red);
 
 		it('should return by default instanceof HTMLElement if no second argument passed', () => {
-			let red = Red.instance();
+			let red = Red.create();
 			red.should.be.instanceOf(HTMLElement);
 		});
 
@@ -129,7 +129,7 @@ describe('Class CustomElement', () => {
 		CustomElement.register(Green, HTMLFormElement);
 
 		it('should return instanceof HTMLFormElement', () => {
-			let green = Green.instance();
+			let green = Green.create();
 			green.should.be.instanceOf(HTMLFormElement);
 		});
 
@@ -149,12 +149,12 @@ describe('Class CustomElement', () => {
 		CustomElement.register(Blue);
 
 		it('should return instanceof HTMLFormElement', () => {
-			let blue = Blue.instance();
+			let blue = Blue.create();
 			blue.should.be.instanceOf(HTMLElement);
 		});
 
 		it('should have properties of function Blue()', () => {
-			let blue = Blue.instance();
+			let blue = Blue.create();
 			blue.should.have.property('a');
 			blue.should.have.property('b');
 			blue.should.have.property('c');
@@ -219,7 +219,7 @@ describe('Class CustomElement', () => {
 		CustomElement.register(Yellow, HTMLFormElement);
 
 		it('should return method name on call method x', () => {
-			let yellow = Yellow.instance();
+			let yellow = Yellow.create();
 			yellow.a().should.be.equal('a');
 			yellow.b().should.be.equal('b');
 			yellow.c().should.be.equal('c');
@@ -229,31 +229,31 @@ describe('Class CustomElement', () => {
 		});
 
 		it('should return Foo parentMethodCall on call yellow.parentMethodCall()', () => {
-			let yellow = Yellow.instance();
+			let yellow = Yellow.create();
 			yellow.parentMethodCall();
 			yellow.$.parentMethodCall.should.be.true();
 		});
 
 		it('should call createdCallback on creating instance', () => {
-			let yellow = Yellow.instance();
+			let yellow = Yellow.create();
 			yellow.$.createdCallback.should.be.true();
 		});
 
 		it('should call attachedCallback on append instance to dom', () => {
-			let yellow = Yellow.instance();
+			let yellow = Yellow.create();
 			document.body.appendChild(yellow);
 			yellow.$.attachedCallback.should.be.true();
 		});
 
 		it('should call attributeChangedCallback if set attribute', () => {
-			let yellow = Yellow.instance();
+			let yellow = Yellow.create();
 			yellow.setAttribute('fooattr', 111);
 			yellow.$.attributeChangedCallback.attrName.should.be.equal('fooattr');
 			yellow.$.attributeChangedCallback.newVal.should.be.equal('111');
 		});
 
 		it('should call detachedCallback on deleted from dom', () => {
-			let yellow = Yellow.instance();
+			let yellow = Yellow.create();
 			document.body.appendChild(yellow);
 			yellow.classList.add('for-deleting');
 			yellow.parentNode.removeChild(yellow);

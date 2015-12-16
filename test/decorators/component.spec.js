@@ -13,17 +13,17 @@ describe('@component decorator', () => {
 	class Baz {}
 
 	it('should instance of HTMLElement', () => {
-		let foo = Foo.instance();
+		let foo = Foo.create();
 		foo.should.be.instanceOf(HTMLElement);
 	});
 
 	it('should instance of HTMLImageElement', () => {
-		let bar = Bar.instance();
+		let bar = Bar.create();
 		bar.should.be.instanceOf(HTMLImageElement);
 	});
 
 	it('should instance of HTMLFormElement', () => {
-		let baz = Baz.instance();
+		let baz = Baz.create();
 		baz.should.be.instanceOf(HTMLFormElement);
 	});
 
