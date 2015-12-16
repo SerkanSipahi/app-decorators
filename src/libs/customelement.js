@@ -17,8 +17,9 @@ export default class CustomElement {
 		let builtComponent = CustomElement.buildComponent(ComponentClass, DOMElement);
 
 		// register element
+		let customCallbacks = CustomElement.getCustomCallbacks();
 		let ComElement = document.registerElement(validComponentName, {
-			prototype: Object.create(builtComponent.prototype)
+			prototype: Object.create(builtComponent.prototype, customCallbacks)
 		});
 
 		// create static factory method for creating dominstance
@@ -152,6 +153,28 @@ export default class CustomElement {
 			});
 		}
 		return methodContainer;
+	}
+
+	/**
+	 * Returns custom element callbacks
+	 * @return {Object}
+	 */
+	static getCustomCallbacks(){
+
+		return {
+			createdCallback: {value: function(...args){
+				this.created ? this.created(...args) : null;
+			}},
+			attachedCallback: {value: function(){
+				this.attached ? this.attached() : null;
+			}},
+			detachedCallback: {value: function(){
+				this.detached ? this.detached() : null;
+			}},
+			attributeChangedCallback: {value: function(...args){
+				this.attributeChanged ? this.attributeChanged(...args) : null;
+			}},
+		}
 	}
 
 	/**

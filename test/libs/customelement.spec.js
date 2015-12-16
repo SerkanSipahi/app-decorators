@@ -141,10 +141,10 @@ describe('Class CustomElement', () => {
 		Blue.prototype.a = function(){};
 		Blue.prototype.b = function(){};
 		Blue.prototype.c = function(){};
-		Blue.prototype.createdCallback = function() {}
-		Blue.prototype.attachedCallback = function() {}
-		Blue.prototype.attributeChangedCallback = function(attrName, oldVal, newVal) {}
-		Blue.prototype.detachedCallback = function() {}
+		Blue.prototype.created = function() {}
+		Blue.prototype.attached = function() {}
+		Blue.prototype.attributeChanged = function(attrName, oldVal, newVal) {}
+		Blue.prototype.detached = function() {}
 
 		CustomElement.register(Blue);
 
@@ -159,10 +159,10 @@ describe('Class CustomElement', () => {
 			blue.should.have.property('b');
 			blue.should.have.property('c');
 			// webcomponents callbacks
-			blue.should.have.property('createdCallback');
-			blue.should.have.property('attachedCallback');
-			blue.should.have.property('attributeChangedCallback');
-			blue.should.have.property('detachedCallback');
+			blue.should.have.property('created');
+			blue.should.have.property('attached');
+			blue.should.have.property('attributeChanged');
+			blue.should.have.property('detached');
 		});
 
 	});
@@ -197,13 +197,13 @@ describe('Class CustomElement', () => {
 			parentMethodCall(){
 				super.parentMethodCall();
 			}
-			createdCallback() {
+			created() {
 				this.$ = { createdCallback : true };
 			}
-			attachedCallback() {
+			attached() {
 				this.$ = { attachedCallback : true }
 			}
-			attributeChangedCallback(attrName, oldVal, newVal) {
+			attributeChanged(attrName, oldVal, newVal) {
 				this.$ = {
 					attributeChangedCallback : {
 						attrName,
@@ -211,7 +211,7 @@ describe('Class CustomElement', () => {
 					}
 				}
 			}
-			detachedCallback() {
+			detached() {
 				this.$ = { detachedCallback : true }
 			}
 		}
