@@ -25,8 +25,9 @@ export default class CustomElement {
 		ComponentClass.ComElement = ComElement;
 
 		// create static factory method for creating dominstance
-		ComponentClass.create = function(){
+		ComponentClass.create = function($create_vars = {}){
 			let comElement = new this.ComElement();
+			comElement.createdCallback($create_vars);
 			return comElement;
 		};
 	}
@@ -164,8 +165,17 @@ export default class CustomElement {
 	 */
 	static getCustomCallbacks(){
 
+		function applyCallbacks(self, ...args){
+			if(args.length && self.$callbacks && self.$callbacks.length) {
+				for(let $callback of self.$callbacks){
+					$callback(self, ...args);
+				}
+			}
+		}
+
 		return {
 			createdCallback: {value: function(...args){
+				applyCallbacks(this, ...args);
 				this.created ? this.created(...args) : null;
 			}},
 			attachedCallback: {value: function(){

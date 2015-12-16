@@ -20,6 +20,8 @@ System.config({
     "babel-runtime": "npm:babel-runtime@5.8.34",
     "core-js": "npm:core-js@1.2.6",
     "es6-module-loader": "npm:es6-module-loader@0.17.8",
+    "handlebars": "github:components/handlebars.js@4.0.5",
+    "jquery": "github:components/jquery@2.1.4",
     "should": "npm:should@7.1.1",
     "systemjs": "npm:systemjs@0.19.6",
     "github:jspm/nodelibs-assert@0.1.0": {

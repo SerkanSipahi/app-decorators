@@ -34,6 +34,8 @@
     "mixin"
   ],
   "devDependencies": {
+    "babel": "5.8.23",
+    "eslint": "^2.0.0-alpha-1",
     "jspm": "0.16.15",
     "jspm-github": "0.13.9",
     "karma": "0.13.15",
@@ -51,14 +53,17 @@
     "sinon": "1.17.2"
   },
   "jspm": {
-    "jspmNodeConversion": false,
+    "dependencies": {
+      "handlebars": "github:components/handlebars.js@4.0.5",
+      "jquery": "github:components/jquery@^2.1.4"
+    },
     "devDependencies": {
-      "es6-module-loader": "npm:es6-module-loader@0.17.8",
-      "should": "npm:should@7.1.1",
-      "systemjs": "npm:systemjs@0.19.6",
       "babel": "npm:babel-core@5.8.24",
       "babel-runtime": "npm:babel-runtime@5.8.24",
-      "core-js": "npm:core-js@1.1.4"
+      "core-js": "npm:core-js@1.1.4",
+      "es6-module-loader": "npm:es6-module-loader@0.17.8",
+      "should": "npm:should@7.1.1",
+      "systemjs": "npm:systemjs@0.19.6"
     }
   }
 }

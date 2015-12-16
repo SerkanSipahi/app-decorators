@@ -38,11 +38,14 @@ module.exports = function (config) {
 		},
 		jspm: {
 		    loadFiles: [
+				// internal libs/files
 				'src/app-decorators.js',
 				'src/decorators/*.js',
 				'src/libs/*.js',
 				'test/decorators/*spec.js',
-				'test/libs/*spec.js'
+				'test/libs/*spec.js',
+				// external libs/files
+				'jspm_packages/github/components/handlebars.js@4.0.5/handlebars.js',
 			]
 		},
 		autoWatch: true,
