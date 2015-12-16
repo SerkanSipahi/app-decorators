@@ -22,9 +22,12 @@ export default class CustomElement {
 			prototype: Object.create(builtComponent.prototype, customCallbacks)
 		});
 
+		ComponentClass.ComElement = ComElement;
+
 		// create static factory method for creating dominstance
 		ComponentClass.create = function(){
-			return new ComElement();
+			let comElement = new this.ComElement();
+			return comElement;
 		};
 	}
 
