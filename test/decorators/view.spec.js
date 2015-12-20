@@ -63,7 +63,7 @@ describe('@view decorator', () => {
 
 	});
 
-	it.skip('should not render phone because is not part of @view.bind', () => {
+	it('should not render phone because is not part of @view.bind', () => {
 
 		let orange_0 = Orange.create();
 		orange_0.$.view._template['test-tpl'] = '<div>{{name}}</div><div>{{city}}</div><div>{{country}}</div>{{phone}}';
