@@ -1,4 +1,6 @@
 
+// internal libs
+import uuid from '../helper/uuid';
 
 // external libs
 import Handlebars from 'handlebars';
@@ -7,82 +9,80 @@ import { Object } from 'core-js/library';
 export default class View {
 
 	/**
-	 * Render-Helper
-	 * @param  {Object} passedViewVars
+	 * Unique-Id
+	 * @type {Number}
+	 */
+	_ui = Number;
+
+	/**
+	 * DomNode
+	 * @type {HTMLElement}
+	 */
+	_domNode = HTMLElement;
+
+	/**
+	 * View Vars
+	 * @type {Object}
+	 */
+	_vars = {};
+
+	/**
+	 * View Template
+	 * @type {String}
+	 */
+	_template = '';
+
+	/**
+	 * Precompiled View-Template
+	 * @type {Function}
+	 */
+	_compiled = Function;
+
+	constructor(config = {}){
+
+		this._domNode = config.domNode;
+		this._vars = config.vars;
+		this._template = config.template;
+
+		this._init();
+	}
+
+	_init(){
+		this._uid = uuid();
+	}
+
+	/**
+	 * Set view var
+	 * @param {String|Object} property
+	 * @param {String|undefined} value
+	 * @return undefined
+	 */
+	set(property, value) {
+		if(Object.isObject(property)){
+			Object.assign(this._vars, property);
+		}
+		else {
+			this._vars[property] = value;
+		}
+	}
+
+	/**
+	 * Render view
+	 * @param  {Object} passedVars
 	 * @param  {String} name
 	 * @return {undefined}
 	 */
-	static render(passedViewVars = {}, name = 'base') {
-		let localViewVars = {};
-		// keep $view
-		let $view = this.$view;
-		// default vars
-		let defaultVars = $view.defaultVars || {};
+	render(passedVars = {}, name = 'base'){
+
+		let tmpLocalViewVars = {};
 		// merge passed passedViewVars into localViewVars
-		Object.assign(localViewVars, this.$bindproperties, $view.vars, passedViewVars);
+		Object.assign(tmpLocalViewVars, this._vars, passedVars);
 		// compile template if not yet done
-		if(!$view.compiled[name]) {
-			$view.compiled[name] = Handlebars.compile($view.template[name]);
+		if(!this._compiled[name]) {
+			this._compiled[name] = Handlebars.compile(this._template[name]);
 		}
 		// write template into dom
-		this.innerHTML = $view.compiled[name](localViewVars);
-	};
-
-	/**
-	 * Register-Template
-	 * @param  {Function} Class
-	 * @param  {String} template
-	 * @return {undefined}
-	 */
-	static registerTemplate(Class, template, name = 'base'){
-
-		let target = Class.prototype;
-		target.$callbacks = [];
-
-		// init $view options
-		target.$callbacks.push(function(root, create_vars){
-
-			!root.$view ? root.$view  = {} : null;
-			!root.$view.vars ? root.$view.vars  = {} : null;
-			!root.$view.template ? root.$view.template  = {} : null;
-			!root.$view.compiled ? root.$view.compiled = {} : null;
-
-			root.$view.template[name] = template;
-			root.$view.render = View.render.bind(root);
-
-			root.$view.vars = create_vars;
-			root.$view.render();
-
-		});
-
-		// init setter for bind properties
-		target.$callbacks.push(function(root, create_vars){
-
-			let properties = {};
-			for(let property in root.$bindproperties){
-				// init setter
-				properties[property] = {
-					set: function(newValue){
-						this.$view.render({[property]: newValue});
-					}
-				}
-			}
-			Object.defineProperties(root, properties);
-
-		});
-
+		this._domNode.innerHTML = this._compiled[name](tmpLocalViewVars);
 	}
 
-	/**
-	 * Bind
-	 * @param  {Object} target
-	 * @param  {String} name
-	 * @return {String} defaultValue
-	 */
-	static bind(target, name, defaultValue){
-
-		!target.$bindproperties ? target.$bindproperties = {} : null;
-		target.$bindproperties[name] = defaultValue;
-
-	}
 }

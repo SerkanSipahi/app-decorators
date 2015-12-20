@@ -42,6 +42,7 @@ module.exports = function (config) {
 				'src/app-decorators.js',
 				'src/decorators/*.js',
 				'src/libs/*.js',
+				'src/helper/*.js',
 				'test/decorators/*spec.js',
 				'test/libs/*spec.js',
 				// external libs/files

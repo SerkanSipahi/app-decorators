@@ -25,7 +25,7 @@ export default class CustomElement {
 		ComponentClass.ComElement = ComElement;
 
 		// create static factory method for creating dominstance
-		ComponentClass.create = function($create_vars = {}){
+		ComponentClass.create = function($create_vars){
 			let comElement = new this.ComElement();
 			comElement.createdCallback($create_vars);
 			return comElement;
@@ -160,22 +160,31 @@ export default class CustomElement {
 	}
 
 	/**
+	 * [applyonCreatedCallback description]
+	 * @param  {[type]} self    [description]
+	 * @param  {[type]} ...args [description]
+	 * @return {[type]}         [description]
+	 */
+	static applyOnCreatedCallback(self, ...args){
+		if(self.$onCreated && self.$onCreated.length) {
+			for(let $callback of self.$onCreated){
+				$callback(self, ...args);
+			}
+		}
+	}
+
+	/**
 	 * Returns custom element callbacks
 	 * @return {Object}
 	 */
 	static getCustomCallbacks(){
 
-		function applyCallbacks(self, ...args){
-			if(args.length && self.$callbacks && self.$callbacks.length) {
-				for(let $callback of self.$callbacks){
-					$callback(self, ...args);
-				}
-			}
-		}
-
 		return {
 			createdCallback: {value: function(...args){
-				applyCallbacks(this, ...args);
+				if(!args.length){
+					return;
+				}
+				CustomElement.applyOnCreatedCallback(this, ...args);
 				this.created ? this.created(...args) : null;
 			}},
 			attachedCallback: {value: function(){
