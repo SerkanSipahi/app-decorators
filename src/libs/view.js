@@ -12,7 +12,7 @@ export default class View {
 	 * Unique-Id
 	 * @type {Number}
 	 */
-	_ui = Number;
+	_uid = Number;
 
 	/**
 	 * DomNode
