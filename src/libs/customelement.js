@@ -160,10 +160,10 @@ export default class CustomElement {
 	}
 
 	/**
-	 * [applyonCreatedCallback description]
-	 * @param  {[type]} self    [description]
-	 * @param  {[type]} ...args [description]
-	 * @return {[type]}         [description]
+	 * Apply onCratedCallbacks
+	 * @param  {Object} self
+	 * @param  {Any} ...args
+	 * @return {undefined}
 	 */
 	static applyOnCreatedCallback(self, ...args){
 		if(self.$onCreated && self.$onCreated.length) {
