@@ -54,7 +54,6 @@ function view(template, templateName = 'base') {
 				},
 			});
 
-			domNode.render = domNode.$.view.render.bind(domNode);
 			domNode.$.view.render();
 
 		});

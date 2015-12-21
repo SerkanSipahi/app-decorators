@@ -89,13 +89,6 @@ class Item extends Data {
 }
 ```
 
-```js
-@component(HTMLElement)
-@component({
-	extends: 'div'
-})
-```
-
 ##### Instructions for manual instantiation:
 ```js
 
