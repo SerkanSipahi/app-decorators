@@ -76,15 +76,15 @@ class Data {
 // It can be passed any DOM-Class! Default is HTLMElement
 @component(HTMLElement)
 class Item extends Data {
-    createdCallback() {
+    created() {
         this.$foo = this.foo();
     }
-    attachedCallback() {
+    attached() {
         this.innerHTML = this.$foo;
     }
-    attributeChangedCallback(attrName, oldVal, newVal) {
+    attributeChanged(attrName, oldVal, newVal) {
     }
-    detachedCallback() {
+    detached() {
     }
 }
 ```
@@ -166,10 +166,10 @@ function Item(){}
 Item.prototype.a = function(){};
 Item.prototype.b = function(){};
 Item.prototype.c = function(){};
-Item.prototype.createdCallback = function() {}
-Item.prototype.attachedCallback = function() {}
-Item.prototype.attributeChangedCallback = function(attrName, oldVal, newVal) {}
-Item.prototype.detachedCallback = function() {}
+Item.prototype.created = function() {}
+Item.prototype.attached = function() {}
+Item.prototype.attributeChanged = function(attrName, oldVal, newVal) {}
+Item.prototype.detached = function() {}
 
 CustomElement.register(Item, HTMLElement);
 var item = Item.create();
@@ -193,7 +193,7 @@ class Item {
     @view.bind b;
     @view.bind c = 'delete';
 
-    createdCallback(){
+    created(){
         this.a = 'add';
         this.b = 'edit';
     }
@@ -278,7 +278,7 @@ class Item {
     @model.attr @view.bind city;
     @model.attr @view.bind country = 'Turkey';
 
-    createdCallback(){
+    created(){
         this.name = 'Serkan';
         this.city = 'Istanbul';
     }
@@ -345,7 +345,7 @@ import { component, on, modelpool } from 'app-decorators';
 @modelpool
 @component(HTMLButtonElement)
 class SpecialButton {
-    createdCallback(){
+    created(){
         this.setAttribute('type', 'submit');
         this.innerHTML = 'Click me!';
     }
