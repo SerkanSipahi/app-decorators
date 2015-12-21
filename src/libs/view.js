@@ -8,6 +8,15 @@ import { Object } from 'core-js/library';
 
 export default class View {
 
+	constructor(config = {}){
+
+		this._domNode = config.domNode;
+		this._vars = config.vars;
+		this._template = config.template;
+
+		this._init();
+	}
+
 	/**
 	 * Unique-Id
 	 * @type {Number}
@@ -37,15 +46,6 @@ export default class View {
 	 * @type {Function}
 	 */
 	_compiled = Function;
-
-	constructor(config = {}){
-
-		this._domNode = config.domNode;
-		this._vars = config.vars;
-		this._template = config.template;
-
-		this._init();
-	}
 
 	_init(){
 		this._uid = uuid();
