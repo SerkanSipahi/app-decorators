@@ -25,7 +25,7 @@ export default class CustomElement {
 		ComponentClass.ComElement = ComElement;
 
 		// create static factory method for creating dominstance
-		ComponentClass.create = function($create_vars){
+		ComponentClass.create = function($create_vars = {}){
 			let comElement = new this.ComElement();
 			comElement.createdCallback($create_vars);
 			return comElement;
@@ -181,9 +181,14 @@ export default class CustomElement {
 
 		return {
 			createdCallback: {value: function(...args){
+				// return if native instantiating (with new) of custom element.
+				// See CustomElement.register => .create(). What we want is to pass arguments
+				// through .create() (see tests view.spec.js) therefore
+				// we have to do that manually (see CustomElement.register .create() => createdCallback)
 				if(!args.length){
 					return;
 				}
+
 				CustomElement.applyOnCreatedCallback(this, ...args);
 				this.created ? this.created(...args) : null;
 			}},
