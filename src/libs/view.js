@@ -1,6 +1,6 @@
 
 // internal libs
-import uuid from '../helper/uuid';
+import uuid from '../helpers/uuid';
 
 // external libs
 import Handlebars from 'handlebars';
