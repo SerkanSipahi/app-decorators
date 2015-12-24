@@ -45,7 +45,7 @@ export default class View {
 	 * Precompiled View-Template
 	 * @type {Function}
 	 */
-	_compiled = Function;
+	_compiled = {};
 
 	_init(){
 		this._uid = uuid();
