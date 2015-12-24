@@ -194,11 +194,22 @@ describe('Class CustomElement', () => {
 		}
 
 		class Yellow extends Baz {
+
+			static a = 12;
+			static b = 34;
+
+			c = 56;
+			d = 78;
+
 			parentMethodCall(){
 				super.parentMethodCall();
 			}
 			created() {
-				this.$ = { createdCallback : true };
+				this.$ = {
+					createdCallback : true,
+					static_a: Yellow.a,
+					static_b: Yellow.b,
+				};
 			}
 			attached() {
 				this.$ = { attachedCallback : true }
@@ -258,6 +269,37 @@ describe('Class CustomElement', () => {
 			yellow.classList.add('for-deleting');
 			yellow.parentNode.removeChild(yellow);
 			yellow.$.detachedCallback.should.be.true();
+		});
+
+		it('should return static properties', () => {
+
+			let yellow = Yellow.create();
+			yellow.$.static_a.should.equal(12);
+			yellow.$.static_b.should.equal(34);
+
+		});
+
+		/**
+		 * Do not forgot to implement the test
+		 * Can be resolved with CustomElement.resolveClassInComponents
+		 * by adding this infos to Class and add $onCreatedCallback
+		 * to instance
+		 */
+		it.skip('should return instance properties', () => {
+
+			let orange_0 = Orange.create();
+			orange_0.c.should.equal(56);
+
+			let orange_1 = Orange.create({phone: 67890 });
+			orange_1.d.should.equal(78);
+
+		});
+
+		/**
+		 * Do not forgot to implement the test
+		 */
+		it.skip('should be called created callback only once', () => {
+
 		});
 
 	});
