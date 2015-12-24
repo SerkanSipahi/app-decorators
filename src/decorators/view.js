@@ -39,7 +39,7 @@ function view(template, templateName = 'base') {
 				domNode: domNode,
 				vars: Object.assign({}, domNode.$appDecorators.view.bind, createVars),
 				template : {
-					base: target.$appDecorators.view.template[templateName],
+					base: domNode.$appDecorators.view.template[templateName],
 				},
 			});
 
