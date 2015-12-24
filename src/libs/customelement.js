@@ -183,12 +183,20 @@ export default class CustomElement {
 			createdCallback: {value: function(...args){
 
 				/**
-				 * return if native instantiating (with new) of custom element.
+				 * 1.) return if native instantiating (with new) of custom element.
 				 * See CustomElement.register => .create(). What we want is to pass arguments
 				 * through .create() (see tests view.spec.js) therefore
 				 * we have to do that manually (see CustomElement.register .create() => createdCallback)
+				 *
+				 * 2.) If createdCallback has not args and has parentElement, the CustomElement
+				 * its instantiated from browser itself ! Also, no used fooCustomElement.create().
+				 * The element was in dom, is already exists there e.g.:
+				 * <body>
+				 *     <com-foo></com-foo>
+				 *     <com-foo></com-foo>
+				 * </body>
 				 */
-				if(!args.length){
+				if(!args.length && !this.parentElement){
 					return;
 				}
 

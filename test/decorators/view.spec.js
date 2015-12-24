@@ -71,6 +71,34 @@ describe('@view decorator', () => {
 		});
 
 		// decorate
+		@view(`<span>{{n}}</span><p>{{p}}</p>`)
+		@component(HTMLElement)
+		class serkan {
+
+			@view.bind n = 'Hello';
+			@view.bind p = 'World';
+
+			attached(){
+
+			}
+		}
+
+		// test
+		it('should also create a element if element created from out of dom', () => {
+
+			// First test
+			let $vc = $('#view-decorator');
+			$vc.append('<com-serkan></com-serkan><com-serkan></com-serkan>');
+			$vc.find('com-serkan').get(0).outerHTML.should.equal('<com-serkan><span>Hello</span><p>World</p></com-serkan>');
+
+			// Second test
+			$vc.find('com-serkan').get(0).p = 'Mars';
+			$vc.find('com-serkan').get(0).outerHTML.should.equal('<com-serkan><span>Hello</span><p>Mars</p></com-serkan>');
+			$vc.find('com-serkan').get(1).outerHTML.should.equal('<com-serkan><span>Hello</span><p>World</p></com-serkan>');
+
+		});
+
+		// decorate
 		@view(`<div>{{name}}</div><div>{{city}}</div><div>{{country}}</div>`)
 		@component(HTMLElement)
 		class Orange {
