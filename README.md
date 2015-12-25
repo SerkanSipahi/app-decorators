@@ -378,3 +378,6 @@ class SpecialButton {
 make install
 make test
 ```
+
+(c) 2015 Serkan Sipahi
+App-Decorators may be freely distributed under the [MIT license](https://github.com/SerkanSipahi/app-decorators/blob/master/LICENSE).
