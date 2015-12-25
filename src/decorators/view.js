@@ -35,14 +35,34 @@ function view(template, templateName = 'base') {
 				domNode.$ = {};
 			}
 
+			// extract dom attributes
+			let domViewAttributes = {};
+			let toBeRemovedAttributes = [];
+			for(let key in Object.keys(domNode.attributes)) {
+				// extract @view.bind.n="foo" property
+				let node = domNode.attributes[key];
+				let matched = /^@view\.bind\.(\S+)$/gi.exec(node.name);
+				if(matched !== null) {
+					let [ ,name ] = matched;
+					domViewAttributes[name] = node.value;
+					toBeRemovedAttributes.push(node.name);
+				}
+			}
+
+			// remove dom attributes
+			for(let attribute of toBeRemovedAttributes){
+				domNode.removeAttribute(attribute);
+			}
+
 			domNode.$.view = new View({
 				domNode: domNode,
-				vars: Object.assign({}, domNode.$appDecorators.view.bind, createVars),
+				vars: Object.assign({}, domNode.$appDecorators.view.bind, domViewAttributes, createVars),
 				template : {
 					base: domNode.$appDecorators.view.template[templateName],
 				},
 			});
 
+			// render view
 			domNode.$.view.render();
 
 		});
@@ -50,6 +70,7 @@ function view(template, templateName = 'base') {
 		// register proxy that initialized on called createdCallback
 		view.helper.registerOnCreatedCallback(target, ( domNode, createVars = {} ) => {
 
+			// prepare property proxy setter
 			let properties = {};
 			for(let property in target.$appDecorators.view.bind){
 				properties[property] = {
@@ -59,7 +80,16 @@ function view(template, templateName = 'base') {
 					}
 				}
 			}
-			// register setter (@view.bind properties)
+
+			// prepare render proxy to $.view
+			properties.render = {
+				value: function(...args) {
+					this.$.view.set(...args);
+					this.$.view.render();
+				}
+			}
+
+			// register setter (@view.bind properties and .$.view.render method)
 			Object.defineProperties(domNode, properties);
 		});
 
@@ -105,7 +135,7 @@ view.helper.registerBind = (target, property, value) => {
 
 	return target;
 
-}
+};
 
 /**
  * Register @bind of view decorator
@@ -124,7 +154,7 @@ view.helper.registerTemplate = (target, template, templateName = 'base') => {
 
 	return target;
 
-}
+};
 
 /**
  * Register on created callback
@@ -144,7 +174,7 @@ view.helper.registerOnCreatedCallback = (target, callback) => {
 
 	return target;
 
-}
+};
 
 /**
  * Register namespace of view decorator
@@ -167,6 +197,6 @@ view.helper.registerNamespaces = (target) => {
 	};
 
 	return target;
-}
+};
 
 export default view;

@@ -1,4 +1,7 @@
 
+// external libs
+import { Object, Reflect } from 'core-js/library';
+
 export default class CustomElement {
 
 	/**
@@ -26,7 +29,26 @@ export default class CustomElement {
 
 		// create static factory method for creating dominstance
 		ComponentClass.create = function($create_vars = {}){
+
+			// define namespace
+			if(!this.$appDecorators) {
+				this.$appDecorators = {};
+			}
+
+			// override constructor
+			this.constructor = function(){};
+			// extract instance methods
+			let tmpInstance = new this();
+			this.$appDecorators.component = {
+				instanceMethods: {}
+			};
+			for(let property of Reflect.ownKeys(tmpInstance)){
+				let instanceMethods = this.$appDecorators.component.instanceMethods;
+				instanceMethods[property] = tmpInstance[property];
+			}
+
 			let comElement = new this.ComElement();
+			Object.assign(comElement, this.$appDecorators.component.instanceMethods, $create_vars);
 			comElement.createdCallback($create_vars);
 			return comElement;
 		};

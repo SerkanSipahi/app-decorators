@@ -198,8 +198,10 @@ describe('Class CustomElement', () => {
 			static a = 12;
 			static b = 34;
 
-			c = 56;
-			d = 78;
+			cc = 56;
+			dd = 78;
+
+			createdCalled = [1,2,3,4];
 
 			parentMethodCall(){
 				super.parentMethodCall();
@@ -209,7 +211,10 @@ describe('Class CustomElement', () => {
 					createdCallback : true,
 					static_a: Yellow.a,
 					static_b: Yellow.b,
+					instance_c: this.cc,
+					instance_d: this.dd,
 				};
+				this.createdCalled.pop();
 			}
 			attached() {
 				this.$ = { attachedCallback : true }
@@ -279,26 +284,24 @@ describe('Class CustomElement', () => {
 
 		});
 
-		/**
-		 * Do not forgot to implement the test
-		 * Can be resolved with CustomElement.resolveClassInComponents
-		 * by adding this infos to Class and add $onCreatedCallback
-		 * to instance
-		 */
-		it.skip('should return instance properties', () => {
+		it('should return instance properties', () => {
 
-			let orange_0 = Orange.create();
-			orange_0.c.should.equal(56);
+			let yellow_0 = Yellow.create();
+			yellow_0.$.instance_c.should.equal(56);
 
-			let orange_1 = Orange.create({phone: 67890 });
-			orange_1.d.should.equal(78);
+			let yellow_1 = Yellow.create();
+			yellow_1.$.instance_d.should.equal(78);
+
+			let yellow_2 = Yellow.create({dd: 999});
+			yellow_2.$.instance_d.should.equal(999);
 
 		});
 
-		/**
-		 * Do not forgot to implement the test
-		 */
-		it.skip('should be called created callback only once', () => {
+
+		it('should be called created-callback only once', () => {
+
+			let yellow = Yellow.create();
+			yellow.createdCalled.should.have.length(3);
 
 		});
 
