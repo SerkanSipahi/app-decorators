@@ -130,45 +130,6 @@ document.body.appendChild(item2);
 </html>
 ```
 
-##### Instructions for using only in ES5 environment
-(available at app-decorators >= v1.0)
-* This can be used at `app-decorators >=0.3` however you have to
-transpile the code `src/libs/customelement.js` by your self in the shell
-
-```
-babel src/libs/customelement.js --out-file dist/component.js --modules common --stage 0
-```
-
-```
-make build module=amd    // for using with requirejs
-// or
-make build module=common // for using with node
-```
-
-##### Description
-```js
-let Foo: HTMLElement = CustomElement.register(Foo: Function, Element = HTMLElement);
-// if no Element passed as last parameter default is HTMLElement
-console.log(Foo.prototype instanceof HTMLElement) // logs true
-```
-```js
-
-var CustomElement = require('src/libs/customelement');
-
-function Item(){}
-Item.prototype.a = function(){};
-Item.prototype.b = function(){};
-Item.prototype.c = function(){};
-Item.prototype.created = function() {}
-Item.prototype.attached = function() {}
-Item.prototype.attributeChanged = function(attrName, oldVal, newVal) {}
-Item.prototype.detached = function() {}
-
-CustomElement.register(Item, HTMLElement);
-var item = Item.create();
-document.body.appendChild(item);
-```
-
 ### @view [ in progress/planing ]
 ```js
 import { component, view } from 'app-decorators';
