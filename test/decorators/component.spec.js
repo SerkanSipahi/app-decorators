@@ -9,7 +9,7 @@ describe('@component decorator', () => {
 	@component(HTMLImageElement)
 	class Bar {}
 
-	@component(HTMLFormElement)
+	@component(HTMLFormElement, 'x')
 	class Baz {}
 
 	it('should instance of HTMLElement', () => {
@@ -22,9 +22,10 @@ describe('@component decorator', () => {
 		bar.should.be.instanceOf(HTMLImageElement);
 	});
 
-	it('should instance of HTMLFormElement', () => {
+	it('should instance of HTMLFormElement + custom prefix for @component', () => {
 		let baz = Baz.create();
 		baz.should.be.instanceOf(HTMLFormElement);
+		baz.outerHTML.should.equal('<x-baz></x-baz>');
 	});
 
 });
