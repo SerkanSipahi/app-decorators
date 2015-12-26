@@ -28,24 +28,21 @@ export default class CustomElement {
 		ComponentClass.ComElement = ComElement;
 
 		// create static factory method for creating dominstance
-		ComponentClass.create = function($create_vars = {}){
+		ComponentClass.create = function($create_vars = null){
 
 			// override constructor
 			this.constructor = function(){};
-			// extract instance methods
+			// extract and assign instance methods
 			let tmpInstance = new this();
-			let $appDecorators = {
-				component : {
-					instanceMethods: {}
-				}
-			}
+			let instanceMethods = {};
 			for(let property of Reflect.ownKeys(tmpInstance)){
-				$appDecorators.component.instanceMethods[property] = tmpInstance[property];
+				instanceMethods[property] = tmpInstance[property];
 			}
-
 			let comElement = new this.ComElement();
-			Object.assign(comElement, $appDecorators.component.instanceMethods, $create_vars);
+			Object.assign(comElement, instanceMethods);
+
 			comElement.createdCallback($create_vars);
+
 			return comElement;
 		};
 	}

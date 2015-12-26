@@ -100,7 +100,6 @@ describe('Class CustomElement', () => {
 
 	});
 
-
 	describe('method register passed class Red', () => {
 
 		class Red {
@@ -206,7 +205,10 @@ describe('Class CustomElement', () => {
 			parentMethodCall(){
 				super.parentMethodCall();
 			}
-			created() {
+			created(created_vars) {
+
+				Object.assign(this, created_vars);
+
 				this.$ = {
 					createdCallback : true,
 					static_a: Yellow.a,
@@ -296,7 +298,6 @@ describe('Class CustomElement', () => {
 			yellow_2.$.instance_d.should.equal(999);
 
 		});
-
 
 		it('should be called created-callback only once', () => {
 

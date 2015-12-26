@@ -141,6 +141,10 @@ describe('@view decorator', () => {
 
 			phone = 12345;
 
+			created(create_vars){
+				Object.assign(this, create_vars);
+			}
+
 		}
 
 		// test
