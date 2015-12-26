@@ -31,10 +31,6 @@ function view(template, templateName = 'base') {
 		// register view engine that initialized on called createdCallback
 		view.helper.registerOnCreatedCallback(target, ( domNode, createVars = {} ) => {
 
-			if(!domNode.$){
-				domNode.$ = {};
-			}
-
 			// extract dom attributes
 			let domViewAttributes = {};
 			let toBeRemovedAttributes = [];
@@ -54,6 +50,7 @@ function view(template, templateName = 'base') {
 				domNode.removeAttribute(attribute);
 			}
 
+			domNode.$ ? null : domNode.$ = {};
 			domNode.$.view = new View({
 				domNode: domNode,
 				vars: Object.assign({}, domNode.$appDecorators.view.bind, domViewAttributes, createVars),
