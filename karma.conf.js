@@ -38,16 +38,19 @@ module.exports = function (config) {
 		},
 		jspm: {
 		    loadFiles: [
+				'test/decorators/*spec.js',
+				'test/libs/*spec.js',
+				'test/helpers/*spec.js',
+			],
+			serveFiles: [
 				// internal libs/files
 				'src/app-decorators.js',
 				'src/decorators/*.js',
 				'src/libs/*.js',
 				'src/helpers/*.js',
-				'test/decorators/*spec.js',
-				'test/libs/*spec.js',
-				'test/helpers/*spec.js',
 				// external libs/files
 				'jspm_packages/github/components/handlebars.js@4.0.5/handlebars.js',
+				'jspm_packages/npm/immutable@3.7.6/dist/immutable.js',
 			]
 		},
 		autoWatch: true,
