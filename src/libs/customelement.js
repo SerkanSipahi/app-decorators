@@ -10,11 +10,11 @@ export default class CustomElement {
 	 * @param  {Element} DOMElement
 	 * @return {undefined}
 	 */
-	static register(ComponentClass, DOMElement = HTMLElement) {
+	static register(ComponentClass, DOMElement = HTMLElement, prefix) {
 
 		// extract useful properties
 		let componentClassName  = CustomElement.getClassName(ComponentClass);
-		let validComponentName  = CustomElement.convertToValidComponentName(componentClassName);
+		let validComponentName  = CustomElement.convertToValidComponentName(componentClassName, prefix);
 
 		// buildComponent
 		let builtComponent = CustomElement.buildComponent(ComponentClass, DOMElement);

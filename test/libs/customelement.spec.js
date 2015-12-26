@@ -117,6 +117,20 @@ describe('Class CustomElement', () => {
 
 	});
 
+	describe('method register passed class gray with custom prefix', () => {
+
+		class Gray {
+		}
+
+		CustomElement.register(Gray, HTMLElement, 'x');
+
+		it('should return custom tag name x-gray', () => {
+			let gray = Gray.create();
+			gray.outerHTML.should.equal('<x-gray></x-gray>');
+		});
+
+	});
+
 	describe('method register passed class Green and as second parameter HTMLFormElement', () => {
 
 		class Green {
