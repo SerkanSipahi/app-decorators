@@ -52,16 +52,17 @@ function view(template, templateName = 'base') {
 				domNode.removeAttribute(attribute);
 			}
 
-			domNode.$ ? null : domNode.$ = {};
-			domNode.$.view = new View({
-				uid: uuid(),
+			let view = View.create({
+				uuid: uuid(),
 				domNode: domNode,
 				vars: Object.assign({}, domNode.$appDecorators.view.bind, domViewAttributes, createVars),
 				renderer: Handlebars,
-				template : {
-					base: domNode.$appDecorators.view.template[templateName],
-				},
+				template: domNode.$appDecorators.view.template[templateName],
 			});
+
+			// define namespace for view
+			domNode.$ ? null : domNode.$ = {};
+			domNode.$.view = view;
 
 			// render view
 			domNode.$.view.render();
