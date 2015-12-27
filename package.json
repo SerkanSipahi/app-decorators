@@ -34,8 +34,7 @@
     "mixin"
   ],
   "devDependencies": {
-    "babel": "5.8.23",
-    "eslint": "^2.0.0-alpha-1",
+    "eslint": "2.0.0-alpha-2",
     "jspm": "0.16.19",
     "jspm-github": "0.13.10",
     "karma": "0.13.16",
