@@ -4,6 +4,8 @@ import View from '../libs/view';
 
 // external libs
 import { Object } from 'core-js/library';
+import Handlebars from 'handlebars';
+import uuid from '../helpers/uuid';
 
 /*****************************************
  * ######### Public Decorators ###########
@@ -52,8 +54,10 @@ function view(template, templateName = 'base') {
 
 			domNode.$ ? null : domNode.$ = {};
 			domNode.$.view = new View({
+				uid: uuid(),
 				domNode: domNode,
 				vars: Object.assign({}, domNode.$appDecorators.view.bind, domViewAttributes, createVars),
+				renderer: Handlebars,
 				template : {
 					base: domNode.$appDecorators.view.template[templateName],
 				},

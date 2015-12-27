@@ -1,9 +1,4 @@
 
-// internal libs
-import uuid from '../helpers/uuid';
-
-// external libs
-import Handlebars from 'handlebars';
 import { Object } from 'core-js/library';
 
 export default class View {
@@ -13,8 +8,8 @@ export default class View {
 		this._domNode = config.domNode;
 		this._vars = config.vars;
 		this._template = config.template;
-
-		this._init();
+		this._renderer = config.renderer;
+		this._uid = config.uid;
 	}
 
 	/**
@@ -47,10 +42,6 @@ export default class View {
 	 */
 	_compiled = {};
 
-	_init(){
-		this._uid = uuid();
-	}
-
 	/**
 	 * Set view var
 	 * @param {String|Object} property
@@ -79,7 +70,7 @@ export default class View {
 		Object.assign(tmpLocalViewVars, this._vars, passedVars);
 		// compile template if not yet done
 		if(!this._compiled[name]) {
-			this._compiled[name] = Handlebars.compile(this._template[name]);
+			this._compiled[name] = this._renderer.compile(this._template[name]);
 		}
 		// write template into dom
 		this._domNode.innerHTML = this._compiled[name](tmpLocalViewVars);
