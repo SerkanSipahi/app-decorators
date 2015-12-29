@@ -64,6 +64,10 @@ export default class CustomElement {
 			}
 			let comElement = new this.ComElement();
 			Object.assign(comElement, instanceProperties);
+
+			// cleanup
+			tmpInstanceProperties = null;
+			instanceProperties = null;
 			// end of extracting and assign of instance properties
 
 			comElement.createdCallback($create_vars);
