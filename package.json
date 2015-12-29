@@ -44,17 +44,16 @@
     "karma-mocha": "0.2.1",
     "karma-safari-launcher": "0.1.1",
     "karma-should": "1.0.0",
-    "karma-sinon": "1.0.4",
     "mocha": "2.3.4",
-    "should": "8.0.2",
-    "sinon": "1.17.2"
+    "should": "8.0.2"
   },
   "jspm": {
     "dependencies": {
       "handlebars": "github:components/handlebars.js@4.0.5",
       "immutable": "npm:immutable@3.7.6",
       "jquery": "github:components/jquery@2.1.4",
-      "seamless-immutable": "npm:seamless-immutable@4.1.1"
+      "seamless-immutable": "npm:seamless-immutable@4.1.1",
+      "sinon": "npm:sinon@1.17.2"
     },
     "devDependencies": {
       "babel": "npm:babel-core@5.8.34",

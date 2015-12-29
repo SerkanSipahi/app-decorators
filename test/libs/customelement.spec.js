@@ -1,5 +1,9 @@
 
+// internal libs
 import CustomElement from 'src/libs/customelement';
+
+// external libs
+import sinon from 'sinon';
 
 describe('Class CustomElement', () => {
 
@@ -134,9 +138,21 @@ describe('Class CustomElement', () => {
 	describe('method register passed class Green and as second parameter HTMLFormElement', () => {
 
 		class Green {
-			foo() {}
-			bar() {}
-			baz() {}
+
+			myValue = 1234
+
+			created(){
+				this.$value = this.myValue;
+			}
+			foo() {
+				return this.bar();
+			}
+			bar() {
+				return this.baz();
+			}
+			baz() {
+				return this.$value;
+			}
 		}
 
 		CustomElement.register(Green, HTMLFormElement);
@@ -144,6 +160,27 @@ describe('Class CustomElement', () => {
 		it('should return instanceof HTMLFormElement', () => {
 			let green = Green.create();
 			green.should.be.instanceOf(HTMLFormElement);
+		});
+
+		it('should called foo bar baz', () => {
+			let green = Green.create();
+
+			// setup tests (spying)
+			sinon.spy(green, "foo");
+			sinon.spy(green, "bar");
+			sinon.spy(green, "baz");
+
+			// start tests
+			green.foo().should.be.equal(1234);
+			green.foo.calledOnce.should.be.true();
+			green.bar.calledOnce.should.be.true();
+			green.baz.calledOnce.should.be.true();
+
+			// cleanup (tearDown)
+			green.foo.restore();
+			green.bar.restore();
+			green.baz.restore();
+
 		});
 
 	});

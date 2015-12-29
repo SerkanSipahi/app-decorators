@@ -25,6 +25,7 @@ System.config({
     "jquery": "github:components/jquery@2.1.4",
     "seamless-immutable": "npm:seamless-immutable@4.1.1",
     "should": "npm:should@8.0.2",
+    "sinon": "npm:sinon@1.17.2",
     "systemjs": "npm:systemjs@0.19.9",
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.3.0"
@@ -43,9 +44,6 @@ System.config({
     },
     "npm:assert@1.3.0": {
       "util": "npm:util@0.10.3"
-    },
-    "npm:babel-runtime@5.8.24": {
-      "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:babel-runtime@5.8.34": {
       "process": "github:jspm/nodelibs-process@0.1.2"
@@ -70,6 +68,10 @@ System.config({
       "systemjs-json": "github:systemjs/plugin-json@0.1.0",
       "util": "github:jspm/nodelibs-util@0.1.0",
       "when": "npm:when@3.7.7"
+    },
+    "npm:formatio@1.1.1": {
+      "process": "github:jspm/nodelibs-process@0.1.2",
+      "samsam": "npm:samsam@1.1.2"
     },
     "npm:inherits@2.0.1": {
       "util": "github:jspm/nodelibs-util@0.1.0"
@@ -103,6 +105,13 @@ System.config({
       "should-format": "npm:should-format@0.3.2",
       "should-type": "npm:should-type@0.2.0",
       "systemjs-json": "github:systemjs/plugin-json@0.1.0"
+    },
+    "npm:sinon@1.17.2": {
+      "formatio": "npm:formatio@1.1.1",
+      "lolex": "npm:lolex@1.3.2",
+      "process": "github:jspm/nodelibs-process@0.1.2",
+      "samsam": "npm:samsam@1.1.2",
+      "util": "npm:util@0.10.3"
     },
     "npm:systemjs@0.19.9": {
       "es6-module-loader": "npm:es6-module-loader@0.17.9",
