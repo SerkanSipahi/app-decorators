@@ -17,29 +17,54 @@ export default class CustomElement {
 		let validComponentName  = CustomElement.convertToValidComponentName(componentClassName, prefix);
 
 		// buildComponent
-		let builtComponent = CustomElement.buildComponent(ComponentClass, DOMElement);
+		DOMElement = CustomElement.buildComponent(ComponentClass, DOMElement);
 
 		// register element
 		let customCallbacks = CustomElement.getCustomCallbacks();
 		let ComElement = document.registerElement(validComponentName, {
-			prototype: Object.create(builtComponent.prototype, customCallbacks)
+			prototype: Object.create(DOMElement.prototype, customCallbacks),
+			// extends: 'div',
 		});
 
+		ComponentClass.Class = ComponentClass;
 		ComponentClass.ComElement = ComElement;
 
 		// create static factory method for creating dominstance
 		ComponentClass.create = function($create_vars = null){
 
 			// override constructor
+			/**
+			 * Nativ CustomElements doesnt allow to use a constructor
+			 * therefore if constructor is added by the user we override that
+			 * otherwise an error could be thrown.
+			 *
+			 */
 			this.constructor = function(){};
-			// extract and assign instance methods
-			let tmpInstance = new this();
-			let instanceMethods = {};
-			for(let property of Reflect.ownKeys(tmpInstance)){
-				instanceMethods[property] = tmpInstance[property];
+
+			// extract and assign instance properties
+			/**
+			 * At the moment we cant extract class properties from prototype
+			 * because it not visible there. Babel convert this:
+			 *
+			 * class Item {
+			 *    prop1 = 123; // <- cant extract it directly (from prototype)
+			 * }
+			 *
+			 * to:
+			 *
+			 * function Item(){
+			 *    this.prop1 = 123; // <- we dont know how we get this.prop1 from there
+			 * }
+			 *
+			 */
+			let tmpInstanceProperties = new this.Class();
+			let instanceProperties = {};
+			for(let property of Reflect.ownKeys(tmpInstanceProperties)){
+				instanceProperties[property] = tmpInstanceProperties[property];
 			}
 			let comElement = new this.ComElement();
-			Object.assign(comElement, instanceMethods);
+			Object.assign(comElement, instanceProperties);
+			// end of extracting and assign of instance properties
 
 			comElement.createdCallback($create_vars);
 
