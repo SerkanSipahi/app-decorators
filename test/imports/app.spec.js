@@ -22,8 +22,8 @@ describe('imported component', () => {
 
 	it('should create an domnode', () => {
 
-		let x = Col.create();
-		x.outerHTML.should.equal('<com-col><com-test><div class="A">1</div></com-test></com-col>');
+		let col = Col.create();
+		col.outerHTML.should.equal('<com-col><com-test><div class="A">1</div></com-test></com-col>');
 
 	});
 
