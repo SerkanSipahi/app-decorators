@@ -37,6 +37,7 @@ module.exports = function (config) {
 				'test/decorators/*spec.js',
 				'test/libs/*spec.js',
 				'test/helpers/*spec.js',
+				'test/imports/*.js',
 			],
 			serveFiles: [
 				// internal libs/files
