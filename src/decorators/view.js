@@ -79,6 +79,9 @@ function view(template, templateName = 'base') {
 					set: function(newValue){
 						this.$.view.set(property, newValue);
 						this.$.view.render();
+					},
+					get: function(newValue){
+						return this.$.view.get(property);
 					}
 				}
 			}
