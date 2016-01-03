@@ -201,8 +201,14 @@ document.body.appendChild(coffee);
 ```js
 import { component } from 'app-decorators';
 
+class Bean {
+	origin = 'africa';
+}
+
 @component(HTMLImageElement, 'x')
-class Coffee {
+
+// and its possible to extends from other class
+class Coffee extends Bean {
 
 	/**
 	 * You can add your custom properties and methods. But be careful when choosing the name
@@ -212,7 +218,7 @@ class Coffee {
 	bar = 'World';
 
 	someDoSomethingMethod(){
-		this.classList.add('baz');
+		this.classList.add(this.origin); // see in "class Bean" whats origin is
 	}
 
 	/**
