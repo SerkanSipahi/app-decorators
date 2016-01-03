@@ -189,6 +189,24 @@ describe('@view decorator', () => {
 
 		});
 
+		it('should get default view properties', () => {
+
+			let orange = Orange.create();
+			orange.name.should.equal('A-Df');
+			orange.city.should.equal('B-Df');
+			orange.country.should.equal('C-Df');
+
+		});
+
+		it('should get passed view properties', () => {
+
+			let orange = Orange.create({name: 'A-2', city: 'B-2'});
+			orange.name.should.equal('A-2');
+			orange.city.should.equal('B-2');
+			orange.country.should.equal('C-Df');
+
+		});
+
 		it('should not render phone because is not part of @view.bind', () => {
 
 			let orange_0 = Orange.create();
