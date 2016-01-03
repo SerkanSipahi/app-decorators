@@ -1,7 +1,5 @@
-## app-decorators.js (v0.3)
+## Decorate.js
 [![devDependency Status](https://david-dm.org/SerkanSipahi/app-decorators/dev-status.svg)](https://david-dm.org/SerkanSipahi/app-decorators#info=devDependencies)
-
->Collection of useful ES7 Decorators that can be used for building webapps
 
 ## Getting Started
 
@@ -28,16 +26,11 @@ or jspm (no mapping required it do it automatically)
 jspm install npm:app-decorators
 ```
 
-## Info
->If you want to use this library you need an environment that support ES6 and ES7
-
-This library can be consumed by any transpiler that supports decorators like babel.js or using the recent iterations of TypeScript. To use with babel, you must include the correct babel plugins for decorator parsing and transformation or use stage-1. Babel 6 does not yet support decorators, use Babel 5 until that is fixed [ Source of the statement:  [core-decorators](https://github.com/jayphelps/core-decorators.js) ]
-
 ## Decorators
 
 ##### For Classes, Functions and Methods
 * [@component](#component)
-* [@view](#view) : in progress
+* [@view](#view)
 * [@on](#on) : in progress
 * [@style](#style) : in progress
 * [@model](#model) : in progress
@@ -46,73 +39,61 @@ This library can be consumed by any transpiler that supports decorators like bab
 
 ## Documentation
 
-### @component [ new ] (can be used)
+### @component
 
-##### Description
+##### Basic usage:
 ```js
-@component();
-class Foo {
-}
-
-let foo = Foo.create();
-// if no Element passed default is HTMLElement
-console.log(foo instanceof HTMLElement) // logs true
-```
-
->"Tests success" natively (CustomElements) in Chrome 46, Firefox 42 and Opera 33
-
->For browsers that are not supporting natively `CustomElements` see this polyfill: [document-register-element](https://github.com/WebReflection/document-register-element)
-
-##### Usage
-```js
+import $ from 'jquery';
 import { component } from 'app-decorators';
 
-class Data {
-    foo(){
-        return 'Hello World';
-    }
-}
 
-// It can be passed any DOM-Class! Default is HTLMElement
-@component(HTMLElement)
-class Item extends Data {
+@component()
+class Item {
+
+	interval = null;
+	// default properties
+	prefix = 'Hello';
+	suffix = 'World!';
+
     created() {
-        this.$foo = this.foo();
+        this.innerHTML = `
+			<style scoped>
+				p {
+					transition: color 200ms ease;
+				}
+				p.blink {
+					color:transparent;
+				}
+			</style>
+			<p>${this.prefix} ${this.suffix}</p>
+		`;
     }
-    attached() {
-        this.innerHTML = this.$foo;
-    }
-    attributeChanged(attrName, oldVal, newVal) {
-    }
-    detached() {
-    }
+
+	blink(ms = 300){
+
+		// return on recalling blink
+		if(this.timeout){
+			return;
+		}
+
+		// 'blink' class is toggled into 'p' tag between the interval of 500 ms
+		this.interval = setInterval(() => {
+			$(this).find('p').toggleClass('blink');
+		}, ms);
+
+	}
+
+	stop(){
+		clearTimeout(this.interval);
+	}
+
 }
 ```
-
-##### Instructions for manual instantiation:
-```js
-
-// creating custom-element
-let item1 = Item.create();
-let item2 = Item.create();
-
-// log true
-console.log(item1 instanceof HTMLElement);
-console.log(item2 instanceof Element);
-
-document.body.appendChild(item1);
-document.body.appendChild(item2);
-
-/**
-<body>
-    <com-item>Hello World</com-item>
-    <com-item>Hello World</com-item>
-</body>
-**/
-
+now put this this in your html page e.g. body
+```html
+<com-item></com-item>
 ```
-
-##### Instructions for automatic instantiation:
+and it will rendered to that:
 
 ```html
 <!DOCTYPE html>
@@ -123,14 +104,141 @@ document.body.appendChild(item2);
         <title>@component</title>
     </head>
     <body>
-        <!-- put your "components" anywhere in html document -->
-        <com-item></com-item>
-        <com-item></com-item>
+        <!-- this will be rendered -->
+        <com-item>
+			<p>Hello World</p>
+		</com-item>
     </body>
 </html>
 ```
+or directly with javascript
+```js
 
-### @view [ in progress/planing ]
+// creating domNode
+let item1 = Item.create();
+
+console.log(item1 instanceof HTMLElement); // log true
+
+document.body.appendChild(item1);
+
+// will rendered:
+/**
+<body>
+    <com-item>
+		<p>Hello World</p>
+	</com-item>
+</body>
+**/
+
+// it will blink every 500ms
+item1.blink(500);
+
+// or if node already exists in dom
+$('com-item')[0].blink(500);
+
+// it will stop blinking after 20 seconds
+setTimeout(() => {
+	item1.stop();
+}, 20000);
+```
+
+##### Advantage usage:
+
+```js
+// its also possible to pass your own properties
+let item2 = Item.create({
+	prefix: 'Whats',
+	suffix: 'up!',
+});
+
+document.body.appendChild(item2);
+
+// will rendered:
+/**
+<body>
+    <com-item>
+		<p>Whats up!</p>
+	</com-item>
+</body>
+**/
+
+item2.blink(300);
+```
+##### Settings:
+```js
+/**
+ * 1.) You can pass as first argument your own nativ html class.
+ * Default is HTMLElement.
+ *
+ * 2.) As the second argument you can pass your custom prefix
+ */
+@component(HTMLImageElement, 'x')
+class Coffee {
+	created({ art }){
+		this.src = 'some/${art}/pic.png';
+	}
+}
+
+/**
+ * You have access for the passed arguments over
+ * created({ art } or over this.art
+ */
+let coffee = Coffee.create({art: 'espresso'});
+
+console.log(coffee instanceof HTMLImageElement) // log true
+
+document.body.appendChild(coffee);
+
+// will rendered
+/**
+<x-coffee src="some/espresso/pic.png" />
+**/
+
+```
+##### Lifecycle of Component (Custom Elements):
+```js
+@component(HTMLImageElement, 'x')
+class Coffee {
+
+	/**
+	 * You can add your custom properties and methods. But be careful when choosing the name
+	 * of property/method because "this" has a direct reference to dom instance
+	 */
+	foo = 'Hello';
+	bar = 'World';
+
+	someDoSomethingMethod(){
+		this.classList.add('baz');
+	}
+
+	/**
+	 * CustomElements Callbacks
+	 */
+
+	// will called if element is created
+	created(){
+
+	}
+
+	// will called if element is in document
+	attached(){
+
+	}
+
+	// will called if any attribute changed or added to element
+	attributeChanged(oldValue, newValue){
+
+	}
+
+	// will called if element is detached/removed from document
+	detached(){
+
+	}
+}
+```
+
+For more information about CustomElements and their livecylce see: [Link](http://www.html5rocks.com/en/tutorials/webcomponents/customelements/?redirect_from_locale=de)
+
 ```js
 import { component, view } from 'app-decorators';
 
