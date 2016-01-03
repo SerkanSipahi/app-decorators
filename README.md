@@ -166,6 +166,8 @@ item2.blink(300);
 ```
 ##### Settings:
 ```js
+import { component } from 'app-decorators';
+
 /**
  * 1.) You can pass as first argument your own nativ html class.
  * Default is HTMLElement.
@@ -197,6 +199,8 @@ document.body.appendChild(coffee);
 ```
 ##### Lifecycle of Component (Custom Elements):
 ```js
+import { component } from 'app-decorators';
+
 @component(HTMLImageElement, 'x')
 class Coffee {
 
