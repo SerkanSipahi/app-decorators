@@ -256,7 +256,7 @@ import $ from 'jquery';
 
 @view(`
 	<h3>{{head}}</h3>
-	<div>{{value}}</div>
+	<div>{{count}}</div>
 	<div>
 		<span class="up"> + </span>
 		<span class="down"> - </span>
@@ -266,20 +266,17 @@ import $ from 'jquery';
 @component(HTMLElement)
 class Item {
 
-	// just a property
-	count = 0;
-
 	// whenever you write in "value" the @view component will
 	// automatically render the view
-	@view.bind value;
+	@view.bind count;
 
 	created(){
 
 		$(this).on('click', '.up', () => {
-			this.value = ++this.count;
+			++this.count
 		});
 		$(this).on('click', '.down', () => {
-			this.value = --this.count;
+			--this.count
 		});
 
 	}
@@ -288,7 +285,6 @@ class Item {
 
 let item = Item.create({
 	head: 'Some Head',
-	value: 1,
 	count: 1,
 });
 
