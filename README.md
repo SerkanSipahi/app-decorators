@@ -249,40 +249,50 @@ class Coffee extends Bean {
 
 For more information about CustomElements and their livecylce see: [Link](http://www.html5rocks.com/en/tutorials/webcomponents/customelements/?redirect_from_locale=de)
 
+### @view
 ```js
 import { component, view } from 'app-decorators';
+import $ from 'jquery';
 
 @view(`
-    <div class="{{a}}">{{a}}</div>
-    <div class="{{b}}">{{b}}</div>
-    <div class="{{c}}">{{c}}</div>
+	<h3>{{head}}</h3>
+	<div>{{value}}</div>
+	<div>
+		<span class="up"> + </span>
+		<span class="down"> - </span>
+	</div>
 `)
 
 @component(HTMLElement)
 class Item {
 
-    @view.bind a;
-    @view.bind b;
-    @view.bind c = 'delete';
+	// just a property
+	count = 0;
 
-    created(){
-        this.a = 'add';
-        this.b = 'edit';
-    }
+	// whenever you write in "value" the @view component will
+	// automatically render the view
+	@view.bind value;
+
+	created(){
+
+		$(this).on('click', '.up', () => {
+			this.value = ++this.count;
+		});
+		$(this).on('click', '.down', () => {
+			this.value = --this.count;
+		});
+
+	}
+
 }
 
-let item = Item.create();
+let item = Item.create({
+	head: 'Some Head',
+	value: 1,
+	count: 1,
+});
+
 document.body.appendChild(item);
-```
-```html
-<body>
-    <!-- output -->
-    <com-item>
-        <div class="add">add</div>
-        <div class="edit">edit</div>
-        <div class="delete">delete</div>
-    </com-item>
-</body>
 ```
 
 ### @on [ in progress/planing ]
