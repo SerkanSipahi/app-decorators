@@ -33,24 +33,7 @@ function view(template, templateName = 'base') {
 		// register view engine that initialized on called createdCallback
 		view.helper.registerOnCreatedCallback(target, ( domNode, createVars = {} ) => {
 
-			// extract dom attributes
-			let domViewAttributes = {};
-			let toBeRemovedAttributes = [];
-			for(let key in Object.keys(domNode.attributes)) {
-				// extract @view.bind.n="foo" property
-				let node = domNode.attributes[key];
-				let matched = /^@view\.bind\.(\S+)$/gi.exec(node.name);
-				if(matched !== null) {
-					let [ ,name ] = matched;
-					domViewAttributes[name] = node.value;
-					toBeRemovedAttributes.push(node.name);
-				}
-			}
-
-			// remove dom attributes
-			for(let attribute of toBeRemovedAttributes){
-				domNode.removeAttribute(attribute);
-			}
+			let domViewAttributes = View.extractViewVarFromDomAttributes(domNode);
 
 			let view = View.create({
 				uuid: uuid(),

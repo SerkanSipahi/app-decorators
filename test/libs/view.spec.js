@@ -71,6 +71,32 @@ describe('View Class', () => {
 
 	});
 
+	describe('static method', () => {
+
+		describe('extractViewVarFromDomAttributes', () => {
+
+			let MockDomNode = {
+				attributes : {
+					0: { name: 'class', value: 'foo' },
+					1: { name: '@view.bind.x', value: 'bar' },
+					2: { name: '@view.bind.b', value: 'baz' },
+				},
+				removeAttribute : () => {}
+			}
+
+			it('it should return objectlist of dom attributes that matched of regex', () => {
+				let attributeList = View.extractViewVarFromDomAttributes(MockDomNode);
+				// positiv test
+				attributeList.should.have.propertyByPath('x').eql('bar');
+				attributeList.should.have.propertyByPath('b').eql('baz');
+				// negativ test
+				attributeList.should.not.have.propertyByPath('class');
+			});
+
+		});
+
+	});
+
 	describe('with all passed arguments over .create', () => {
 
 		it('should render accepted template', () => {

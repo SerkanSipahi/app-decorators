@@ -56,6 +56,35 @@ export default class View {
 	rendered = '';
 
 	/**
+	 * Excract domnode attributes
+	 * @param  {HTMLElement} domNode
+	 * @return {Object}
+	 */
+	static extractViewVarFromDomAttributes(domNode){
+
+		let domViewAttributes = {};
+		let toBeRemovedAttributes = [];
+		for(let key in Object.keys(domNode.attributes)) {
+
+			let node = domNode.attributes[key];
+			let matched = /^@view\.bind\.(\S+)$/gi.exec(node.name);
+			if(matched !== null) {
+				let [ ,name ] = matched;
+				domViewAttributes[name] = node.value;
+				toBeRemovedAttributes.push(node.name);
+			}
+
+		}
+
+		// remove dom attributes
+		for(let attribute of toBeRemovedAttributes){
+			domNode.removeAttribute(attribute);
+		}
+
+		return domViewAttributes;
+	}
+
+	/**
 	 * Set view var
 	 * @param {String|Object} property
 	 * @param {String|undefined} value
