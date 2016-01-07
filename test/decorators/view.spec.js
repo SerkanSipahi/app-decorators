@@ -109,6 +109,9 @@ describe('@view decorator', () => {
 			$vc.find('com-serkan').get(0).outerHTML.should.equal('<com-serkan class="foo"><span>Thats</span><p>awesome!</p></com-serkan>');
 			$vc.find('com-serkan').get(1).outerHTML.should.equal('<com-serkan class="baz"><span>Whats</span><p>up!</p></com-serkan>');
 
+			$vc.find('com-serkan').get(1).p = 'going on!';
+			$vc.find('com-serkan').get(1).outerHTML.should.equal('<com-serkan class="baz"><span>Whats</span><p>going on!</p></com-serkan>');
+
 		});
 
 		it('should render template if call domNode.render directly or over domNode.$.view.render', () => {
