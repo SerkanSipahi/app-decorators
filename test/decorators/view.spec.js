@@ -70,21 +70,21 @@ describe('@view decorator', () => {
 	  		$('#view-decorator').remove();
 		});
 
-		// decorate
-		@view(`<span>{{n}}</span><p>{{p}}</p>`)
-		@component(HTMLElement)
-		class serkan {
-
-			@view.bind n = 'Hello';
-			@view.bind p = 'World';
-
-			attached(){
-
-			}
-		}
-
 		// test
 		it('should also create a element if element created from out of dom', () => {
+
+			// decorate
+			@view(`<span>{{n}}</span><p>{{p}}</p>`)
+			@component(HTMLElement)
+			class serkan {
+
+				@view.bind n = 'Hello';
+				@view.bind p = 'World';
+
+				created(){
+
+				}
+			}
 
 			// First test
 			let $vc = $('#view-decorator');

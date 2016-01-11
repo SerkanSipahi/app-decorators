@@ -5,7 +5,6 @@ import View from '../libs/view';
 // external libs
 import { Object } from 'core-js/library';
 import Handlebars from 'handlebars';
-import uuid from '../helpers/uuid';
 
 /*****************************************
  * ######### Public Decorators ###########
@@ -36,7 +35,6 @@ function view(template, templateName = 'base') {
 			let domViewAttributes = View.extractViewVarFromDomAttributes(domNode);
 
 			let view = View.create({
-				uuid: uuid(),
 				domNode: domNode,
 				vars: Object.assign({}, domNode.$appDecorators.view.bind, domViewAttributes, createVars),
 				renderer: Handlebars,
@@ -79,6 +77,7 @@ function view(template, templateName = 'base') {
 
 			// register setter (@view.bind properties and .$.view.render method)
 			Object.defineProperties(domNode, properties);
+
 		});
 
 	}

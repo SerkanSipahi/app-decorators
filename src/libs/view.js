@@ -2,14 +2,21 @@
 // external libs
 import { Object } from 'core-js/library';
 
+// internal libs
+import uuid from '../helpers/uuid';
+
 export default class View {
 
+	/**
+	 * Create an instance of View Class
+	 * @param  {Object} config
+	 * @return {Object}
+	 */
 	static create(config = {}){
 
 		// init view
 		let view = new View();
 		// setup view
-		view.setUniqueId(config.uuid);
 		view.setDomNode(config.domNode);
 		view.setRenderer(config.renderer);
 		view.setTemplate(config.template);
@@ -17,6 +24,14 @@ export default class View {
 
 		return view;
 
+	}
+
+	/**
+	 * constructor
+	 * @return {undefined}
+	 */
+	constructor(){
+		this._uid = uuid();
 	}
 
 	/**
