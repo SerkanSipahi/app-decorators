@@ -16,7 +16,7 @@ node_modules:
 jspm_packages:
 	$(jspm) install
 
-test:
+test: node_modules jspm_packages
 	$(karma) start
 
 clean:
