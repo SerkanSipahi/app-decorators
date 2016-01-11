@@ -145,8 +145,8 @@ view.helper.registerTemplate = (target, template, templateName = 'base') => {
 
 /**
  * Register on created callback
- * @param  {[type]}   target   [description]
- * @param  {Function} callback [description]
+ * @param  {Object} target
+ * @param  {Function} callback
  * @return {Function} target
  */
 view.helper.registerOnCreatedCallback = (target, callback) => {
