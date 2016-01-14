@@ -13,16 +13,4 @@ describe('@on decorator', () => {
 
 	});
 
-	describe('view.helper.prepareEventDomain', () => {
-
-		it('should prepare eventDomain string into event and delegateSelector', () => {
-
-			on.helper.prepareEventDomain('click').should.containDeep(['click', undefined]);;
-			on.helper.prepareEventDomain('dbclick .abc').should.containDeep(['dbclick', '.abc']);;
-			on.helper.prepareEventDomain('mouseup .abc .def').should.containDeep(['mouseup', '.abc .def']);
-
-		});
-
-	});
-
 });
