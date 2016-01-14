@@ -94,6 +94,11 @@ view.bind = (target, property, descriptor) => {
 
 	// get default value
 	let value = descriptor.initializer ? descriptor.initializer() : '';
+
+	if(Object.classof(value) !== 'String'){
+		throw new Error('The value of @view.bind must be an String');
+	}
+
 	view.helper.registerBind(target, property, value);
 
 };
