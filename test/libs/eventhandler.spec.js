@@ -24,7 +24,7 @@ describe('Eventhandler Class', () => {
 		let element = document.createElement("div");
 		let bindObject = { foo: 'bar' };
 
-		element.innerHTTML = `
+		element.innerHTML = `
 			<div class="foo">Foo</div>
 			<div class="bar">
 				<div class="baz">Baz</div>
