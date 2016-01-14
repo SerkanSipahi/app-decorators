@@ -55,7 +55,7 @@ function view(template, templateName = 'base') {
 
 			// prepare property proxy setter
 			let properties = {};
-			for(let property in target.$appDecorators.view.bind){
+			for(let property in domNode.$appDecorators.view.bind){
 				properties[property] = {
 					set: function(newValue){
 						this.$.view.set(property, newValue);
