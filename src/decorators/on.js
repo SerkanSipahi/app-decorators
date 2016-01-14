@@ -44,7 +44,7 @@ on.helper.registerEvent = (target, eventDomain, method, callback = function(){})
 	let [ event, delegateSelector ] = on.helper.prepareEventDomain(eventDomain);
 
 	// define events
-	target.$appDecorators.on.events[method] = [ event, delegateSelector, callback ];
+	target.$appDecorators.on.events[eventDomain] = callback;
 
 	return target;
 
