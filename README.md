@@ -43,7 +43,6 @@ jspm install npm:app-decorators
 
 ##### Basic usage:
 ```js
-import $ from 'jquery';
 import { component } from 'app-decorators';
 
 
@@ -54,6 +53,8 @@ class Item {
 	// default properties
 	prefix = 'Hello';
 	suffix = 'World!';
+
+	$ : ::document.querySelector;
 
     created() {
         this.innerHTML = `
@@ -78,7 +79,7 @@ class Item {
 
 		// 'blink' class is toggled into 'p' tag between the interval of 500 ms
 		this.interval = setInterval(() => {
-			$(this).find('p').toggleClass('blink');
+			this.$('p').classList.toggle('blink');
 		}, ms);
 
 	}
@@ -134,7 +135,7 @@ document.body.appendChild(item1);
 item1.blink(500);
 
 // or if node already exists in dom
-$('com-item')[0].blink(500);
+document.querySelector('com-item').blink(500);
 
 // it will stop blinking after 20 seconds
 setTimeout(() => {
@@ -252,7 +253,6 @@ For more information about CustomElements and their livecylce see: [Link](http:/
 ### @view
 ```js
 import { component, view } from 'app-decorators';
-import $ from 'jquery';
 
 @view(`
 	<h3>{{head}}</h3>
@@ -272,10 +272,10 @@ class Item {
 
 	created(){
 
-		$(this).on('click', '.up', () => {
+		this.addEventListener('click', '.up', () => {
 			++this.count
 		});
-		$(this).on('click', '.down', () => {
+		this.addEventListener('click', '.down', () => {
 			--this.count
 		});
 
