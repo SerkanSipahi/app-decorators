@@ -4,12 +4,6 @@ import { Object } from 'core-js/library';
 export default class Eventhandler {
 
 	/**
-	 * Simple query selector
-	 * @type {HTMLElement}
-	 */
-	$ = ::document.querySelector;
-
-	/**
 	 * Checks the type of given var
 	 * @type {Function}
 	 */
@@ -19,52 +13,49 @@ export default class Eventhandler {
 	 * Passed config object
 	 * @type {Object}
 	 */
-	config = {};
+	config = {
+		events : {},
+		element : null,
+		bind: null,
+	};
 
 	constructor(config = {}) {
 
-		/**
-		 * Merge passed config
-		 * ====================
-		 *
-		 * example config:
-		 * {
-		 *    events: {
-		 *       "click": function onClick( e ) {}
-		 *       "mouseup": function onMouseup( e ) {}
-		 *    },
-		 *    element: document.body,
-		 *    bind: that // optional
-		 * }
-		 */
-		Object.assign(this.config, config);
 		// initialize EventHandler
-		this._init();
+		this._init(config);
 	}
 
 	/**
 	 * Initialize Eventhandler
 	 * @return {undefined}
 	 */
-	_init(){
+	_init(config){
 
 		/**
-		 * if no events passed return maybe the event will
-		 * passed over "addEventCollection" or "addEvent"
+		 * Throw error if no events passed
 		 */
-		if(!this.config.events) {
-			return;
+		if(!config.events) {
+			throw new Error('Please pass events. See documentation!');
 		}
 
 		/**
-		 * if no element passed return maybe the element will
-		 * passed over addElement
+		 * Throw error if no element passed
 		 */
-		if(!this.config.element){
-			return;
+		if(!config.element){
+			throw new Error('Please pass an element. See documentation!');
 		}
 
-		this.addEventCollection(this.config.events);
+		// bind bindObject
+		Eventhandler.bindObjectToEventList(config.events, config.bind);
+		// group events
+		let groupedEvents = Eventhandler.groupEvents(config.events);
+		// Merge passed config
+		Object.assign(this.config.events, groupedEvents);
+		// Assign element
+		this.config.element = config.element;
+
+		// add events eventListener
+		this._addEventCollection(groupedEvents);
 
 	}
 
@@ -80,7 +71,7 @@ export default class Eventhandler {
 	/**
 	 * Convert eventDomain into seperate item
 	 * @param  {String} eventDomain
-	 * @return {Array} [ eventType, delegateSelector ]
+	 * @return {Array} [ type, delegateSelector ]
 	 */
 	static prepareEventdomain(eventDomain) {
 
@@ -89,14 +80,69 @@ export default class Eventhandler {
 		}
 
 		let splitedEventDomain = eventDomain.split(' ');
-		let eventType = splitedEventDomain[0];
-		let delegateSelector = undefined;
+		let type = splitedEventDomain[0];
+		let delegateSelector = null;
 		if(splitedEventDomain[1]){
 			delegateSelector = splitedEventDomain.splice(1).join(' ');
 		}
 
-		return [ eventType, delegateSelector ];
+		return [ type, delegateSelector ];
 
+	}
+
+	/**
+	 * Group events
+	 * @param  {Object} config
+	 * @return {Object}
+	 */
+	static groupEvents(events = {}){
+
+		let tmpConfig = {};
+
+		for(let eventDomain in events){
+			if(!events.hasOwnProperty(eventDomain)){
+				continue;
+			}
+
+			let [ type, delegateSelector ] = Eventhandler.prepareEventdomain(eventDomain);
+			if(!tmpConfig[type]){
+				tmpConfig[type] = [];
+			}
+
+			tmpConfig[type].push({
+				[ delegateSelector ]: events[eventDomain],
+			});
+		}
+
+		return tmpConfig;
+
+	}
+
+	/**
+	 * Bind object to event value
+	 * @param  {Object} events
+	 * @param  {Object} bindObject
+	 * @return {undefined}
+	 */
+	static bindObjectToEventList(events = {}, bindObject){
+
+		for(let eventDomain in events){
+			if(!events.hasOwnProperty(eventDomain)){
+				continue;
+			}
+			// bind and assign bindObject
+			events[eventDomain] = bindObject::events[eventDomain];
+		}
+
+	}
+
+	/**
+	 * Return event callbacks
+	 * @param  {String} eventType
+	 * @return {Array}
+	 */
+	_get(eventType){
+		return this.config.events[eventType];
 	}
 
 	/**
@@ -104,17 +150,14 @@ export default class Eventhandler {
 	 * Example: see above constructor config.events
 	 * @param {Objbect} events
 	 */
-	addEventCollection(events){
-
-		// merge passed arg into config.events
-		Object.assign(this.config.events, events);
+	_addEventCollection(events){
 
 		// add events eventlistener
-		for(let eventDomain in events){
-			if(!events.hasOwnProperty(eventDomain)){
+		for(let type in events){
+			if(!events.hasOwnProperty(type)){
 				continue;
 			}
-			this.addEvent(this.config.element, eventDomain, events[eventDomain]);
+			this._addEvent(this.config.element, type, events[type]);
 		}
 
 	}
@@ -125,13 +168,26 @@ export default class Eventhandler {
 	 * @param {String} eventDomain
 	 * @param {Function} callback
 	 */
-	addEvent(element, eventDomain, callback) {
+	_addEvent(element, type, delegateSelectors) {
 
-		let self = this;
-		let [ eventType, delegateSelector ] = Eventhandler.prepareEventdomain(eventDomain);
-		element.addEventListener(eventType, function( event ){
-			if(!delegateSelector || this.matches(delegateSelector)) {
-				self.bind ? callback.bind(self.bind)( event ) : callback( event );
+		element.addEventListener(type, ( event ) => {
+
+			for(let delegateObject of delegateSelectors){
+
+				// received key (delegateSelector) is always a key
+				// therefore (see below) delegateSelector === "null"
+				let delegateSelector = Object.keys(delegateObject)[0];
+				let callback = delegateObject[delegateSelector];
+				let matchedSelector = false;
+
+				if(delegateSelector){
+					matchedSelector = event.target.matches(delegateSelector);
+				}
+
+				if(delegateSelector === "null" || matchedSelector){
+					callback(event);
+				}
+
 			}
 		});
 
