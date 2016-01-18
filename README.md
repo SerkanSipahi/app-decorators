@@ -54,7 +54,7 @@ class Item {
 	prefix = 'Hello';
 	suffix = 'World!';
 
-	$ : ::document.querySelector;
+	$ = ::document.querySelector;
 
     created() {
         this.innerHTML = `
