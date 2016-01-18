@@ -3,6 +3,10 @@ import { Object } from 'core-js/library';
 
 export default class Eventhandler {
 
+	constructor(config = {}) {
+		this._init(config);
+	}
+
 	/**
 	 * Checks the type of given var
 	 * @type {Function}
@@ -14,16 +18,16 @@ export default class Eventhandler {
 	 * @type {Object}
 	 */
 	config = {
-		events : {},
-		element : null,
+		events: {},
+		element: null,
 		bind: null,
 	};
 
-	constructor(config = {}) {
-
-		// initialize EventHandler
-		this._init(config);
-	}
+	/**
+	 * Main event callback wrapper
+	 * @type {Object}
+	 */
+	mainEventCallackContainer = {};
 
 	/**
 	 * Initialize Eventhandler
@@ -139,10 +143,10 @@ export default class Eventhandler {
 	/**
 	 * Return event callbacks
 	 * @param  {String} eventType
-	 * @return {Array}
+	 * @return {Array|null}
 	 */
 	_get(eventType){
-		return this.config.events[eventType];
+		return this.config.events[eventType] || null;
 	}
 
 	/**
@@ -170,7 +174,7 @@ export default class Eventhandler {
 	 */
 	_addEvent(element, type, delegateSelectors) {
 
-		element.addEventListener(type, ( event ) => {
+		this.mainEventCallackContainer[type] = function( event ){
 
 			for(let delegateObject of delegateSelectors){
 
@@ -189,22 +193,9 @@ export default class Eventhandler {
 				}
 
 			}
-		});
+		};
 
-	}
-
-	/**
-	 * Remove all events from eventshandler
-	 * @return {undefined}
-	 */
-	removeEvents() {
-
-		for(let eventDomain in this.config.events){
-			if(!events.hasOwnProperty(eventDomain)){
-				continue;
-			}
-			this.removeEvent(eventDomain);
-		}
+		element.addEventListener(type, this.mainEventCallackContainer[type]);
 
 	}
 
@@ -215,11 +206,50 @@ export default class Eventhandler {
 	 */
 	removeEvent(eventDomain) {
 
-		// get needed values for removing
-		let [ eventType, ] = Eventhandler.prepareEventdomain(eventDomain);
-		let callback = this.config.events[eventDomain];
-		// remove event from listener
-		this.config.element.removeEventListener(eventType, callback);
+		let [ type, delegateSelector ] = Eventhandler.prepareEventdomain(eventDomain);
+
+		if(!this.config.events[type]) {
+			throw new Error(`Event: ${type} not exists!`);
+		}
+
+		let index = 0;
+		for(let delegateObject of this.config.events[type]){
+			// remove delegate callback if passed e.g. "click .foo"
+			if(delegateSelector && delegateObject[delegateSelector]){
+				this.config.events[type].splice(index, 1);
+			}
+			// remove all callbacks if passed type e.g. "click" or e.g. "click" is empty
+			if((type && delegateSelector === null) || this.config.events[type].length === 0){
+				delete this.config.events[type];
+			}
+			index++;
+		}
+
+		// remove listener if eventsList empty or not exists
+		if(!this.config.events[type]){
+			this.config.element.removeEventListener(type, this.mainEventCallackContainer[type]);
+			delete this.config.events[type];
+		}
+
+	}
+
+	/**
+	 * Removes all eventhandler
+	 * @return {undefined}
+	 */
+	reset() {
+
+		if(!Object.keys(this.config.events).length){
+			return;
+		}
+
+		// add events eventlistener
+		for(let type in this.config.events){
+			if(!events.hasOwnProperty(type)){
+				continue;
+			}
+			this.removeEvent(type);
+		}
 
 	}
 

@@ -41,12 +41,17 @@ describe('Eventhandler Class', () => {
 					"d"     : naz,
 				},
 				element: document.createElement("div"),
+				bind: {},
 			});
 
 			// test
 			eventHandler._get('a').should.have.length(2);
 			eventHandler._get('b').should.have.length(2);
 			eventHandler._get('c').should.have.length(1);
+			eventHandler._get('d').should.have.length(1);
+			// negativ test
+			let testObject = { f: eventHandler._get('f') };
+			testObject.should.have.propertyByPath('f').eql(null);
 
 		});
 
@@ -136,7 +141,7 @@ describe('Eventhandler Class', () => {
 			document.body.removeChild(element);
 		});
 
-		it('should trigger events', () => {
+		it('should trigger and remove events', () => {
 
 			let eventHandler = Eventhandler.create({
 				events : {
@@ -150,6 +155,12 @@ describe('Eventhandler Class', () => {
 				element: element,
 				bind: bindObject,
 			});
+
+			/**
+			 * INFO to the test:
+			 * except click all other native events can not be easily simulated.
+			 * Mouseup, Mousedown was tested manually.
+			 */
 
 			// setup tests (spying)
 			// test click
@@ -178,16 +189,23 @@ describe('Eventhandler Class', () => {
 			// test bind object
 			bindObject.someMethod.callCount.should.eql(1);
 
-			/**
-			 * INFO to the test:
-			 * except click all other native events can not be easily simulated.
-			 * Mouseup, Mousedown was tested manually.
-			 */
+			// test removeEvent
+			eventHandler.removeEvent('click .foo');
+			eventHandler._get('click').should.have.length(2);
 
-			// reset spyies
-			clickCallbacks[0][".foo"].restore();
-			clickCallbacks[1][".bar"].restore();
-			clickCallbacks[2][".baz"].restore();
+			eventHandler.removeEvent('mouseup .boo');
+			eventHandler._get('mouseup').should.have.length(1);
+
+			eventHandler.removeEvent('click');
+			let clickTestObject = { click: eventHandler._get('click') };
+			clickTestObject.should.have.propertyByPath('click').eql(null);
+
+			eventHandler.removeEvent('mouseup .koo');
+			let mouseupTestObject = { mouseup: eventHandler._get('mouseup') };
+			mouseupTestObject.should.have.propertyByPath('mouseup').eql(null);
+
+			eventHandler.removeEvent('mousedown');
+			Object.keys(eventHandler.config.events).should.have.length(0);
 
 		});
 
