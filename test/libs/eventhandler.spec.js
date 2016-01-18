@@ -105,7 +105,7 @@ describe('Eventhandler Class', () => {
 
 	});
 
-	describe('Eventhandler.create()', () => {
+	describe('Eventhandler.create() and Eventhandler.prototype.removeEvent', () => {
 
 		let clickFoo = function() {};
 		let mouseupBoo = function() {};
