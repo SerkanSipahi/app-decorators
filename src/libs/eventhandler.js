@@ -50,7 +50,9 @@ export default class Eventhandler {
 		}
 
 		// bind bindObject
-		Eventhandler.bindObjectToEventList(config.events, config.bind);
+		if(config.bind){
+			Eventhandler.bindObjectToEventList(config.events, config.bind);
+		}
 		// group events
 		let groupedEvents = Eventhandler.groupEvents(config.events);
 		// Merge passed config
