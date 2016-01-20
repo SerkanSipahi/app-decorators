@@ -48,24 +48,6 @@ on.helper.registerEvent = (target, eventDomain, method, callback = function(){})
 };
 
 /**
- * Prepare eventDomain
- * @param  {String} eventDomain
- * @return {Array}
- */
-on.helper.prepareEventDomain = (eventDomain) => {
-
-	let splitedEventDomain = eventDomain.split(' ');
-	let event = splitedEventDomain[0];
-	let delegateSelector = undefined;
-	if(splitedEventDomain[1]){
-		delegateSelector = splitedEventDomain.splice(1).join(' ');
-	}
-
-	return [ event, delegateSelector ];
-
-}
-
-/**
  * Register on created callback
  * @param  {Object} target
  * @param  {Function} callback
