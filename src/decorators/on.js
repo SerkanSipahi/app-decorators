@@ -73,11 +73,11 @@ on.helper.registerOnCreatedCallback = (target, callback) => {
  * @param  {Function} callback
  * @return {Function} target
  */
-on.helper.registerOnDeatchedCallback = (target, callback) => {
+on.helper.registerOnDetachedCallback = (target, callback) => {
 
 	// define $onCreated callbacks
 	if(!target.$onDetached) {
-		target.$Detached = [];
+		target.$onDetached = [];
 	}
 
 	// init render engine
