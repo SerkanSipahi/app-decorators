@@ -100,11 +100,14 @@ on.helper.registerNamespaces = (target) => {
 	}
 
 	// define namespace
-	target.$appDecorators = {
-		on: {
-			events: {},
-		},
-	};
+	if(!target.$appDecorators){
+		target.$appDecorators = {};
+	}
+	if(!target.$appDecorators.on){
+		target.$appDecorators.on = {
+			events : {},
+		};
+	}
 
 	return target;
 };

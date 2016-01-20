@@ -181,12 +181,15 @@ view.helper.registerNamespaces = (target) => {
 	}
 
 	// define namespace
-	target.$appDecorators = {
-		view: {
+	if(!target.$appDecorators){
+		target.$appDecorators = {};
+	}
+	if(!target.$appDecorators.view){
+		target.$appDecorators.view = {
 			bind: {},
 			template: {},
-		},
-	};
+		};
+	}
 
 	return target;
 };
