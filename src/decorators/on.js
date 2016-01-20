@@ -1,19 +1,53 @@
 
+// internal libs
+import Eventhandler from '../libs/eventhandler';
+
 /**
  * on (EventHandler)
  * @param  {Any} ...args
  * @return {Function}
  */
-export default function on(...args) {
+export default function on(eventDomain) {
 
-	if(!args.length){
+	if(!eventDomain){
 		throw new Error('Please pass an event type e.g "click"');
 	}
 
 	return (target, method, descriptor) => {
 
 		// register events
-		on.helper.registerEvent(target, ...args, method, descriptor.value);
+		on.helper.registerEvent(target, eventDomain, method, descriptor.value);
+
+		// define $onCreated callbacks
+		if(!target.$onCreated) {
+			target.$onCreated = [];
+		}
+
+		// ensure "registerOnCreatedCallback" called once
+		if(target.$onCreated.length > 0){
+			return;
+		}
+
+		on.helper.registerOnCreatedCallback(target, ( domNode ) => {
+
+			let eventHandler = Eventhandler.create({
+				events: domNode.$appDecorators.on.events,
+				element: domNode,
+			});
+
+			// define namespace for eventhandler
+			domNode.$ ? null : domNode.$ = {};
+			domNode.$.eventHandler = eventHandler;
+
+		});
+
+		on.helper.registerOnDetachedCallback(target, (domNode) => {
+
+			// cleanup: remove all eventhandler
+			domNode.$.eventHandler.reset();
+			domNode.$.eventHandler = null;
+
+		});
 
 	}
 }
@@ -54,11 +88,6 @@ on.helper.registerEvent = (target, eventDomain, method, callback = function(){})
  * @return {Function} target
  */
 on.helper.registerOnCreatedCallback = (target, callback) => {
-
-	// define $onCreated callbacks
-	if(!target.$onCreated) {
-		target.$onCreated = [];
-	}
 
 	// init render engine
 	target.$onCreated.push(callback);
