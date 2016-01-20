@@ -36,12 +36,9 @@ on.helper.registerEvent = (target, eventDomain, method, callback = function(){})
 	// define namespaces
 	on.helper.registerNamespaces(target);
 
-	if(target.$appDecorators.on.events[method]) {
+	if(target.$appDecorators.on.events[eventDomain]) {
 		throw new Error(`The method: "${method}" already exists!`);
 	}
-
-	// prepare event domain
-	let [ event, delegateSelector ] = on.helper.prepareEventDomain(eventDomain);
 
 	// define events
 	target.$appDecorators.on.events[eventDomain] = callback;
