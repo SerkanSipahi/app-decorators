@@ -29,6 +29,10 @@ export default class CustomElement {
 		// create static factory method for creating dominstance
 		ComponentClass.create = function($create_vars){
 
+			if(arguments.length > 1){
+				throw new Error('Its not allowd to pass more than one argument');
+			}
+
 			let classof = Object.classof($create_vars);
 			if(!(classof === 'Object' || classof === 'Undefined')) {
 				throw new Error('Passed Object must be an object .create({}) or nothing .create()');
