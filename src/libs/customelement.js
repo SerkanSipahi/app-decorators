@@ -27,8 +27,12 @@ export default class CustomElement {
 		});
 
 		// create static factory method for creating dominstance
-		ComponentClass.create = function($create_vars = null){
+		ComponentClass.create = function($create_vars){
 
+			let classof = Object.classof($create_vars);
+			if(!(classof === 'Object' || classof === 'Undefined')) {
+				throw new Error('Passed Object must be an object .create({}) or nothing .create()');
+			}
 
 			// extract and assign instance properties
 			/**
