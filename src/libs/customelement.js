@@ -1,6 +1,8 @@
 
 // external libs
 import { Object, Reflect } from 'core-js/library';
+import Immutable from 'immutable';
+
 
 export default class CustomElement {
 
@@ -27,47 +29,38 @@ export default class CustomElement {
 		});
 
 		// create static factory method for creating dominstance
-		ComponentClass.create = function($create_vars){
+		ComponentClass.create = function(create_vars){
 
 			if(arguments.length > 1){
 				throw new Error('Its not allowd to pass more than one argument');
 			}
 
-			let classof = Object.classof($create_vars);
+			let classof = Object.classof(create_vars);
 			if(!(classof === 'Object' || classof === 'Undefined')) {
 				throw new Error('Passed Object must be an object .create({}) or nothing .create()');
 			}
 
-			// extract and assign instance properties
-			/**
-			 * At the moment we cant extract class properties from prototype
-			 * because it not visible there. Babel convert this:
-			 *
-			 * class Item {
-			 *    prop1 = 123; // <- cant extract it directly (from prototype)
-			 * }
-			 *
-			 * to:
-			 *
-			 * function Item(){
-			 *    this.prop1 = 123; // <- we dont know how we get this.prop1 from there
-			 * }
-			 *
-			 */
+			// make sure passed object is immutable (no reference)
+			if(classof === 'Object'){
+				create_vars = Immutable.Map(create_vars).toJS();
+			}
+
+			// create an instance of customElement
+			let comElement = new ComElement();
+
+			// extract and assign class properties
 			let tmpInstanceProperties = new ComponentClass();
 			let instanceProperties = {};
-			for(let property of Reflect.ownKeys(tmpInstanceProperties)){
+			for(let property of Object.getOwnPropertyNames(tmpInstanceProperties)){
 				instanceProperties[property] = tmpInstanceProperties[property];
 			}
-			let comElement = new ComElement();
 			Object.assign(comElement, instanceProperties);
 
 			// cleanup
 			tmpInstanceProperties = null;
 			instanceProperties = null;
-			// end of extracting and assign of instance properties
 
-			comElement.createdCallback($create_vars);
+			comElement.createdCallback(create_vars);
 
 			return comElement;
 		};
