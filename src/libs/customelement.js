@@ -26,9 +26,6 @@ export default class CustomElement {
 			// extends: 'div',
 		});
 
-		ComponentClass.Class = ComponentClass;
-		ComponentClass.ComElement = ComElement;
-
 		// create static factory method for creating dominstance
 		ComponentClass.create = function($create_vars = null){
 
@@ -57,12 +54,12 @@ export default class CustomElement {
 			 * }
 			 *
 			 */
-			let tmpInstanceProperties = new this.Class();
+			let tmpInstanceProperties = new ComponentClass();
 			let instanceProperties = {};
 			for(let property of Reflect.ownKeys(tmpInstanceProperties)){
 				instanceProperties[property] = tmpInstanceProperties[property];
 			}
-			let comElement = new this.ComElement();
+			let comElement = new ComElement();
 			Object.assign(comElement, instanceProperties);
 
 			// cleanup
