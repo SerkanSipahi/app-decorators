@@ -29,14 +29,6 @@ export default class CustomElement {
 		// create static factory method for creating dominstance
 		ComponentClass.create = function($create_vars = null){
 
-			// override constructor
-			/**
-			 * Nativ CustomElements doesnt allow to use a constructor
-			 * therefore if constructor is added by the user we override that
-			 * otherwise an error could be thrown.
-			 *
-			 */
-			this.constructor = function(){};
 
 			// extract and assign instance properties
 			/**
