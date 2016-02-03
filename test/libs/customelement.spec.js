@@ -104,6 +104,18 @@ describe('Class CustomElement', () => {
 
 	});
 
+	describe('method register passing more than one argument', () => {
+
+		class Morethan {}
+		CustomElement.register(Morethan);
+
+		it('should throw an error', () => {
+			(function(){ Morethan.create({}, 1) })
+				.should.throw('Its not allowd to pass more than one argument');
+		});
+
+	});
+
 	describe('method register passing none object', () => {
 
 		class Noneobject {}
