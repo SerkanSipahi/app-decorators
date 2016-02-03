@@ -104,6 +104,18 @@ describe('Class CustomElement', () => {
 
 	});
 
+	describe('method register passing none object', () => {
+
+		class Noneobject {}
+		CustomElement.register(Noneobject);
+
+		it('should throw an error', () => {
+			(function(){ Noneobject.create([]) })
+				.should.throw('Passed Object must be an object .create({}) or nothing .create()');
+		});
+
+	});
+
 	describe('method register passed class Red', () => {
 
 		class Red {
