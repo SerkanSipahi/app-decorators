@@ -213,8 +213,8 @@ export default class CustomElement {
 	 */
 	static getCustomCallbacks(){
 
-		return {
-			createdCallback: {value: function(...args){
+		return Object.getOwnPropertyDescriptors({
+			createdCallback: function(...args) {
 
 				/**
 				 * 1.) If no args and no parentElement then was called .create(). We can only
@@ -229,17 +229,19 @@ export default class CustomElement {
 
 				CustomElement.applyOnCreatedCallback(this, ...args);
 				this.created ? this.created(...args) : null;
-			}},
-			attachedCallback: {value: function(){
+
+			},
+			attachedCallback: function(...args) {
 				this.attached ? this.attached() : null;
-			}},
-			detachedCallback: {value: function(){
+			},
+			detachedCallback: function(...args) {
 				this.detached ? this.detached() : null;
-			}},
-			attributeChangedCallback: {value: function(...args){
+			},
+			attributeChangedCallback: function(...args) {
 				this.attributeChanged ? this.attributeChanged(...args) : null;
-			}},
-		}
+			},
+		});
+
 	}
 
 	/**
