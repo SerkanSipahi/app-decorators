@@ -12,7 +12,11 @@ export default class View {
 	 * @param  {Object} config
 	 * @return {Object}
 	 */
-	static create(config = {}){
+	static create(config){
+
+		if(Object.classof(config) !== 'Object') {
+			throw new Error('Passed Object must be an object {}');
+		}
 
 		// init view
 		let view = new View();
