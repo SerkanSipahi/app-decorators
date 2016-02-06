@@ -47,7 +47,8 @@ function view(template, templateName = 'base') {
 			});
 
 			// define namespace for view
-			domNode.$ ? null : domNode.$ = { view };
+			domNode.$ ? null : domNode.$ = {};
+			domNode.$.view = view;
 
 			// render view
 			domNode.$.view.render();

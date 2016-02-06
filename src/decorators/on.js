@@ -38,10 +38,12 @@ export default function on(eventDomain) {
 			let eventHandler = Eventhandler.create({
 				events: domNode.$appDecorators.on.events,
 				element: domNode,
+				bind: domNode,
 			});
 
 			// define namespace for eventhandler
-			domNode.$ ? null : domNode.$ = { eventHandler };
+			domNode.$ ? null : domNode.$ = {};
+			domNode.$.eventHandler = eventHandler;
 
 		});
 
