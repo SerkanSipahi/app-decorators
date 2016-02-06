@@ -23,7 +23,12 @@ export default function on(eventDomain) {
 			target.$onCreated = [];
 		}
 
-		// ensure "registerOnCreatedCallback" called once
+		/**
+		 * ### Ensure "registerOnCreatedCallback" (see below) registered only once ###
+		 * This function will called every time if an event registered e.g. @on('click .foo')
+		 * but registerOnCreatedCallback can only call once because we want only Create
+		 * one eventhandler
+		 */
 		if(target.$onCreated.length > 0){
 			return;
 		}
