@@ -41,8 +41,7 @@ export default function on(eventDomain) {
 			});
 
 			// define namespace for eventhandler
-			domNode.$ ? null : domNode.$ = {};
-			domNode.$.eventHandler = eventHandler;
+			domNode.$ ? null : domNode.$ = { eventHandler };
 
 		});
 
