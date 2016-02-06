@@ -31,6 +31,12 @@ export default class View {
 	}
 
 	/**
+	* Regular Expression for View-Var
+	* @type {RegExp}
+	 */
+	static viewBindRegExp = /^@view\.bind\.(\S+)$/i;
+
+	/**
 	 * constructor
 	 * @return {undefined}
 	 */
@@ -77,27 +83,41 @@ export default class View {
 	/**
 	 * Excract domnode attributes
 	 * @param  {HTMLElement} domNode
+	 * @param  {RegExp} filterRegex
+	 * @param  {Boolean} removeDomAttributes
 	 * @return {Object}
 	 */
-	static extractViewVarFromDomAttributes(domNode){
+	static getDomAttributes(domNode, filterRegex, removeDomAttributes = false){
+
+		if(filterRegex && Object.classof(filterRegex) !== 'RegExp'){
+			throw Error('Second argument is passed but it must be a Regular-Expression');
+		}
 
 		let domViewAttributes = {};
 		let toBeRemovedAttributes = [];
-		for(let key in Object.keys(domNode.attributes)) {
+		for(let key in domNode.attributes) {
+			if(!domNode.attributes.hasOwnProperty(key)){
+				continue;
+			}
 
 			let node = domNode.attributes[key];
-			let matched = /^@view\.bind\.(\S+)$/gi.exec(node.name);
-			if(matched !== null) {
-				let [ ,name ] = matched;
-				domViewAttributes[name] = node.value;
-				toBeRemovedAttributes.push(node.name);
+			if(filterRegex){
+				let matched = filterRegex.exec(node.name);
+				if(matched !== null) {
+					let [ ,name ] = matched;
+					domViewAttributes[name] = node.value;
+					removeDomAttributes ? toBeRemovedAttributes.push(node.name) : null;
+				}
+			} else {
+				domViewAttributes[node.name] = node.value;
 			}
 
 		}
 
-		// remove dom attributes
-		for(let attribute of toBeRemovedAttributes){
-			domNode.removeAttribute(attribute);
+		if(removeDomAttributes){
+			for(let attribute of toBeRemovedAttributes){
+				domNode.removeAttribute(attribute);
+			}
 		}
 
 		return domViewAttributes;

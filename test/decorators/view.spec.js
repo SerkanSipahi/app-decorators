@@ -100,17 +100,26 @@ describe('@view decorator', () => {
 
 		it('should also create a element if element created from out of dom', () => {
 
+			// decorate
+			@view(`<span>{{uid}}.)<b>{{class}}</b>{{b}}</span><p>{{c}}</p>`)
+			@component(HTMLElement)
+			class Fire {}
+
 			let $vc = $('#view-decorator');
 			$vc.append(`
-				<com-serkan class="foo" @view.bind.n="Thats" @view.bind.p="awesome!"></com-serkan>
-				<com-serkan class="baz" @view.bind.n="Whats" @view.bind.p="up!"></com-serkan>
+				<com-fire uid="1" class="First" @view.bind.b="Thats" @view.bind.c="awesome!"></com-fire>
+				<com-fire uid="2" class="Second" @view.bind.b="Whats" @view.bind.c="up!"></com-fire>
 			`);
 
-			$vc.find('com-serkan').get(0).outerHTML.should.equal('<com-serkan class="foo"><span>Thats</span><p>awesome!</p></com-serkan>');
-			$vc.find('com-serkan').get(1).outerHTML.should.equal('<com-serkan class="baz"><span>Whats</span><p>up!</p></com-serkan>');
+			$vc.find('com-fire').get(0).outerHTML.should.equal('<com-fire uid="1" class="First"><span>1.)<b>First</b>Thats</span><p>awesome!</p></com-fire>');
+			$vc.find('com-fire').get(1).outerHTML.should.equal('<com-fire uid="2" class="Second"><span>2.)<b>Second</b>Whats</span><p>up!</p></com-fire>');
 
-			$vc.find('com-serkan').get(1).p = 'going on!';
-			$vc.find('com-serkan').get(1).outerHTML.should.equal('<com-serkan class="baz"><span>Whats</span><p>going on!</p></com-serkan>');
+			$vc.find('com-fire').get(1).c = 'on!';
+			$vc.find('com-fire').get(1).outerHTML.should.equal('<com-fire uid="2" class="Second"><span>2.)<b>Second</b>Whats</span><p>on!</p></com-fire>');
+
+			// should not render because uid is not a @view property
+			$vc.find('com-fire').get(1).uid = 333;
+			$vc.find('com-fire').get(1).outerHTML.should.equal('<com-fire uid="2" class="Second"><span>2.)<b>Second</b>Whats</span><p>on!</p></com-fire>');
 
 		});
 

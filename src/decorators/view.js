@@ -32,11 +32,16 @@ function view(template, templateName = 'base') {
 		// register view engine that initialized on called createdCallback
 		view.helper.registerOnCreatedCallback(target, ( domNode, createVars = {} ) => {
 
-			let domViewAttributes = View.extractViewVarFromDomAttributes(domNode);
+			// get and merge dom view var attributes
+			let domViewAttributes = View.getDomAttributes(domNode, View.viewBindRegExp, true);
+			Object.assign(domNode.$appDecorators.view.bind, domViewAttributes);
+
+			// get the restof regular attributes
+			let regularDomAttributes = View.getDomAttributes(domNode);
 
 			let view = View.create({
-				domNode: domNode,
-				vars: Object.assign({}, domNode.$appDecorators.view.bind, domViewAttributes, createVars),
+				domNode,
+				vars: Object.assign({}, domNode.$appDecorators.view.bind, createVars, regularDomAttributes),
 				renderer: Handlebars,
 				template: domNode.$appDecorators.view.template[templateName],
 			});
