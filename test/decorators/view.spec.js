@@ -162,8 +162,9 @@ describe('@view decorator', () => {
 		// test
 		it('should render the right template on using @view and @view.bind', () => {
 
-			// domNode testing
+			// should create template with default vars (see above @view.bind inside Orange)
 			let orange_0 = Orange.create();
+			// should override @view.bind default vars inside Oragen
 			let orange_1 = Orange.create({city: 'New York', xyz: 7777});
 			let orange_2 = Orange.create({name: 'A-1', city: 'B-1', country: 'C-1'});
 			let orange_3 = Orange.create({name: 'A-2', city: 'B-2', country: 'C-2', phone: 9999});
