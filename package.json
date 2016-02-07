@@ -34,34 +34,33 @@
     "mixin"
   ],
   "devDependencies": {
-    "eslint": "2.0.0-alpha-2",
-    "jspm": "0.16.19",
-    "jspm-github": "0.13.10",
-    "karma": "0.13.16",
+    "jspm": "0.16.27",
+    "eslint": "2.0.0-rc.0",
+    "jspm-github": "0.14.3",
+    "karma": "0.13.19",
     "karma-chrome-launcher": "0.2.2",
     "karma-firefox-launcher": "0.1.7",
     "karma-jspm": "2.0.2",
     "karma-mocha": "0.2.1",
     "karma-safari-launcher": "0.1.1",
     "karma-should": "1.0.0",
-    "mocha": "2.3.4",
-    "should": "8.0.2"
+    "mocha": "2.4.5",
+    "should": "8.2.1"
   },
   "jspm": {
     "dependencies": {
       "handlebars": "github:components/handlebars.js@4.0.5",
       "immutable": "npm:immutable@3.7.6",
-      "jquery": "github:components/jquery@2.1.4",
-      "seamless-immutable": "npm:seamless-immutable@4.1.1",
-      "sinon": "npm:sinon@1.17.2"
+      "core-js": "npm:core-js@2.0.3"
     },
     "devDependencies": {
-      "babel": "npm:babel-core@5.8.34",
-      "babel-runtime": "npm:babel-runtime@5.8.34",
-      "core-js": "npm:core-js@2.0.0",
-      "es6-module-loader": "npm:es6-module-loader@0.17.9",
-      "should": "npm:should@8.0.2",
-      "systemjs": "npm:systemjs@0.19.9"
+      "babel": "npm:babel-core@5.8.35",
+      "babel-runtime": "npm:babel-runtime@5.8.35",
+      "es6-module-loader": "npm:es6-module-loader@0.17.10",
+      "should": "npm:should@8.2.1",
+      "sinon": "npm:sinon@1.17.3",
+      "systemjs": "npm:systemjs@0.19.20",
+      "jquery": "github:components/jquery@2.2.0"
     }
   }
 }
