@@ -18,6 +18,7 @@ module.exports = function (config) {
 	    ],
 		browsers: [
 			'Chrome',
+			'Firefox',
 			'FirefoxEnableWebComponents',
 		],
 		customLaunchers: {
@@ -41,6 +42,7 @@ module.exports = function (config) {
 			],
 			serveFiles: [
 				// internal libs/files
+				'src/bootstrap.js',
 				'src/app-decorators.js',
 				'src/decorators/*.js',
 				'src/libs/*.js',

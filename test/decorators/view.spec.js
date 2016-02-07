@@ -70,8 +70,7 @@ describe('@view decorator', () => {
 	  		$('#view-decorator').remove();
 		});
 
-		// test
-		it('should also create a element if element created from out of dom', () => {
+		it('should also create a element if element created from out of dom', (done) => {
 
 			// decorate
 			@view(`<span>{{n}}</span><p>{{p}}</p>`)
@@ -86,19 +85,27 @@ describe('@view decorator', () => {
 				}
 			}
 
+
 			// First test
 			let $vc = $('#view-decorator');
 			$vc.append('<com-serkan></com-serkan><com-serkan></com-serkan>');
-			$vc.find('com-serkan').get(0).outerHTML.should.equal('<com-serkan><span>Hello</span><p>World</p></com-serkan>');
 
-			// Second test
-			$vc.find('com-serkan').get(0).p = 'Mars';
-			$vc.find('com-serkan').get(0).outerHTML.should.equal('<com-serkan><span>Hello</span><p>Mars</p></com-serkan>');
-			$vc.find('com-serkan').get(1).outerHTML.should.equal('<com-serkan><span>Hello</span><p>World</p></com-serkan>');
+			// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
+			setTimeout(() => {
+
+				$vc.find('com-serkan').get(0).outerHTML.should.equal('<com-serkan><span>Hello</span><p>World</p></com-serkan>');
+
+				// Second test
+				$vc.find('com-serkan').get(0).p = 'Mars';
+				$vc.find('com-serkan').get(0).outerHTML.should.equal('<com-serkan><span>Hello</span><p>Mars</p></com-serkan>');
+				$vc.find('com-serkan').get(1).outerHTML.should.equal('<com-serkan><span>Hello</span><p>World</p></com-serkan>');
+
+				done();
+			}, 0);
 
 		});
 
-		it('should also create a element if element created from out of dom', () => {
+		it('should also create a element if element created from out of dom', (done) => {
 
 			// decorate
 			@view(`<span>{{uid}}.)<b>{{class}}</b>{{b}}</span><p>{{c}}</p>`)
@@ -111,28 +118,42 @@ describe('@view decorator', () => {
 				<com-fire uid="2" class="Second" @view.bind.b="Whats" @view.bind.c="up!"></com-fire>
 			`);
 
-			$vc.find('com-fire').get(0).outerHTML.should.equal('<com-fire uid="1" class="First"><span>1.)<b>First</b>Thats</span><p>awesome!</p></com-fire>');
-			$vc.find('com-fire').get(1).outerHTML.should.equal('<com-fire uid="2" class="Second"><span>2.)<b>Second</b>Whats</span><p>up!</p></com-fire>');
+			// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
+			setTimeout(() => {
 
-			$vc.find('com-fire').get(1).c = 'on!';
-			$vc.find('com-fire').get(1).outerHTML.should.equal('<com-fire uid="2" class="Second"><span>2.)<b>Second</b>Whats</span><p>on!</p></com-fire>');
+				$vc.find('com-fire').get(0).outerHTML.should.equal('<com-fire uid="1" class="First"><span>1.)<b>First</b>Thats</span><p>awesome!</p></com-fire>');
+				$vc.find('com-fire').get(1).outerHTML.should.equal('<com-fire uid="2" class="Second"><span>2.)<b>Second</b>Whats</span><p>up!</p></com-fire>');
 
-			// should not render because uid is not a @view property
-			$vc.find('com-fire').get(1).uid = 333;
-			$vc.find('com-fire').get(1).outerHTML.should.equal('<com-fire uid="2" class="Second"><span>2.)<b>Second</b>Whats</span><p>on!</p></com-fire>');
+				$vc.find('com-fire').get(1).c = 'on!';
+				$vc.find('com-fire').get(1).outerHTML.should.equal('<com-fire uid="2" class="Second"><span>2.)<b>Second</b>Whats</span><p>on!</p></com-fire>');
+
+				// should not render because uid is not a @view property
+				$vc.find('com-fire').get(1).uid = 333;
+				$vc.find('com-fire').get(1).outerHTML.should.equal('<com-fire uid="2" class="Second"><span>2.)<b>Second</b>Whats</span><p>on!</p></com-fire>');
+
+				done();
+
+			}, 0);
 
 		});
 
-		it('should render template if call domNode.render directly or over domNode.$.view.render', () => {
+		it('should render template if call domNode.render directly or over domNode.$.view.render', (done) => {
 
 			let $vc = $('#view-decorator');
 			$vc.append(`<com-serkan></com-serkan>`);
 
-			$vc.find('com-serkan').get(0).render({n: 'Cool', p: 'man!'});
-			$vc.find('com-serkan').get(0).outerHTML.should.equal('<com-serkan><span>Cool</span><p>man!</p></com-serkan>');
+			// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
+			setTimeout(() => {
 
-			$vc.find('com-serkan').get(0).$.view.render({n: 'Hey', p: 'there!'});
-			$vc.find('com-serkan').get(0).outerHTML.should.equal('<com-serkan><span>Hey</span><p>there!</p></com-serkan>');
+				$vc.find('com-serkan').get(0).render({n: 'Cool', p: 'man!'});
+				$vc.find('com-serkan').get(0).outerHTML.should.equal('<com-serkan><span>Cool</span><p>man!</p></com-serkan>');
+
+				$vc.find('com-serkan').get(0).$.view.render({n: 'Hey', p: 'there!'});
+				$vc.find('com-serkan').get(0).outerHTML.should.equal('<com-serkan><span>Hey</span><p>there!</p></com-serkan>');
+
+				done();
+
+			}, 0);
 
 		})
 

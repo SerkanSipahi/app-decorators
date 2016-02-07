@@ -51,18 +51,19 @@
   },
   "jspm": {
     "dependencies": {
+      "core-js": "npm:core-js@2.0.3",
       "handlebars": "github:components/handlebars.js@4.0.5",
       "immutable": "npm:immutable@3.7.6",
-      "core-js": "npm:core-js@2.0.3"
+      "webcomponents": "github:webcomponents/webcomponentsjs@0.7.20"
     },
     "devDependencies": {
       "babel": "npm:babel-core@5.8.35",
       "babel-runtime": "npm:babel-runtime@5.8.35",
       "es6-module-loader": "npm:es6-module-loader@0.17.10",
+      "jquery": "github:components/jquery@2.2.0",
       "should": "npm:should@8.2.1",
       "sinon": "npm:sinon@1.17.3",
-      "systemjs": "npm:systemjs@0.19.20",
-      "jquery": "github:components/jquery@2.2.0"
+      "systemjs": "npm:systemjs@0.19.20"
     }
   }
 }

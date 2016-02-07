@@ -332,10 +332,15 @@ describe('Class CustomElement', () => {
 			yellow.$.createdCallback.should.be.true();
 		});
 
-		it('should call attachedCallback on append instance to dom', () => {
+		it('should call attachedCallback on append instance to dom', (done) => {
 			let yellow = Yellow.create();
 			document.body.appendChild(yellow);
-			yellow.$.attachedCallback.should.be.true();
+
+			// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
+			setTimeout(() => {
+				yellow.$.attachedCallback.should.be.true();
+				done();
+			}, 0);
 		});
 
 		it('should call attributeChangedCallback if set attribute', () => {
@@ -345,12 +350,17 @@ describe('Class CustomElement', () => {
 			yellow.$.attributeChangedCallback.newVal.should.be.equal('111');
 		});
 
-		it('should call detachedCallback on deleted from dom', () => {
+		it.skip('should call detachedCallback on deleted from dom', (done) => {
 			let yellow = Yellow.create();
 			document.body.appendChild(yellow);
-			yellow.classList.add('for-deleting');
-			yellow.parentNode.removeChild(yellow);
-			yellow.$.detachedCallback.should.be.true();
+
+			// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
+			setTimeout(() => {
+				yellow.classList.add('for-deleting');
+				yellow.parentNode.removeChild(yellow);
+				yellow.$.detachedCallback.should.be.true();
+				done();
+			}, 0);
 		});
 
 		it('should return static properties', () => {
