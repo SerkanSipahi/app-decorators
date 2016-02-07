@@ -1,6 +1,7 @@
 
 import View from 'src/libs/view';
 import Handlebars from 'handlebars';
+import Immutable from 'immutable';
 
 describe('View Class', () => {
 
