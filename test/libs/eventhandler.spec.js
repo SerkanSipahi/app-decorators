@@ -27,7 +27,7 @@ describe('Eventhandler Class', () => {
 	let koo = function koo(){};
 	let naz = function naz(){};
 
-	describe('Evenhandler.prototype._get', () => {
+	describe('Evenhandler.prototype.getHandlers', () => {
 
 		it('should return callback/s by given event', () => {
 
@@ -45,12 +45,12 @@ describe('Eventhandler Class', () => {
 			});
 
 			// test
-			eventHandler._get('a').should.have.length(2);
-			eventHandler._get('b').should.have.length(2);
-			eventHandler._get('c').should.have.length(1);
-			eventHandler._get('d').should.have.length(1);
+			eventHandler.getHandlers('a').should.have.length(2);
+			eventHandler.getHandlers('b').should.have.length(2);
+			eventHandler.getHandlers('c').should.have.length(1);
+			eventHandler.getHandlers('d').should.have.length(1);
 			// negativ test
-			let testObject = { f: eventHandler._get('f') };
+			let testObject = { f: eventHandler.getHandlers('f') };
 			testObject.should.have.propertyByPath('f').eql(null);
 
 		});
@@ -164,7 +164,7 @@ describe('Eventhandler Class', () => {
 
 			// setup tests (spying)
 			// test click
-			clickCallbacks = eventHandler._get('click');
+			clickCallbacks = eventHandler.getHandlers('click');
 			sinon.spy(clickCallbacks[0], ".foo");
 			sinon.spy(clickCallbacks[1], ".bar");
 			sinon.spy(clickCallbacks[2], ".baz");
@@ -191,17 +191,17 @@ describe('Eventhandler Class', () => {
 
 			// test removeEvent
 			eventHandler.removeEvent('click .foo');
-			eventHandler._get('click').should.have.length(2);
+			eventHandler.getHandlers('click').should.have.length(2);
 
 			eventHandler.removeEvent('mouseup .boo');
-			eventHandler._get('mouseup').should.have.length(1);
+			eventHandler.getHandlers('mouseup').should.have.length(1);
 
 			eventHandler.removeEvent('click');
-			let clickTestObject = { click: eventHandler._get('click') };
+			let clickTestObject = { click: eventHandler.getHandlers('click') };
 			clickTestObject.should.have.propertyByPath('click').eql(null);
 
 			eventHandler.removeEvent('mouseup .koo');
-			let mouseupTestObject = { mouseup: eventHandler._get('mouseup') };
+			let mouseupTestObject = { mouseup: eventHandler.getHandlers('mouseup') };
 			mouseupTestObject.should.have.propertyByPath('mouseup').eql(null);
 
 			eventHandler.removeEvent('mousedown');

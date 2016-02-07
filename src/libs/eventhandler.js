@@ -147,7 +147,7 @@ export default class Eventhandler {
 	 * @param  {String} eventType
 	 * @return {Array|null}
 	 */
-	_get(eventType){
+	getHandlers(eventType){
 		return this.config.events[eventType] || null;
 	}
 
