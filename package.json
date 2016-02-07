@@ -14,6 +14,7 @@
   },
   "homepage": "https://github.com/SerkanSipahi/app-decorators#readme",
   "scripts": {
+    "postinstall": "npm install jspm@0.16.27 && node_modules/.bin/jspm install npm:core-js@2.0.3 github:components/handlebars.js@4.0.5 npm:immutable@3.7.6 github:webcomponents/webcomponentsjs@0.7.20",
     "test": "./node_modules/.bin/karma start --browsers FirefoxEnableWebComponents --single-run"
   },
   "keywords": [
