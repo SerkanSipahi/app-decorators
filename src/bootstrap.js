@@ -3,6 +3,9 @@
  * Load polyfills
  */
 
+// load Webcomponents
+import Webcomponents from './libs/dependencies';
+
 // Load and assign needed polyfills for Object
 import { corejs } from './libs/dependencies';
 !Object.assign  ? Object.assign  = corejs.Object.assign  : null;

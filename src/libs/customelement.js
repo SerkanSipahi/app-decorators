@@ -1,7 +1,6 @@
 
 // external libs
-import { Object, Reflect } from 'core-js/library';
-import Immutable from 'immutable';
+import { Immutable } from './dependencies';
 
 
 export default class CustomElement {
