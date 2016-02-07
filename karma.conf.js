@@ -48,6 +48,7 @@ module.exports = function (config) {
 				// external libs/files
 				'jspm_packages/github/components/handlebars.js@4.0.5/handlebars.js',
 				'jspm_packages/npm/immutable@3.7.6/dist/immutable.js',
+				'jspm_packages/npm/should@8.0.2/lib/should.js',
 			]
 		},
 		autoWatch: true,
