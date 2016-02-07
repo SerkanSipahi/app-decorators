@@ -1,7 +1,4 @@
 
-// external libs
-import { Object } from 'core-js/library';
-
 // internal libs
 import uuid from '../helpers/uuid';
 

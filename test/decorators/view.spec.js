@@ -1,7 +1,6 @@
 
 // internal libs
 import { component, view } from 'src/app-decorators';
-import { Object } from 'core-js/library';
 
 // external libs
 import $ from 'jquery';

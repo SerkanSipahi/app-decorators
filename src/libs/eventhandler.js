@@ -1,6 +1,4 @@
 
-import { Object } from 'core-js/library';
-
 export default class Eventhandler {
 
 	constructor(config = {}) {

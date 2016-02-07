@@ -3,8 +3,7 @@
 import View from '../libs/view';
 
 // external libs
-import { Object } from 'core-js/library';
-import Handlebars from 'handlebars';
+import { Handlebars } from '../libs/dependencies';
 
 /*****************************************
  * ######### Public Decorators ###########
