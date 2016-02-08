@@ -31,7 +31,7 @@ jspm install npm:app-decorators
 ##### For Classes, Functions and Methods
 * [@component](#component)
 * [@view](#view)
-* [@on](#on) : in progress
+* [@on](#on)
 * [@style](#style) : in progress
 * [@model](#model) : in progress
 * [@modelpool](#modelpool) : in progress
@@ -291,7 +291,7 @@ let item = Item.create({
 document.body.appendChild(item);
 ```
 
-### @on [ in progress/planing ]
+### @on
 ```js
 import { component, view, on } from 'app-decorators';
 
@@ -312,14 +312,6 @@ class Item {
     }
     @on('click .delete') deleteItem( event ){
         console.log('on click .add');
-    }
-
-    // alternate style
-    @on.click('.add') onAdd( event ){
-        console.log('on click .add');
-    }
-    @on.mouseenter('.add') onMouseenter( event ){
-        console.log('on mouseenter .add');
     }
 
 }
@@ -446,16 +438,6 @@ class SpecialButton {
 </com-item>
  */
 
-```
-
-### @style
-```js
-// in progress
-```
-
-### @router
-```js
-// in progress
 ```
 
 ## Tests
