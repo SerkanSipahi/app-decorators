@@ -34,12 +34,6 @@
     "webapp",
     "mixin"
   ],
-  "dependencies": {
-      "core-js": "2.0.0",
-      "webcomponents.js": "0.7.20",
-      "handlebars": "4.0.5",
-      "immutable": "3.7.6"
-  },
   "devDependencies": {
     "jspm": "0.16.27",
     "eslint": "2.0.0-rc.0",
