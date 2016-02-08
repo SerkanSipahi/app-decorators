@@ -1,5 +1,5 @@
 
-export { default as corejs } from '../../jspm_packages/npm/core-js@2.0.0/library/index';
-export { default as Handlebars } from '../../jspm_packages/github/components/handlebars.js@4.0.5/handlebars';
-export { default as Immutable } from '../../jspm_packages/npm/immutable@3.7.6/dist/immutable';
-export { default as Webcomponents } from '../../jspm_packages/github/webcomponents/webcomponentsjs@0.7.20/webcomponents-lite';
+export { default as corejs } from '../../node_modules/core-js/library/index';
+export { default as Handlebars } from '../../node_modules/handlebars/dist/handlebars';
+export { default as Immutable } from '../../node_modules/immutable/dist/immutable';
+export { default as Webcomponents } from '../../node_modules/webcomponents.js/webcomponents-lite';

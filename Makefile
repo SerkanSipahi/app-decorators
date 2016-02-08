@@ -16,7 +16,7 @@ node_modules:
 jspm_packages:
 	$(jspm) install
 
-test: node_modules jspm_packages
+test:
 	$(karma) start
 
 clean:
@@ -25,5 +25,5 @@ clean:
 jspm  = ./node_modules/.bin/jspm
 karma = ./node_modules/.bin/karma
 
-.PHONY: install test clean;
+.PHONY: install test clean node_modules jspm_packages;
 MAKEFLAGS = -s

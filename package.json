@@ -14,7 +14,6 @@
   },
   "homepage": "https://github.com/SerkanSipahi/app-decorators#readme",
   "scripts": {
-    "postinstall": "node_modules/.bin/jspm install -y npm:core-js@2.0.3 github:components/handlebars.js@4.0.5 npm:immutable@3.7.6 github:webcomponents/webcomponentsjs@0.7.20",
     "test": "./node_modules/.bin/karma start --browsers FirefoxEnableWebComponents --single-run"
   },
   "keywords": [
@@ -35,9 +34,13 @@
     "mixin"
   ],
   "dependencies": {
-      "jspm": "0.16.27"
+      "core-js": "2.0.0",
+      "webcomponents.js": "0.7.20",
+      "handlebars": "4.0.5",
+      "immutable": "3.7.6"
   },
   "devDependencies": {
+    "jspm": "0.16.27",
     "eslint": "2.0.0-rc.0",
     "jspm-github": "0.14.3",
     "karma": "0.13.19",
@@ -53,6 +56,11 @@
     "sinon": "1.17.3"
   },
   "jspm": {
+    "dependencies": {
+      "handlebars": "github:components/handlebars.js@4.0.5",
+      "immutable": "npm:immutable@3.7.6",
+      "core-js": "npm:core-js@2.0.0"
+    },
     "devDependencies": {
       "babel": "npm:babel-core@5.8.35",
       "babel-runtime": "npm:babel-runtime@5.8.35",
