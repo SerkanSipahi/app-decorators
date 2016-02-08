@@ -1,7 +1,7 @@
 
 import View from 'src/libs/view';
-import Handlebars from 'handlebars';
-import Immutable from 'immutable';
+import { Handlebars } from '../../src/libs/dependencies';
+import { Immutable } from '../../src/libs/dependencies';
 
 describe('View Class', () => {
 
