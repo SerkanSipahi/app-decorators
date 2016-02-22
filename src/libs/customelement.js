@@ -2,8 +2,16 @@
 // external libs
 import { Immutable } from './dependencies';
 
+// internal libs
+import Elements from '../datas/elements';
 
 export default class CustomElement {
+
+	/**
+	 * Default prefix
+	 * @type {String}
+	 */
+	static defaultPrefix = 'com';
 
 	/**
 	 * Register an element by give ES5/ES6 Class
@@ -11,21 +19,35 @@ export default class CustomElement {
 	 * @param  {Element} DOMElement
 	 * @return {undefined}
 	 */
-	static register(ComponentClass, DOMElement = HTMLElement, prefix) {
+	static register(ComponentClass, config = {}) {
+
+		let componentName = config.name || null;
+		let componentExtends = config.extends || null;
+		let componentPrefix = config.prefix || CustomElement.defaultPrefix;
+
+		let DOMElement = HTMLElement;
+		if(componentExtends !== null) {
+			DOMElement = Elements[componentExtends];
+		}
 
 		// extract useful properties
-		let componentClassName  = CustomElement.getClassName(ComponentClass);
-		let validComponentName  = CustomElement.convertToValidComponentName(componentClassName, prefix);
+		if(componentName === null) {
+			let componentClassName = CustomElement.getClassName(ComponentClass);
+			componentName = CustomElement.convertToValidComponentName(componentClassName, componentPrefix);
+		}
 
 		// buildComponent
 		DOMElement = CustomElement.buildComponent(ComponentClass, DOMElement);
 
 		// register element
 		let customCallbacks = CustomElement.getCustomCallbacks();
-		let ComElement = document.registerElement(validComponentName, {
+		let registerElementOptions = {
 			prototype: Object.create(DOMElement.prototype, customCallbacks),
-			// extends: 'div',
-		});
+		};
+		if(componentExtends !== null) {
+			Object.assign(registerElementOptions, { extends: componentName});
+		}
+		let ComElement = document.registerElement(componentName, registerElementOptions);
 
 		// create static factory method for creating dominstance
 		ComponentClass.create = function(create_vars){
@@ -36,7 +58,7 @@ export default class CustomElement {
 
 			let classof = Object.classof(create_vars);
 			if(!(classof === 'Object' || classof === 'Undefined')) {
-				throw new Error('Passed Object must be an object .create({}) or nothing .create()');
+				throw new Error('Passed Object must be an object or undefined');
 			}
 
 			// make sure passed object is immutable (no reference)

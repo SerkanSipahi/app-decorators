@@ -7,8 +7,8 @@ import CustomElement from '../libs/customelement';
  * @param  {Any} ...args
  * @return {Function}
  */
-export default function component(DOMElement, prefix) {
+export default function component(config) {
 	return function decorator(ComponentClass) {
-		CustomElement.register(ComponentClass, DOMElement, prefix);
+		CustomElement.register(ComponentClass, config);
 	}
 }
