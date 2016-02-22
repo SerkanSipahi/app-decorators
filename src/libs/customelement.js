@@ -30,7 +30,7 @@ export default class CustomElement {
 			DOMElement = Elements[componentExtends];
 		}
 
-		// extract useful properties
+		// create componentname if config.name is not passed
 		if(componentName === null) {
 			let componentClassName = CustomElement.getClassName(ComponentClass);
 			componentName = CustomElement.convertToValidComponentName(componentClassName, componentPrefix);
@@ -45,7 +45,7 @@ export default class CustomElement {
 			prototype: Object.create(DOMElement.prototype, customCallbacks),
 		};
 		if(componentExtends !== null) {
-			Object.assign(registerElementOptions, { extends: componentName});
+			Object.assign(registerElementOptions, { extends: componentExtends});
 		}
 		let ComElement = document.registerElement(componentName, registerElementOptions);
 
