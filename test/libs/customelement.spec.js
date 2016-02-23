@@ -123,7 +123,7 @@ describe('Class CustomElement', () => {
 
 		it('should throw an error', () => {
 			(function(){ Noneobject.create([]) })
-				.should.throw('Passed Object must be an object .create({}) or nothing .create()');
+				.should.throw('Passed Object must be an object or undefined');
 		});
 
 	});
@@ -141,20 +141,6 @@ describe('Class CustomElement', () => {
 		it('should return by default instanceof HTMLElement if no second argument passed', () => {
 			let red = Red.create();
 			red.should.be.instanceOf(HTMLElement);
-		});
-
-	});
-
-	describe('method register passed class gray with custom prefix', () => {
-
-		class Gray {
-		}
-
-		CustomElement.register(Gray, HTMLElement, 'x');
-
-		it('should return custom tag name x-gray', () => {
-			let gray = Gray.create();
-			gray.outerHTML.should.equal('<x-gray></x-gray>');
 		});
 
 	});

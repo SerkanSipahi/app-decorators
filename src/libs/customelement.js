@@ -23,17 +23,19 @@ export default class CustomElement {
 
 		let componentName = config.name || null;
 		let componentExtends = config.extends || null;
-		let componentPrefix = config.prefix || CustomElement.defaultPrefix;
 
 		let DOMElement = HTMLElement;
 		if(componentExtends !== null) {
 			DOMElement = Elements[componentExtends];
+			if(!DOMElement){
+				throw new Error(`"${componentExtends}" is not valid selector name or not exists in src/datas/elements.js`);
+			}
 		}
 
 		// create componentname if config.name is not passed
 		if(componentName === null) {
 			let componentClassName = CustomElement.getClassName(ComponentClass);
-			componentName = CustomElement.convertToValidComponentName(componentClassName, componentPrefix);
+			componentName = CustomElement.convertToValidComponentName(componentClassName, CustomElement.defaultPrefix);
 		}
 
 		// buildComponent
