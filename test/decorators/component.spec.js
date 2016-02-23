@@ -38,4 +38,18 @@ describe('@component decorator', () => {
 		baz.outerHTML.should.equal('<my-bier></my-bier>');
 	});
 
+	// *********************** //
+
+	@component({
+		name: 'my-qux',
+		extends: 'form',
+	})
+	class Qux {}
+
+	it('should instance of HTMLFormElement + custom componentname', () => {
+		let qux = Qux.create();
+		qux.should.be.instanceOf(HTMLFormElement);
+		qux.outerHTML.should.equal('<form is="my-qux"></form>');
+	});
+
 });
