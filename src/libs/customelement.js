@@ -24,6 +24,8 @@ export default class CustomElement {
 		let componentName = config.name || null;
 		let componentExtends = config.extends || null;
 
+		// assign to DOMElement right Element by passed "extends" property
+		// e.g. if passed is img its return HTMLImageElement or on form HTMLFormElement
 		let DOMElement = HTMLElement;
 		if(componentExtends !== null) {
 			DOMElement = Elements[componentExtends];
