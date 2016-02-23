@@ -32,7 +32,7 @@ describe('@component decorator', () => {
 	})
 	class Baz {}
 
-	it('should instance of HTMLFormElement + custom prefix for @component', () => {
+	it('should instance of HTMLElement + custom componentname', () => {
 		let baz = Baz.create();
 		baz.should.be.instanceOf(HTMLElement);
 		baz.outerHTML.should.equal('<my-bier></my-bier>');
