@@ -1,5 +1,6 @@
 
 import { component } from 'src/app-decorators';
+import $ from 'jquery';
 
 describe('@component decorator', () => {
 
@@ -17,12 +18,20 @@ describe('@component decorator', () => {
 	@component({
 		extends: 'img'
 	})
-	class Bar {}
+	class Bar {
+		created() {
+			this.src = 'path/to/picture.png';
+		}
+	}
 
 	it('should instance of HTMLImageElement', () => {
 		let bar = Bar.create();
 		bar.should.be.instanceOf(HTMLImageElement);
-		bar.outerHTML.should.equal('<img is="com-bar">');
+		try {
+			bar.outerHTML.should.equal('<img src="path/to/picture.png" is="com-bar">');
+		} catch(e){
+			bar.outerHTML.should.equal('<img is="com-bar" src="path/to/picture.png">');
+		}
 	});
 
 	// *********************** //
@@ -44,12 +53,32 @@ describe('@component decorator', () => {
 		name: 'my-qux',
 		extends: 'form',
 	})
-	class Qux {}
+	class Qux {
+		created(){
+			this.innerHTML = 'Hello World!';
+		}
+	}
 
 	it('should instance of HTMLFormElement + custom componentname', () => {
 		let qux = Qux.create();
 		qux.should.be.instanceOf(HTMLFormElement);
-		qux.outerHTML.should.equal('<form is="my-qux"></form>');
+		qux.outerHTML.should.equal('<form is="my-qux">Hello World!</form>');
 	});
+
+	it('should create a element by passed @component config (name, extends) from out of dom', (done) => {
+
+		$('body').append('<form is="my-qux"></form>');
+
+		// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
+		setTimeout(() => {
+			// test
+			$('form[is="my-qux"]').get(0).outerHTML.should.equal('<form is="my-qux">Hello World!</form>');
+			//cleanup
+			$('form[is="my-qux"]').remove();
+			done();
+		}, 0);
+
+	});
+
 
 });

@@ -154,7 +154,7 @@ describe('@view decorator', () => {
 
 			}, 0);
 
-		})
+		});
 
 		class Core {
 			x = 1;

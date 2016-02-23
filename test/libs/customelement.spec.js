@@ -170,6 +170,7 @@ describe('Class CustomElement', () => {
 		it('should return instanceof HTMLFormElement', () => {
 			let green = Green.create();
 			green.should.be.instanceOf(HTMLFormElement);
+			green.outerHTML.should.equal('<form is="com-green"></form>');
 		});
 
 		it('should called foo bar baz', () => {
