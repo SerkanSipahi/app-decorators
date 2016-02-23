@@ -18,7 +18,7 @@ describe('@on decorator', () => {
 		it('should work in combination', () => {
 
 			@view(`<div class="foo">Foo</div>`)
-			@component(HTMLElement)
+			@component()
 			class Snack {
 
 				clickFooFuncCalled = false;

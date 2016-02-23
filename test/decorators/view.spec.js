@@ -18,7 +18,7 @@ describe('@view decorator', () => {
 
 		it('should works as accepted ', (done) => {
 
-			@component(HTMLElement)
+			@component()
 			class Manually {}
 
 			let target = Manually.prototype;
@@ -73,7 +73,7 @@ describe('@view decorator', () => {
 
 			// decorate
 			@view(`<span>{{n}}</span><p>{{p}}</p>`)
-			@component(HTMLElement)
+			@component()
 			class serkan {
 
 				@view.bind n = 'Hello';
@@ -108,7 +108,7 @@ describe('@view decorator', () => {
 
 			// decorate
 			@view(`<span>{{uid}}.)<b>{{class}}</b>{{b}}</span><p>{{c}}</p>`)
-			@component(HTMLElement)
+			@component()
 			class Fire {}
 
 			let $vc = $('#view-decorator');
@@ -164,7 +164,7 @@ describe('@view decorator', () => {
 
 		// decorate
 		@view(`<div>{{name}}</div><div>{{city}}</div><div>{{country}}</div>`)
-		@component(HTMLElement)
+		@component()
 		class Orange extends Core {
 
 			@view.bind name = 'A-Df';

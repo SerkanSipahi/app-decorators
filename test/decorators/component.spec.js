@@ -22,7 +22,7 @@ describe('@component decorator', () => {
 	it('should instance of HTMLImageElement', () => {
 		let bar = Bar.create();
 		bar.should.be.instanceOf(HTMLImageElement);
-		bar.outerHTML.should.equal('<img is="com-bar"></img>');
+		bar.outerHTML.should.equal('<img is="com-bar">');
 	});
 
 	// *********************** //

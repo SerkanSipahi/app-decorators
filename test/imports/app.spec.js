@@ -8,7 +8,7 @@ import $ from 'jquery';
 
 describe('imported component', () => {
 
-	@component(HTMLElement)
+	@component()
 	class Col {
 
 		item = { name: 'A', content: 1 };

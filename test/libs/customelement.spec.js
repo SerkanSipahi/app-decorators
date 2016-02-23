@@ -179,7 +179,7 @@ describe('Class CustomElement', () => {
 			}
 		}
 
-		CustomElement.register(Green, HTMLFormElement);
+		CustomElement.register(Green, { extends: 'form'});
 
 		it('should return instanceof HTMLFormElement', () => {
 			let green = Green.create();
@@ -309,7 +309,7 @@ describe('Class CustomElement', () => {
 			}
 		}
 
-		CustomElement.register(Yellow, HTMLFormElement);
+		CustomElement.register(Yellow, { extends: 'form' });
 
 		it('should return method name on call method x', () => {
 			let yellow = Yellow.create();
