@@ -26,7 +26,7 @@ export default {
 	'h': w.HTMLHeadingElement,
 	'html': w.HTMLHtmlElement,
 	'iframe': w.HTMLIFrameElement,
-	'image': w.HTMLImageElement,
+	'img': w.HTMLImageElement,
 	'input': w.HTMLInputElement,
 	'keygen': w.HTMLKeygenElement,
 	'li': w.HTMLLIElement,
