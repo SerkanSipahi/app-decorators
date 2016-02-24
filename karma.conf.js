@@ -11,6 +11,7 @@ module.exports = function (config) {
 		plugins: [
 			'karma-chrome-launcher',
 			'karma-firefox-launcher',
+			'karma-safari-launcher',
 			'karma-mocha',
 			'karma-sinon',
 			'karma-should',
@@ -19,6 +20,7 @@ module.exports = function (config) {
 		browsers: [
 			'Chrome',
 			'Firefox',
+			'Safari',
 			'FirefoxEnableWebComponents',
 		],
 		customLaunchers: {

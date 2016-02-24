@@ -34,6 +34,16 @@ export default class CustomElement {
 			}
 		}
 
+		/**
+		 * Safari´s Nativ Element Class it not a function.
+		 * We have to map them to a function otherwise it throw an error.
+		 */
+		if (typeof DOMElement !== 'function'){
+		    var _Element = function(){};
+		    _Element.prototype = DOMElement.prototype;
+		    DOMElement = _Element;
+		}
+
 		// create componentname if config.name is not passed
 		if(componentName === null) {
 			let componentClassName = CustomElement.getClassName(ComponentClass);
@@ -348,7 +358,7 @@ export default class CustomElement {
 	 */
 	static getStaticMethods(ClassComponent) {
 		let constructor = CustomElement.getConstructor(ClassComponent);
-		return CustomElement.extractProperties(constructor, /length|name|prototype/);
+		return CustomElement.extractProperties(constructor, /length|name|prototype|arguments|caller/);
 	}
 
 	/**

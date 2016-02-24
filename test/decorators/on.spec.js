@@ -1,5 +1,11 @@
 
+// internal libs
 import { component, view, on } from 'src/app-decorators';
+
+// external libs
+import sinon from 'sinon';
+
+let isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
 
 describe('@on decorator', () => {
 
@@ -21,15 +27,7 @@ describe('@on decorator', () => {
 			@component()
 			class Snack {
 
-				clickFooFuncCalled = false;
-
-				doSomething(arg){
-					this.clickFooFuncCalled = arg;
-				}
-
-				@on('click .foo') clickFoo(){
-					this.doSomething(true);
-				}
+				@on('click .foo') clickFoo(){}
 
 				@on('click .a') onClick_a() {}
 				@on('click .b .c') onClick_bc() {}
@@ -56,8 +54,25 @@ describe('@on decorator', () => {
 			events.should.have.propertyByPath("mousedown").eql(prototype.onMousedown);
 
 			let snack = Snack.create();
+
+			let clickCallbacks = snack.$.eventHandler.getHandlers('click');
+			sinon.spy(clickCallbacks[0], ".foo");
+			sinon.spy(clickCallbacks[1], ".a");
+			sinon.spy(clickCallbacks[2], ".b .c");
+
 			snack.querySelector('.foo').click();
-			snack.clickFooFuncCalled.should.be.true();
+
+			/**
+			 * Its not possible to simulate click on safari but
+			 * its tests manually by real mouseclick and worked well
+			 */
+			if(isSafari) {
+				return;
+			}
+
+			clickCallbacks[0][".foo"].callCount.should.eql(1);
+			clickCallbacks[1][".a"].callCount.should.eql(0);
+			clickCallbacks[2][".b .c"].callCount.should.eql(0);
 
 		});
 
