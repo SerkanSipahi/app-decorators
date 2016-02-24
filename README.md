@@ -3,13 +3,8 @@
 
 ## Getting Started
 
-with npm
 ```
 npm install app-decorators --save
-```
-or git
-```
-git clone https://github.com/SerkanSipahi/app-decorators.git
 ```
 
 Mapping with systemjs
@@ -19,11 +14,6 @@ System.config({
 		"app-decorators": "node_modules/app-decorators/src/app-decorators",
 	}
 });
-```
-
-or jspm (no mapping required it do it automatically)
-```
-jspm install npm:app-decorators
 ```
 
 ## Decorators
@@ -175,7 +165,9 @@ import { component } from 'app-decorators';
  *
  * 2.) As the second argument you can pass your custom prefix
  */
-@component(HTMLImageElement, 'x')
+@component({
+	extends: 'img'
+})
 class Coffee {
 	created({ art }){
 		this.src = 'some/${art}/pic.png';
@@ -194,7 +186,7 @@ document.body.appendChild(coffee);
 
 // will rendered
 /**
-<x-coffee src="some/espresso/pic.png" />
+<img is="com-coffee" src="some/espresso/pic.png" />
 **/
 
 ```
@@ -206,7 +198,9 @@ class Bean {
 	origin = 'africa';
 }
 
-@component(HTMLImageElement, 'x')
+@component({
+	extends: 'img'
+})
 
 // and its possible to extends from other class
 class Coffee extends Bean {
@@ -263,7 +257,7 @@ import { component, view } from 'app-decorators';
 	</div>
 `)
 
-@component(HTMLElement)
+@component()
 class Item {
 
 	// whenever you write in "value" the @view component will
@@ -301,7 +295,7 @@ import { component, view, on } from 'app-decorators';
     <div class="delete">delete</div>
 `)
 
-@component(HTMLElement)
+@component()
 class Item {
 
     @on('click .add') addItem( event ){
@@ -341,7 +335,7 @@ import { component, view, model } from 'app-decorators';
     <div class="country">{{country}}</div>
 `)
 
-@component(HTMLElement)
+@component()
 class Item {
 
     @model.attr @view.bind name;
@@ -427,7 +421,7 @@ class SpecialButton {
 
 /**
 // on submit
-<com-specialbutton type="submit">Click me!</specialbutton>
+<button is="com-specialbutton" type="submit">Click me!</button>
 
 // it changed to "serkan [ update ]"
 
