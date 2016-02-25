@@ -122,7 +122,6 @@ describe('View Class', () => {
 		it('should render accepted template', () => {
 
 			let view = View.create({
-				uuid: 1,
 				domNode: document.createElement('div'),
 				vars: { foo: 'Hello', bar: 'World!' },
 				renderer: Handlebars,

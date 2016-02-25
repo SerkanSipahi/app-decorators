@@ -1,7 +1,4 @@
 
-// internal libs
-import uuid from '../helpers/uuid';
-
 export default class View {
 
 	/**
@@ -32,20 +29,6 @@ export default class View {
 	* @type {RegExp}
 	 */
 	static viewBindRegExp = /^@view\.bind\.(\S+)$/i;
-
-	/**
-	 * constructor
-	 * @return {undefined}
-	 */
-	constructor(){
-		this._uid = uuid();
-	}
-
-	/**
-	 * Unique-Id
-	 * @type {Number}
-	 */
-	_uid = 0;
 
 	/**
 	 * DomNode
@@ -204,10 +187,6 @@ export default class View {
 		}
 
 		this._domNode = domNode;
-	}
-
-	setUniqueId(uid){
-		this._uid = uid;
 	}
 
 	/**
