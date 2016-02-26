@@ -58,7 +58,8 @@ module.exports = function (config) {
 				'node_modules/core-js/**/*.js',
 				'node_modules/handlebars/dist/handlebars.js',
 				'node_modules/immutable/dist/immutable.js',
-				'node_modules/webcomponents.js/webcomponents-lite.js'
+				'node_modules/webcomponents.js/webcomponents-lite.js',
+				'node_modules/pouchdb/dist/pouchdb.js',
 			]
 		},
 		autoWatch: true,
