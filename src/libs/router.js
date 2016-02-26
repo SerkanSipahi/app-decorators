@@ -120,7 +120,7 @@ export default class Router {
 	}
 
 	/**
-	 * stop description
+	 * stop
 	 * @return {Undefined}
 	 */
 	stop(){
@@ -155,8 +155,8 @@ export default class Router {
 	 */
 	_bindInternalEvents(){
 
-		this._eventHandler.on(window, 'popstate', (e) => ::this._forwardingOnIntervalEvents);
-		this._eventHandler.on(document.body, 'click a', (e) => ::this._forwardingOnIntervalEvents);
+		this._eventHandler.on(window, 'popstate', (e) => ::this._forwardingOnIntervalEvent);
+		this._eventHandler.on(document.body, 'click a', (e) => ::this._forwardingOnIntervalEvent);
 
 	}
 
@@ -188,26 +188,18 @@ export default class Router {
 	}
 
 	/**
-	 * [_forwardingOnIntervalEvents description]
+	 * _forwardingOnIntervalEvent
 	 * @param  {Element} target
 	 * @param  {String} type
 	 * @return {Undefined}
 	 */
-	_forwardingOnIntervalEvents({target, type}){
+	_forwardingOnIntervalEvent({target, type}){
 
-		let urlObject = null;
+		let urlObject = this._getUrlObject(document.location.href);
 
-		switch(type) {
-		    case 'popstate':
-		        urlObject = this._getUrlObject(document.location.href);
-		        break;
-		    case 'click':
-				target.preveneDefault();
-		        urlObject = this._getUrlObject(target.href);
-				this._pushState(urlObject.fragment);
-		        break;
-		    default:
-		        throw new Error('Something gone wrong! type does not exists');
+		if(type === 'click') {
+			target.preveneDefault();
+			this._pushState(urlObject.fragment);
 		}
 
 		// replace that with: this._eventhandler.trigger('urlchanged', {..})
@@ -223,7 +215,7 @@ export default class Router {
 	 */
 	_getUrlObject(href){
 		let url = new URL(href);
-		url.fragment = url.href.replace(`${url.protocol}//${url.hostname}`, '');
+		url.fragment = url.href.replace(url.origin, '');
 		return url;
 	}
 
