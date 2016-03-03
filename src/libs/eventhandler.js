@@ -28,17 +28,19 @@ export default class Eventhandler {
 	_init(config){
 
 		/**
+		* Throw error if no element passed
+		*/
+		if(!config.element){
+			throw new Error('Please pass an element. See documentation!');
+		}
+		// Assign element
+		this.config.element = config.element;
+
+		/**
 		 * Throw error if no events passed
 		 */
 		if(!config.events) {
-			throw new Error('Please pass events. See documentation!');
-		}
-
-		/**
-		 * Throw error if no element passed
-		 */
-		if(!config.element){
-			throw new Error('Please pass an element. See documentation!');
+			return;
 		}
 
 		// bind bindObject
@@ -46,14 +48,10 @@ export default class Eventhandler {
 			Eventhandler.bindObjectToEventList(config.events, config.bind);
 		}
 		// group events
-		let groupedEvents = Eventhandler.groupEvents(config.events);
-		// Merge passed config
-		Object.assign(this.config.events, groupedEvents);
-		// Assign element
-		this.config.element = config.element;
+		this.config.events = Eventhandler.groupEvents(config.events);
 
 		// add events eventListener
-		this._addEventCollection(groupedEvents);
+		this._addEventCollection(this.config.events);
 
 	}
 
@@ -135,6 +133,33 @@ export default class Eventhandler {
 	}
 
 	/**
+	 * on
+	 * @param  {String} eventDomain
+	 * @param  {Function} handler
+	 * @return {Undefined}
+	 */
+	on(eventDomain, handler){
+
+		this._addConfigEvents(eventDomain, handler);
+		this._addEvent(this.config.element, type, this.config.events[type]);
+
+	}
+
+	/**
+	 * trigger
+	 * @param  {String} event
+	 * @param  {Any} value
+	 * @return {Undefined}
+	 */
+	trigger(event, value = null){
+
+		this.config.element.dispatchEvent(
+			new Event(event, { detail: value })
+		);
+
+	}
+
+	/**
 	 * Return event callbacks
 	 * @param  {String} eventType
 	 * @return {Array|null}
@@ -161,9 +186,27 @@ export default class Eventhandler {
 	}
 
 	/**
+	 * _addConfigEvents
+	 * @param {String} eventDomain
+	 * @param {Function} handler
+	 */
+	_addConfigEvents(eventDomain, handler){
+
+		let [ type, delegateSelector ] = Eventhandler.prepareEventdomain(eventDomain);
+		if(!this.config.events[type]){
+			this.config.events[type] = [];
+		}
+
+		this.config.events[type].push({
+			[ delegateSelector ]: handler,
+		});
+
+	}
+
+	/**
 	 * Add single event
 	 * @param {HTMLElement} element
-	 * @param {String} eventDomain
+	 * @param {String} type
 	 * @param {Function} callback
 	 */
 	_addEvent(element, type, delegateSelectors) {
