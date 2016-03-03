@@ -59,7 +59,7 @@ export default class Router {
 			back: ::history.back,
 			pushState: ::history.pushState,
 			replaceState: ::history.replaceState,
-			eventHandler: new Eventhandler(),
+			EventHandler: Eventhandler,
 		});
 
 		return router;
@@ -74,14 +74,18 @@ export default class Router {
 	 * @param  {History} replaceState
 	 * @param  {History} forward
 	 * @param  {History} back
-	 * @return {Undefined}
+	 * @return {Router}
 	 */
-	constructor({ routes, eventHandler, pushState, replaceState, forward, back }){
+	constructor({ routes, EventHandler, pushState, replaceState, forward, back }){
 
 		// public
 		Object.assign(this, { forward, back });
 
 		// private
+		this._popstateEventHandler = new EventHandler({ element: window });
+		this._clickEventHandler = new EventHandler({ element: document.body });
+		this._urlchangedEventHandler = new EventHandler({ element: window });
+
 		this._pushState = pushState;
 		this._replaceState = replaceState;
 		this._eventHandler = eventHandler;
@@ -108,6 +112,26 @@ export default class Router {
 	 * @return {Undefined}
 	 */
 	on(routename, route, handler){
+
+	}
+
+	/**
+	 * remove route
+	 * @return {Undefined}
+	 */
+	remove(){
+
+	}
+
+	/**
+	 * redirect
+	 * @return {undefined}
+	 */
+	redirect(){
+
+	}
+
+	constructURL(rouete, params = {}){
 
 	}
 
@@ -145,7 +169,6 @@ export default class Router {
 
 		this._bindInternalEvents();
 		this._bindRoutes(this._routes);
-		this._eventHandler.on(window, 'urlchanged', (e) => ::this.onUrlstate);
 
 	}
 
@@ -155,8 +178,9 @@ export default class Router {
 	 */
 	_bindInternalEvents(){
 
-		this._eventHandler.on(window, 'popstate', (e) => ::this._forwardingOnIntervalEvent);
-		this._eventHandler.on(document.body, 'click a', (e) => ::this._forwardingOnIntervalEvent);
+		this._popstateEventHandler.on('popstate', (e) => ::this._forwardingOnIntervalEvent);
+		this._clickEventHandler.on('click a', (e) => ::this._forwardingOnIntervalEvent);
+		this._urlchangedEventHandler.on('urlchange', (e) => ::this.onUrlstate);
 
 	}
 
@@ -193,18 +217,16 @@ export default class Router {
 	 * @param  {String} type
 	 * @return {Undefined}
 	 */
-	_forwardingOnIntervalEvent({target, type}){
+	_forwardingOnIntervalEvent({ target, type }){
 
 		let urlObject = this._getUrlObject(document.location.href);
 
 		if(type === 'click') {
 			target.preveneDefault();
-			this._pushState(urlObject.fragment);
+			this._pushState(null, null, encodeURI(urlObject.fragment));
 		}
-
-		// replace that with: this._eventhandler.trigger('urlchanged', {..})
-		var event = new Event('urlchanged', { urlstate: urlObject });
-		window.dispatchEvent(event);
+		
+		this._urlchangedEventHandler.trigger('urlchange', urlObject);
 
 	}
 
@@ -214,9 +236,12 @@ export default class Router {
 	 * @return {URL} url
 	 */
 	_getUrlObject(href){
+
 		let url = new URL(href);
 		url.fragment = url.href.replace(url.origin, '');
+
 		return url;
+
 	}
 
 	/**
