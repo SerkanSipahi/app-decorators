@@ -6,12 +6,6 @@ export default class Eventhandler {
 	}
 
 	/**
-	 * Checks the type of given var
-	 * @type {Function}
-	 */
-	classof = Object.classof;
-
-	/**
 	 * Passed config object
 	 * @type {Object}
 	 */
