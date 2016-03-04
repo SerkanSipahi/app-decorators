@@ -24,17 +24,7 @@ describe('Class Router', () => {
 					'/product/detail/{{ id }}?foo={{ a }}&bar={{ b }}#baz={{ c }}': ({ id, b, c }) => {
 
 					}
-				},
-				'checkout::login': {
-					'*?thats={{ it }}*': ({ it }) => {
-
-					}
-				},
-				'checkout::logout': {
-					'/logout(?:token=([0-9])+)?/': ([ number ]) => {
-
-					}
-				},
+				}
 			}
 		});
 
@@ -46,7 +36,7 @@ describe('Class Router', () => {
 
 		});
 
-		router.on('checkout::login', '*?thats={{ it }}*', ({ it }) => {
+		router.on('checkout::login', /.*?thats={{ it }}:*/, ({ it }) => {
 
 		});
 
