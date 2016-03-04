@@ -82,9 +82,9 @@ export default class Router {
 		Object.assign(this, { forward, back });
 
 		// private
-		this._popstateEventHandler = new EventHandler({ element: window });
-		this._clickEventHandler = new EventHandler({ element: document.body });
-		this._urlchangedEventHandler = new EventHandler({ element: window });
+		this._popstateEventHandler = EventHandler.create({ element: window });
+		this._clickEventHandler = EventHandler.create({ element: document.body });
+		this._urlchangedEventHandler = EventHandler.create({ element: window });
 
 		this._pushState = pushState;
 		this._replaceState = replaceState;
