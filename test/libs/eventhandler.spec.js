@@ -11,8 +11,8 @@ describe('Eventhandler Class', () => {
 
 		it('should prepare eventDomain string into event and delegateSelector', () => {
 
-			Eventhandler.prepareEventdomain('click').should.containDeep(['click', null]);;
-			Eventhandler.prepareEventdomain('dbclick .abc').should.containDeep(['dbclick', '.abc']);;
+			Eventhandler.prepareEventdomain('click').should.containDeep(['click', null]);
+			Eventhandler.prepareEventdomain('dbclick .abc').should.containDeep(['dbclick', '.abc']);
 			Eventhandler.prepareEventdomain('mouseup .abc .def').should.containDeep(['mouseup', '.abc .def']);
 
 		});
