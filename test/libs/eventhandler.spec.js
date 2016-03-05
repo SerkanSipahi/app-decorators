@@ -189,6 +189,33 @@ describe('Eventhandler Class', () => {
 			// test bind object
 			bindObject.someMethod.callCount.should.eql(1);
 
+			// cleanup spyies
+			clickCallbacks[0][".foo"].restore();
+			clickCallbacks[1][".bar"].restore();
+			clickCallbacks[2][".baz"].restore();
+			bindObject["someMethod"].restore();
+
+			// test removeEvent
+			eventHandler.removeEvent('click .foo');
+			eventHandler.getHandlers('click').should.have.length(2);
+
+			eventHandler.removeEvent('mouseup .boo');
+			eventHandler.getHandlers('mouseup').should.have.length(1);
+
+			eventHandler.removeEvent('click');
+			let clickTestObject = { click: eventHandler.getHandlers('click') };
+			clickTestObject.should.have.propertyByPath('click').eql(null);
+
+			eventHandler.removeEvent('mouseup .koo');
+			let mouseupTestObject = { mouseup: eventHandler.getHandlers('mouseup') };
+			mouseupTestObject.should.have.propertyByPath('mouseup').eql(null);
+
+			eventHandler.removeEvent('mousedown');
+			Object.keys(eventHandler.config.events).should.have.length(0);
+
+
+		});
+
 			// test removeEvent
 			eventHandler.removeEvent('click .foo');
 			eventHandler.getHandlers('click').should.have.length(2);
