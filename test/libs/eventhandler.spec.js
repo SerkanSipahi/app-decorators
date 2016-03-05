@@ -288,4 +288,29 @@ describe('Eventhandler Class', () => {
 
 	});
 
+	describe('Eventhandler.prototype.trigger', () => {
+
+		it('should trigger registered customevent', () => {
+
+			let triggerPassedValue = null;
+			let customCallback = function(e) { triggerPassedValue = e.detail; };
+			let eventHandler = Eventhandler.create({ element: document.body });
+
+			eventHandler.on('customevent', customCallback);
+			let customeventCallbacks = eventHandler.getHandlers('customevent');
+			sinon.spy(customeventCallbacks[0], null);
+
+			// triger event without passing value
+			eventHandler.trigger('customevent');
+			customeventCallbacks[0][null].callCount.should.eql(1);
+
+			eventHandler.trigger('customevent', 1234);
+			triggerPassedValue.should.equal(1234);
+
+			customeventCallbacks[0][null].restore();
+
+		});
+
+	});
+
 });
