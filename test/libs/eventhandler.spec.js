@@ -216,6 +216,56 @@ describe('Eventhandler Class', () => {
 
 		});
 
+		it('should trigger and remove events if registered over on method', () => {
+
+			let eventHandler = Eventhandler.create({ element, bind: bindObject });
+
+			eventHandler.on("click .foo", clickFoo);
+			eventHandler.on("click .bar", clickBar);
+			eventHandler.on("click .baz", clickBaz);
+			eventHandler.on("mouseup .boo", mouseupBoo);
+			eventHandler.on("mouseup .koo", mouseupKoo);
+			eventHandler.on("mousedown", mouseDown);
+
+			/**
+			 * INFO to the test:
+			 * except click all other native events can not be easily simulated.
+			 * Mouseup, Mousedown was tested manually.
+			 */
+
+			// setup tests (spying)
+			// test click
+			clickCallbacks = eventHandler.getHandlers('click');
+			sinon.spy(clickCallbacks[0], ".foo");
+			sinon.spy(clickCallbacks[1], ".bar");
+			sinon.spy(clickCallbacks[2], ".baz");
+			sinon.spy(bindObject, "someMethod");
+
+			// test click event
+			element.querySelector('.baz').click();
+			clickCallbacks[0][".foo"].callCount.should.eql(0);
+			clickCallbacks[1][".bar"].callCount.should.eql(0);
+			clickCallbacks[2][".baz"].callCount.should.eql(1);
+
+			element.querySelector('.foo').click();
+			clickCallbacks[0][".foo"].callCount.should.eql(1);
+			clickCallbacks[1][".bar"].callCount.should.eql(0);
+			clickCallbacks[2][".baz"].callCount.should.eql(1);
+
+			element.querySelector('.bar').click();
+			clickCallbacks[0][".foo"].callCount.should.eql(1);
+			clickCallbacks[1][".bar"].callCount.should.eql(1);
+			clickCallbacks[2][".baz"].callCount.should.eql(1);
+
+			// test bind object
+			bindObject.someMethod.callCount.should.eql(1);
+
+			// cleanup spyies
+			clickCallbacks[0][".foo"].restore();
+			clickCallbacks[1][".bar"].restore();
+			clickCallbacks[2][".baz"].restore();
+			bindObject["someMethod"].restore();
+
 			// test removeEvent
 			eventHandler.removeEvent('click .foo');
 			eventHandler.getHandlers('click').should.have.length(2);
