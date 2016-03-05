@@ -157,7 +157,7 @@ export default class Eventhandler {
 	trigger(event, value = null){
 
 		this.config.element.dispatchEvent(
-			new Event(event, { detail: value })
+			value ? new CustomEvent(event, { detail: value }) : new Event(event)
 		);
 
 	}
