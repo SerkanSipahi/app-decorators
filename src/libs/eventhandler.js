@@ -141,15 +141,9 @@ export default class Eventhandler {
 			this._addEvent(this.config.element, type, this.config.events);
 		}
 
-		// bind bindObject
-		if(this.config.bind){
-			// bind and assign bindObject
-			handler = this.config.bind::handler;
-		}
-
 		// add delegate selector to event list
 		this.config.events[type].push({
-			[ delegateSelector ]: handler,
+			[ delegateSelector ]: this.config.bind ? this.config.bind::handler: handler,
 		});
 
 	}
