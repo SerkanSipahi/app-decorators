@@ -16,12 +16,6 @@ export default class Eventhandler {
 	};
 
 	/**
-	 * hasConstructorEvents
-	 * @type {Boolean}
-	 */
-	hasConstructorEvents = false;
-
-	/**
 	 * Main event callback wrapper
 	 * @type {Object}
 	 */
@@ -41,14 +35,6 @@ export default class Eventhandler {
 		}
 		// Assign element
 		this.config.element = config.element;
-
-		/**
-		 * Throw error if no events passed
-		 */
-		if(!config.events) {
-			this.hasConstructorEvents = true;
-			return;
-		}
 
 		// bind bindObject
 		if(config.bind){
@@ -147,11 +133,6 @@ export default class Eventhandler {
 	 */
 	on(eventDomain, handler){
 
-		if(this.hasConstructorEvents){
-			throw new Error(`
-				Mix registering over "constructor" and over "on" is not possible!
-				Please use only one of them (on or just constructor)
-			`);
 		}
 
 		this._addToConfigEvents(eventDomain, handler);
@@ -223,14 +204,6 @@ export default class Eventhandler {
 	 * @param {String} type
 	 * @param {Function} callback
 	 */
-	_addEvent(element, type, delegateSelectors) {
-
-		if(this.mainEventCallackContainer[type]){
-			throw new Error(`
-				Type "${type}" already exists! Seemingly it was registered by "on".
-				It can be only used one event type over "on"
-			`);
-		}
 
 		this.mainEventCallackContainer[type] = function( event ){
 
