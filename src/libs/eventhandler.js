@@ -38,6 +38,7 @@ export default class Eventhandler {
 
 		// bind bindObject
 		if(config.bind){
+			this.config.bind = config.bind;
 			Eventhandler.bindObjectToEventList(config.events, config.bind);
 		}
 		// group events
@@ -133,10 +134,23 @@ export default class Eventhandler {
 	 */
 	on(eventDomain, handler){
 
+		let [ type, delegateSelector ] = Eventhandler.prepareEventdomain(eventDomain);
+		// if event type not registered, add to eventlistener
+		if(!this.config.events[type]){
+			this.config.events[type] = [];
+			this._addEvent(this.config.element, type, this.config.events);
 		}
 
-		this._addToConfigEvents(eventDomain, handler);
-		this._addEvent(this.config.element, type, this.config.events[type]);
+		// bind bindObject
+		if(this.config.bind){
+			// bind and assign bindObject
+			handler = this.config.bind::handler;
+		}
+
+		// add delegate selector to event list
+		this.config.events[type].push({
+			[ delegateSelector ]: handler,
+		});
 
 	}
 
@@ -175,26 +189,8 @@ export default class Eventhandler {
 			if(!events.hasOwnProperty(type)){
 				continue;
 			}
-			this._addEvent(this.config.element, type, events[type]);
+			this._addEvent(this.config.element, type, this.config.events);
 		}
-
-	}
-
-	/**
-	 * _addToConfigEvents
-	 * @param {String} eventDomain
-	 * @param {Function} handler
-	 */
-	_addToConfigEvents(eventDomain, handler){
-
-		let [ type, delegateSelector ] = Eventhandler.prepareEventdomain(eventDomain);
-		if(!this.config.events[type]){
-			this.config.events[type] = [];
-		}
-
-		this.config.events[type].push({
-			[ delegateSelector ]: handler,
-		});
 
 	}
 
@@ -204,9 +200,11 @@ export default class Eventhandler {
 	 * @param {String} type
 	 * @param {Function} callback
 	 */
+	_addEvent(element, type, configEvents) {
 
-		this.mainEventCallackContainer[type] = function( event ){
+		this.mainEventCallackContainer[type] = ( event ) => {
 
+			let delegateSelectors = configEvents[type];
 			for(let delegateObject of delegateSelectors){
 
 				// received key (delegateSelector) is always a key
@@ -226,7 +224,7 @@ export default class Eventhandler {
 			}
 		};
 
-		element.addEventListener(type, this.mainEventCallackContainer[type]);
+		element.addEventListener(type, this.mainEventCallackContainer[type], false);
 
 	}
 
