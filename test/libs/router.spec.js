@@ -5,9 +5,14 @@ import Router from 'src/libs/router';
 
 describe('Class Router', () => {
 
-	it('should throw an error if passed object is not an object', () => {
+	describe('static newUrl() method', () => {
 
-		(() => { Router.create().should.throw('Passed Object must be an object {}')});
+		it('should return url object with fragment property', () => {
+
+			let url = Router.newUrl('http://www.mydomain.com/path/to/somewhere.html?a=1&b=2');
+			url.fragment.should.equal('/path/to/somewhere.html?a=1&b=2');
+
+		});
 
 	});
 
