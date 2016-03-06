@@ -47,6 +47,18 @@ export default class Router {
 	_run = false;
 
 	/**
+	 * _windowEventhandler
+	 * @type EventHandler
+	 */
+	_windowEventhandler;
+
+	/**
+	 * _bodyEventhandler
+	 * @type EventHandler
+	 */
+	_bodyEventhandler;
+
+	/**
 	 * Create an instance of Router Class
 	 * @param  {Object} config
 	 * @return {Router} router
@@ -82,25 +94,14 @@ export default class Router {
 		Object.assign(this, { forward, back });
 
 		// private
-		this._popstateEventHandler = EventHandler.create({ element: window });
-		this._clickEventHandler = EventHandler.create({ element: document.body });
-		this._urlchangedEventHandler = EventHandler.create({ element: window });
+		this._windowEventhandler = EventHandler.create({ element: window });
+		this._bodyEventhandler = EventHandler.create({ element: document.body });
 
 		this._pushState = pushState;
 		this._replaceState = replaceState;
-		this._eventHandler = eventHandler;
 		this._routes = routes;
 
 		this._init();
-
-	}
-
-	/**
-	 * onUrlchanged
-	 * @param  {Object} urlchanged
-	 * @return {Undefined}
-	 */
-	onUrlchanged({ urlchanged }) {
 
 	}
 
@@ -173,14 +174,24 @@ export default class Router {
 	}
 
 	/**
+	 * onUrlchanged
+	 * @param  {Object} urlchanged
+	 * @return {Undefined}
+	 */
+	_onUrlchange({ urlchanged }) {
+
+	}
+
+	/**
 	 * _bindInternalEvents description
 	 * @return {Undefined}
 	 */
 	_bindInternalEvents(){
 
-		this._popstateEventHandler.on('popstate', (e) => ::this._forwardingOnIntervalEvent);
-		this._clickEventHandler.on('click a', (e) => ::this._forwardingOnIntervalEvent);
-		this._urlchangedEventHandler.on('urlchange', (e) => ::this.onUrlstate);
+		this._bodyEventhandler.on('click a', ::this._forwardingOnIntervalEvent);
+		this._windowEventhandler.on('popstate', ::this._forwardingOnIntervalEvent);
+
+		this._windowEventhandler.on('urlchange', ::this._onUrlchange);
 
 	}
 
@@ -219,23 +230,23 @@ export default class Router {
 	 */
 	_forwardingOnIntervalEvent({ target, type }){
 
-		let urlObject = this._getUrlObject(document.location.href);
+		let urlObject = Router.newUrl(document.location.href);
 
 		if(type === 'click') {
 			target.preveneDefault();
 			this._pushState(null, null, encodeURI(urlObject.fragment));
 		}
-		
+
 		this._urlchangedEventHandler.trigger('urlchange', urlObject);
 
 	}
 
 	/**
-	 * _getUrlObject
+	 * newUrl
 	 * @param  {String} href
 	 * @return {URL} url
 	 */
-	_getUrlObject(href){
+	static newUrl(href){
 
 		let url = new URL(href);
 		url.fragment = url.href.replace(url.origin, '');
