@@ -102,21 +102,32 @@ describe('Class Router', () => {
 			}
 		});
 
-		router.on('product::detail', '/product/detail/{{ id }}', ({ id }) => {
+		router.addRoute('product::detail', '/product/detail/{{ id }}').then(({ id }) => {
 
 		});
 
-		router.on('product::site', '/product/detail/{{ id }}?foo={{ a }}&bar={{ b }}#baz={{ c }}', ({ id, b, c }) => {
+		router.addRoute('product::site', '/product/detail/{{ id }}?foo={{ a }}&bar={{ b }}#baz={{ c }}').then(({ id, a, b, c }) => {
 
 		});
 
-		router.on('checkout::login', /.*?thats={{ it }}:*/, ({ it }) => {
+		router.addRoute('checkout::login', /.*?thats={{ awesome }}:*/).then(({ awesome }) => {
 
 		});
 
-		router.on('checkout::login', /.*logout(?:token=([0-9])+)?/, ([ number ]) => {
+		async function chckout_login(){
 
-		});
+			// 'checkout::login' can forwarding to some service (see thirt ar
+			let invoice = await router.addRoute('checkout::login', /.*logout(?:token=([0-9])+)?/, 'http://www.mydomain/cat/document/1');
+
+			// do something
+			// ...
+			// ...
+
+			router.addRoute('checkout::login', '/login/user/{{ name }/messages/{{ id }}').then(({ name, messages }) => {
+
+			});
+
+		};
 
 	});
 
