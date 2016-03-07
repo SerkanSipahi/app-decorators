@@ -1,7 +1,7 @@
 
 // internal libs
 import Router from 'src/libs/router';
-
+import Eventhandler from 'src/libs/eventhandler';
 
 describe('Class Router', () => {
 

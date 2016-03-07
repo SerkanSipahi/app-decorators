@@ -1,4 +1,9 @@
 
+
+// external libs
+import { Immutable } from 'src/libs/dependencies';
+import Elements from 'src/datas/elements';
+
 // internal libs
 import CustomElement from 'src/libs/customelement';
 
@@ -107,7 +112,7 @@ describe('Class CustomElement', () => {
 	describe('method register passing more than one argument', () => {
 
 		class Morethan {}
-		CustomElement.register(Morethan);
+		CustomElement.register(Morethan, { Elements, Immutable });
 
 		it('should throw an error', () => {
 			(function(){ Morethan.create({}, 1) })
@@ -119,7 +124,7 @@ describe('Class CustomElement', () => {
 	describe('method register passing none object', () => {
 
 		class Noneobject {}
-		CustomElement.register(Noneobject);
+		CustomElement.register(Noneobject, { Elements, Immutable });
 
 		it('should throw an error', () => {
 			(function(){ Noneobject.create([]) })
@@ -136,7 +141,7 @@ describe('Class CustomElement', () => {
 			baz() {}
 		}
 
-		CustomElement.register(Red);
+		CustomElement.register(Red, { Elements, Immutable });
 
 		it('should return by default instanceof HTMLElement if no second argument passed', () => {
 			let red = Red.create();
@@ -165,7 +170,7 @@ describe('Class CustomElement', () => {
 			}
 		}
 
-		CustomElement.register(Green, { extends: 'form'});
+		CustomElement.register(Green, { extends: 'form', Elements, Immutable });
 
 		it('should return instanceof HTMLFormElement', () => {
 			let green = Green.create();
@@ -207,7 +212,7 @@ describe('Class CustomElement', () => {
 		Blue.prototype.attributeChanged = function(attrName, oldVal, newVal) {}
 		Blue.prototype.detached = function() {}
 
-		CustomElement.register(Blue);
+		CustomElement.register(Blue, { Elements, Immutable });
 
 		it('should return instanceof HTMLFormElement', () => {
 			let blue = Blue.create();
@@ -296,7 +301,7 @@ describe('Class CustomElement', () => {
 			}
 		}
 
-		CustomElement.register(Yellow, { extends: 'form' });
+		CustomElement.register(Yellow, { extends: 'form', Elements, Immutable });
 
 		it('should return method name on call method x', () => {
 			let yellow = Yellow.create();

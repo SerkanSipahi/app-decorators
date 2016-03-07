@@ -1,10 +1,4 @@
 
-// external libs
-import { Immutable } from './dependencies';
-
-// internal libs
-import Elements from '../datas/elements';
-
 export default class CustomElement {
 
 	/**
@@ -23,6 +17,7 @@ export default class CustomElement {
 
 		let componentName = config.name || null;
 		let componentExtends = config.extends || null;
+		let { Elements, Immutable } = config;
 
 		// assign to DOMElement right Element by passed "extends" property
 		// e.g. if passed is img its return HTMLImageElement or on form HTMLFormElement

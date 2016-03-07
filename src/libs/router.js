@@ -1,7 +1,4 @@
 
-// internal libs
-import Eventhandler from './eventhandler';
-
 export default class Router {
 
 	/**
@@ -27,12 +24,6 @@ export default class Router {
 	 * @type {History}
 	 */
 	_replaceState = null;
-
-	/**
-	 * _eventHandler
-	 * @type {Eventhandler}
-	 */
-	_eventHandler = null;
 
 	/**
 	 * _routes
@@ -71,7 +62,7 @@ export default class Router {
 			back: ::history.back,
 			pushState: ::history.pushState,
 			replaceState: ::history.replaceState,
-			EventHandler: Eventhandler,
+			EventHandler: config.config.Eventhandler,
 		});
 
 		return router;
