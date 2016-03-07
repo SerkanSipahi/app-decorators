@@ -206,8 +206,8 @@ export default class Eventhandler {
 				let delegateSelector = Object.keys(delegateObject)[0];
 				let callback = delegateObject[delegateSelector];
 				let matchedSelector = false;
-
-				if(delegateSelector){
+ 
+				if(delegateSelector && event.target.matches){
 					matchedSelector = event.target.matches(delegateSelector);
 				}
 

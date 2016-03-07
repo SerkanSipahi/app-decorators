@@ -50,14 +50,30 @@ export default class Router {
 	_bodyEventhandler;
 
 	/**
+	 * _lastFragment
+	 * @type {String}
+	 */
+	_lastFragment = null;
+
+	/**
+	 * _onUrlchangeCallback
+	 * @type {Function}
+	 */
+	_onUrlchangeCallback = null;
+
+	/**
 	 * Create an instance of Router Class
 	 * @param  {Object} config
 	 * @return {Router} router
 	 */
-	static create({ routes }){
+	static create(config = {}){
 
 		let router = new Router({
-			routes: routes,
+			routes: config.routes,
+			// router can have there scope. Moment is document.body
+			scope: config.scope || Router.defaultScope,
+			// if true it call always onUrlchange regardless of whether same url adress
+			forceUrlchange: config.forceUrlchange || Router.defaultForceUrlchange,
 			forward: ::history.forward,
 			back: ::history.back,
 			pushState: ::history.pushState,
@@ -165,11 +181,24 @@ export default class Router {
 	}
 
 	/**
+	 * onUrlchange description
+	 * @param  {Function} handler
+	 * @return {Undefined}
+	 */
+	onUrlchange(handler = () => {}){
+		this._onUrlchangeCallback = handler;
+	}
+
+	/**
 	 * onUrlchanged
 	 * @param  {Object} urlchanged
 	 * @return {Undefined}
 	 */
-	_onUrlchange({ urlchanged }) {
+	_onUrlchange(event) {
+
+		if(this._onUrlchangeCallback) {
+			this._onUrlchangeCallback(event);
+		}
 
 	}
 
@@ -181,17 +210,7 @@ export default class Router {
 
 		this._bodyEventhandler.on('click a', ::this._forwardingOnIntervalEvent);
 		this._windowEventhandler.on('popstate', ::this._forwardingOnIntervalEvent);
-
 		this._windowEventhandler.on('urlchange', ::this._onUrlchange);
-
-	}
-
-	/**
-	 * _removeInternalEvents
-	 * @return {[type]}
-	 */
-	_removeInternalEvents(){
-
 
 	}
 
@@ -219,16 +238,22 @@ export default class Router {
 	 * @param  {String} type
 	 * @return {Undefined}
 	 */
-	_forwardingOnIntervalEvent({ target, type }){
+	_forwardingOnIntervalEvent( event ){
 
-		let urlObject = Router.newUrl(document.location.href);
+		event.preventDefault ? event.preventDefault() : null;
 
-		if(type === 'click') {
-			target.preveneDefault();
-			this._pushState(null, null, encodeURI(urlObject.fragment));
+		let urlObject = Router.newUrl(
+			event.type === 'click' ? event.target.href : location.href
+		);
+
+		if(urlObject.fragment !== this._lastFragment) {
+			if(event.type === 'click'){
+				this._pushState(null, null, encodeURI(urlObject.fragment));
+			}
+			this._windowEventhandler.trigger('urlchange', urlObject);
 		}
 
-		this._urlchangedEventHandler.trigger('urlchange', urlObject);
+		this._lastFragment = urlObject.fragment;
 
 	}
 
