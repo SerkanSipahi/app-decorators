@@ -2,6 +2,12 @@
 export default class Router {
 
 	/**
+	 * routes
+	 * @type {Object}
+	 */
+	routes = null;
+
+	/**
 	 * foward()
 	 * @type {History}
 	 */
@@ -32,16 +38,41 @@ export default class Router {
 	forceUrlchange = false;
 
 	/**
-	 * shadowEvent
-	 * @type {Boolean}
-	 */
-	shadowEvent = true;
-
-	/**
-	 * _routes
+	 * scope
 	 * @type {Object}
 	 */
-	_routes = null;
+	scope = {
+		host: null,
+		urlchange: null,
+	};
+
+	/**
+	 * event
+	 * @type {Object}
+	 */
+	event = {
+		host: null,
+		urlchange: null,
+	};
+
+	/**
+	 * mode
+	 * @type {Object}
+	 */
+	mode = {
+		stealth: null,
+	};
+
+	/**
+	 * helper
+	 * @type {Object}
+	 */
+	helper = {
+		URLResolver: null,
+		encodeURI: null,
+		location: null,
+		Promise: null,
+	};
 
 	/**
 	 * _lastFragment
@@ -50,51 +81,37 @@ export default class Router {
 	_lastFragment = null;
 
 	/**
-	 * EVENT_URLCHANGE
+	 * _lastEvent
 	 * @type {String}
 	 */
-	static EVENT_URLCHANGE = 'urlchange';
+	_lastEvent = null;
+
+	/**
+	 * _lastRoute
+	 * @type {String|RegExp}
+	 */
+	_lastRoute = null;
 
 	/**
 	 * constructor
 	 * @param  {Object} config
 	 * @return {Router}
 	 */
-	constructor({ config }){
+	constructor(config){
 
-		this._routes = config.routes;
-
-		this.pushState = config.pushState;
-		this.replaceState = config.replaceState;
-		this.forward = config.forward;
-		this.back = config.back;
-		this.forceUrlchange = config.forceUrlchange || false;
-		this.shadowEvent = true;
-
-		this._scope_root = config.scope_root;
-		this._event_root = config.event_root;
-
-		this._event_popsate = config.event_popsate;
-		this._scope_popstate = config.scope_popstate;
-
-		this._event_urlchange = config.event_urlchange || Router.EVENT_URLCHANGE;
-		this._scope_urlchange = config.scope_urlchange;
-
-		Router.URLResolver = config.URLResolver;
-		Router.encodeURI = config.encodeURI;
-
+		Object.assign(this, config);
 		this._init();
 
 	}
 
 	/**
-	 * newUrl
+	 * resolveURL
 	 * @param  {String} href
 	 * @return {URL} url
 	 */
-	static newUrl(href){
+	resolveURL(href){
 
-		let url = new Router.URLResolver(href);
+		let url = new this.helper.URLResolver(href);
 		url.fragment = url.href.replace(url.origin, '');
 		return url;
 
@@ -102,25 +119,49 @@ export default class Router {
 
 	/**
 	 * on
-	 * @param  {String} type
+	 * @param  {String} event
 	 * @param  {Function} handler
 	 * @param  {Function} handler
 	 * @return {Promise}
 	 */
-	on(type, ...args){
+	on(event = null, ...args){
 
-		return { then: ::this.then };
+		let [ arg_2, arg_3 ] = args;
+
+		if(!event){
+			throw 'Please pass at least event e.g urlchange, Foo, Bar, ...';
+		}
+
+		let handler = null;
+		let rule = null;
+		let classof_arg2 = Object.classof(arg_2);
+		let classof_arg3 = Object.classof(arg_3);
+
+		if(event && classof_arg2 === 'Function' && classof_arg3 === 'Undefined'){
+			handler = arg_2;
+		}
+		if(event && classof_arg2 === 'String' && classof_arg3 === 'Function'){
+			rule = arg_2;
+			handler = arg_3;
+		}
+
+		// if(Object.classof(this._scope[event]) !== 'Array'){
+		// 	this._scope[event] = [];
+		// }
+		let promise = this.createPromise(::this._onPromiseResolved);
+		// this._scope[event].push({ rule, handler, promise });
+
+		return promise;
 
 	}
 
 	/**
-	 * addRoute
-	 * @param {String} routename
-	 * @param {String|RegExp} route
+	 * createPromise
+	 * @param  {Function} handler
+	 * @return {Promise}
 	 */
-	addRoute(routename, route, remote){
-
-		return { then: ::this.then };
+	createPromise(handler) {
+		return new Promise(handler);
 	}
 
 	/**
@@ -131,26 +172,31 @@ export default class Router {
 	 */
 	trigger(event = '', options = null){
 
-		let _scope = this[`_scope_${event}`];
+		let _scope = this._scope[event];
 		if(!_scope){
-			throw `Allowed events: urlchange, ${(this._route_events || []).join(', ')}`;
+			throw `Allowed events: urlchange, ${(this._routes || []).join(', ')}`;
 		}
-		_scope.trigger(event, options);
+
+		this._scope[this._event].trigger(event, options);
 
 	}
 
+	/**
+	 * encodeURI
+	 * @param  {String} uri
+	 * @return {String}
+	 */
+	encodeURI(uri){
+		return this.helper.encodeURI(uri);
+	}
 
 	/**
 	 * destroy
 	 * @return {Undefined}
 	 */
 	destroy() {
-
-		this._scope_root.removeEvent(this._event_root);
-		this._scope_popstate.removeEvent(this._event_popsate);
-		this._scope_urlchange.removeEvent(this._event_urlchange);
-		// TODO:
-		// clear history records, etc
+		this.listener.host.removeEvent(this.event.host);
+		this.listener.urlchange.removeEvent(this.event.urlchange);
 	}
 
 
@@ -161,44 +207,43 @@ export default class Router {
 	// sollte in start umbenannt werden
 	_init(){
 
-		this._bindInternalEvents();
+		this._bindEvents();
 		this._bindRoutes();
 
 	}
 
 	/**
-	 * _bindInternalEvents description
+	 * _bindEvents
 	 * @return {Undefined}
 	 */
-	_bindInternalEvents(){
+	_bindEvents(){
 
-		this._scope_root.on(this._event_root, ::this._forwardingOnIntervalEvent);
-		this._scope_popstate.on(this._event_popsate, ::this._forwardingOnIntervalEvent);
-		this._scope_urlchange.on(this._event_urlchange, ::this._onUrlchange);
+		this.listener.host.on(this.event.host, ::this._onAction);
+		this.listener.urlchange.on(this.event.urlchange, ::this._onUrlchange);
 
 	}
 
 	/**
-	 * _forwardingOnIntervalEvent
+	 * _onAction
 	 * @param  {Element} target
 	 * @param  {String} type
 	 * @return {Undefined}
 	 */
-	_forwardingOnIntervalEvent( event ){
+	_onAction( event ){
 
 		event.preventDefault ? event.preventDefault() : null;
 		this.shadowEvent ? event.stopPropagation() : null;
 
-		let [ event_root_type ] = this._event_root.split(' ');
-		let urlObject = Router.newUrl(
-			event.type === event_root_type ? event.target.href : location.href
+		let [ event_root_type ] = this.event.host.split(' ');
+		let urlObject = this.resolveURL(
+			event.type === event_root_type ? event.target.href : this.helper.location.href
 		);
 
 		if(urlObject.fragment !== this._lastFragment) {
 			if(event.type === event_root_type){
-				this.pushState(null, null, Router.encodeURI(urlObject.fragment));
+				this.pushState(null, null, this.encodeURI(urlObject.fragment));
 			}
-			this._scope_urlchange.trigger(this._event_urlchange, urlObject);
+			this.listener.urlchange.trigger(this.event.urlchange, urlObject);
 		}
 
 		this._lastFragment = urlObject.fragment;
@@ -210,8 +255,8 @@ export default class Router {
 	 * @param  {Event} event
 	 * @return {Undefined}
 	 */
-	_onUrlchange({ detail }){
-
+	_onUrlchange( event ){
+		console.log('_onUrlchange', event, event.detail.fragment);
 	}
 
 	/**
@@ -233,15 +278,12 @@ export default class Router {
 	}
 
 	/**
-	 * [then description]
-	 * @param  {Function} callback [description]
-	 * @return {[type]}            [description]
+	 * [_onPromiseResolved description]
+	 * @param  {Function} resolve
+	 * @param  {Function} reject
+	 * @return {Undefined}
 	 */
-	then(callback){
-
-		return new Promise(() => {
-
-		});
+	_onPromiseResolved(resolve, reject) {
 
 	}
 

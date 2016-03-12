@@ -9,30 +9,43 @@ import Router from '../libs/router';
  */
 Router.create = function(config = {}){
 
-	let $routerConfig = {
-		config : {
+	let { window } = System.global;
+	let { document } = window;
+	let { body } = document;
 
-			routes: config.routes,
-			pushState: ::history.pushState,
-			replaceState: ::history.replaceState,
-			forward: ::history.forward,
-			back: ::history.back,
+	let routerConfig = {
 
-			scope_root: Eventhandler.create({ element: config.scope_root || document && document.body || null }),
-			event_root: config.event_root || 'click a',
+		routes: config.routes,
+		pushState: ::history.pushState,
+		replaceState: ::history.replaceState,
+		forward: ::history.forward,
+		back: ::history.back,
 
-			scope_popstate: Eventhandler.create({ element: config.scope_popstate || window}),
-			event_popsate: config.event_popsate || 'popstate',
-
-			scope_urlchange: Eventhandler.create({ element: config.scope_urlchange || window}),
-
+		listener: {
+			host: Eventhandler.create({ element: config.scope_host || document && body || null }),
+			urlchange: Eventhandler.create({ element: config.scope_urlchange || window }),
+		},
+		event: {
+			host: config.event_host || 'click a',
+			urlchange: config.event_urlchange || 'urlchange',
+		},
+		mode: {
+			stealth: config.mode_stealth || true,
+		},
+		helper: {
 			URLResolver: config.URLResolver || window.URL,
 			encodeURI: config.encodeURI || window.encodeURI,
+			location: config.location || window.location,
+			Promise: config.Promise || window.Promise,
 		},
 	};
 
 	// assign and return Instance of Router + config
-	return new Router($routerConfig);
+	let router = new Router(routerConfig);
+	let popstateHandler = Eventhandler.create({ element: window });
+	popstateHandler.on('popstate', router::router._onAction);
+
+	return router;
 
 }
 
