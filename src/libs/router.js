@@ -145,6 +145,10 @@ export default class Router {
 			handler = arg_3;
 		}
 
+		if(handler === null){
+			throw 'You forget to pass the handler';
+		}
+
 		// if(Object.classof(this._scope[event]) !== 'Array'){
 		// 	this._scope[event] = [];
 		// }
@@ -231,16 +235,18 @@ export default class Router {
 	 */
 	_onAction( event ){
 
-		event.preventDefault ? event.preventDefault() : null;
-		this.shadowEvent ? event.stopPropagation() : null;
+		if(event instanceof Event){
+			event.preventDefault();
+			this.shadowEvent ? event.stopPropagation() : null;
+		}
 
-		let [ event_root_type ] = this.event.host.split(' ');
+		let [ event_host_type ] = this.event.host.split(' ');
 		let urlObject = this.resolveURL(
-			event.type === event_root_type ? event.target.href : this.helper.location.href
+			event.type === event_host_type ? event.target.href : this.helper.location.href
 		);
 
 		if(urlObject.fragment !== this._lastFragment) {
-			if(event.type === event_root_type){
+			if(event.type === event_host_type){
 				this.pushState(null, null, this.encodeURI(urlObject.fragment));
 			}
 			this.listener.urlchange.trigger(this.event.urlchange, urlObject);
