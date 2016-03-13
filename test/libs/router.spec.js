@@ -9,7 +9,9 @@ describe('Class Router', () => {
 		it('should return url object with additional "fragment" property', () => {
 
 			// setup
-			let router = router = Router.create();
+			let router = router = Router.create({
+				listener: document.createElement('div'),
+			});
 			// test
 			let url = router.resolveURL('http://www.mydomain.com/path/to/somewhere.html?a=1&b=2');
 			url.fragment.should.equal('/path/to/somewhere.html?a=1&b=2');
@@ -25,7 +27,9 @@ describe('Class Router', () => {
 		it('should return promise object', () => {
 
 			// setup
-			let router = router = Router.create();
+			let router = router = Router.create({
+				listener: document.createElement('div'),
+			});
 			// test
 			router.createPromise(function(){}).should.be.Promise();
 			// cleanup
@@ -40,7 +44,9 @@ describe('Class Router', () => {
 		it('should throw an error if no argeument passed', () => {
 
 			// setup
-			let router = router = Router.create();
+			let router = router = Router.create({
+				listener: document.createElement('div'),
+			});
 			// test
 			(() => { router.on() }).should.throw();
 			// cleanup
@@ -62,7 +68,9 @@ describe('Class Router', () => {
 		it('should throw an error if passed not known event with handler', () => {
 
 			// setup
-			let router = router = Router.create();
+			let router = router = Router.create({
+				listener: document.createElement('div'),
+			});
 			// test
 			(() => { router.on('someevent', () => {}) }).should.throw();
 			// cleanup
@@ -73,7 +81,9 @@ describe('Class Router', () => {
 		it('should throw an error if passed routename + route but not handler', () => {
 
 			// setup
-			let router = router = Router.create();
+			let router = router = Router.create({
+				listener: document.createElement('div'),
+			});
 			// test
 			(() => { router.on('my route', '/a/b/c') }).should.throw();
 			// cleanup
@@ -84,7 +94,9 @@ describe('Class Router', () => {
 		it('should return promise if passed arguments passed correctly', () => {
 
 			// setup
-			let router = router = Router.create();
+			let router = router = Router.create({
+				listener: document.createElement('div'),
+			});
 			// test
 			router.on('a', '/product/detail/{{ id }}', ({ id }) => {}).should.be.Promise();
 			router.on('urlchange', (event) => {}).then((event)  => {}).should.be.Promise();
@@ -96,7 +108,9 @@ describe('Class Router', () => {
 		it('should call "callback" if passed argument is internal event', () => {
 
 			// setup
-			let router = router = Router.create();
+			let router = router = Router.create({
+				listener: document.createElement('div'),
+			});
 			let spy_handler = sinon.spy();
 			// test wihout trigger args
 			router.on('urlchange', spy_handler);
