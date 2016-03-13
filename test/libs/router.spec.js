@@ -22,14 +22,19 @@ describe('Class Router', () => {
 	describe('prototype.createPromise', () => {
 
 		it('should return promise object', () => {
-
 			router.createPromise(function(){}).should.be.Promise();
-
 		});
 
 	});
 
-	describe('static create', () => {
+	describe('prototype.on', () => {
+
+		it('should return promise if passed arguments passed rightly', () => {
+
+			router.on('a', '/product/detail/{{ id }}', ({ id }) => {}).should.be.Promise();
+			router.on('urlchange', (event) => {}).then((event)  => {}).should.be.Promise();
+
+		});
 
 		it('should throw an error if any passed argument missing', () => {
 
@@ -39,14 +44,11 @@ describe('Class Router', () => {
 
 		});
 
-		it('should return promise if passed arguments passed rightly', () => {
+	});
 
-			router.on('a', '/product/detail/{{ id }}', ({ id }) => {}).should.be.Promise();
-			router.on('urlchange', (event) => {}).then((event)  => {}).should.be.Promise();
+	describe('click on anchor and by brower.back()', () => {
 
-		});
-
-		it('should return promise if passed arguments passed rightly', () => {
+		it('should call handler _onUrlchange', () => {
 
 			let element = null;
 			element = document.createElement("div");
