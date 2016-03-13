@@ -4,16 +4,17 @@ import Router from 'src/apps/router';
 
 describe('Class Router', () => {
 
-	// http://stackoverflow.com/questions/25578112/spying-on-a-method-with-sinon-method-bound-to-event-listener-method-was-execut#25578185
-	let spy_onUrlchange = sinon.spy(Router.prototype, "_onUrlchange");
-	let router = router = Router.create();
-
 	describe('prototype.resolveURL', () => {
 
 		it('should return url object with additional "fragment" property', () => {
 
+			// setup
+			let router = router = Router.create();
+			// test
 			let url = router.resolveURL('http://www.mydomain.com/path/to/somewhere.html?a=1&b=2');
 			url.fragment.should.equal('/path/to/somewhere.html?a=1&b=2');
+			// cleanup
+			router.destroy();
 
 		});
 
@@ -22,25 +23,95 @@ describe('Class Router', () => {
 	describe('prototype.createPromise', () => {
 
 		it('should return promise object', () => {
+
+			// setup
+			let router = router = Router.create();
+			// test
 			router.createPromise(function(){}).should.be.Promise();
+			// cleanup
+			router.destroy();
+
 		});
 
 	});
 
 	describe('prototype.on', () => {
 
-		it('should return promise if passed arguments passed rightly', () => {
+		it('should throw an error if no argeument passed', () => {
 
-			router.on('a', '/product/detail/{{ id }}', ({ id }) => {}).should.be.Promise();
-			router.on('urlchange', (event) => {}).then((event)  => {}).should.be.Promise();
+			// setup
+			let router = router = Router.create();
+			// test
+			(() => { router.on() }).should.throw();
+			// cleanup
+			router.destroy();
 
 		});
 
-		it('should throw an error if any passed argument missing', () => {
+		it('should throw an error if passed internal event wihout handler', () => {
 
-			(function(){ router.on() }).should.throw();
-			(function(){ router.on('urlchange') }).should.throw();
-			(function(){ router.on('my route', '/a/b/c') }).should.throw();
+			// setup
+			let router = router = Router.create();
+			// test
+			(() => { router.on('urlchange') }).should.throw();
+			// cleanup
+			router.destroy();
+
+		});
+
+		it('should throw an error if passed not known event with handler', () => {
+
+			// setup
+			let router = router = Router.create();
+			// test
+			(() => { router.on('someevent', () => {}) }).should.throw();
+			// cleanup
+			router.destroy();
+
+		});
+
+		it('should throw an error if passed routename + route but not handler', () => {
+
+			// setup
+			let router = router = Router.create();
+			// test
+			(() => { router.on('my route', '/a/b/c') }).should.throw();
+			// cleanup
+			router.destroy();
+
+		});
+
+		it('should return promise if passed arguments passed correctly', () => {
+
+			// setup
+			let router = router = Router.create();
+			// test
+			router.on('a', '/product/detail/{{ id }}', ({ id }) => {}).should.be.Promise();
+			router.on('urlchange', (event) => {}).then((event)  => {}).should.be.Promise();
+			// cleanup
+			router.destroy();
+
+		});
+
+		it('should call "callback" if passed argument is internal event', () => {
+
+			// setup
+			let router = router = Router.create();
+			let spy_handler = sinon.spy();
+			// test wihout trigger args
+			router.on('urlchange', spy_handler);
+			router.trigger('urlchange');
+			spy_handler.callCount.should.equal(1);
+			// test with trigger args
+			router.trigger('urlchange', { hello: 'world' });
+			spy_handler.callCount.should.equal(2);
+			spy_handler.args[1][0].detail.should.propertyByPath('hello').eql('world');
+			// cleanup
+			router.destroy();
+
+		});
+
+		it('should call "then" if passed argument is internal event', () => {
 
 		});
 
@@ -49,6 +120,11 @@ describe('Class Router', () => {
 	describe('click on anchor and by brower.back()', () => {
 
 		it('should call handler _onUrlchange', () => {
+
+			// setup
+			// http://stackoverflow.com/questions/25578112/spying-on-a-method-with-sinon-method-bound-to-event-listener-method-was-execut#25578185
+			let spy_onUrlchange = sinon.spy(Router.prototype, "_onUrlchange");
+			let router = router = Router.create();
 
 			let element = null;
 			element = document.createElement("div");
@@ -79,6 +155,7 @@ describe('Class Router', () => {
 			// cleanup
 			document.body.removeChild(element);
 			router._onUrlchange.restore();
+			router.destroy();
 
 		});
 
