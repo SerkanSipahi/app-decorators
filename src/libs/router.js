@@ -5,7 +5,7 @@ export default class Router {
 	 * routes
 	 * @type {Object}
 	 */
-	routes = null;
+	routes = {};
 
 	/**
 	 * foward()
@@ -113,19 +113,6 @@ export default class Router {
 	}
 
 	/**
-	 * resolveURL
-	 * @param  {String} href
-	 * @return {URL} url
-	 */
-	resolveURL(href){
-
-		let url = new this.helper.URLResolver(href);
-		url.fragment = url.href.replace(url.origin, '');
-		return url;
-
-	}
-
-	/**
 	 * on
 	 * @param  {String} event
 	 * @param  {Function} handler
@@ -162,7 +149,7 @@ export default class Router {
 		// if passed 2 arguments e.g 'urlchange', handler
 		if([event, ...args].length === 2) {
 
-			if(!this.listener[event]){
+			if(!this.event[event]){
 				throw `Event: "${event} is not allowed! Allowed is: ${this.event.urlchange}"`;
 			}
 			this.handler[event].push({ handler, promise });
@@ -177,20 +164,6 @@ export default class Router {
 	}
 
 	/**
-	 * createPromise
-	 * @param  {Function} handler
-	 * @return {Promise}
-	 */
-	createPromise(handler=null) {
-
-		if(!handler){
-			throw `Please pass a handler function handler(){}!`;
-		}
-
-		return new this.helper.Promise(handler);
-	}
-
-	/**
 	 * trigger
 	 * @param  {String} event
 	 * @param  {Object} options
@@ -198,12 +171,22 @@ export default class Router {
 	 */
 	trigger(event = '', options = null){
 
-		if(!this.listener[event]){
+		if(!this.event[event]){
 			throw `Event: "${event} is not allowed! Please use: ${this.event.urlchange}"`;
 		}
 
-		this.listener[event].trigger(this.event[event], options);
+		this.listener.trigger(this.event[event], options);
 
+	}
+
+
+	/**
+	 * destroy
+	 * @return {Undefined}
+	 */
+	destroy() {
+		this.listener.off(this.event.action);
+		this.listener.off(this.event.urlchange);
 	}
 
 	/**
@@ -215,13 +198,33 @@ export default class Router {
 		return this.helper.encodeURI(uri);
 	}
 
+
 	/**
-	 * destroy
-	 * @return {Undefined}
+	 * resolveURL
+	 * @param  {String} href
+	 * @return {URL} url
 	 */
-	destroy() {
-		this.listener.action.removeEvent(this.event.action);
-		this.listener.urlchange.removeEvent(this.event.urlchange);
+	resolveURL(href){
+
+		let url = new this.helper.URLResolver(href);
+		url.fragment = url.href.replace(url.origin, '');
+		return url;
+
+	}
+
+
+	/**
+	 * createPromise
+	 * @param  {Function} handler
+	 * @return {Promise}
+	 */
+	createPromise(handler=null) {
+
+		if(!handler){
+			throw `Please pass a handler function handler(){}!`;
+		}
+
+		return new this.helper.Promise(handler);
 	}
 
 
@@ -243,8 +246,8 @@ export default class Router {
 	 */
 	_bindEvents(){
 
-		this.listener.action.on(this.event.action, ::this._onAction);
-		this.listener.urlchange.on(this.event.urlchange, ::this._onUrlchange);
+		this.listener.on(this.event.action, ::this._onAction);
+		this.listener.on(this.event.urlchange, ::this._onUrlchange);
 
 	}
 
@@ -270,7 +273,7 @@ export default class Router {
 			if(event.type === event_action_type){
 				this.pushState(null, null, this.encodeURI(urlObject.fragment));
 			}
-			this.listener.urlchange.trigger(this.event.urlchange, urlObject);
+			this.listener.trigger(this.event.urlchange, urlObject);
 		}
 
 		this._lastFragment = urlObject.fragment;
@@ -339,7 +342,7 @@ export default class Router {
 	 * remove route
 	 * @return {Undefined}
 	 */
-	removeEvent(){
+	off(){
 
 	}
 

@@ -21,10 +21,8 @@ Router.create = function(config = {}){
 		forward: ::history.forward,
 		back: ::history.back,
 
-		listener: {
-			action: Eventhandler.create({ element: config.event_action || document && body || null }),
-			urlchange: Eventhandler.create({ element: config.event_urlchange || window }),
-		},
+		listener: Eventhandler.create({ element: config.listener || document && body || null }),
+		
 		event: {
 			action: config.event_host || 'click a',
 			urlchange: config.event_urlchange || 'urlchange',

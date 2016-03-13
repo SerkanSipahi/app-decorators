@@ -196,6 +196,7 @@ export default class Eventhandler {
 	 */
 	_addEvent(element, type, configEvents) {
 
+		// save reference callback. Its important for if necessary to remove it
 		this.mainEventCallackContainer[type] = ( event ) => {
 
 			let delegateSelectors = configEvents[type];
@@ -206,7 +207,7 @@ export default class Eventhandler {
 				let delegateSelector = Object.keys(delegateObject)[0];
 				let callback = delegateObject[delegateSelector];
 				let matchedSelector = false;
- 
+
 				if(delegateSelector && event.target.matches){
 					matchedSelector = event.target.matches(delegateSelector);
 				}
@@ -223,11 +224,11 @@ export default class Eventhandler {
 	}
 
 	/**
-	 * Remove event from listener by given eventdomain
+	 * off event from listener by given eventdomain
 	 * @param  {String} eventDomain
 	 * @return {undefined}
 	 */
-	removeEvent(eventDomain) {
+	off(eventDomain) {
 
 		let [ type, delegateSelector ] = Eventhandler.prepareEventdomain(eventDomain);
 
@@ -271,7 +272,7 @@ export default class Eventhandler {
 			if(!events.hasOwnProperty(type)){
 				continue;
 			}
-			this.removeEvent(type);
+			this.off(type);
 		}
 
 	}
