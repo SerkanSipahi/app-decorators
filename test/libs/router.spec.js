@@ -19,6 +19,16 @@ describe('Class Router', () => {
 
 	});
 
+	describe('prototype.createPromise', () => {
+
+		it('should return promise object', () => {
+
+			router.createPromise(function(){}).should.be.Promise();
+
+		});
+
+	});
+
 	describe('static create', () => {
 
 		it('should throw an error if any passed argument missing', () => {
