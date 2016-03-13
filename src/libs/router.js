@@ -38,11 +38,11 @@ export default class Router {
 	forceUrlchange = false;
 
 	/**
-	 * scope
+	 * listner
 	 * @type {Object}
 	 */
-	scope = {
-		host: null,
+	listner = {
+		action: null,
 		urlchange: null,
 	};
 
@@ -51,7 +51,7 @@ export default class Router {
 	 * @type {Object}
 	 */
 	event = {
-		host: null,
+		action: null,
 		urlchange: null,
 	};
 
@@ -199,7 +199,7 @@ export default class Router {
 	 * @return {Undefined}
 	 */
 	destroy() {
-		this.listener.host.removeEvent(this.event.host);
+		this.listener.action.removeEvent(this.event.action);
 		this.listener.urlchange.removeEvent(this.event.urlchange);
 	}
 
@@ -222,7 +222,7 @@ export default class Router {
 	 */
 	_bindEvents(){
 
-		this.listener.host.on(this.event.host, ::this._onAction);
+		this.listener.action.on(this.event.action, ::this._onAction);
 		this.listener.urlchange.on(this.event.urlchange, ::this._onUrlchange);
 
 	}
@@ -240,13 +240,13 @@ export default class Router {
 			this.shadowEvent ? event.stopPropagation() : null;
 		}
 
-		let [ event_host_type ] = this.event.host.split(' ');
+		let [ event_action_type ] = this.event.action.split(' ');
 		let urlObject = this.resolveURL(
-			event.type === event_host_type ? event.target.href : this.helper.location.href
+			event.type === event_action_type ? event.target.href : this.helper.location.href
 		);
 
 		if(urlObject.fragment !== this._lastFragment) {
-			if(event.type === event_host_type){
+			if(event.type === event_action_type){
 				this.pushState(null, null, this.encodeURI(urlObject.fragment));
 			}
 			this.listener.urlchange.trigger(this.event.urlchange, urlObject);

@@ -22,11 +22,11 @@ Router.create = function(config = {}){
 		back: ::history.back,
 
 		listener: {
-			host: Eventhandler.create({ element: config.scope_host || document && body || null }),
-			urlchange: Eventhandler.create({ element: config.scope_urlchange || window }),
+			action: Eventhandler.create({ element: config.event_action || document && body || null }),
+			urlchange: Eventhandler.create({ element: config.event_urlchange || window }),
 		},
 		event: {
-			host: config.event_host || 'click a',
+			action: config.event_host || 'click a',
 			urlchange: config.event_urlchange || 'urlchange',
 		},
 		mode: {
