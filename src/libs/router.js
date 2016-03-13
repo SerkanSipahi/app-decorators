@@ -56,6 +56,14 @@ export default class Router {
 	};
 
 	/**
+	 * handler
+	 * @type {Object}
+	 */
+	handler = {
+		urlchange: [],
+	};
+
+	/**
 	 * mode
 	 * @type {Object}
 	 */
@@ -127,33 +135,42 @@ export default class Router {
 	on(event = null, ...args){
 
 		let [ arg_2, arg_3 ] = args;
-
-		if(!event){
-			throw 'Please pass at least event e.g urlchange, Foo, Bar, ...';
-		}
-
 		let handler = null;
 		let rule = null;
 		let classof_arg2 = Object.classof(arg_2);
 		let classof_arg3 = Object.classof(arg_3);
 
+		if(!event){
+			throw 'Please pass at least event e.g urlchange, Foo, Bar, ...';
+		}
+
+		// generic event e.g. urlchange
 		if(event && classof_arg2 === 'Function' && classof_arg3 === 'Undefined'){
 			handler = arg_2;
 		}
+		// if route event
 		if(event && classof_arg2 === 'String' && classof_arg3 === 'Function'){
 			rule = arg_2;
 			handler = arg_3;
 		}
-
 		if(handler === null){
 			throw 'You forget to pass the handler';
 		}
 
-		// if(Object.classof(this._scope[event]) !== 'Array'){
-		// 	this._scope[event] = [];
-		// }
 		let promise = this.createPromise(::this._onPromiseResolved);
-		// this._scope[event].push({ rule, handler, promise });
+
+		// if passed 2 arguments e.g 'urlchange', handler
+		if([event, ...args].length === 2) {
+
+			if(!this.listener[event]){
+				throw `Event: "${event} is not allowed! Allowed is: ${this.event.urlchange}"`;
+			}
+			this.handler[event].push({ handler, promise });
+
+		} else {
+			// if route
+		}
+
 
 		return promise;
 
@@ -181,12 +198,11 @@ export default class Router {
 	 */
 	trigger(event = '', options = null){
 
-		let _scope = this._scope[event];
-		if(!_scope){
-			throw `Allowed events: urlchange, ${(this._routes || []).join(', ')}`;
+		if(!this.listener[event]){
+			throw `Event: "${event} is not allowed! Please use: ${this.event.urlchange}"`;
 		}
 
-		this._scope[this._event].trigger(event, options);
+		this.listener[event].trigger(this.event[event], options);
 
 	}
 
@@ -266,8 +282,29 @@ export default class Router {
 	 * @param  {Event} event
 	 * @return {Undefined}
 	 */
-	_onUrlchange( event ){
-		console.log('_onUrlchange', event, event.detail.fragment);
+	_onUrlchange(event){
+
+		// call registered internal events e.g. router.on('urlchange', handler);
+		this._callRegisteredInternalEvents(event);
+
+	}
+
+	/**
+	 * _callRegisteredInternalEvents
+	 * @return {Undefined}
+	 */
+	_callRegisteredInternalEvents(event){
+
+		// if has length its automatically handler and promise available
+		if(!this.handler.urlchange.length){
+			return;
+		}
+
+		for(let { handler, promise } of this.handler.urlchange){
+			// call callback handler
+			handler.call(this, event);
+		}
+
 	}
 
 	/**
