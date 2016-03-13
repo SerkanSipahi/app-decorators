@@ -164,8 +164,13 @@ export default class Router {
 	 * @param  {Function} handler
 	 * @return {Promise}
 	 */
-	createPromise(handler) {
-		return new Promise(handler);
+	createPromise(handler=null) {
+
+		if(!handler){
+			throw `Please pass a handler function handler(){}!`;
+		}
+
+		return new this.helper.Promise(handler);
 	}
 
 	/**
