@@ -147,6 +147,40 @@ export default class Eventhandler {
 		});
 
 	}
+	
+	/**
+	 * off event from listener by given eventdomain
+	 * @param  {String} eventDomain
+	 * @return {undefined}
+	 */
+	off(eventDomain) {
+
+		let [ type, delegateSelector ] = Eventhandler.prepareEventdomain(eventDomain);
+
+		if(!this.config.events[type]) {
+			throw new Error(`Event: ${type} not exists!`);
+		}
+
+		let index = 0;
+		for(let delegateObject of this.config.events[type]){
+			// remove delegate callback if passed e.g. "click .foo"
+			if(delegateSelector && delegateObject[delegateSelector]){
+				this.config.events[type].splice(index, 1);
+			}
+			// remove all callbacks if passed type e.g. "click" or e.g. "click" is empty
+			if((type && delegateSelector === null) || this.config.events[type].length === 0){
+				delete this.config.events[type];
+			}
+			index++;
+		}
+
+		// remove listener if eventsList empty or not exists
+		if(!this.config.events[type]){
+			this.config.element.removeEventListener(type, this.mainEventCallackContainer[type]);
+			delete this.config.events[type];
+		}
+
+	}
 
 	/**
 	 * trigger
@@ -220,40 +254,6 @@ export default class Eventhandler {
 		};
 
 		element.addEventListener(type, this.mainEventCallackContainer[type], false);
-
-	}
-
-	/**
-	 * off event from listener by given eventdomain
-	 * @param  {String} eventDomain
-	 * @return {undefined}
-	 */
-	off(eventDomain) {
-
-		let [ type, delegateSelector ] = Eventhandler.prepareEventdomain(eventDomain);
-
-		if(!this.config.events[type]) {
-			throw new Error(`Event: ${type} not exists!`);
-		}
-
-		let index = 0;
-		for(let delegateObject of this.config.events[type]){
-			// remove delegate callback if passed e.g. "click .foo"
-			if(delegateSelector && delegateObject[delegateSelector]){
-				this.config.events[type].splice(index, 1);
-			}
-			// remove all callbacks if passed type e.g. "click" or e.g. "click" is empty
-			if((type && delegateSelector === null) || this.config.events[type].length === 0){
-				delete this.config.events[type];
-			}
-			index++;
-		}
-
-		// remove listener if eventsList empty or not exists
-		if(!this.config.events[type]){
-			this.config.element.removeEventListener(type, this.mainEventCallackContainer[type]);
-			delete this.config.events[type];
-		}
 
 	}
 

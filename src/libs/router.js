@@ -146,18 +146,19 @@ export default class Router {
 
 		let promise = this.createPromise(::this._onPromiseResolved);
 
-		// if passed 2 arguments e.g 'urlchange', handler
+		// if passed 2 arguments e.g .on('urlchange', handler)
 		if([event, ...args].length === 2) {
 
 			if(!this.event[event]){
 				throw `Event: "${event} is not allowed! Allowed is: ${this.event.urlchange}"`;
 			}
-			this.handler[event].push({ handler, promise });
+			this.scope.on(event, handler);
 
-		} else {
-			// if route
 		}
+		// if passed 3 arguments e.g .on('Routename', '/a/{{ id }}', handler)
+		else {
 
+		}
 
 		return promise;
 
@@ -175,18 +176,17 @@ export default class Router {
 			throw `Event: "${event} is not allowed! Please use: ${this.event.urlchange}"`;
 		}
 
-		this.listener.trigger(this.event[event], options);
+		this.scope.trigger(this.event[event], options);
 
 	}
 
-
 	/**
-	 * destroy
+	 * off
 	 * @return {Undefined}
 	 */
-	destroy() {
-		this.listener.off(this.event.action);
-		this.listener.off(this.event.urlchange);
+	off() {
+		this.scope.off(this.event.action);
+		this.scope.off(this.event.urlchange);
 	}
 
 	/**
@@ -246,8 +246,8 @@ export default class Router {
 	 */
 	_bindEvents(){
 
-		this.listener.on(this.event.action, ::this._onAction);
-		this.listener.on(this.event.urlchange, ::this._onUrlchange);
+		this.scope.on(this.event.action, ::this._onAction);
+		this.scope.on(this.event.urlchange, ::this._onUrlchange);
 
 	}
 
@@ -273,7 +273,7 @@ export default class Router {
 			if(event.type === event_action_type){
 				this.pushState(null, null, this.encodeURI(urlObject.fragment));
 			}
-			this.listener.trigger(this.event.urlchange, urlObject);
+			this.scope.trigger(this.event.urlchange, urlObject);
 		}
 
 		this._lastFragment = urlObject.fragment;
@@ -286,7 +286,6 @@ export default class Router {
 	 * @return {Undefined}
 	 */
 	_onUrlchange(event){
-
 		// call registered internal events e.g. router.on('urlchange', handler);
 		this._callRegisteredInternalEvents(event);
 
