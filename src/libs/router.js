@@ -338,14 +338,6 @@ export default class Router {
 	}
 
 	/**
-	 * remove route
-	 * @return {Undefined}
-	 */
-	off(){
-
-	}
-
-	/**
 	 * redirect
 	 * @return {undefined}
 	 */
