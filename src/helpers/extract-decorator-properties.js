@@ -2,14 +2,14 @@
 /**
  * Excract domnode attributes
  * @param  {HTMLElement} domNode
- * @param  {RegExp} filterRegex
+ * @param  {Strng} type
  * @param  {Boolean} removeDomAttributes
  * @return {Object}
  */
 export default function extractDecoratorProperties(domNode, type, removeDomAttributes = false) {
 
 	const expressions = {
-		['@on']: /^@on(\S+)$/i,
+		['@on']: /^@on\((\S+)\)$/i,
 		['@view.bind']: /^@view\.bind\.(\S+)$/i,
 	};
 

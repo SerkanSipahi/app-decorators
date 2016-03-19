@@ -4,15 +4,11 @@ import extractDecoratorProperties from '../../src/helpers/extract-decorator-prop
 
 describe('extractDecoratorProperties', () => {
 
-	function Element(){
-		this.attributes = {
-			0: { name: '@view.bind.b', value: 'baz' },
-			1: { name: 'class', value: 'foo' },
-			2: { name: '@view.bind.x', value: 'bar' },
-		};
+	function MockElement(attributes){
+		this.attributes = attributes;
 	}
 
-	Element.prototype = {
+	MockElement.prototype = {
 		// simulate removing of removeAttribute
 		removeAttribute : function(attribute) {
 			for(let attr in this.attributes){
@@ -26,7 +22,12 @@ describe('extractDecoratorProperties', () => {
 
 	it('it should return objectlist of dom attributes that matched of @view.bind', () => {
 
-		let MockDomNode = new Element();
+		let MockDomNode = new MockElement({
+			0: { name: '@view.bind.b', value: 'baz' },
+			1: { name: 'class', value: 'foo' },
+			2: { name: '@view.bind.x', value: 'bar' },
+		});
+
 		let viewAttributeList = extractDecoratorProperties(MockDomNode, '@view.bind', true);
 
 		// positiv test
@@ -41,6 +42,31 @@ describe('extractDecoratorProperties', () => {
 
 		let regularAttributeList = extractDecoratorProperties(MockDomNode);
 		regularAttributeList.should.have.propertyByPath('class').eql('foo');
+
+	});
+
+	it('it should return objectlist of dom attributes that matched of @on', () => {
+
+		let MockDomNode = new MockElement({
+			0: { name: '@on(click)', value: 'clickFunction()' },
+			1: { name: 'id', value: 'bazi' },
+			2: { name: '@on(mousedown)', value: 'mousedownFunction()' },
+		});
+
+		let viewAttributeList = extractDecoratorProperties(MockDomNode, '@on', true);
+
+		// positiv test
+		viewAttributeList.should.have.propertyByPath('click').eql('clickFunction()');
+		viewAttributeList.should.have.propertyByPath('mousedown').eql('mousedownFunction()');
+		// negativ test
+		viewAttributeList.should.not.have.propertyByPath('id');
+
+		// the third argument for getDomAttributes removes the dom attribute
+		Object.keys(MockDomNode.attributes).should.have.length(1);
+		MockDomNode.attributes.should.have.propertyByPath(1, 'name').eql('id');
+
+		let regularAttributeList = extractDecoratorProperties(MockDomNode);
+		regularAttributeList.should.have.propertyByPath('id').eql('bazi');
 
 	});
 
