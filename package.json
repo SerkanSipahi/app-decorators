@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/SerkanSipahi/app-decorators#readme",
   "scripts": {
-    "postinstall": "npm install core-js@2.0.0 webcomponents.js@0.7.20 handlebars@4.0.5 immutable@3.7.6 pouchdb@5.2.1",
+    "postinstall": "npm install core-js@2.0.0 webcomponents.js@0.7.20 handlebars@4.0.5 immutable@3.7.6 pouchdb@5.2.1 bluebird@3.3.4",
     "test": "./node_modules/.bin/karma start --browsers FirefoxEnableWebComponents --single-run"
   },
   "keywords": [

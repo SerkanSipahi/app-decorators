@@ -61,6 +61,7 @@ module.exports = function (config) {
 				'node_modules/immutable/dist/immutable.js',
 				'node_modules/webcomponents.js/webcomponents-lite.js',
 				'node_modules/pouchdb/dist/pouchdb.js',
+				'node_modules/bluebird/js/browser/bluebird.js',
 			]
 		},
 		autoWatch: true,

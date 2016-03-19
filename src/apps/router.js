@@ -1,6 +1,7 @@
 
 import Eventhandler from '../libs/eventhandler';
 import Router from '../libs/router';
+import { Promise } from '../libs/dependencies';
 
 /**
  * create
