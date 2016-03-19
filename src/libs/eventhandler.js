@@ -147,7 +147,7 @@ export default class Eventhandler {
 		});
 
 	}
-	
+
 	/**
 	 * off event from listener by given eventdomain
 	 * @param  {String} eventDomain

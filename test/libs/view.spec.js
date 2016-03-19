@@ -1,7 +1,6 @@
 
 import View from 'src/libs/view';
 import { Handlebars } from '../../src/libs/dependencies';
-import { Immutable } from '../../src/libs/dependencies';
 
 describe('View Class', () => {
 
@@ -67,51 +66,6 @@ describe('View Class', () => {
 			// tests
 			view.render().rendered.should.equal('<div>Hello</div><span>Mars</span>');
 			view.getDomNode().outerHTML.should.equal('<p><div>Hello</div><span>Mars</span></p>');
-
-		});
-
-	});
-
-	describe('static method', () => {
-
-		let MockDomNode = {
-			attributes : {
-				0: { name: '@view.bind.b', value: 'baz' },
-				1: { name: 'class', value: 'foo' },
-				2: { name: '@view.bind.x', value: 'bar' },
-			},
-			// simulate removing of removeAttribute
-			removeAttribute : function(attribute) {
-				for(let attr in this.attributes){
-					if(!this.attributes.hasOwnProperty(attr)) continue;
-					if(this.attributes[attr].name === attribute){
-						delete this.attributes[attr];
-					}
-				}
-			}
-		}
-
-		describe('getDomAttributes', () => {
-
-			it('it should return objectlist of dom attributes that matched of regex', () => {
-
-				let MockDomNode1 = Immutable.Map(MockDomNode).toJS();
-
-				let viewAttributeList = View.getDomAttributes(MockDomNode1, View.viewBindRegExp, true);
-				// positiv test
-				viewAttributeList.should.have.propertyByPath('x').eql('bar');
-				viewAttributeList.should.have.propertyByPath('b').eql('baz');
-				// negativ test
-				viewAttributeList.should.not.have.propertyByPath('class');
-
-				// the third argument for getDomAttributes removes the dom attribute
-				Object.keys(MockDomNode1.attributes).should.have.length(1);
-				MockDomNode1.attributes.should.have.propertyByPath(1, 'name').eql('class');
-
-				let regularAttributeList = View.getDomAttributes(MockDomNode1);
-				regularAttributeList.should.have.propertyByPath('class').eql('foo');
-
-			});
 
 		});
 

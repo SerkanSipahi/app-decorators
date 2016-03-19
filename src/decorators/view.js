@@ -1,6 +1,7 @@
 
 // internal libs
 import View from '../libs/view';
+import extractDecoratorProperties from '../helpers/extract-decorator-properties';
 
 // external libs
 import { Handlebars } from '../libs/dependencies';
@@ -32,11 +33,11 @@ function view(template, templateName = 'base') {
 		view.helper.registerOnCreatedCallback(target, ( domNode, createVars = {} ) => {
 
 			// get and merge dom view var attributes
-			let domViewAttributes = View.getDomAttributes(domNode, View.viewBindRegExp, true);
+			let domViewAttributes = extractDecoratorProperties(domNode, '@view.bind', true);
 			Object.assign(domNode.$appDecorators.view.bind, domViewAttributes);
 
 			// get the restof regular attributes
-			let regularDomAttributes = View.getDomAttributes(domNode);
+			let regularDomAttributes = extractDecoratorProperties(domNode);
 
 			let view = View.create({
 				domNode,
