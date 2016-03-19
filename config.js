@@ -10,7 +10,9 @@ System.config({
     ]
   },
   paths: {
+    "app/*": "app/*",
     "src/*": "src/*",
+    "test/*": "test/*",
     "github:*": "jspm_packages/github/*",
     "npm:*": "jspm_packages/npm/*"
   },
