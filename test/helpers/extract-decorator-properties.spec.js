@@ -1,5 +1,4 @@
 
-import { Immutable } from '../../src/libs/dependencies';
 import extractDecoratorProperties from '../../src/helpers/extract-decorator-properties';
 
 describe('extractDecoratorProperties', () => {
