@@ -56,14 +56,6 @@ export default class Router {
 	};
 
 	/**
-	 * handler
-	 * @type {Object}
-	 */
-	handler = {
-		urlchange: [],
-	};
-
-	/**
 	 * mode
 	 * @type {Object}
 	 */
@@ -262,26 +254,6 @@ export default class Router {
 	 * @return {Undefined}
 	 */
 	_onUrlchange(event){
-		// call registered internal events e.g. router.on('urlchange', handler);
-		this._callRegisteredInternalEvents(event);
-
-	}
-
-	/**
-	 * _callRegisteredInternalEvents
-	 * @return {Undefined}
-	 */
-	_callRegisteredInternalEvents(event){
-
-		// if has length its automatically handler and promise available
-		if(!this.handler.urlchange.length){
-			return;
-		}
-
-		for(let { handler, promise } of this.handler.urlchange){
-			// call callback handler
-			handler.call(this, event);
-		}
 
 	}
 
@@ -297,19 +269,9 @@ export default class Router {
 				if(!routes.hasOwnProperty(route)){
 					return;
 				}
-				this.on(/*routename, routepath, handler*/);
+				this.addRoute(/*routename, routepath, handler*/);
 			}
 		}
-
-	}
-
-	/**
-	 * [_onPromiseResolved description]
-	 * @param  {Function} resolve
-	 * @param  {Function} reject
-	 * @return {Undefined}
-	 */
-	_onPromiseResolved(resolve, reject) {
 
 	}
 
