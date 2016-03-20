@@ -158,7 +158,7 @@ export default class Eventhandler {
 		let [ type, delegateSelector ] = Eventhandler.prepareEventdomain(eventDomain);
 
 		if(!this.config.events[type]) {
-			throw new Error(`Event: ${type} not exists!`);
+			return;
 		}
 
 		let index = 0;
