@@ -74,6 +74,8 @@ export default class Router {
 		Promise: null,
 	};
 
+	promise = {}
+
 	/**
 	 * _lastFragment
 	 * @type {String}
@@ -93,6 +95,12 @@ export default class Router {
 	_lastRoute = null;
 
 	/**
+	 * _events description
+	 * @type {Object}
+	 */
+	_events = {};
+
+	/**
 	 * constructor
 	 * @param  {Object} config
 	 * @return {Router}
@@ -110,28 +118,49 @@ export default class Router {
 	 * @param  {function} handler
 	 * @return {Promise}
 	 */
-	on(event = null, handler = null){
+	on(type = null, handler = null){
 
-		if(!event){
-			throw 'Please pass at least event e.g urlchange, Foo, Bar, ...';
+		if(!type){
+			throw 'Please pass at least type e.g urlchange, Foo, Bar, ...';
 		}
 
-		let promise = this.createPromise((resolve, reject) => {
-			this.promise[event].resolve = resolve;
-		});
+		// keep event types
+		!this._events[type] ? this._events[type] = null : null
 
-		if(Object.classof(handler) === 'Undefined'){
-			handler = (event) => {
-				this.promise[event].resolve(event);
+		let promise = null;
+		if(!handler){
+
+			if(!this.promise[type]){
+				this.promise[type] = [];
 			}
+
+			promise = this.Promise((resolve, reject) => {
+				this.promise[type].push(resolve);
+			});
 		}
 
-		this.scope.on(event, handler);
+		this.scope.on(type, event => {
+			// call handler if passed
+			if(handler){
+				handler(event);
+			}
+			// resolve promise
+			this._promiseHandler(type, event);
+		});
 
 		return promise;
 
 	}
 
+	/**
+	* off
+	* @param  {string} event
+	* @return {undefined}
+	*/
+	off(event) {
+		this.scope.off(event);
+	}
+	
 	/**
 	 * trigger
 	 * @param  {String} event
@@ -144,17 +173,25 @@ export default class Router {
 			throw `Event: "${event} is not allowed! Please use: ${this.event.urlchange}"`;
 		}
 
-		this.scope.trigger(this.event[event], options);
+		this.scope.trigger(event, options);
 
 	}
+
 
 	/**
 	 * off
 	 * @return {Undefined}
 	 */
-	off() {
+	destroy() {
+
+		// remove internal events
 		this.scope.off(this.event.action);
 		this.scope.off(this.event.urlchange);
+
+		// remove registered events
+		for(let event of Object.keys(this._events)){
+			this.scope.off(event);
+		}
 	}
 
 	/**
@@ -182,11 +219,11 @@ export default class Router {
 
 
 	/**
-	 * createPromise
+	 * Promise
 	 * @param  {Function} handler
 	 * @return {Promise}
 	 */
-	createPromise(handler=null) {
+	Promise(handler=null) {
 
 		if(!handler){
 			throw `Please pass a handler function handler(){}!`;
@@ -254,6 +291,26 @@ export default class Router {
 	 * @return {Undefined}
 	 */
 	_onUrlchange(event){
+
+	}
+
+	/**
+	 * _promiseHandler
+	 * @param  {string} type
+	 * @param  {Evemt} event
+	 * @return {undefined}
+	 */
+	_promiseHandler(type, event){
+
+		if(this.promise[type]){
+
+			let resolve;
+			// promise can resolved only once there shift()
+			while((resolve = this.promise[type].shift()) !== undefined){
+				resolve(event);
+			}
+
+		}
 
 	}
 
