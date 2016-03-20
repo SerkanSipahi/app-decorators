@@ -128,6 +128,7 @@ export default class Router {
 		!this._events[type] ? this._events[type] = null : null
 
 		let promise = null;
+		// create promise if handler not exists
 		if(!handler){
 
 			if(!this.promise[type]){
@@ -160,7 +161,7 @@ export default class Router {
 	off(event) {
 		this.scope.off(event);
 	}
-	
+
 	/**
 	 * trigger
 	 * @param  {String} event
@@ -305,7 +306,7 @@ export default class Router {
 		if(this.promise[type]){
 
 			let resolve;
-			// promise can resolved only once there shift()
+			// promise can resolved only once therefore shift()
 			while((resolve = this.promise[type].shift()) !== undefined){
 				resolve(event);
 			}

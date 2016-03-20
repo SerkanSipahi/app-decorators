@@ -39,10 +39,6 @@ describe('Class Router', () => {
 
 	});
 
-	describe('prototype.trigger', () => {
-
-	});
-
 	describe('prototype.off', () => {
 
 	});
@@ -115,7 +111,7 @@ describe('Class Router', () => {
 
 		});
 
-		it('should call "callback" if passed argument is internal event', () => {
+		it('should handle promise or handler correctly', () => {
 
 			// setup
 			let router = Router.create({
@@ -124,8 +120,20 @@ describe('Class Router', () => {
 			let spy_handler = sinon.spy(() => {});
 			// test wihout trigger args
 			router.on('urlchange', spy_handler);
-			router.trigger('urlchange');
+
+			// test if promise resolved
+			router.on('urlchange').should.be.finally.propertyByPath('detail', 'thats').eql('nice');
+			router.on('urlchange').should.be.finally.propertyByPath('detail', 'thats').eql('nice');
+			router.on('urlchange').then(({detail}) => {
+				return `#${detail.thats}#`;
+			}).should.be.finally.eql('#nice#');
+			// test promise count
+			router.promise.urlchange.should.be.length(3);
+
+			router.trigger('urlchange', { thats: 'nice' });
 			spy_handler.callCount.should.equal(1);
+			router.promise.urlchange.should.be.length(0);
+
 			// test with trigger args
 			router.trigger('urlchange', { hello: 'world' });
 			spy_handler.callCount.should.equal(2);
