@@ -16,7 +16,7 @@ export default function on(eventDomain) {
 	return (target, method, descriptor) => {
 
 		// register events
-		on.helper.registerEvent(target, eventDomain, method, descriptor.value);
+		on.helper.registerEvent(target, eventDomain, descriptor.value);
 
 		// define $onCreated callbacks
 		if(!target.$onCreated) {
@@ -71,13 +71,13 @@ on.helper = {};
  * @param  {Function} callback
  * @return {Function} target
  */
-on.helper.registerEvent = (target, eventDomain, method, callback = function(){}) => {
+on.helper.registerEvent = (target, eventDomain, callback = function(){}) => {
 
 	// define namespaces
 	on.helper.registerNamespaces(target);
 
 	if(target.$appDecorators.on.events[eventDomain]) {
-		throw new Error(`The method: "${method}" already exists!`);
+		throw new Error(`The Event: "${eventDomain}" already exists!`);
 	}
 
 	// define events
