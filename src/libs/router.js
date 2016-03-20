@@ -38,10 +38,10 @@ export default class Router {
 	forceUrlchange = false;
 
 	/**
-	 * listner
+	 * scope
 	 * @type {Object}
 	 */
-	listner = {
+	scope = {
 		action: null,
 		urlchange: null,
 	};
@@ -114,51 +114,27 @@ export default class Router {
 
 	/**
 	 * on
-	 * @param  {String} event
-	 * @param  {Function} handler
-	 * @param  {Function} handler
+	 * @param  {string} event
+	 * @param  {function} handler
 	 * @return {Promise}
 	 */
-	on(event = null, ...args){
-
-		let [ arg_2, arg_3 ] = args;
-		let handler = null;
-		let rule = null;
-		let classof_arg2 = Object.classof(arg_2);
-		let classof_arg3 = Object.classof(arg_3);
+	on(event = null, handler = null){
 
 		if(!event){
 			throw 'Please pass at least event e.g urlchange, Foo, Bar, ...';
 		}
 
-		// generic event e.g. urlchange
-		if(event && classof_arg2 === 'Function' && classof_arg3 === 'Undefined'){
-			handler = arg_2;
-		}
-		// if route event
-		if(event && classof_arg2 === 'String' && classof_arg3 === 'Function'){
-			rule = arg_2;
-			handler = arg_3;
-		}
-		if(handler === null){
-			throw 'You forget to pass the handler';
-		}
+		let promise = this.createPromise((resolve, reject) => {
+			this.promise[event].resolve = resolve;
+		});
 
-		let promise = this.createPromise(::this._onPromiseResolved);
-
-		// if passed 2 arguments e.g .on('urlchange', handler)
-		if([event, ...args].length === 2) {
-
-			if(!this.event[event]){
-				throw `Event: "${event} is not allowed! Allowed is: ${this.event.urlchange}"`;
+		if(Object.classof(handler) === 'Undefined'){
+			handler = (event) => {
+				this.promise[event].resolve(event);
 			}
-			this.scope.on(event, handler);
-
 		}
-		// if passed 3 arguments e.g .on('Routename', '/a/{{ id }}', handler)
-		else {
 
-		}
+		this.scope.on(event, handler);
 
 		return promise;
 

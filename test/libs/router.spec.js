@@ -62,40 +62,27 @@ describe('Class Router', () => {
 
 		});
 
-		it('should throw an error if passed internal event wihout handler', () => {
+		it('should not throw an error if no handler passed', () => {
 
 			// setup
 			let router = Router.create({
 				scope: document.createElement('div'),
 			});
 			// test
-			(() => { router.on('urlchange') }).should.throw();
+			(() => { router.on('urlchange') }).should.not.throw();
 			// cleanup
 			router.off();
 
 		});
 
-		it('should throw an error if passed not known event with handler', () => {
+		it('should not throw an error if passed event with handler', () => {
 
 			// setup
 			let router = Router.create({
 				scope: document.createElement('div'),
 			});
 			// test
-			(() => { router.on('someevent', () => {}) }).should.throw();
-			// cleanup
-			router.off();
-
-		});
-
-		it('should throw an error if passed routename + route but not handler', () => {
-
-			// setup
-			let router = Router.create({
-				scope: document.createElement('div'),
-			});
-			// test
-			(() => { router.on('my route', '/a/b/c') }).should.throw();
+			(() => { router.on('someevent', () => {}) }).should.not.throw();
 			// cleanup
 			router.off();
 
@@ -108,8 +95,8 @@ describe('Class Router', () => {
 				scope: document.createElement('div'),
 			});
 			// test
-			router.on('a', '/product/detail/{{ id }}', ({ id }) => {}).should.be.Promise();
-			router.on('urlchange', (event) => {}).then((event)  => {}).should.be.Promise();
+			router.on('urlchange').should.be.Promise();
+			router.on('my route', (event) => {}).then((event)  => {}).should.be.Promise();
 			// cleanup
 			router.off();
 
@@ -132,10 +119,6 @@ describe('Class Router', () => {
 			spy_handler.args[1][0].detail.should.propertyByPath('hello').eql('world');
 			// cleanup
 			router.off();
-
-		});
-
-		it('should call "then" if passed argument is internal event', () => {
 
 		});
 
