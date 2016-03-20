@@ -197,6 +197,15 @@ export default class Eventhandler {
 	}
 
 	/**
+	 * existsEvent
+	 * @param  {string} eventype
+	 * @return {boolean}
+	 */
+	existsEvent(eventType){
+		return this.config.events[eventType] ? true : false;
+	}
+
+	/**
 	 * Return event callbacks
 	 * @param  {String} eventType
 	 * @return {Array|null}
