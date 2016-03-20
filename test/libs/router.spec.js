@@ -16,13 +16,13 @@ describe('Class Router', () => {
 			let url = router.resolveURL('http://www.mydomain.com/path/to/somewhere.html?a=1&b=2');
 			url.fragment.should.equal('/path/to/somewhere.html?a=1&b=2');
 			// cleanup
-			router.off();
+			router.destroy();
 
 		});
 
 	});
 
-	describe('prototype.createPromise', () => {
+	describe('prototype.Promise', () => {
 
 		it('should return promise object', () => {
 
@@ -31,9 +31,9 @@ describe('Class Router', () => {
 				scope: document.createElement('div'),
 			});
 			// test
-			router.createPromise(function(){}).should.be.Promise();
+			router.Promise(function(){}).should.be.Promise();
 			// cleanup
-			router.off();
+			router.destroy();
 
 		});
 
@@ -58,7 +58,7 @@ describe('Class Router', () => {
 			// test
 			(() => { router.on() }).should.throw();
 			// cleanup
-			router.off();
+			router.destroy();
 
 		});
 
@@ -71,7 +71,7 @@ describe('Class Router', () => {
 			// test
 			(() => { router.on('urlchange') }).should.not.throw();
 			// cleanup
-			router.off();
+			router.destroy();
 
 		});
 
@@ -84,11 +84,11 @@ describe('Class Router', () => {
 			// test
 			(() => { router.on('someevent', () => {}) }).should.not.throw();
 			// cleanup
-			router.off();
+			router.destroy();
 
 		});
 
-		it('should return promise if passed arguments passed correctly', () => {
+		it('should return promise if passed only event', () => {
 
 			// setup
 			let router = Router.create({
@@ -96,9 +96,22 @@ describe('Class Router', () => {
 			});
 			// test
 			router.on('urlchange').should.be.Promise();
-			router.on('my route', (event) => {}).then((event)  => {}).should.be.Promise();
+			router.on('urlchange').then(() => {}).should.be.Promise();
 			// cleanup
-			router.off();
+			router.destroy();
+
+		});
+
+		it('should return null if passed event and handler', () => {
+
+			// setup
+			let router = Router.create({
+				scope: document.createElement('div'),
+			});
+			// test
+			should(router.on('my route', (event) => {})).be.null();
+			// cleanup
+			router.destroy();
 
 		});
 
@@ -108,7 +121,7 @@ describe('Class Router', () => {
 			let router = Router.create({
 				scope: document.createElement('div'),
 			});
-			let spy_handler = sinon.spy();
+			let spy_handler = sinon.spy(() => {});
 			// test wihout trigger args
 			router.on('urlchange', spy_handler);
 			router.trigger('urlchange');
@@ -118,7 +131,7 @@ describe('Class Router', () => {
 			spy_handler.callCount.should.equal(2);
 			spy_handler.args[1][0].detail.should.propertyByPath('hello').eql('world');
 			// cleanup
-			router.off();
+			router.destroy();
 
 		});
 
@@ -168,7 +181,12 @@ describe('Class Router', () => {
 			// cleanup
 			document.body.removeChild(element);
 			router._onUrlchange.restore();
-			router.off();
+			router.destroy();
+
+		});
+
+	});
+
 
 		});
 
