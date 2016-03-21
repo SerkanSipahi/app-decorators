@@ -195,9 +195,4 @@ describe('Class Router', () => {
 
 	});
 
-
-		});
-
-	});
-
 });
