@@ -178,7 +178,6 @@ export default class Router {
 
 	}
 
-
 	/**
 	 * off
 	 * @return {Undefined}
@@ -204,7 +203,6 @@ export default class Router {
 		return this.helper.encodeURI(uri);
 	}
 
-
 	/**
 	 * resolveURL
 	 * @param  {String} href
@@ -217,7 +215,6 @@ export default class Router {
 		return url;
 
 	}
-
 
 	/**
 	 * Promise
@@ -232,7 +229,6 @@ export default class Router {
 
 		return new this.helper.Promise(handler);
 	}
-
 
 	/**
 	 * _init
