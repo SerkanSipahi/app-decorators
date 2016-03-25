@@ -36,6 +36,10 @@ module.exports = function (config) {
 		  },
 		},
 		jspm: {
+
+			browser: "jspm.browser.js",
+			config: "jspm.config.js",
+
 		    loadFiles: [
 				'test/decorators/*spec.js',
 				'test/libs/*spec.js',
