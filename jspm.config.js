@@ -2,7 +2,7 @@ SystemJS.config({
   transpiler: "plugin-babel",
   babelOptions: {
     "presents": [
-      "babel-preset-stage-0"
+      "babel-preset-es2015"
     ],
     "plugins": [
       "babel-plugin-transform-decorators-legacy",
