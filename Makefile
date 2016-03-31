@@ -4,11 +4,12 @@ default:
 	@echo "Available Targets:"
 	@echo ""
 	@echo "   make install"
+	@echo "   make dev"
 	@echo "   make test"
 	@echo "   make clean"
 	@echo ""
 
-install: node_modules jspm_packages
+install: clean node_modules jspm_packages
 
 node_modules:
 	npm install
