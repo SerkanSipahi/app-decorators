@@ -205,14 +205,15 @@ export default class CustomElement {
 	/**
 	 * Extract and build methods in new object structure for createClass
 	 * @param  {Object} propObject
-	 * @param  {Regex} exclude
+	 * @param  {Object} options
 	 * @return {Array} methodContainer
 	 */
-	static extractProperties(propObject, exclude = false){
+	static extractProperties(propObject, options){
 
 		let methodContainer = [];
 		for(let method of Reflect.ownKeys(propObject)) {
-			if(exclude && method.match(exclude)) {
+			let ignore = options.ignore;
+			if(ignore && method.match(ignore)) {
 				continue;
 			};
 			methodContainer.push({
@@ -343,7 +344,7 @@ export default class CustomElement {
 	 */
 	static getInstanceMethods(ClassComponent) {
 		let prototype = CustomElement.getPrototype(ClassComponent);
-		return CustomElement.extractProperties(prototype, /constructor/);
+		return CustomElement.extractProperties(prototype, { ignore: /constructor/ });
 	}
 
 	/**
@@ -353,7 +354,7 @@ export default class CustomElement {
 	 */
 	static getStaticMethods(ClassComponent) {
 		let constructor = CustomElement.getConstructor(ClassComponent);
-		return CustomElement.extractProperties(constructor, /length|name|prototype|arguments|caller/);
+		return CustomElement.extractProperties(constructor, { ignore: /length|name|prototype|arguments|caller/ });
 	}
 
 	/**
