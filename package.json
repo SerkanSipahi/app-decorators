@@ -35,9 +35,9 @@
     "mixin"
   ],
   "devDependencies": {
-    "jspm": "0.17.0-beta.11",
-    "eslint": "2.0.0-rc.0",
-    "jspm-github": "0.14.6",
+    "babel-eslint": "6.0.0-beta.6",
+    "eslint": "2.5.0",
+    "jspm": "0.17.0-beta.12",
     "karma": "0.13.19",
     "karma-chrome-launcher": "0.2.2",
     "karma-firefox-launcher": "0.1.7",
