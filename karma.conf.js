@@ -1,7 +1,7 @@
 module.exports = function (config) {
 
 	config.set({
-		basePath: './',
+		basePath: './dist',
 		frameworks: [
 			'jspm',
 			'mocha',
@@ -36,6 +36,10 @@ module.exports = function (config) {
 	          flags: ['--no-sandbox']
 		  },
 		},
+		files: [{
+	        pattern: '**/*.js.map',
+	        included: false
+		}],
 		jspm: {
 
 			browser: "jspm.browser.js",
