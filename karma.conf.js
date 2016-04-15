@@ -19,6 +19,7 @@ module.exports = function (config) {
 	    ],
 		browsers: [
 			'Chrome',
+			'ChromeCanary',
 			'Firefox',
 			'Safari',
 			'FirefoxEnableWebComponents',
