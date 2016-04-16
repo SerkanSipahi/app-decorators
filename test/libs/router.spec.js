@@ -152,16 +152,19 @@ describe('Class Router', () => {
 
 			router.on('Startpage /index.html');
 			router.on('Resultpage /results.html');
-			router.on('Detailpage /details-{{id}}.html');
-			router.on('Configurator /conf-{{start}}-{{end}}.html');
+			router.on('Detailpage /details.html');
+			router.on('Configurator /configurator.html');
 
 			// test routes count
 			Object.keys(router.getRoutes()).should.be.length(4);
 
 			// add registered route
-			router.on('Detailpage /details-{{id}}.html', ({ id }) => {});
+			router.on('Detailpage /details.html');
 			// routes count must be the same
 			Object.keys(router.getRoutes()).should.be.length(4);
+
+			// cleanup
+			router.destroy();
 
 		});
 
