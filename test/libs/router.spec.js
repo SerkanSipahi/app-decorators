@@ -143,6 +143,29 @@ describe('Class Router', () => {
 
 		});
 
+		it('should assign routes correctly', () => {
+
+			// setup
+			let router = Router.create({
+				scope: document.createElement('div'),
+			});
+
+			router.on('Startpage /index.html', () => {});
+			router.on('Resultpage /results.html', () => {});
+			router.on('Detailpage /details-{{id}}.html', ({ id }) => {});
+			router.on('Configurator /conf-{{start}}-{{end}}.html', ({ id }) => {});
+
+			// test routes count
+			Object.keys(router.getRoutes()).should.be.length(4);
+
+			// add registered route
+			router.on('Detailpage /details-{{id}}.html', ({ id }) => {});
+			// routes count must be the same
+			Object.keys(router.getRoutes()).should.be.length(4);
+
+		});
+
+
 	});
 
 	describe('click on anchor and by brower.back()', () => {

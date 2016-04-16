@@ -2,12 +2,6 @@
 export default class Router {
 
 	/**
-	 * routes
-	 * @type {Object}
-	 */
-	routes = {};
-
-	/**
 	 * foward()
 	 * @type {History}
 	 */
@@ -95,6 +89,12 @@ export default class Router {
 	_lastRoute = null;
 
 	/**
+	 * routes
+	 * @type {Object}
+	 */
+	_routes = {};
+
+	/**
 	 * _events description
 	 * @type {Object}
 	 */
@@ -118,36 +118,14 @@ export default class Router {
 	 * @param  {function} handler
 	 * @return {Promise}
 	 */
-	on(type = null, handler = null){
+	on(type = '', handler = null){
 
 		if(!type){
 			throw 'Please pass at least type e.g urlchange, Foo, Bar, ...';
 		}
 
-		// keep event types
-		!this._events[type] ? this._events[type] = null : null
-
-		let promise = null;
-		// create promise if handler not exists
-		if(!handler){
-
-			if(!this.promise[type]){
-				this.promise[type] = [];
-			}
-
-			promise = this.Promise((resolve, reject) => {
-				this.promise[type].push(resolve);
-			});
-		}
-
-		this.scope.on(type, event => {
-			// call handler if passed
-			if(handler){
-				handler(event);
-			}
-			// resolve promise
-			this._promiseHandler(type, event);
-		});
+		let [ routeName, route ] = type.split(' ');
+		let promise = this.addRouteListener(routeName, route, handler);
 
 		return promise;
 
@@ -192,6 +170,75 @@ export default class Router {
 		for(let event of Object.keys(this._events)){
 			this.scope.off(event);
 		}
+	}
+
+	addRouteListener(routeName, route, handler = null){
+
+		// add route
+		// is required for: if route matched then we
+		// can take routename for triggering
+		this.addRoute(routeName, route);
+
+		// add event, its required if we want to destroy the router
+		this.addEvent(routeName);
+
+		// create promise if handler not exists
+		let promise = null;
+		if(!handler){
+
+			if(!this.promise[routeName]){
+				this.promise[routeName] = [];
+			}
+
+			promise = this.Promise((resolve, reject) => {
+				this.promise[routeName].push(resolve);
+			});
+
+		}
+
+		this.scope.on(routeName, event => {
+			// call handler if passed
+			if(handler){
+				handler(event);
+			}
+			// resolve promise
+			this._promiseHandler(routeName, event);
+		});
+
+		return promise;
+	}
+
+	/**
+	 * addRoute
+	 * @param {string} routeName
+	 * @param {string} route
+	 */
+	addRoute(routeName, route){
+
+		if(route && !this._routes[routeName]) {
+			this._routes[route] = routeName;
+		}
+
+	}
+
+	/**
+	 * addEvent
+	 * @param {undefined} type
+	 */
+	addEvent(type){
+
+		if(!this._events[type]){
+			this._events[type] = null;
+		}
+
+	}
+
+	/**
+	 * getRoutes
+	 * @return {Object}
+	 */
+	getRoutes(){
+		return this._routes;
 	}
 
 	/**
