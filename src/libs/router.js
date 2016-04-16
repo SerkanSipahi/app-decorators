@@ -283,7 +283,6 @@ export default class Router {
 	_init(){
 
 		this._bindEvents();
-		this._bindRoutes();
 
 	}
 
@@ -352,24 +351,6 @@ export default class Router {
 				resolve(event);
 			}
 
-		}
-
-	}
-
-	/**
-	 * _bindRoutes description
-	 * @param  {Object} routes
-	 * @return {Undefined}
-	 */
-	_bindRoutes(routes){
-
-		if(routes) {
-			for(let route in routes) {
-				if(!routes.hasOwnProperty(route)){
-					return;
-				}
-				this.addRoute(/*routename, routepath, handler*/);
-			}
 		}
 
 	}
