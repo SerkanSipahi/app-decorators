@@ -333,6 +333,37 @@ export default class Router {
 	 */
 	_onUrlchange(event){
 
+		// createURL === URL object
+		if(event.detail instanceof this.helper.createURL){
+			let { fragment } = event.detail;
+			let { routeName, params } = this._matchURL(fragment);
+			if(routeName){
+				this.scope.trigger(routeName, params);
+			}
+		}
+
+	}
+
+	/**
+	 * _matchURL description
+	 * @param  {string} fragment
+	 * @return {object}
+	 */
+	_matchURL(fragment){
+
+		let matchedObject = { params: {} };
+		// test for bestcase (static url)
+		if(this._routes[fragment]){
+			matchedObject = {
+				routeName : this._routes[fragment],
+			}
+		}
+		else {
+
+		}
+
+		return matchedObject;
+
 	}
 
 	/**

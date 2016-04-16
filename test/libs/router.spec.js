@@ -264,7 +264,7 @@ describe('Class Router', () => {
 			document.querySelectorAll('.foo').should.length(1);
 
 			// test popstate
-			// chrome: with karma + mocha is does not work (.back/forward)!
+			// chrome: with karma + mocha it does not work (.back/forward)!
 			// Dont know why!? I have tested for Chrome manually and its works
 			router.back();
 			router.back();
@@ -275,6 +275,43 @@ describe('Class Router', () => {
 			// cleanup
 			document.body.removeChild(element);
 			router._onUrlchange.restore();
+			router.destroy();
+
+		});
+
+		it('should match registered route (pathname) without dynamic parameter', () => {
+
+			let element = null;
+			element = document.createElement("div");
+			let router = Router.create({
+				scope: element,
+			});
+			element.classList.add('anchor-container');
+			element.innerHTML = `
+				<a class="index" href="/index.html"> Index </a>
+				<a class="some-path-url" href="/some/path/url.html"> Some path URL </a>
+				<a class="not-registered-url" href="/not/registered/url.html"> Not registered URL </a>
+			`;
+			document.body.appendChild(element);
+
+			let spy_index_handler = sinon.spy(() => {});
+			let spy_somePathURL_handler = sinon.spy(() => {});
+
+			router.on('Index /index.html', spy_index_handler);
+			router.on('SomePathURL /some/path/url.html', spy_somePathURL_handler);
+
+			element.querySelector('.index').click();
+			element.querySelector('.some-path-url').click();
+			element.querySelector('.not-registered-url').click();
+
+			spy_index_handler.callCount.should.equal(1);
+			spy_somePathURL_handler.callCount.should.equal(1);
+
+			element.querySelector('.some-path-url').click();
+
+			spy_index_handler.callCount.should.equal(1);
+			spy_somePathURL_handler.callCount.should.equal(2);
+
 			router.destroy();
 
 		});
