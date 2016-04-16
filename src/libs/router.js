@@ -148,10 +148,6 @@ export default class Router {
 	 */
 	trigger(event = '', options = null){
 
-		if(!this.event[event]){
-			throw `Event: "${event} is not allowed! Please use: ${this.event.urlchange}"`;
-		}
-
 		this.scope.trigger(event, options);
 
 	}
