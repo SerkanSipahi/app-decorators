@@ -111,7 +111,7 @@ describe('Class Router', () => {
 
 		});
 
-		it('should handle promise or handler correctly', () => {
+		it('should handle promise or handler correctly', (done) => {
 
 			// setup
 			let router = Router.create({
@@ -122,10 +122,10 @@ describe('Class Router', () => {
 			router.on('urlchange', spy_handler);
 
 			// test if promise resolved
-			router.on('urlchange').should.be.finally.propertyByPath('detail', 'thats').eql('nice');
-			router.on('urlchange').should.be.finally.propertyByPath('detail', 'thats').eql('nice');
-			router.on('urlchange').then(({detail}) => {
-				return `#${detail.thats}#`;
+			router.on('urlchange').should.be.finally.propertyByPath('thats').eql('nice');
+			router.on('urlchange').should.be.finally.propertyByPath('thats').eql('nice');
+			router.on('urlchange').then(({thats}) => {
+				return `#${thats}#`;
 			}).should.be.finally.eql('#nice#');
 			// test promise count
 			router.promise.urlchange.should.be.length(3);
@@ -137,9 +137,14 @@ describe('Class Router', () => {
 			// test with trigger args
 			router.trigger('urlchange', { hello: 'world' });
 			spy_handler.callCount.should.equal(2);
-			spy_handler.args[1][0].detail.should.propertyByPath('hello').eql('world');
-			// cleanup
-			router.destroy();
+			spy_handler.args[1][0].should.propertyByPath('hello').eql('world');
+
+			// need this timeout for promise tests
+			setTimeout(() => {
+				// cleanup
+				router.destroy();
+				done();
+			}, 10);
 
 		});
 
@@ -183,38 +188,59 @@ describe('Class Router', () => {
 			router.on('Resultpage /results.html', spy_resultpage_handler);
 			router.on('Detailpage /details.html', spy_detailpage_handler);
 			router.on('Configurator /configurator.html', spy_configurator_handler);
+			// router.on('Product /product/{{id}}-{{name}}.html', spy_configurator_handler);
 
 			router.trigger('Startpage');
 			router.trigger('Resultpage');
 			router.trigger('Resultpage');
-			router.trigger('Detailpage', { id: 1234 });
+			router.trigger('Detailpage');
 			router.trigger('Configurator');
+			// router.trigger('Product', { id: 123, name: 'foo' });
+			// router.trigger('Product', { id: 123 }); // should throw error because name missing
 
 			spy_startpage_handler.callCount.should.equal(1);
 			spy_resultpage_handler.callCount.should.equal(2);
 			spy_detailpage_handler.callCount.should.equal(1);
 			spy_configurator_handler.callCount.should.equal(1);
 
-			spy_detailpage_handler.args[0][0].detail.should.propertyByPath('id').eql(1234);
-
 			router.destroy();
+
+		});
+
+		it.skip('should route to correct href if handler is linkname (idea not implemented)', () => {
+
+			let router = Router.create({
+				scope: document.createElement('div'),
+			});
+
+			router.on('Google /index.html', 'https://www.google.de');
+			router.on('AbsoluteURL /absolute.html', '/absolute-internal-url.html');
+			router.on('RelativeURL /relative.html', 'relative-internal-url.html');
+
+			router.trigger('Google');
+			router.trigger('AbsoluteURL');
+			router.trigger('RelativeURL');
 
 		});
 
 	});
 
-	describe('click on anchor and by brower.back()', () => {
+	describe('click on anchor or brower.back()', () => {
 
 		it('should call handler _onUrlchange', () => {
 
 			// setup
 			// http://stackoverflow.com/questions/25578112/spying-on-a-method-with-sinon-method-bound-to-event-listener-method-was-execut#25578185
 			let spy_onUrlchange = sinon.spy(Router.prototype, "_onUrlchange");
+			let spy_urlchange = sinon.spy(() => {});
 			let element = null;
 			element = document.createElement("div");
 			let router = Router.create({
 				scope: element,
 			});
+
+			router.on('urlchange', spy_urlchange);
+
 			element.classList.add('anchor-container');
 			element.innerHTML = `
 				<a class="foo" href="/index"> Index </a>
@@ -231,6 +257,8 @@ describe('Class Router', () => {
 			element.querySelector('.baz').click(); spy_onUrlchange.callCount.should.equal(3);
 			element.querySelector('.qux').click(); spy_onUrlchange.callCount.should.equal(4);
 			element.querySelector('.qux').click(); spy_onUrlchange.callCount.should.equal(4);
+
+			spy_urlchange.callCount.should.equal(4);
 
 			// test pushstate works. If not work we are on different site (out of tests)
 			document.querySelectorAll('.foo').should.length(1);

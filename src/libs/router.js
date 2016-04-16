@@ -193,12 +193,14 @@ export default class Router {
 		}
 
 		this.scope.on(routeName, event => {
-			// call handler if passed
+
+			let params = event.detail || {};
+
 			if(handler){
-				handler(event);
+				handler(params);
 			}
 			// resolve promise
-			this._promiseHandler(routeName, event);
+			this._promiseHandler(routeName, params);
 		});
 
 		return promise;
