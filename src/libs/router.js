@@ -62,7 +62,7 @@ export default class Router {
 	 * @type {Object}
 	 */
 	helper = {
-		URLResolver: null,
+		createURL: null,
 		encodeURI: null,
 		location: null,
 		Promise: null,
@@ -247,13 +247,13 @@ export default class Router {
 	}
 
 	/**
-	 * resolveURL
+	 * createURL
 	 * @param  {String} href
 	 * @return {URL} url
 	 */
-	resolveURL(href){
+	createURL(href){
 
-		let url = new this.helper.URLResolver(href);
+		let url = new this.helper.createURL(href);
 		url.fragment = url.href.replace(url.origin, '');
 		return url;
 
@@ -310,7 +310,7 @@ export default class Router {
 		}
 
 		let [ event_action_type ] = this.event.action.split(' ');
-		let urlObject = this.resolveURL(
+		let urlObject = this.createURL(
 			event.type === event_action_type ? event.target.href : this.helper.location.href
 		);
 

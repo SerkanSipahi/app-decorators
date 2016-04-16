@@ -32,7 +32,7 @@ Router.create = function(config = {}){
 			stealth: config.mode_stealth || true,
 		},
 		helper: {
-			URLResolver: config.URLResolver || window.URL,
+			createURL: config.createURL || window.URL,
 			encodeURI: config.encodeURI || window.encodeURI,
 			location: config.location || window.location,
 			Promise: config.Promise || window.Promise,

@@ -4,7 +4,7 @@ import Router from 'src/apps/router';
 
 describe('Class Router', () => {
 
-	describe('prototype.resolveURL', () => {
+	describe('prototype.createURL', () => {
 
 		it('should return url object with additional "fragment" property', () => {
 
@@ -13,7 +13,7 @@ describe('Class Router', () => {
 				scope: document.createElement('div'),
 			});
 			// test
-			let url = router.resolveURL('http://www.mydomain.com/path/to/somewhere.html?a=1&b=2');
+			let url = router.createURL('http://www.mydomain.com/path/to/somewhere.html?a=1&b=2');
 			url.fragment.should.equal('/path/to/somewhere.html?a=1&b=2');
 			// cleanup
 			router.destroy();
