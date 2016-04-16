@@ -150,10 +150,10 @@ describe('Class Router', () => {
 				scope: document.createElement('div'),
 			});
 
-			router.on('Startpage /index.html', () => {});
-			router.on('Resultpage /results.html', () => {});
-			router.on('Detailpage /details-{{id}}.html', ({ id }) => {});
-			router.on('Configurator /conf-{{start}}-{{end}}.html', ({ id }) => {});
+			router.on('Startpage /index.html');
+			router.on('Resultpage /results.html');
+			router.on('Detailpage /details-{{id}}.html');
+			router.on('Configurator /conf-{{start}}-{{end}}.html');
 
 			// test routes count
 			Object.keys(router.getRoutes()).should.be.length(4);
