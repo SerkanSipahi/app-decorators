@@ -190,7 +190,7 @@ export default class Router {
 				this.promise[routeName] = [];
 			}
 
-			promise = this.Promise((resolve, reject) => {
+			promise = this.Promise(resolve => {
 				this.promise[routeName].push(resolve);
 			});
 
