@@ -168,6 +168,38 @@ describe('Class Router', () => {
 
 		});
 
+		it('should trigger correct handler on explicitly triggering', () => {
+
+			let router = Router.create({
+				scope: document.createElement('div'),
+			});
+
+			let spy_startpage_handler = sinon.spy(() => {});
+			let spy_resultpage_handler = sinon.spy(() => {});
+			let spy_detailpage_handler = sinon.spy(() => {});
+			let spy_configurator_handler = sinon.spy(() => {});
+
+			router.on('Startpage /index.html', spy_startpage_handler);
+			router.on('Resultpage /results.html', spy_resultpage_handler);
+			router.on('Detailpage /details.html', spy_detailpage_handler);
+			router.on('Configurator /configurator.html', spy_configurator_handler);
+
+			router.trigger('Startpage');
+			router.trigger('Resultpage');
+			router.trigger('Resultpage');
+			router.trigger('Detailpage', { id: 1234 });
+			router.trigger('Configurator');
+
+			spy_startpage_handler.callCount.should.equal(1);
+			spy_resultpage_handler.callCount.should.equal(2);
+			spy_detailpage_handler.callCount.should.equal(1);
+			spy_configurator_handler.callCount.should.equal(1);
+
+			spy_detailpage_handler.args[0][0].detail.should.propertyByPath('id').eql(1234);
+
+			router.destroy();
+
+		});
 
 	});
 
