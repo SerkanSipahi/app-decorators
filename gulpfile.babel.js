@@ -8,7 +8,8 @@ import replace from 'gulp-replace';
 gulp.task('compile:src', () => {
 	return gulp.src('src/**/*.js')
 		.pipe(changed('dist/src'))
-		.pipe(replace(/([^:]\/\/([^#]).*|\/\*[\s\S]*?\*\/)/gm, ''))
+		// remove comments but not http:-->//<--
+		.pipe(replace(/([^:http(s)?]\/\/.*|\/\*[\s\S]*?\*\/)/gm, ''))
 		.pipe(sourcemaps.init())
 		.pipe(babel())
 		.pipe(sourcemaps.write('.'))
@@ -18,7 +19,8 @@ gulp.task('compile:src', () => {
 gulp.task('compile:test', () => {
 	return gulp.src('test/**/*.js')
 		.pipe(changed('dist/test'))
-		.pipe(replace(/([^:]\/\/([^#]).*|\/\*[\s\S]*?\*\/)/gm, ''))
+		// remove comments but not http:-->//<--
+		.pipe(replace(/([^:http(s)?]\/\/.*|\/\*[\s\S]*?\*\/)/gm, ''))
 		.pipe(sourcemaps.init())
 		.pipe(babel())
 		.pipe(sourcemaps.write('.'))
