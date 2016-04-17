@@ -437,6 +437,7 @@ class SpecialButton {
 ## Tests
 ```
 make install
+make compile
 make test
 ```
 
