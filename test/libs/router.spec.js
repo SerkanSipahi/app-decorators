@@ -320,6 +320,7 @@ describe('Class Router', () => {
 			// need this timeout for promise tests
 			setTimeout(() => {
 				// cleanup
+				document.body.removeChild(element);
 				router.destroy();
 				done();
 			}, 10);
