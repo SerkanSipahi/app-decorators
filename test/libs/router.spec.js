@@ -279,7 +279,7 @@ describe('Class Router', () => {
 
 		});
 
-		it('should match registered route (pathname) without dynamic parameter', () => {
+		it('should match registered route (pathname) without dynamic parameter', (done) => {
 
 			let element = null;
 			element = document.createElement("div");
@@ -297,8 +297,13 @@ describe('Class Router', () => {
 			let spy_index_handler = sinon.spy(() => {});
 			let spy_somePathURL_handler = sinon.spy(() => {});
 
+			// register by handler
 			router.on('Index /index.html', spy_index_handler);
 			router.on('SomePathURL /some/path/url.html', spy_somePathURL_handler);
+			// register by promise
+			router.on('SomePathURL /some/path/url.html').then(() => {
+				return 'matched';
+			}).should.be.finally.eql('matched');
 
 			element.querySelector('.index').click();
 			element.querySelector('.some-path-url').click();
@@ -312,7 +317,12 @@ describe('Class Router', () => {
 			spy_index_handler.callCount.should.equal(1);
 			spy_somePathURL_handler.callCount.should.equal(2);
 
-			router.destroy();
+			// need this timeout for promise tests
+			setTimeout(() => {
+				// cleanup
+				router.destroy();
+				done();
+			}, 10);
 
 		});
 
