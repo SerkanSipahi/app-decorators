@@ -15,16 +15,11 @@ export default function on(eventDomain) {
 
 	return (target, method, descriptor) => {
 
+		// register namespaces
+		on.helper.registerNamespaces(target);
+
 		// register events
 		on.helper.registerEvent(target, eventDomain, descriptor.value);
-
-		// define $onCreated.on namespace
-		if(!target.$onCreated) {
-			target.$onCreated = {};
-		}
-		if(!('on' in target.$onCreated)){
-			target.$onCreated.on = [];
-		}
 
 		/**
 		 * ### Ensure "registerOnCreatedCallback" (see below) registered only once ###
@@ -76,9 +71,6 @@ on.helper = {};
  */
 on.helper.registerEvent = (target, eventDomain, callback = function(){}) => {
 
-	// define namespaces
-	on.helper.registerNamespaces(target);
-
 	if(target.$appDecorators.on.events[eventDomain]) {
 		throw new Error(`The Event: "${eventDomain}" already exists!`);
 	}
@@ -98,9 +90,7 @@ on.helper.registerEvent = (target, eventDomain, callback = function(){}) => {
  */
 on.helper.registerOnCreatedCallback = (target, callback) => {
 
-	// init render engine
 	target.$onCreated.on.push(callback);
-
 	return target;
 
 };
@@ -113,17 +103,7 @@ on.helper.registerOnCreatedCallback = (target, callback) => {
  */
 on.helper.registerOnAttachedCallback = (target, callback) => {
 
-	// define $onAttached callbacks
-	if(!target.$onAttached) {
-		target.$onAttached = {};
-	}
-	if(!('on' in target.$onAttached)){
-		target.$onAttached.on = [];
-	}
-
-	// init render engine
 	target.$onAttached.on.push(callback);
-
 	return target;
 
 };
@@ -136,17 +116,8 @@ on.helper.registerOnAttachedCallback = (target, callback) => {
  */
 on.helper.registerOnDetachedCallback = (target, callback) => {
 
-	// define $onDetached callbacks
-	if(!target.$onDetached) {
-		target.$onDetached = {};
-	}
-	if(!('on' in target.$onDetached)){
-		target.$onDetached.on = [];
-	}
-
 	// init render engine
 	target.$onDetached.on.push(callback);
-
 	return target;
 
 };
@@ -158,20 +129,26 @@ on.helper.registerOnDetachedCallback = (target, callback) => {
  */
 on.helper.registerNamespaces = (target) => {
 
-	// if namespace already exists do nothing
-	if(target.$appDecorators && target.$appDecorators.on){
-		return target;
-	}
-
-	// define namespace
-	if(!target.$appDecorators){
-		target.$appDecorators = {};
-	}
-	if(!target.$appDecorators.on){
+	// define $appDecorators.on namespace
+	if(!target.$appDecorators) target.$appDecorators = {};
+	if(!target.$appDecorators.on) {
 		target.$appDecorators.on = {
 			events : {},
 		};
 	}
 
+	// define $onCreated.on namespace
+	if(!target.$onCreated) target.$onCreated = {};
+	if(!target.$onCreated.on) target.$onCreated.on = [];
+
+	// define $onDetached.on callbacks
+	if(!target.$onDetached) target.$onDetached = {};
+	if(!target.$onDetached.on) target.$onDetached.on = [];
+
+	// define $onAttached.on callbacks
+	if(!target.$onAttached) target.$onAttached = {};
+	if(!target.$onAttached.on) target.$onAttached.on = [];
+
 	return target;
+
 };

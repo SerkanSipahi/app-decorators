@@ -26,6 +26,9 @@ function view(template, templateName = 'base') {
 
 		let target = Class.prototype;
 
+		// define namespaces
+		view.helper.registerNamespaces(target);
+
 		// register Template
 		view.helper.registerTemplate(target, template, templateName);
 
@@ -104,6 +107,10 @@ view.bind = (target, property, descriptor) => {
 		throw new Error('The value of @view.bind must be an String');
 	}
 
+	// define namespaces
+	view.helper.registerNamespaces(target);
+
+	// register view binds
 	view.helper.registerBind(target, property, value);
 
 };
@@ -124,9 +131,6 @@ view.helper = {};
  */
 view.helper.registerBind = (target, property, value) => {
 
-	// define namespaces
-	view.helper.registerNamespaces(target);
-
 	// define @view.bind property/value
 	target.$appDecorators.view.bind[property] = value;
 
@@ -143,12 +147,8 @@ view.helper.registerBind = (target, property, value) => {
  */
 view.helper.registerTemplate = (target, template, templateName = 'base') => {
 
-	// define namespaces
-	view.helper.registerNamespaces(target);
-
 	// add template
 	target.$appDecorators.view.template[templateName] = template;
-
 	return target;
 
 };
@@ -161,17 +161,8 @@ view.helper.registerTemplate = (target, template, templateName = 'base') => {
  */
 view.helper.registerOnCreatedCallback = (target, callback) => {
 
-	// define $onCreated.on callbacks
-	if(!target.$onCreated) {
-		target.$onCreated = {};
-	}
-	if(!('view' in target.$onCreated)){
-		target.$onCreated.view = [];
-	}
-
 	// init render engine
 	target.$onCreated.view.push(callback);
-
 	return target;
 
 };
@@ -183,21 +174,18 @@ view.helper.registerOnCreatedCallback = (target, callback) => {
  */
 view.helper.registerNamespaces = (target) => {
 
-	// if namespace already exists do nothing
-	if(target.$appDecorators && target.$appDecorators.view){
-		return target;
-	}
-
 	// define namespace
-	if(!target.$appDecorators){
-		target.$appDecorators = {};
-	}
+	if(!target.$appDecorators) target.$appDecorators = {};
 	if(!target.$appDecorators.view){
 		target.$appDecorators.view = {
 			bind: {},
 			template: {},
 		};
 	}
+
+	// define $onCreated.on callbacks
+	if(!target.$onCreated) target.$onCreated = {};
+	if(!target.$onCreated.view) target.$onCreated.view = [];
 
 	return target;
 };
