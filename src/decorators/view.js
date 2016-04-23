@@ -161,13 +161,16 @@ view.helper.registerTemplate = (target, template, templateName = 'base') => {
  */
 view.helper.registerOnCreatedCallback = (target, callback) => {
 
-	// define $onCreated callbacks
+	// define $onCreated.on callbacks
 	if(!target.$onCreated) {
-		target.$onCreated = [];
+		target.$onCreated = {};
+	}
+	if(!('view' in target.$onCreated)){
+		target.$onCreated.view = [];
 	}
 
 	// init render engine
-	target.$onCreated.push(callback);
+	target.$onCreated.view.push(callback);
 
 	return target;
 

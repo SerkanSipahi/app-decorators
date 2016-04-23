@@ -231,9 +231,12 @@ export default class CustomElement {
 	 * @return {undefined}
 	 */
 	static applyOnCreatedCallback(self, ...args){
-		if(self.$onCreated && self.$onCreated.length) {
-			for(let $callback of self.$onCreated){
-				$callback(self, ...args);
+
+		if(self.$onCreated) {
+			for(let decorator of Object.keys(self.$onCreated)){
+				for(let $callback of self.$onCreated[decorator]) {
+					$callback(self, ...args);
+				}
 			}
 		}
 	}

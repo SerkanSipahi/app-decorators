@@ -18,9 +18,12 @@ export default function on(eventDomain) {
 		// register events
 		on.helper.registerEvent(target, eventDomain, descriptor.value);
 
-		// define $onCreated callbacks
+		// define $onCreated.on namespace
 		if(!target.$onCreated) {
-			target.$onCreated = [];
+			target.$onCreated = {};
+		}
+		if(!('on' in target.$onCreated)){
+			target.$onCreated.on = [];
 		}
 
 		/**
@@ -29,7 +32,7 @@ export default function on(eventDomain) {
 		 * but registerOnCreatedCallback can only call once because we want only Create
 		 * one eventhandler
 		 */
-		if(target.$onCreated.length > 0){
+		if(target.$onCreated.on.length > 0){
 			return;
 		}
 
@@ -96,7 +99,30 @@ on.helper.registerEvent = (target, eventDomain, callback = function(){}) => {
 on.helper.registerOnCreatedCallback = (target, callback) => {
 
 	// init render engine
-	target.$onCreated.push(callback);
+	target.$onCreated.on.push(callback);
+
+	return target;
+
+};
+
+/**
+ * Register on onAttached callback
+ * @param  {Object} target
+ * @param  {Function} callback
+ * @return {Function} target
+ */
+on.helper.registerOnAttachedCallback = (target, callback) => {
+
+	// define $onAttached callbacks
+	if(!target.$onAttached) {
+		target.$onAttached = {};
+	}
+	if(!('on' in target.$onAttached)){
+		target.$onAttached.on = [];
+	}
+
+	// init render engine
+	target.$onAttached.on.push(callback);
 
 	return target;
 
@@ -110,13 +136,16 @@ on.helper.registerOnCreatedCallback = (target, callback) => {
  */
 on.helper.registerOnDetachedCallback = (target, callback) => {
 
-	// define $onCreated callbacks
+	// define $onDetached callbacks
 	if(!target.$onDetached) {
-		target.$onDetached = [];
+		target.$onDetached = {};
+	}
+	if(!('on' in target.$onDetached)){
+		target.$onDetached.on = [];
 	}
 
 	// init render engine
-	target.$onDetached.push(callback);
+	target.$onDetached.on.push(callback);
 
 	return target;
 
