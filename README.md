@@ -16,6 +16,14 @@ System.config({
 });
 ```
 
+If you use app-decorators with Babeljs, Typescript or an other compiler you need following features:
+```
+class-properties
+decorators
+function-bind
+es2015
+```
+
 ## Decorators
 
 ##### For Classes, Functions and Methods
