@@ -64,8 +64,8 @@ describe('View Class', () => {
 			});
 
 			// tests
-			view.render().rendered.should.equal('<div>Hello</div><span>Mars</span>');
-			view.getDomNode().outerHTML.should.equal('<p><div>Hello</div><span>Mars</span></p>');
+			view.render().renderedTemplate.should.equal('<div>Hello</div><span>Mars</span>');
+			view.getDomNode().outerHTML.should.equal('<p rendered="true"><div>Hello</div><span>Mars</span></p>');
 
 		});
 
@@ -82,7 +82,7 @@ describe('View Class', () => {
 				template: '<div class="foo">{{foo}}</div><div class="bar">{{bar}}</div>',
 			});
 
-			view.render().rendered.should.equal('<div class="foo">Hello</div><div class="bar">World!</div>');
+			view.render().renderedTemplate.should.equal('<div class="foo">Hello</div><div class="bar">World!</div>');
 
 		});
 

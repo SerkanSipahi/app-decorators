@@ -52,7 +52,7 @@ export default class View {
 	 * rendered template
 	 * @type {String}
 	 */
-	rendered = '';
+	renderedTemplate = '';
 
 	/**
 	 * Set view var
@@ -151,26 +151,51 @@ export default class View {
 	/**
 	 * Render view
 	 * @param  {Object} passedVars
-	 * @param  {String} name
+	 * @param  {Object<templaeName, force}
 	 * @return {this}
 	 */
-	render(passedVars = {}, name = 'base'){
+	render(passedVars = {}, { templateName = 'base', force = false } = {}){
 
 		let tmpLocalViewVars = {};
 		// merge passed passedViewVars into localViewVars
 		Object.assign(tmpLocalViewVars, this._vars, passedVars);
+
+		// do nothing if already rendered
+		if(this._domNode.getAttribute('rendered') && !force){
+			return this;
+		}
+
 		// compile template if not yet done
-		if(!this._compiled[name]) {
-			this._compiled[name] = this._renderer.compile(this._template[name]);
+		if(!this._compiled[templateName]) {
+			this._compiled[templateName] = this._renderer.compile(this._template[templateName]);
 		}
 
 		// keep rendered template
-		this.rendered = this._compiled[name](tmpLocalViewVars);
+		this.renderedTemplate = this._compiled[templateName](tmpLocalViewVars);
 		// write template into dom
-		this._domNode.innerHTML = this.rendered;
+		this._domNode.innerHTML = this.renderedTemplate;
+
+		// set rendered flag
+		if(this._renderedFlag){
+			this._domNode.setAttribute('rendered', this._renderedFlag);
+		}
 
 		return this;
 
+	}
+
+	/**
+	 * _renderedFlag
+	 * @type {Boolean}
+	 */
+	_renderedFlag = true;
+
+	/**
+	 * _setRenderedFlagAfterRender description
+	 * @param {[type]} boolean [description]
+	 */
+	_setRenderedFlagAfterRender(boolean) {
+		this._renderedFlag = boolean;
 	}
 
 }

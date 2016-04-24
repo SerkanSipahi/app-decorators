@@ -13,10 +13,10 @@ import { Handlebars } from '../libs/dependencies';
 /**
  * Register View
  * @param  {String} template
- * @param  {String} templateName
+ * @param  {Object<templateName, renderedFlag} templateName
  * @return {Function}
  */
-function view(template, templateName = 'base') {
+function view(template, options = {}) {
 
 	if(!template) {
 		throw new Exception('Please pass a template!');
@@ -25,6 +25,9 @@ function view(template, templateName = 'base') {
 	return (Class, name) => {
 
 		let target = Class.prototype;
+
+		let templateName = options.templateName || 'base';
+		let renderedFlag = options.renderedFlag === false ? false : true;
 
 		// define namespaces
 		view.helper.registerNamespaces(target);
@@ -42,16 +45,18 @@ function view(template, templateName = 'base') {
 			// get the restof regular attributes
 			let regularDomAttributes = extractDecoratorProperties(domNode);
 
-			let view = View.create({
-				domNode,
+			let viewInstance = View.create({
+				domNode: domNode,
 				vars: Object.assign({}, domNode.$appDecorators.view.bind, createVars, regularDomAttributes),
 				renderer: Handlebars,
 				template: domNode.$appDecorators.view.template[templateName],
 			});
 
+			viewInstance._setRenderedFlagAfterRender(renderedFlag);
+
 			// define namespace for view
 			domNode.$ ? null : domNode.$ = {};
-			domNode.$.view = view;
+			domNode.$.view = viewInstance;
 
 			// render view
 			domNode.$.view.render();

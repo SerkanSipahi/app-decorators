@@ -72,7 +72,7 @@ describe('@view decorator', () => {
 		it('should also create a element if element created from out of dom', (done) => {
 
 			// decorate
-			@view(`<span>{{n}}</span><p>{{p}}</p>`)
+			@view(`<span>{{n}}</span><p>{{p}}</p>`, { renderedFlag: false })
 			@component()
 			class serkan {
 
@@ -107,7 +107,7 @@ describe('@view decorator', () => {
 		it('should also create a element if element created from out of dom', (done) => {
 
 			// decorate
-			@view(`<span>{{uid}}.)<b>{{class}}</b>{{b}}</span><p>{{c}}</p>`)
+			@view(`<span>{{uid}}.)<b>{{class}}</b>{{b}}</span><p>{{c}}</p>`, { renderedFlag: false })
 			@component()
 			class Fire {}
 
@@ -163,7 +163,7 @@ describe('@view decorator', () => {
 		}
 
 		// decorate
-		@view(`<div>{{name}}</div><div>{{city}}</div><div>{{country}}</div>`)
+		@view(`<div>{{name}}</div><div>{{city}}</div><div>{{country}}</div>`, { renderedFlag: false })
 		@component()
 		class Orange extends Core {
 
