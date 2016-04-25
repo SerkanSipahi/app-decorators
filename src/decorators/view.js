@@ -45,21 +45,20 @@ function view(template, options = {}) {
 			// get the restof regular attributes
 			let regularDomAttributes = extractDecoratorProperties(domNode);
 
-			let viewInstance = View.create({
-				domNode: domNode,
+			let view = View.create({
+				rootNode: domNode,
+				templateNode: document.createElement('div'),
 				vars: Object.assign({}, domNode.$appDecorators.view.bind, createVars, regularDomAttributes),
 				renderer: Handlebars,
 				template: domNode.$appDecorators.view.template[templateName],
 			});
 
-			viewInstance._setRenderedFlagAfterRender(renderedFlag);
-
 			// define namespace for view
 			domNode.$ ? null : domNode.$ = {};
-			domNode.$.view = viewInstance;
+			domNode.$.view = view;
 
 			// render view
-			domNode.$.view.render();
+			view.render(null, { renderedFlag });
 
 		});
 
@@ -72,7 +71,7 @@ function view(template, options = {}) {
 				properties[property] = {
 					set: function(newValue){
 						this.$.view.set(property, newValue);
-						this.$.view.render();
+						this.$.view.render(null, {force: true});
 					},
 					get: function(newValue){
 						return this.$.view.get(property);
@@ -84,7 +83,7 @@ function view(template, options = {}) {
 			properties.render = {
 				value: function(...args) {
 					this.$.view.set(...args);
-					this.$.view.render();
+					this.$.view.render(null, {force: true});
 				}
 			}
 

@@ -55,7 +55,8 @@ describe('View Class', () => {
 		it('should render passed args with right setup', () => {
 
 			// setup
-			view.setDomNode(document.createElement('p'));
+			view.setRootNode(document.createElement('p'));
+			view.setTemplateNode(document.createElement('div'));
 			view.setRenderer(Handlebars);
 			view.setTemplate('<div>{{foo}}</div><span>{{bar}}</span>');
 			view.set({
@@ -64,8 +65,10 @@ describe('View Class', () => {
 			});
 
 			// tests
-			view.render().renderedTemplate.should.equal('<div>Hello</div><span>Mars</span>');
-			view.getDomNode().outerHTML.should.equal('<p rendered="true"><div>Hello</div><span>Mars</span></p>');
+			view.render(null, { renderedFlag: false });
+
+			view.renderedTemplate.should.equal('<div>Hello</div><span>Mars</span>');
+			view.el.outerHTML.should.equal('<p><div>Hello</div><span>Mars</span></p>');
 
 		});
 
@@ -76,15 +79,43 @@ describe('View Class', () => {
 		it('should render accepted template', () => {
 
 			let view = View.create({
-				domNode: document.createElement('div'),
+				rootNode: document.createElement('p'),
+				templateNode: document.createElement('div'),
 				vars: { foo: 'Hello', bar: 'World!' },
 				renderer: Handlebars,
 				template: '<div class="foo">{{foo}}</div><div class="bar">{{bar}}</div>',
 			});
 
-			view.render().renderedTemplate.should.equal('<div class="foo">Hello</div><div class="bar">World!</div>');
+			view.render();
+
+			view.renderedTemplate.should.equal('<div class="foo">Hello</div><div class="bar">World!</div>');
+			view.el.outerHTML.should.equal('<p rendered="true"><div class="foo">Hello</div><div class="bar">World!</div></p>');
 
 		});
+
+	});
+
+	describe('replaceNode method', () => {
+
+		it('should replace given node with given selector', () => {
+
+			let view = View.create({
+				rootNode: document.createElement('p'),
+				templateNode: document.createElement('div'),
+				vars: { foo: 'Thats', bar: 'nice' },
+				renderer: Handlebars,
+				template: '<div class="foo">{{foo}}</div><inner-component></inner-component><div class="bar">{{bar}}</div>',
+			});
+
+			view.render(null, { renderedFlag: false });
+
+			let pNode = document.createElement('p');
+			pNode.innerHTML = '<ul><li> nok nok </li></ul>'
+			view.replaceNode('inner-component', pNode.querySelector('ul'));
+
+			view.el.outerHTML.should.equal('<p><div class="foo">Thats</div><ul><li> nok nok </li></ul><div class="bar">nice</div></p>');
+
+		})
 
 	});
 

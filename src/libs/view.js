@@ -15,7 +15,8 @@ export default class View {
 		// init view
 		let view = new View();
 		// setup view
-		view.setDomNode(config.domNode);
+		view.setRootNode(config.rootNode);
+		view.setTemplateNode(config.templateNode);
 		view.setRenderer(config.renderer);
 		view.setTemplate(config.template);
 		view.set(config.vars);
@@ -25,10 +26,22 @@ export default class View {
 	}
 
 	/**
-	 * DomNode
+	 * el (alias for _rootNode)
 	 * @type {HTMLElement}
 	 */
-	_domNode = null;
+	el = null;
+
+	/**
+	 * _rootNode
+	 * @type {HTMLElement}
+	 */
+	_rootNode = null;
+
+	/**
+	 * _templateNode
+	 * @type {HTMLElement}
+	 */
+	_templateNode = [];
 
 	/**
 	 * View Vars
@@ -104,11 +117,25 @@ export default class View {
 	}
 
 	/**
-	 * Returns domNode
+	 * setRootNode
+	 * @param {HTMLElement} rootNode
+	 */
+	setRootNode(rootNode){
+
+		if(!rootNode instanceof HTMLElement){
+			throw new Error('Allowed is domNode as argument');
+		}
+
+		this._rootNode = rootNode;
+
+	}
+
+	/**
+	 * Returns _templateNode
 	 * @return {HTMLElement}
 	 */
-	getDomNode(){
-		return this._domNode;
+	getTemplateNode(){
+		return this._templateNode;
 	}
 
 	/**
@@ -131,13 +158,13 @@ export default class View {
 	 * Set domeNode
 	 * @param {HTMLElement} domNode
 	 */
-	setDomNode(domNode) {
+	setTemplateNode(templateNode) {
 
-		if(!domNode instanceof HTMLElement){
+		if(!templateNode instanceof HTMLElement){
 			throw new Error('Allowed is domNode as argument');
 		}
 
-		this._domNode = domNode;
+		this._templateNode = templateNode;
 	}
 
 	/**
@@ -154,15 +181,19 @@ export default class View {
 	 * @param  {Object<templaeName, force}
 	 * @return {this}
 	 */
-	render(passedVars = {}, { templateName = 'base', force = false } = {}){
+	render(passedVars = {}, { templateName = 'base', force = false, renderedFlag = true } = {}){
 
 		let tmpLocalViewVars = {};
 		// merge passed passedViewVars into localViewVars
 		Object.assign(tmpLocalViewVars, this._vars, passedVars);
 
 		// do nothing if already rendered
-		if(this._domNode.getAttribute('rendered') && !force){
+		if(this._rootNode && this._rootNode.getAttribute('rendered') && !force){
 			return this;
+		}
+
+		if(force){
+			this._rootNode.innerHTML = '';
 		}
 
 		// compile template if not yet done
@@ -173,11 +204,13 @@ export default class View {
 		// keep rendered template
 		this.renderedTemplate = this._compiled[templateName](tmpLocalViewVars);
 		// write template into dom
-		this._domNode.innerHTML = this.renderedTemplate;
+		this._templateNode.innerHTML = this.renderedTemplate;
+		this._appendTo(this._rootNode);
+		this.el = this._rootNode;
 
 		// set rendered flag
-		if(this._renderedFlag){
-			this._domNode.setAttribute('rendered', this._renderedFlag);
+		if(renderedFlag){
+			this._rootNode.setAttribute('rendered', renderedFlag);
 		}
 
 		return this;
@@ -185,17 +218,36 @@ export default class View {
 	}
 
 	/**
-	 * _renderedFlag
-	 * @type {Boolean}
+	 * replaceNode
+	 * @param  {oldNodeSelector} selector
+	 * @param  {Element} newNode
+	 * @return {undefined}
 	 */
-	_renderedFlag = true;
+	replaceNode(oldNodeSelector, newChild) {
+
+		let oldChild = this._rootNode.querySelector(oldNodeSelector);
+		if(!oldChild) {
+			throw new Error('Replace node doesnt exists');
+		}
+
+		oldChild.parentNode.replaceChild(newChild, oldChild);
+
+	}
 
 	/**
-	 * _setRenderedFlagAfterRender description
-	 * @param {[type]} boolean [description]
+	 * _appendTo
+	 * @param  {HTMLElement} rootNode
+	 * @return {Undefined}
 	 */
-	_setRenderedFlagAfterRender(boolean) {
-		this._renderedFlag = boolean;
+	_appendTo(rootNode){
+
+		if(this._templateNode.childNodes){
+			let childNodesArray = [].slice.call(this._templateNode.childNodes);
+			for(let childNode of childNodesArray) {
+				rootNode.appendChild(childNode);
+			}
+		}
+
 	}
 
 }
