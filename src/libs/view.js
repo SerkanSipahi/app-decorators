@@ -274,6 +274,16 @@ export default class View {
 	}
 
 	/**
+	 * getRootNode
+	 * @return {Element}
+	 */
+	getRootNode(){
+
+		return this._rootNode;
+
+	}
+
+	/**
 	 * replaceNode
 	 * @param  {oldNodeSelector} selector
 	 * @param  {Element} newNode
