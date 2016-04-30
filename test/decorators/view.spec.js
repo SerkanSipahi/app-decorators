@@ -5,6 +5,11 @@ import { component, view } from 'src/app-decorators';
 // external libs
 import $ from 'jquery';
 
+// init special innerHTML for test
+String.prototype.removeGutter = function(){
+	return this.replace(/[\t\n\r]/gm, '');
+}
+
 describe('@view decorator', () => {
 
 	describe('helper.registerTemplate/registerBind/registerNamespaces and registerOnCreatedCallback  (unit-test)', () => {
