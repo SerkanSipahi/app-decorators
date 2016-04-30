@@ -134,9 +134,8 @@ describe('View Class', () => {
 				template: '<div class="foo">{{foo}}</div>',
 			});
 
-			view.render();
-
 			// first render call should render
+			view.render();
 			view.el.outerHTML.should.equal('<my-element rendered="true"><div class="foo">Liya</div></my-element>');
 
 			spy_getAttribute.callCount.should.equal(1);
@@ -154,6 +153,10 @@ describe('View Class', () => {
 			view.render(null, {force: true});
 			spy_getAttribute.callCount.should.equal(3);
 			spy_setAttribute.callCount.should.equal(2);
+
+			//cleanup spy
+			View.prototype.getAttribute.restore();
+			View.prototype.setAttribute.restore();
 
 		});
 
