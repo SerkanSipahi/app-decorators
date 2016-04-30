@@ -45,6 +45,7 @@ function view(template, options = {}) {
 			// get the restof regular attributes
 			let regularDomAttributes = extractDecoratorProperties(domNode);
 
+			// initialize view
 			let view = View.create({
 				rootNode: domNode,
 				templateNode: document.createElement('div'),
@@ -57,8 +58,20 @@ function view(template, options = {}) {
 			domNode.$ ? null : domNode.$ = {};
 			domNode.$.view = view;
 
+			// before render lets move/save inner-component
+			// NOTE: all below code part should be part of some view method e.g inside of render
+			let innerRootNodes = document.createElement('inner-component');
+			view.appendChildNodesTo(domNode, innerRootNodes);
+
 			// render view
 			view.render(null, { renderedFlag });
+
+			// if inner-component exists
+			let rootNode = view.getRootNode();
+			let innerComponentNode = rootNode.querySelector('inner-component');
+			if(innerComponentNode){
+				view.appendChildNodesTo(innerRootNodes, innerComponentNode);
+			}
 
 		});
 

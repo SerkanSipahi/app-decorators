@@ -206,7 +206,7 @@ export default class View {
 		// write template into dom
 		this._templateNode.innerHTML = this.renderedTemplate;
 		// append templateNode to _rootNode
-		this._appendTo(this._templateNode, this._rootNode);
+		this.appendChildNodesTo(this._templateNode, this._rootNode);
 		// el is alias for _rootNode
 		this.el = this._rootNode;
 
@@ -301,16 +301,16 @@ export default class View {
 	}
 
 	/**
-	 * _appendTo
-	 * @param  {Element} rootNode
+	 * appendChildNodesTo
+	 * @param  {Element} targetNode
 	 * @return {Undefined}
 	 */
-	_appendTo(templateNode, rootNode){
+	appendChildNodesTo(domNode, targetNode){
 
-		if(templateNode && templateNode.childNodes){
-			let childNodesArray = [].slice.call(templateNode.childNodes);
+		if(domNode && domNode.childNodes){
+			let childNodesArray = [].slice.call(domNode.childNodes);
 			for(let childNode of childNodesArray) {
-				rootNode.appendChild(childNode);
+				targetNode.appendChild(childNode);
 			}
 		}
 
