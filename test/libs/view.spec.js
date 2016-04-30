@@ -121,6 +121,37 @@ describe('View Class', () => {
 
 	describe('render() method', () => {
 
+		it('should not render because rendered attribute flag is set or only when explicitly wanted', () => {
+
+			let spy_setAttribute = sinon.spy(View.prototype, "setAttribute");
+			let spy_getAttribute = sinon.spy(View.prototype, "getAttribute");
+
+			let rootNode = document.createElement('my-element');
+			rootNode.setAttribute('rendered', true);
+			rootNode.innerHTML = 'Should not rendered';
+
+			let view = View.create({
+				rootNode: rootNode,
+				templateNode: document.createElement('div'),
+				vars: { foo: 'Gokcen' },
+				renderer: Handlebars,
+				template: '<div class="foo">{{foo}}</div>',
+			});
+
+			// should not render because rendered flag is set
+			view.render();
+			view.getRootNode().outerHTML.should.equal('<my-element rendered="true">Should not rendered</my-element>');
+
+			// explicitly wanted to render because force = true is set
+			view.render(null, { force: true });
+			view.el.outerHTML.should.equal('<my-element rendered="true"><div class="foo">Gokcen</div></my-element>');
+
+			//cleanup spy
+			View.prototype.getAttribute.restore();
+			View.prototype.setAttribute.restore();
+
+		});
+
 		it('should render only once if called many times or render force true', () => {
 
 			let spy_setAttribute = sinon.spy(View.prototype, "setAttribute");
