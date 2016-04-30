@@ -107,13 +107,42 @@ describe('View Class', () => {
 				template: '<div class="foo">{{foo}}</div><inner-component></inner-component><div class="bar">{{bar}}</div>',
 			});
 
+			let innerRootNodes = document.createElement('p');
+			innerRootNodes.innerHTML = '<ul><li> nok nok </li></ul>'
+
 			view.render(null, { renderedFlag: false });
 
-			let pNode = document.createElement('p');
-			pNode.innerHTML = '<ul><li> nok nok </li></ul>'
-			view.replaceNode('inner-component', pNode.querySelector('ul'));
+			// if inner-component exists
+			let rootNode = view.getRootNode();
+			let innerComponentNode = rootNode.querySelector('inner-component');
+			if(innerComponentNode){
+				view.appendChildNodesTo(innerRootNodes, innerComponentNode);
+			}
 
-			view.el.outerHTML.should.equal('<p><div class="foo">Thats</div><ul><li> nok nok </li></ul><div class="bar">nice</div></p>');
+			view.el.outerHTML.should.equal('<p><div class="foo">Thats</div><inner-component><ul><li> nok nok </li></ul></inner-component><div class="bar">nice</div></p>');
+
+		});
+
+	});
+
+	describe('replaceSelf method', () => {
+
+		it.skip('should replace himself with given selector', () => {
+
+			let rootNode = document.createElement('p');
+			rootNode.innerHTML = '<span>Hello World</div>';
+
+			let view = View.create({
+				rootNode: rootNode,
+				templateNode: document.createElement('div'),
+				vars: { foo: 'Thats', bar: 'nice' },
+				renderer: Handlebars,
+				template: '<div class="foo">{{foo}}</div><black-hole></black-hole><div class="bar">{{bar}}</div>',
+			});
+
+			view.render(null, { renderedFlag: false });
+			view.replaceSelf('black-hole');
+			view.el.outerHTML.should.equal('<div boundary="" class="foo">Thats</div><p rendered="true"><span>Hello World</div></p><div class="bar">nice</div>');
 
 		});
 
