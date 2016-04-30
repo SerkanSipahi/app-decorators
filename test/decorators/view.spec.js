@@ -271,4 +271,40 @@ describe('@view decorator', () => {
 
 	});
 
+	it('render inner-component component', (done) => {
+
+		@view(`
+			<div class="a"></div>
+			<div class="b"></div>
+			<div class="c">
+				<span><inner-component></inner-component></span>
+			</div>
+		`)
+
+		@component({
+			name: 'my-innercomponent'
+		})
+		class MyInnerComponent {}
+
+		$('body').append('<my-innercomponent>Im inner of MyInnerComponent</my-innercomponent>');
+
+		// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
+		setTimeout(() => {
+
+			$('my-innercomponent').get(0).outerHTML.removeGutter().should.equal(`
+				<my-innercomponent rendered="true">
+					<div class="a"></div>
+					<div class="b"></div>
+					<div class="c">
+						<span><inner-component>Im inner of MyInnerComponent</inner-component></span>
+					</div>
+				</my-innercomponent>
+			`.removeGutter());
+
+			done();
+			
+		}, 10);
+
+	});
+
 });
