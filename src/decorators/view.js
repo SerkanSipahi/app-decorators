@@ -51,6 +51,7 @@ function view(template, options = {}) {
 				templateNode: document.createElement('div'),
 				vars: Object.assign({}, domNode.$appDecorators.view.bind, createVars, regularDomAttributes),
 				renderer: Handlebars,
+				createElement: document.createElement.bind(document),
 				template: domNode.$appDecorators.view.template[templateName],
 			});
 
@@ -58,20 +59,8 @@ function view(template, options = {}) {
 			domNode.$ ? null : domNode.$ = {};
 			domNode.$.view = view;
 
-			// before render lets move/save inner-component
-			// NOTE: all below code part should be part of some view method e.g inside of render
-			let innerRootNodes = document.createElement('inner-component');
-			view.appendChildNodesTo(domNode, innerRootNodes);
-
 			// render view
 			view.render(null, { renderedFlag });
-
-			// if inner-component exists
-			let rootNode = view.getRootNode();
-			let innerComponentNode = rootNode.querySelector('inner-component');
-			if(innerComponentNode){
-				view.appendChildNodesTo(innerRootNodes, innerComponentNode);
-			}
 
 		});
 

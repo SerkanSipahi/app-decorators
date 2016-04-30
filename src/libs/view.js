@@ -18,6 +18,7 @@ export default class View {
 		view.setRootNode(config.rootNode);
 		view.setTemplateNode(config.templateNode);
 		view.setRenderer(config.renderer);
+		view.setElementCreater(config.createElement);
 		view.setTemplate(config.template);
 		view.set(config.vars);
 
@@ -30,6 +31,13 @@ export default class View {
 	 * @type {Element}
 	 */
 	el = null;
+
+
+	/**
+	 * _origs
+	 * @type {Object}
+	 */
+	_origs = {};
 
 	/**
 	 * _rootNode
@@ -60,6 +68,12 @@ export default class View {
 	 * @type {Function}
 	 */
 	_compiled = {};
+
+	/**
+	 * _innerComponent description
+	 * @type {String}
+	 */
+	_innerComponent = 'inner-component';
 
 	/**
 	 * rendered template
@@ -126,6 +140,10 @@ export default class View {
 			throw new Error('Allowed is domNode as argument');
 		}
 
+		if(!this._origs.rootNode){
+			this._origs.rootNode = rootNode.cloneNode(true);
+		}
+
 		this._rootNode = rootNode;
 
 	}
@@ -176,6 +194,14 @@ export default class View {
 	}
 
 	/**
+	 * setElementCreater
+	 * @param {function} func
+	 */
+	setElementCreater(func) {
+		this._createElement = func;
+	}
+
+	/**
 	 * Render view
 	 * @param  {Object} passedVars
 	 * @param  {Object<templaeName, force}
@@ -205,10 +231,21 @@ export default class View {
 		this.renderedTemplate = this._compiled[templateName](tmpLocalViewVars);
 		// write template into dom
 		this._templateNode.innerHTML = this.renderedTemplate;
+
+		// before render lets move/save inner-component
+		let innerRootNodes = this._createElement(this._innerComponent);
+		this.appendChildNodesTo(this._rootNode, innerRootNodes);
+
 		// append templateNode to _rootNode
 		this.appendChildNodesTo(this._templateNode, this._rootNode);
 		// el is alias for _rootNode
 		this.el = this._rootNode;
+
+		// if inner-component exists
+		let innerComponentNode = this._rootNode.querySelector('inner-component');
+		if(innerComponentNode){
+			this.appendChildNodesTo(innerRootNodes, innerComponentNode);
+		}
 
 		// set rendered flag
 		if(renderedFlag){

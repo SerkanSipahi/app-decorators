@@ -58,6 +58,7 @@ describe('View Class', () => {
 			view.setRootNode(document.createElement('p'));
 			view.setTemplateNode(document.createElement('div'));
 			view.setRenderer(Handlebars);
+			view.setElementCreater(document.createElement.bind(document));
 			view.setTemplate('<div>{{foo}}</div><span>{{bar}}</span>');
 			view.set({
 				foo: 'Hello',
@@ -83,6 +84,7 @@ describe('View Class', () => {
 				templateNode: document.createElement('div'),
 				vars: { foo: 'Hello', bar: 'World!' },
 				renderer: Handlebars,
+				createElement: document.createElement.bind(document),
 				template: '<div class="foo">{{foo}}</div><div class="bar">{{bar}}</div>',
 			});
 
@@ -99,25 +101,20 @@ describe('View Class', () => {
 
 		it('should replace given node with given selector', () => {
 
+
+			let rootNode = document.createElement('p');
+			rootNode.innerHTML = '<ul><li> nok nok </li></ul>'
+
 			let view = View.create({
-				rootNode: document.createElement('p'),
+				rootNode: rootNode,
 				templateNode: document.createElement('div'),
 				vars: { foo: 'Thats', bar: 'nice' },
 				renderer: Handlebars,
+				createElement: document.createElement.bind(document),
 				template: '<div class="foo">{{foo}}</div><inner-component></inner-component><div class="bar">{{bar}}</div>',
 			});
 
-			let innerRootNodes = document.createElement('p');
-			innerRootNodes.innerHTML = '<ul><li> nok nok </li></ul>'
-
 			view.render(null, { renderedFlag: false });
-
-			// if inner-component exists
-			let rootNode = view.getRootNode();
-			let innerComponentNode = rootNode.querySelector('inner-component');
-			if(innerComponentNode){
-				view.appendChildNodesTo(innerRootNodes, innerComponentNode);
-			}
 
 			view.el.outerHTML.should.equal('<p><div class="foo">Thats</div><inner-component><ul><li> nok nok </li></ul></inner-component><div class="bar">nice</div></p>');
 
@@ -137,6 +134,7 @@ describe('View Class', () => {
 				templateNode: document.createElement('div'),
 				vars: { foo: 'Thats', bar: 'nice' },
 				renderer: Handlebars,
+				createElement: document.createElement.bind(document),
 				template: '<div class="foo">{{foo}}</div><black-hole></black-hole><div class="bar">{{bar}}</div>',
 			});
 
@@ -164,6 +162,7 @@ describe('View Class', () => {
 				templateNode: document.createElement('div'),
 				vars: { foo: 'Gokcen' },
 				renderer: Handlebars,
+				createElement: document.createElement.bind(document),
 				template: '<div class="foo">{{foo}}</div>',
 			});
 
@@ -191,6 +190,7 @@ describe('View Class', () => {
 				templateNode: document.createElement('div'),
 				vars: { foo: 'Liya' },
 				renderer: Handlebars,
+				createElement: document.createElement.bind(document),
 				template: '<div class="foo">{{foo}}</div>',
 			});
 
