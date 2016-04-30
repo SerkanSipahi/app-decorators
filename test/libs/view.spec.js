@@ -119,4 +119,44 @@ describe('View Class', () => {
 
 	});
 
+	describe('render() method', () => {
+
+		it('should render only once if called many times or render force true', () => {
+
+			let spy_setAttribute = sinon.spy(View.prototype, "setAttribute");
+			let spy_getAttribute = sinon.spy(View.prototype, "getAttribute");
+
+			let view = View.create({
+				rootNode: document.createElement('my-element'),
+				templateNode: document.createElement('div'),
+				vars: { foo: 'Liya' },
+				renderer: Handlebars,
+				template: '<div class="foo">{{foo}}</div>',
+			});
+
+			view.render();
+
+			// first render call should render
+			view.el.outerHTML.should.equal('<my-element rendered="true"><div class="foo">Liya</div></my-element>');
+
+			spy_getAttribute.callCount.should.equal(1);
+			spy_getAttribute.args[0][1].should.equal('rendered');
+
+			spy_setAttribute.callCount.should.equal(1);
+			spy_setAttribute.args[0][1].should.equal('rendered');
+
+			// second render call should not render
+			view.render();
+			spy_getAttribute.callCount.should.equal(2);
+			spy_setAttribute.callCount.should.equal(1);
+
+			// third render call should render
+			view.render(null, {force: true});
+			spy_getAttribute.callCount.should.equal(3);
+			spy_setAttribute.callCount.should.equal(2);
+
+		});
+
+	});
+
 });
