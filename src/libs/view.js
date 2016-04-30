@@ -27,19 +27,19 @@ export default class View {
 
 	/**
 	 * el (alias for _rootNode)
-	 * @type {HTMLElement}
+	 * @type {Element}
 	 */
 	el = null;
 
 	/**
 	 * _rootNode
-	 * @type {HTMLElement}
+	 * @type {Element}
 	 */
 	_rootNode = null;
 
 	/**
 	 * _templateNode
-	 * @type {HTMLElement}
+	 * @type {Element}
 	 */
 	_templateNode = [];
 
@@ -118,11 +118,11 @@ export default class View {
 
 	/**
 	 * setRootNode
-	 * @param {HTMLElement} rootNode
+	 * @param {Element} rootNode
 	 */
 	setRootNode(rootNode){
 
-		if(!rootNode instanceof HTMLElement){
+		if(!rootNode instanceof Element){
 			throw new Error('Allowed is domNode as argument');
 		}
 
@@ -132,7 +132,7 @@ export default class View {
 
 	/**
 	 * Returns _templateNode
-	 * @return {HTMLElement}
+	 * @return {Element}
 	 */
 	getTemplateNode(){
 		return this._templateNode;
@@ -156,11 +156,11 @@ export default class View {
 
 	/**
 	 * Set domeNode
-	 * @param {HTMLElement} domNode
+	 * @param {Element} domNode
 	 */
 	setTemplateNode(templateNode) {
 
-		if(!templateNode instanceof HTMLElement){
+		if(!templateNode instanceof Element){
 			throw new Error('Allowed is domNode as argument');
 		}
 
@@ -188,7 +188,7 @@ export default class View {
 		Object.assign(tmpLocalViewVars, this._vars, passedVars);
 
 		// do nothing if already rendered
-		if(this._rootNode && this._rootNode.getAttribute('rendered') && !force){
+		if(this.getAttribute(this._rootNode, 'rendered') && !force){
 			return this;
 		}
 
@@ -197,23 +197,79 @@ export default class View {
 		}
 
 		// compile template if not yet done
-		if(!this._compiled[templateName]) {
-			this._compiled[templateName] = this._renderer.compile(this._template[templateName]);
+		if(!this.isCompiled(templateName)) {
+			this._compiled[templateName] = this.compile(templateName);
 		}
 
 		// keep rendered template
 		this.renderedTemplate = this._compiled[templateName](tmpLocalViewVars);
 		// write template into dom
 		this._templateNode.innerHTML = this.renderedTemplate;
-		this._appendTo(this._rootNode);
+		// append templateNode to _rootNode
+		this._appendTo(this._templateNode, this._rootNode);
+		// el is alias for _rootNode
 		this.el = this._rootNode;
 
 		// set rendered flag
 		if(renderedFlag){
-			this._rootNode.setAttribute('rendered', renderedFlag);
+			this.setAttribute(this._rootNode, 'rendered', renderedFlag);
 		}
 
 		return this;
+
+	}
+
+	/**
+	 * compile
+	 * @param  {String} templateName
+	 * @return {Function}
+	 */
+	compile(templateName){
+
+		return this._renderer.compile(this._template[templateName]);
+
+	}
+
+	/**
+	 * isCompiled
+	 * @param  {String} templateName
+	 * @return {Boolean}
+	 */
+	isCompiled(templateName){
+
+		return this._compiled[templateName];
+
+	}
+
+	/**
+	 * getAttribute
+	 * @param  {domNode} domNode
+	 * @param  {String} value
+	 * @return {Any}
+	 */
+	getAttribute(domNode, value){
+
+		if(!domNode instanceof Element){
+			throw new Error('Allowed is domNode as argument');
+		}
+
+		return domNode.getAttribute(value);
+
+	}
+
+	/**
+	 * setAttribute
+	 * @param {element} domNode
+	 * @param {string} name
+	 * @param {string|number} value
+	 */
+	setAttribute(domNode, name, value){
+
+		if(!domNode instanceof Element){
+			throw new Error('Allowed is domNode as argument');
+		}
+
+		domNode.setAttribute(name, value);
 
 	}
 
@@ -236,13 +292,13 @@ export default class View {
 
 	/**
 	 * _appendTo
-	 * @param  {HTMLElement} rootNode
+	 * @param  {Element} rootNode
 	 * @return {Undefined}
 	 */
-	_appendTo(rootNode){
+	_appendTo(templateNode, rootNode){
 
-		if(this._templateNode.childNodes){
-			let childNodesArray = [].slice.call(this._templateNode.childNodes);
+		if(templateNode && templateNode.childNodes){
+			let childNodesArray = [].slice.call(templateNode.childNodes);
 			for(let childNode of childNodesArray) {
 				rootNode.appendChild(childNode);
 			}
