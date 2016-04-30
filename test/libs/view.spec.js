@@ -115,7 +115,7 @@ describe('View Class', () => {
 
 			view.el.outerHTML.should.equal('<p><div class="foo">Thats</div><ul><li> nok nok </li></ul><div class="bar">nice</div></p>');
 
-		})
+		});
 
 	});
 
