@@ -271,6 +271,45 @@ describe('@view decorator', () => {
 
 	});
 
+	it('should not render because rendered flag is set', (done) => {
+
+		@view(`
+			<div>Should render if flag is not set</div>
+		`)
+
+		@component({
+			name: 'my-shouldnotrender'
+		})
+		class MyShouldnotrender {}
+
+		$('body').append(`
+			<my-shouldnotrender rendered="true">
+				<div>
+					<span>Im already rendered</span>
+				</div>
+			</my-shouldnotrender>
+		`.removeGutter());
+
+		// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
+		setTimeout(() => {
+
+			$('my-shouldnotrender').get(0).outerHTML.removeGutter().should.equal(`
+				<my-shouldnotrender rendered="true">
+					<div>
+						<span>Im already rendered</span>
+					</div>
+				</my-shouldnotrender>
+			`.removeGutter());
+
+			// cleanup
+			$('my-shouldnotrender').remove();
+
+			done();
+
+		}, 10);
+
+	});
+
 	it('render inner-component component', (done) => {
 
 		@view(`
@@ -301,8 +340,11 @@ describe('@view decorator', () => {
 				</my-innercomponent>
 			`.removeGutter());
 
+			// cleanup
+			$('my-innercomponent').remove();
+
 			done();
-			
+
 		}, 10);
 
 	});
