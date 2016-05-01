@@ -70,10 +70,10 @@ export default class View {
 	_compiled = {};
 
 	/**
-	 * _innerComponent description
+	 * _innerComSelector description
 	 * @type {String}
 	 */
-	_innerComponent = 'inner-component';
+	_innerComSelector = 'inner-component';
 
 	/**
 	 * rendered template
@@ -233,7 +233,7 @@ export default class View {
 		this._templateNode.innerHTML = this.renderedTemplate;
 
 		// before render lets move/save inner-component
-		let innerRootNodes = this._createElement(this._innerComponent);
+		let innerRootNodes = this._createElement(this._innerComSelector);
 		this.appendChildNodesTo(this._rootNode, innerRootNodes);
 
 		// append templateNode to _rootNode
@@ -242,7 +242,7 @@ export default class View {
 		this.el = this._rootNode;
 
 		// if inner-component exists
-		let innerComponentNode = this._rootNode.querySelector('inner-component');
+		let innerComponentNode = this._rootNode.querySelector(this._innerComSelector);
 		if(innerComponentNode){
 			this.appendChildNodesTo(innerRootNodes, innerComponentNode);
 		}
