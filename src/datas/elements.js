@@ -15,7 +15,6 @@ export default {
 	'dl': w.HTMLDListElement,
 	'data': w.HTMLDataElement,
 	'datalist': w.HTMLDataListElement,
-	'dialog': w.HTMLDialogElement,
 	'div': w.HTMLDivElement,
 	'document': w.HTMLDocument,
 	'fieldset': w.HTMLFieldSetElement,
