@@ -15,6 +15,8 @@ export default class CustomElement {
 	 */
 	static register(ComponentClass, config = {}) {
 
+		ComponentClass.instanceProperties = CustomElement.getProperties(ComponentClass);
+
 		let componentName = config.name || null;
 		let componentExtends = config.extends || null;
 		let { Elements, Immutable } = config;
@@ -77,19 +79,7 @@ export default class CustomElement {
 
 			// create an instance of customElement
 			let comElement = new ComElement();
-
-			// extract and assign class properties
-			let tmpInstanceProperties = new ComponentClass();
-			let instanceProperties = {};
-			for(let property of Object.getOwnPropertyNames(tmpInstanceProperties)){
-				instanceProperties[property] = tmpInstanceProperties[property];
-			}
-			Object.assign(comElement, instanceProperties);
-
-			// cleanup
-			tmpInstanceProperties = null;
-			instanceProperties = null;
-
+			Object.assign(comElement, ComponentClass.instanceProperties);
 			comElement.createdCallback(create_vars);
 
 			return comElement;
@@ -224,6 +214,17 @@ export default class CustomElement {
 		return methodContainer;
 	}
 
+	static getProperties(ComponentClass){
+
+		let tmpInstanceProperties = new ComponentClass();
+		let instanceProperties = {};
+		for(let property of Object.getOwnPropertyNames(tmpInstanceProperties)){
+			instanceProperties[property] = tmpInstanceProperties[property];
+		}
+
+		return tmpInstanceProperties;
+	}
+
 	/**
 	 * Apply onCratedCallbacks
 	 * @param  {Object} self
@@ -260,7 +261,6 @@ export default class CustomElement {
 				if(!args.length && !this.parentElement){
 					return;
 				}
-
 				CustomElement.applyOnCreatedCallback(this, ...args);
 				this.created ? this.created(...args) : null;
 
