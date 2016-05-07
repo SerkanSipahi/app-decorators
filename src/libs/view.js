@@ -342,11 +342,8 @@ export default class View {
 	 */
 	appendChildNodesTo(domNode, targetNode){
 
-		if(domNode && domNode.childNodes){
-			let childNodesArray = [].slice.call(domNode.childNodes);
-			for(let childNode of childNodesArray) {
-				targetNode.appendChild(childNode);
-			}
+		while (domNode.childNodes.length > 0) {
+		    targetNode.appendChild(domNode.childNodes[0]);
 		}
 
 	}
