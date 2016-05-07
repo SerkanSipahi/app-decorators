@@ -211,6 +211,7 @@ export default class View {
 
 		// do nothing if already rendered
 		if(this.getAttribute(this._rootNode, 'rendered') && !force){
+			this.trigger('view-already-rendered');
 			return this;
 		}
 
@@ -246,6 +247,7 @@ export default class View {
 		// set rendered flag
 		if(renderedFlag){
 			this.setAttribute(this._rootNode, 'rendered', renderedFlag);
+			this.trigger('view-rendered');
 		}
 
 		return this;
@@ -347,6 +349,16 @@ export default class View {
 			}
 		}
 
+	}
+
+	/**
+	 * trigger
+	 * @param  {String} event
+	 * @return {Undefined}
+	 */
+	trigger(type){
+		let event = new Event(type);
+		this._rootNode.dispatchEvent(event);
 	}
 
 }
