@@ -1,6 +1,6 @@
 
 // internal libs
-import { component, view } from 'src/app-decorators';
+import { component, view, on } from 'src/app-decorators';
 
 // external libs
 import $ from 'jquery';
@@ -346,6 +346,180 @@ describe('@view decorator', () => {
 			done();
 
 		}, 10);
+
+	});
+
+	it('render compontents only once on nested component', (done) => {
+
+		/***********************************
+		 ******** my-quxust component
+		 ***********************************/
+		@view(`
+			<div class="x"></div>
+			<div class="y"></div>
+			<div class="z">
+				<span><inner-component></inner-component></span>
+			</div>
+		`)
+		@component({
+			name: 'my-quxust',
+		})
+		class MyQuxust {
+
+			created(){}
+			@on('view-rendered') viewRendered(){}
+			@on('view-already-rendered') viewAlreadyRendered(){}
+
+		}
+
+		/***********************************
+		 ******** my-specical-com component
+		 ***********************************/
+		@view(`
+			<ul>
+				<li> One </li>
+				<li> Two </li>
+				<li>
+					<inner-component></inner-component>
+				</li>
+			</ul>
+		`)
+		@component({
+			name: 'my-specical-com',
+		})
+		class MySpecialCom {
+
+			created(){}
+			@on('view-rendered') viewRendered(){}
+			@on('view-already-rendered') viewAlreadyRendered(){}
+
+		}
+
+		/***********************************
+		 ******** my-awesome-com component
+		 ***********************************/
+		@view('<p>im template, im appened</p>')
+		@component({
+			name: 'my-awesome-com',
+		})
+		class MyAwesomeCom {
+
+			created(){}
+			@on('view-rendered') viewRendered(){}
+			@on('view-already-rendered') viewAlreadyRendered(){}
+
+		}
+
+		// setup spies
+		let spy_createdMyQuxust = sinon.spy(MyQuxust.prototype, "created");
+		let spy_createdMySpecialCom = sinon.spy(MySpecialCom.prototype, "created");
+		let spy_createdMyAwesomeCom = sinon.spy(MyAwesomeCom.prototype, "created");
+
+		let spy_viewRenderedMyQuxust = sinon.spy(MyQuxust.prototype.$appDecorators.on.events, "view-rendered");
+		let spy_viewRenderedMySpecialCom = sinon.spy(MySpecialCom.prototype.$appDecorators.on.events, "view-rendered");
+		let spy_viewRenderedMyAwesomeCom = sinon.spy(MyAwesomeCom.prototype.$appDecorators.on.events, "view-rendered");
+
+		let spy_viewAlreadyRenderedMyQuxust = sinon.spy(MyQuxust.prototype.$appDecorators.on.events, "view-already-rendered");
+		let spy_viewAlreadyRenderedMySpecialCom = sinon.spy(MySpecialCom.prototype.$appDecorators.on.events, "view-already-rendered");
+		let spy_viewAlreadyRenderedMyAwesomeCom = sinon.spy(MyAwesomeCom.prototype.$appDecorators.on.events, "view-already-rendered");
+
+		// setup nested components
+		$('body').append(`
+			<my-quxust>
+				<my-specical-com>
+					<my-awesome-com>
+						<span>i have not inner-component</span>
+					</my-awesome-com>
+				</my-specical-com>
+			</my-quxust>
+		`);
+
+		// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
+		setTimeout(() => {
+
+			// test
+			let markup = `
+				<my-quxust rendered="true">
+					<div class="x"></div>
+					<div class="y"></div>
+					<div class="z">
+						<span>
+							<inner-component>
+								<my-specical-com rendered="true">
+									<ul>
+										<li> One </li>
+										<li> Two </li>
+										<li>
+											<inner-component>
+												<my-awesome-com rendered="true">
+													<span>i have not inner-component</span>
+													<p>im template, im appened</p>
+												</my-awesome-com>
+											</inner-component>
+										</li>
+									</ul>
+								</my-specical-com>
+							</inner-component>
+						</span>
+					</div>
+				</my-quxust>
+			`.removeGutter();
+
+			$('my-quxust').get(0).outerHTML.removeGutter().should.equal(markup);
+
+			// created should call only once
+			spy_createdMyQuxust.callCount.should.equal(1);
+			spy_createdMySpecialCom.callCount.should.equal(1);
+			spy_createdMyAwesomeCom.callCount.should.equal(1);
+
+			// view-rendered should trigger only once
+			spy_viewRenderedMyQuxust.callCount.should.equal(1);
+			spy_viewRenderedMySpecialCom.callCount.should.equal(1);
+			spy_viewRenderedMyAwesomeCom.callCount.should.equal(1);
+
+			spy_viewAlreadyRenderedMyQuxust.callCount.should.equal(0);
+			spy_viewAlreadyRenderedMySpecialCom.callCount.should.equal(0);
+			spy_viewAlreadyRenderedMyAwesomeCom.callCount.should.equal(0);
+
+			$('my-quxust').remove();
+			$('body').append(markup);
+
+			// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
+			setTimeout(() => {
+
+				// created should call only once
+				spy_createdMyQuxust.callCount.should.equal(2);
+				spy_createdMySpecialCom.callCount.should.equal(2);
+				spy_createdMyAwesomeCom.callCount.should.equal(2);
+
+				// view-rendered should trigger only once
+				spy_viewRenderedMyQuxust.callCount.should.equal(1);
+				spy_viewRenderedMySpecialCom.callCount.should.equal(1);
+				spy_viewRenderedMyAwesomeCom.callCount.should.equal(1);
+
+				spy_viewAlreadyRenderedMyQuxust.callCount.should.equal(1);
+				spy_viewAlreadyRenderedMySpecialCom.callCount.should.equal(1);
+				spy_viewAlreadyRenderedMyAwesomeCom.callCount.should.equal(1);
+
+
+				//cleanup
+				spy_createdMyQuxust.restore();
+				spy_createdMySpecialCom.restore();
+				spy_createdMyAwesomeCom.restore();
+
+				spy_viewRenderedMyQuxust.restore();
+				spy_viewRenderedMySpecialCom.restore();
+				spy_viewRenderedMyAwesomeCom.restore();
+
+				spy_viewAlreadyRenderedMyQuxust.restore();
+				spy_viewAlreadyRenderedMySpecialCom.restore();
+				spy_viewAlreadyRenderedMyAwesomeCom.restore();
+
+				done();
+
+			}, 20);
+
+		}, 20);
 
 	});
 
