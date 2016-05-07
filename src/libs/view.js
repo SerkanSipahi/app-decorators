@@ -140,10 +140,6 @@ export default class View {
 			throw new Error('Allowed is domNode as argument');
 		}
 
-		if(!this._origs.rootNode){
-			this._origs.rootNode = rootNode.cloneNode(true);
-		}
-
 		this._rootNode = rootNode;
 
 	}
