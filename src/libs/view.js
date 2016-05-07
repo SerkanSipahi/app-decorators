@@ -229,9 +229,11 @@ export default class View {
 		// write template into dom
 		this._templateNode.innerHTML = this.renderedTemplate;
 
-		// before render lets move/save childnodes of _rootNode
 		let innerRootNodes = this._createElement('inner-root-nodes');
-		this.appendChildNodesTo(this._rootNode, innerRootNodes);
+		let innerComponentNode = this._templateNode.querySelector(this._innerComSelector);
+		if(innerComponentNode) {
+			this.appendChildNodesTo(this._rootNode, innerRootNodes);
+		}
 
 		// append templateNode to _rootNode
 		this.appendChildNodesTo(this._templateNode, this._rootNode);
@@ -239,7 +241,7 @@ export default class View {
 		this.el = this._rootNode;
 
 		// if inner-component exists
-		let innerComponentNode = this._rootNode.querySelector(this._innerComSelector);
+		innerComponentNode = this._rootNode.querySelector(this._innerComSelector);
 		if(innerComponentNode){
 			this.appendChildNodesTo(innerRootNodes, innerComponentNode);
 		}
