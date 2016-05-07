@@ -15,7 +15,7 @@ export default class CustomElement {
 	 */
 	static register(ComponentClass, config = {}) {
 
-		ComponentClass.instanceProperties = CustomElement.getProperties(ComponentClass);
+		ComponentClass.prototype.$instanceProperties = CustomElement.getProperties(ComponentClass);
 
 		let componentName = config.name || null;
 		let componentExtends = config.extends || null;
@@ -79,7 +79,6 @@ export default class CustomElement {
 
 			// create an instance of customElement
 			let comElement = new ComElement();
-			Object.assign(comElement, ComponentClass.instanceProperties);
 			comElement.createdCallback(create_vars);
 
 			return comElement;
@@ -261,6 +260,10 @@ export default class CustomElement {
 				if(!args.length && !this.parentElement){
 					return;
 				}
+
+				// create an instance of customElement
+				Object.assign(this, this.$instanceProperties);
+
 				CustomElement.applyOnCreatedCallback(this, ...args);
 				this.created ? this.created(...args) : null;
 
