@@ -21,25 +21,7 @@ export default class CustomElement {
 		let componentExtends = config.extends || null;
 		let { Elements, Immutable } = config;
 
-		// assign to DOMElement right Element by passed "extends" property
-		// e.g. if passed is img its return HTMLImageElement or on form HTMLFormElement
-		let DOMElement = HTMLElement;
-		if(componentExtends !== null) {
-			DOMElement = Elements[componentExtends];
-			if(!DOMElement){
-				throw new Error(`"${componentExtends}" is not valid selector name or not exists in src/datas/elements.js`);
-			}
-		}
-
-		/**
-		 * Safari´s Nativ Element Class it not a function.
-		 * We have to map them to a function otherwise it throw an error.
-		 */
-		if (typeof DOMElement !== 'function'){
-		    var _Element = function(){};
-		    _Element.prototype = DOMElement.prototype;
-		    DOMElement = _Element;
-		}
+		let DOMElement = CustomElement.getElementByName(componentExtends, Elements);
 
 		// create componentname if config.name is not passed
 		if(componentName === null) {
@@ -91,6 +73,37 @@ export default class CustomElement {
 		let ConstructedClass = CustomElement.constructDOMClass(CollectionOfClasses, DOMElement);
 
 		return ConstructedClass;
+	}
+
+	/**
+	 * getElementByName
+	 * @param  {string} name
+	 * @return {Element}
+	 */
+	static getElementByName(name, Elements) {
+
+		// assign to DOMElement right Element by passed "extends" property
+		// e.g. if passed is img its return HTMLImageElement or on form HTMLFormElement
+		let DOMElement = HTMLElement;
+		if(name !== null) {
+			DOMElement = Elements[name];
+			if(!DOMElement){
+				throw new Error(`"${name}" is not valid selector name or not exists in src/datas/elements.js`);
+			}
+		}
+
+		/**
+		 * Safari´s Nativ Element Class it not a function.
+		 * We have to map them to a function otherwise it throw an error.
+		 */
+		if (typeof DOMElement !== 'function'){
+		    var _Element = function(){};
+		    _Element.prototype = DOMElement.prototype;
+		    DOMElement = _Element;
+		}
+
+		return DOMElement;
+
 	}
 
 	/**
