@@ -154,7 +154,7 @@ describe('Class CustomElement', () => {
 
 		class Green {
 
-			myValue = 1234
+			myValue = 1234;
 
 			created(){
 				this.$value = this.myValue;
