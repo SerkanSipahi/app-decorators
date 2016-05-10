@@ -61,10 +61,6 @@ module.exports = function (config) {
 				'src/datas/*.js',
 				'src/apps/*.js',
 				// external libs/files
-				'jspm_packages/github/components/handlebars.js@4.0.5/handlebars.js',
-				'jspm_packages/npm/immutable@3.7.6/dist/immutable.js',
-				'jspm_packages/npm/should@8.2.1/lib/should.js',
-
 				'node_modules/core-js/**/*.js',
 				'node_modules/handlebars/dist/handlebars.js',
 				'node_modules/immutable/dist/immutable.js',
