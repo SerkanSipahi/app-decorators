@@ -199,6 +199,37 @@ describe('Class CustomElement', () => {
 
 		});
 
+		it('should call foo, bar and baz if customelement created by dom', (done) => {
+
+			let spy_green_foo = sinon.spy(Green.prototype, "foo");
+			let spy_green_bar = sinon.spy(Green.prototype, "bar");
+			let spy_green_baz = sinon.spy(Green.prototype, "baz");
+
+			let div = document.createElement('div');
+			div.id = 'customelement-green';
+			document.body.appendChild(div);
+			div.innerHTML = '<form is="com-green"></form>';
+
+			setTimeout(() => {
+
+				// start tests
+				document.querySelector('form[is="com-green"]').foo().should.be.equal(1234);
+				spy_green_foo.calledOnce.should.be.true();
+				spy_green_bar.calledOnce.should.be.true();
+				spy_green_baz.calledOnce.should.be.true();
+
+				// cleanup (tearDown)
+				spy_green_foo.restore();
+				spy_green_bar.restore();
+				spy_green_baz.restore();
+
+				done();
+
+			}, 20);
+
+
+		});
+
 	});
 
 	describe('method register passed ES5 class', () => {
