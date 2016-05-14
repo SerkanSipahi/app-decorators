@@ -105,6 +105,30 @@ describe('Eventhandler Class', () => {
 
 	});
 
+	describe('Eventhandler.bindObjectToEventList(events, bindObject)', () => {
+
+		it('should bind new context', () => {
+
+			let events = {
+				a: function(){ return this }
+			};
+
+			// Test 1 ( with new created clone context )
+			let div = document.createElement('div');
+			div.innerHTML = 'Just Dom';
+			let newEvents = Eventhandler.bindObjectToEventList(events, div);
+
+			newEvents.a().should.be.equal(div);
+			newEvents.a().innerHTML.should.be.equal('Just Dom');
+
+			// Test 2 ( original events object does not lose there context )
+			events.a().should.be.equal(events);
+			events.a().should.not.have.propertyByPath('innerHTML');
+
+		});
+
+	});
+
 	describe('Eventhandler.create() and Eventhandler.prototype.off', () => {
 
 		let clickFoo = function() {};

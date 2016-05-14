@@ -39,7 +39,7 @@ export default class Eventhandler {
 		// bind bindObject
 		if(config.bind){
 			this.config.bind = config.bind;
-			Eventhandler.bindObjectToEventList(config.events, config.bind);
+			config.events = Eventhandler.bindObjectToEventList(config.events, config.bind);
 		}
 		// group events
 		this.config.events = Eventhandler.groupEvents(config.events);
@@ -114,15 +114,19 @@ export default class Eventhandler {
 	 * @param  {Object} bindObject
 	 * @return {undefined}
 	 */
-	static bindObjectToEventList(events = {}, bindObject){
+	static bindObjectToEventList(events = {}, bindObject = {}){
+
+		let contextBindObject = {};
 
 		for(let eventDomain in events){
 			if(!events.hasOwnProperty(eventDomain)){
 				continue;
 			}
 			// bind and assign bindObject
-			events[eventDomain] = bindObject::events[eventDomain];
+			contextBindObject[eventDomain] = bindObject::events[eventDomain];
 		}
+
+		return contextBindObject;
 
 	}
 
