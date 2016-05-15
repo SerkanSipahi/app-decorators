@@ -174,6 +174,42 @@ describe('@on decorator', () => {
 
 		});
 
+		it('should ensure that @on methods connected with base methods', () => {
+
+			@view('<div class="a"> A </div>')
+			@component()
+			class Ritter {
+				baseMethod(){
+				}
+				@on('click .a') onFoo_a() {
+					this.baseMethod();
+				}
+			}
+
+			if(isSafari) {
+				return;
+			}
+
+			// create instane
+			let ritter = Ritter.create();
+
+			// spy for Ritter onFoo_a
+			let ritter_clickCallbacks = ritter.$.eventHandler.getHandlers('click');
+			let ritter_function_spy = sinon.spy(ritter_clickCallbacks[0], ".a");
+			// spy for Ritter baseMethod
+			let ritter_baseMethod_spy = sinon.spy(Ritter.prototype, "baseMethod");
+
+			//test
+			ritter.querySelector('.a').click();
+			ritter_function_spy.callCount.should.eql(1);
+			ritter_baseMethod_spy.callCount.should.eql(1);
+
+			// cleanup
+			ritter_function_spy.restore();
+			ritter_baseMethod_spy.restore();
+
+		});
+
 	});
 
 });
