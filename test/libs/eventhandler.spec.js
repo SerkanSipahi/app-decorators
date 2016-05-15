@@ -107,7 +107,7 @@ describe('Eventhandler Class', () => {
 
 	describe('Eventhandler.bindObjectToEventList(events, bindObject)', () => {
 
-		it('should bind new context', () => {
+		it('should bind new context without overwriting orginal events object', () => {
 
 			let events = {
 				a: function(){ return this }
