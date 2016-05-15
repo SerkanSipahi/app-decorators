@@ -134,7 +134,7 @@ describe('@on decorator', () => {
 			milkey_1_a_function_spy.callCount.should.eql(2);
 			milkey_1_b_function_spy.callCount.should.eql(2);
 
-			// test 4
+			// cleanup
 			milkey_1_a_function_spy.restore();
 			milkey_1_b_function_spy.restore();
 
