@@ -12,7 +12,7 @@ String.prototype.removeGutter = function(){
 
 describe('@view decorator', () => {
 
-	describe('helper.registerTemplate/registerBind/registerNamespaces and registerOnCreatedCallback  (unit-test)', () => {
+	describe('helper.registerTemplate/registerBind/registerNamespaces and registerCallback  (unit-test)', () => {
 
 		it('should create right namespace object', () => {
 
@@ -38,7 +38,7 @@ describe('@view decorator', () => {
 			view.helper.registerBind(target, 'className', 'foo');
 			view.helper.registerBind(target, 'content', 'Hello World');
 
-			view.helper.registerOnCreatedCallback(target, function(instance, createVars){
+			view.helper.registerCallback('created', target, function(instance, createVars){
 
 				// test registerBind
 				instance.should.have.propertyByPath('$appDecorators', 'view', 'bind', 'className').eql('foo');

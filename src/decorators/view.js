@@ -36,7 +36,7 @@ function view(template, options = {}) {
 		view.helper.registerTemplate(target, template, templateName);
 
 		// register view engine that initialized on called createdCallback
-		view.helper.registerOnCreatedCallback(target, ( domNode, createVars = {} ) => {
+		view.helper.registerCallback('created', target, ( domNode, createVars = {} ) => {
 
 			// get and merge dom view var attributes
 			let domViewAttributes = extractDecoratorProperties(domNode, '@view.bind', true);
@@ -65,7 +65,7 @@ function view(template, options = {}) {
 		});
 
 		// register proxy that initialized on called createdCallback
-		view.helper.registerOnCreatedCallback(target, ( domNode, createVars = {} ) => {
+		view.helper.registerCallback('created', target, ( domNode, createVars = {} ) => {
 
 			// prepare property proxy setter
 			let properties = {};
@@ -126,74 +126,79 @@ view.bind = (target, property, descriptor) => {
  *****************************************/
 
 // define namespace
-view.helper = {};
+view.helper = {
 
-/**
- * Register @bind of view decorator
- * @param  {Function|Objet} target
- * @param  {String} property
- * @param  {String} value
- * @return {Object} target
- */
-view.helper.registerBind = (target, property, value) => {
+	/**
+	 * Register @bind of view decorator
+	 * @param  {Function|Objet} target
+	 * @param  {String} property
+	 * @param  {String} value
+	 * @return {Object} target
+	 */
+	registerBind: (target, property, value) => {
 
-	// define @view.bind property/value
-	target.$appDecorators.view.bind[property] = value;
+		// define @view.bind property/value
+		target.$appDecorators.view.bind[property] = value;
 
-	return target;
+		return target;
 
-};
+	},
 
-/**
- * Register @bind of view decorator
- * @param  {Function|Objet} target
- * @param  {String} template
- * @param  {String} templateName
- * @return {Function} target
- */
-view.helper.registerTemplate = (target, template, templateName = 'base') => {
+	/**
+	 * Register @bind of view decorator
+	 * @param  {Function|Objet} target
+	 * @param  {String} template
+	 * @param  {String} templateName
+	 * @return {Function} target
+	 */
+	registerTemplate: (target, template, templateName = 'base') => {
 
-	// add template
-	target.$appDecorators.view.template[templateName] = template;
-	return target;
+		// add template
+		target.$appDecorators.view.template[templateName] = template;
+		return target;
 
-};
+	},
 
-/**
- * Register on created callback
- * @param  {Object} target
- * @param  {Function} callback
- * @return {Function} target
- */
-view.helper.registerOnCreatedCallback = (target, callback) => {
+	/**
+	 * Helper for registering callbacks
+	 * @param  {String} name
+	 * @param  {Function} target
+	 * @return {Function} callack
+	 */
+	registerCallback: (name, target, callback) => {
 
-	// init render engine
-	target.$onCreated.view.push(callback);
-	return target;
+		// ucFirst
+		name = name.charAt(0).toUpperCase()+name.slice(1);
+		// its created something like onCreated if passed name=created
+		target[`$on${name}`].view.push(callback);
 
-};
+		return target;
 
-/**
- * Register namespace of view decorator
- * @param  {Function|Objet} target
- * @return {Function} target
- */
-view.helper.registerNamespaces = (target) => {
+	},
 
-	// define namespace
-	if(!target.$appDecorators) target.$appDecorators = {};
-	if(!target.$appDecorators.view){
-		target.$appDecorators.view = {
-			bind: {},
-			template: {},
-		};
+	/**
+	 * Register namespace of view decorator
+	 * @param  {Function|Objet} target
+	 * @return {Function} target
+	 */
+	registerNamespaces: (target) => {
+
+		// define namespace
+		if(!target.$appDecorators) target.$appDecorators = {};
+		if(!target.$appDecorators.view){
+			target.$appDecorators.view = {
+				bind: {},
+				template: {},
+			};
+		}
+
+		// define $onCreated.on callbacks
+		if(!target.$onCreated) target.$onCreated = {};
+		if(!target.$onCreated.view) target.$onCreated.view = [];
+
+		return target;
 	}
 
-	// define $onCreated.on callbacks
-	if(!target.$onCreated) target.$onCreated = {};
-	if(!target.$onCreated.view) target.$onCreated.view = [];
-
-	return target;
 };
 
 export default view;
