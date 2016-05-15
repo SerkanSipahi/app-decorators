@@ -140,7 +140,7 @@ describe('@on decorator', () => {
 
 		});
 
-		it('it should ensure that eventhandler has right context', () => {
+		it('should ensure that eventhandler has right context', () => {
 
 			@view('<div class="a"> A </div>', { renderedFlag: false })
 			@component()
