@@ -7,72 +7,170 @@ import sinon from 'sinon';
 
 let isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
 
+// init special innerHTML for test
+String.prototype.removeGutter = function(){
+	return this.replace(/[\t\n\r]/gm, '');
+}
+
 describe('@on decorator', () => {
 
 	describe('view.helper.registerNamespaces', () => {
 
-		it('should create right namespace object', () => {
+		it('should create namespace object´s', () => {
 
-			on.helper.registerNamespaces({}).should.have.propertyByPath('$appDecorators', 'on', 'events');
+			on.helper.registerNamespaces({}).should.have.containEql({
+				$appDecorators: { on: { events: {} } },
+				$onCreated:  { on: [] },
+				$onAttached: { on: [] },
+				$onDetached: { on: [] },
+			});
 
 		});
 
 	});
 
-	describe('@on decorator integrationtest with @component, @view and @on', () => {
+	describe('view.helper', () => {
 
-		it('should work in combination', () => {
+		// Mock target
+		let mockTarget = {
+			$appDecorators: {
+				on: { events: { 'some-event' : () => {} } }
+			},
+			$onCreated: {
+				on: []
+			}
+		};
+		let mockFunction = function(){}
 
-			@view(`<div class="foo">Foo</div>`)
-			@component()
+		describe('registerEvent', () => {
+
+			it('should throw an error because eventtype already exists', () => {
+
+				(function(){
+					on.helper.registerEvent(mockTarget, 'some-event', function(){})
+				}).should.throw('The Event: "some-event" already exists!');
+
+			});
+
+			it('should build event object based on registered namespaces', () => {
+
+				let result = on.helper.registerEvent(mockTarget, 'some-other-event', mockFunction);
+				result.should.have.propertyByPath('$appDecorators', 'on', 'events', 'some-other-event').equal(mockFunction);
+
+			});
+
+		});
+
+		describe('registerCallback', () => {
+
+			it('should add callback based on registered namespaces', () => {
+
+				let result = on.helper.registerCallback('created', mockTarget, mockFunction);
+				result.should.have.propertyByPath('$onCreated', 'on', 0).equal(mockFunction);
+
+			});
+
+		});
+
+	});
+
+	describe('Snack.prototype.$appDecorators.on.events', () => {
+
+		it('should contain registered events over @on', () => {
+
 			class Snack {
-
-				@on('click .foo') clickFoo(){}
-
 				@on('click .a') onClick_a() {}
-				@on('click .b .c') onClick_bc() {}
-
-				@on('mouseup .d') onMouseup_d(){}
-				@on('mouseup .e .f') onMouseup_ef(){}
-
-				@on('mousedown') onMousedown(){}
-
+				@on('click .b') onClick_b() {}
 			}
 
 			let events = Snack.prototype.$appDecorators.on.events;
 			let prototype = Snack.prototype;
 
-			// test property paths of clicks
 			events.should.have.propertyByPath("click .a").eql(prototype.onClick_a);
-			events.should.have.propertyByPath("click .b .c").eql(prototype.onClick_bc);
+			events.should.have.propertyByPath("click .b").eql(prototype.onClick_b);
 
-			// test property paths of mouseup
-			events.should.have.propertyByPath("mouseup .d").eql(prototype.onMouseup_d);
-			events.should.have.propertyByPath("mouseup .e .f").eql(prototype.onMouseup_ef);
+			Object.keys(events).should.have.length(2);
 
-			// test property paths of onMousedown
-			events.should.have.propertyByPath("mousedown").eql(prototype.onMousedown);
+		});
 
-			let snack = Snack.create();
+		it('should trigger correct method if clicked', () => {
 
-			let clickCallbacks = snack.$.eventHandler.getHandlers('click');
-			sinon.spy(clickCallbacks[0], ".foo");
-			sinon.spy(clickCallbacks[1], ".a");
-			sinon.spy(clickCallbacks[2], ".b .c");
+			@view(`
+				<div class="a"> A </div>
+				<div class="b"> B </div>
+			`)
+			@component()
+			class Milkey {
+				@on('click .a') onFoo_a() {}
+				@on('click .b') onBar_b() {}
+			}
 
-			snack.querySelector('.foo').click();
+			// create instane
+			let milkey_1 = Milkey.create({cid: 1});
 
-			/**
-			 * Its not possible to simulate click on safari but
-			 * its tests manually by real mouseclick and worked well
-			 */
+			// spy for milkey_1
+			let milkey_1_clickCallbacks = milkey_1.$.eventHandler.getHandlers('click');
+			let milkey_1_a_function_spy = sinon.spy(milkey_1_clickCallbacks[0], ".a");
+			let milkey_1_b_function_spy = sinon.spy(milkey_1_clickCallbacks[1], ".b");
+
+			// can simulate click on safari
 			if(isSafari) {
 				return;
 			}
 
-			clickCallbacks[0][".foo"].callCount.should.eql(1);
-			clickCallbacks[1][".a"].callCount.should.eql(0);
-			clickCallbacks[2][".b .c"].callCount.should.eql(0);
+			// test 1
+			milkey_1.querySelector('.a').click();
+			milkey_1_a_function_spy.callCount.should.eql(1);
+			milkey_1_b_function_spy.callCount.should.eql(0);
+
+			// test 2
+			milkey_1.querySelector('.b').click();
+			milkey_1_a_function_spy.callCount.should.eql(1);
+			milkey_1_b_function_spy.callCount.should.eql(1);
+
+			// test 3
+			milkey_1.querySelector('.a').click();
+			milkey_1.querySelector('.b').click();
+			milkey_1_a_function_spy.callCount.should.eql(2);
+			milkey_1_b_function_spy.callCount.should.eql(2);
+
+			// test 4
+			milkey_1_a_function_spy.restore();
+			milkey_1_b_function_spy.restore();
+
+		});
+
+		it('it should ensure that eventhandler has right context', () => {
+
+			@view('<div class="a"> A </div>', { renderedFlag: false })
+			@component()
+			class Hanuta {
+				cid = null;
+				created({cid}){
+					this.cid = cid;
+				}
+				@on('click .a') onFoo_a() {
+					this.setAttribute('cid', this.cid);
+				}
+			}
+
+			if(isSafari) {
+				return;
+			}
+
+			//create instances
+			let hanuta_1 = Hanuta.create({cid: 1});
+			let hanuta_2 = Hanuta.create({cid: 2});
+
+			// test 1
+			hanuta_2.querySelector('.a').click();
+			hanuta_2.outerHTML.should.be.equal('<com-hanuta cid="2"><div class="a"> A </div></com-hanuta>');
+			hanuta_1.outerHTML.should.be.equal('<com-hanuta><div class="a"> A </div></com-hanuta>');
+
+			// test 2
+			hanuta_1.querySelector('.a').click();
+			hanuta_1.outerHTML.should.be.equal('<com-hanuta cid="1"><div class="a"> A </div></com-hanuta>');
+			hanuta_2.outerHTML.should.be.equal('<com-hanuta cid="2"><div class="a"> A </div></com-hanuta>');
 
 		});
 
