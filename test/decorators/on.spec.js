@@ -210,6 +210,53 @@ describe('@on decorator', () => {
 
 		});
 
+		it('should trigger window events but is instanec of Context and Element', () => {
+
+			@component()
+			class Context {
+
+				@on('resize', window) onResize(event){
+					this.callFoo();
+					return this;
+				}
+				callFoo(){
+					return this;
+				}
+
+			}
+
+			let context = Context.create();
+			let context_clickCallbacks = context.$.eventHandler.getHandlers('resize');
+			let onResize = context_clickCallbacks[0][null];
+
+			document.body.appendChild(context);
+
+			// test Context
+			should(onResize() instanceof Context).be.true();
+			should(context.callFoo() instanceof Context).be.true();
+
+			// test Element
+			should(onResize() instanceof Element).be.true();
+			should(context.callFoo() instanceof Element).be.true();
+
+			// spy for context resize
+			let context_function_spy = sinon.spy(context_clickCallbacks[0], null);
+			let callFoo_function_spy = sinon.spy(Context.prototype, 'callFoo');
+
+			// trigger resize
+			let resizeEvent = new Event('resize');
+			window.dispatchEvent(resizeEvent);
+
+			// test
+			context_function_spy.callCount.should.eql(1);
+			callFoo_function_spy.callCount.should.eql(1);
+
+			// cleanup
+			context_function_spy.restore();
+			callFoo_function_spy.restore();
+
+		});
+
 	});
 
 });
