@@ -7,7 +7,7 @@ import Eventhandler from '../libs/eventhandler';
  * @param  {Any} ...args
  * @return {Function}
  */
-export default function on(eventDomain) {
+export default function on(eventDomain, context) {
 
 	if(!eventDomain){
 		throw new Error('Please pass an event type e.g "click"');
@@ -34,7 +34,7 @@ export default function on(eventDomain) {
 
 			let eventHandler = Eventhandler.create({
 				events: domNode.$appDecorators.on.events,
-				element: domNode,
+				element: context || domNode,
 				bind: domNode,
 			});
 
