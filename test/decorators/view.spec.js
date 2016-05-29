@@ -12,7 +12,7 @@ String.prototype.removeGutter = function(){
 
 describe('@view decorator', () => {
 
-	describe('helper.registerTemplate/registerBind/registerNamespaces and registerCallback  (unit-test)', () => {
+	describe('helper.registerTemplate/registerBind/registerNamespaces and registerOnCreatedCallback  (unit-test)', () => {
 
 		it('should create right namespace object', () => {
 
@@ -23,12 +23,9 @@ describe('@view decorator', () => {
 
 		it('should works as accepted ', (done) => {
 
-			@component()
-			class Manually {}
+			let target = Object.create({});
 
-			let target = Manually.prototype;
-
-			// register namespaces
+			// register namespaces target
 			view.helper.registerNamespaces(target);
 
 			// register template
@@ -52,13 +49,13 @@ describe('@view decorator', () => {
 				createVars.should.have.propertyByPath('content').eql('Hello Mars');
 
 				// test instanceof
-				instance.should.instanceOf(Manually);
+				instance.should.instanceOf(Object);
 
 				// finish
 				done()
 			});
 
-			let manually = Manually.create({className: 'baz', content: 'Hello Mars'});
+			view.helper.create(target, { className: 'baz', 'content': 'Hello Mars' });
 
 		});
 

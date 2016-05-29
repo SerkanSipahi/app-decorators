@@ -128,6 +128,17 @@ view.bind = (target, property, descriptor) => {
 // define namespace
 view.helper = {
 
+	create: (target, ...args) => {
+
+		let createdCallbacks = target.$onCreated.view;
+		for(let createdCallback of createdCallbacks) {
+			createdCallback(target, ...args);
+		}
+
+		return target;
+
+	},
+
 	/**
 	 * Register @bind of view decorator
 	 * @param  {Function|Objet} target
