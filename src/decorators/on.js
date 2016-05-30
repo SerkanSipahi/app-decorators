@@ -34,7 +34,7 @@ export default function on(eventDomain, context) {
 
 			let eventHandler = Eventhandler.create({
 				events: domNode.$appDecorators.on.events,
-				element: context || domNode,
+				element: domNode,
 				bind: domNode,
 			});
 

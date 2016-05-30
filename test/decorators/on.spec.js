@@ -210,7 +210,7 @@ describe('@on decorator', () => {
 
 		});
 
-		it('should trigger window events but is instanec of Context and Element', () => {
+		it.skip('should trigger window events but is instanec of Context and Element', () => {
 
 			@component()
 			class Context {
