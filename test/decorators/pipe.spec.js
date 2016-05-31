@@ -8,36 +8,54 @@ describe.skip('@pipe decorator', () => {
 	// Idee: alle componenten können miteinander kommunizieren, wenn sie
 	// mit x-foo oder mit irgendeinem html tag z.B. <div is="x-foo"></div>
 	// erstellt wurden sind.
+	//
+	// 2.) Man verringert den komplexität wert
 
 	it('...', () => {
 
+		@error()
+
 		@style(`
 			x-stream {
-				top : 0;
-				left : 0;
-				position : 'absolute';
+
+				$deltaX: @on('wheel').currentTarget.deltaX;
+				$deltaY: @on('wheel').currentTarget.deltaY;
+
+				top: $deltaX;
+				left: $deltaY;
+				position: 'absolute';
 			}
 		`)
+
 		@view(`
-			<x-button @('click')="onClickButton()">Click Me!</x-button>
-			<x-box>
+			<button is="x-button" @('click')="onClickButton()">Click Me!</button>
+			<box is="x-box">
 				<input is="x-input" @on('change').value="{{ firstname > }}" name="firstname" value="{{ firstname < }}" type="text" />
 				<input is="x-input" @on('change').value="{{ surename > }}" name="surename" value="{{ surename < }}"type="text" />
 				<a is="x-a" href="?stream&firstname={{ name < }}&lastname{{ nachname < }}" @route.name="onPost"></a>
-			</x-box>
+			</box>
 		`)
-		@component()
-		class Stream {
 
-			relatedTo = ''
+		@component({
+			name: 'x-stream'
+		})
+
+		class Stream {
 
 			created(){
 
 				this.model.vorname = 'Serkan';
 				this.model.nachname = 'Sipahi';
+			}
+
+			attached(){
 
 				this.trigger('startCircleAnimation');
+			}
 
+			@on('wheel') @debounce(100) onWheel(event){
+
+				console.log(event.deltaX, event.deltaY);
 			}
 
 			/**
@@ -47,10 +65,23 @@ describe.skip('@pipe decorator', () => {
 			@model.attr nachname = '';
 
 			@model('change:vorname') onChangeVorname(oldValue, newValue){
+
 				this.view.vorname = newValue;
 			}
 			@model('change:nachname') onChangeNachname(oldValue, newValue){
+
 				this.view.nachname = newValue;
+			}
+
+			@if @cond(1 > 0)
+				@request('http://google.com')
+			@else
+				@request('http://bing.com')
+
+			@extractHTML(/<a href="(.*)"<\/>/gm)
+
+			onExtractedHTML(links, error) {
+
 			}
 
 			/**
@@ -59,7 +90,7 @@ describe.skip('@pipe decorator', () => {
 			 * @return {undefined}
 			 */
 
-			@view.bind('') id = 0;
+			@view.bind id = 0;
 
 			@on('startCircleAnimation')
 
@@ -72,20 +103,18 @@ describe.skip('@pipe decorator', () => {
 			animation_MoveCircleInBox(result, error){
 
 				if(error){
-					throw Stream.Error('Es ist ein Fehler aufgereten!');
+					throw this.Error('Es ist ein Fehler aufgereten!');
 				}
 
-				this.view.id++;
-
+				console.log('animation done!');
 			}
 
 			onClickButton(event){
 
 				this.querySelector('a[is="x-a"]').click();
-
 			}
 
-			@on('post', '?stream&firstname={{name}}&lastname{{nachname}}') onPost({name, nachname}){
+			@on('get', '?stream&firstname={{name}}&lastname{{nachname}}') onPost({name, nachname}){
 
 				this.model.vorname = name;
 				this.model.nachname = nachname;
