@@ -13,7 +13,8 @@ describe.skip('@pipe decorator', () => {
 
 	it('...', () => {
 
-		@error()
+		@error({ level: 3 })
+		@datapool('information')
 
 		@style(`
 			x-stream {
@@ -24,16 +25,24 @@ describe.skip('@pipe decorator', () => {
 				top: $deltaX;
 				left: $deltaY;
 				position: 'absolute';
+
+				content: "{{ <links.key }}"
 			}
 		`)
 
+		/**
+		 * Highlighting für diese syntax für die Lesbarkeit von Code
+		 */
 		@view(`
 			<button is="x-button" @('click')="onClickButton()">Click Me!</button>
 			<box is="x-box">
-				<input is="x-input" @on('change').value="{{ firstname > }}" name="firstname" value="{{ firstname < }}" type="text" />
-				<input is="x-input" @on('change').value="{{ surename > }}" name="surename" value="{{ surename < }}"type="text" />
-				<a is="x-a" href="?stream&firstname={{ name < }}&lastname{{ nachname < }}" @route.name="onPost"></a>
+				<input is="x-input" @on('change').value="{{ >firstname }}" name="firstname" value="{{ <firstname }}" type="text" />
+				<input is="x-input" @on('change').value="{{ >surename }}" name="surename" value="{{ <surename }}"type="text" />
+				<a is="x-a" @request.post="?stream&firstname={{ <name }}&lastname{{ <nachname }}" @route.name="onPost"></a>
 			</box>
+			<x-links while="{{ <links key value }}">
+				<a is="x-a" @request.post="/{{ <value.firstname }}/{{ <value.lastname }}"> {{ <key }} </a>
+			</x-links>
 		`)
 
 		@component({
@@ -64,6 +73,8 @@ describe.skip('@pipe decorator', () => {
 			@model.attr vorname = '';
 			@model.attr nachname = '';
 
+			@model.attr links = [];
+
 			@model('change:vorname') onChangeVorname(oldValue, newValue){
 
 				this.view.vorname = newValue;
@@ -73,15 +84,27 @@ describe.skip('@pipe decorator', () => {
 				this.view.nachname = newValue;
 			}
 
-			@if @cond(1 > 0)
-				@request('http://google.com')
+			@on('get-links')
+			@if @cond(this.request.url)
+				@request(this.request.url)
 			@else
 				@request('http://bing.com')
-
-			@extractHTML(/<a href="(.*)"<\/>/gm)
+			@extractFromString(/<a href="(.*)"<\/>/gm)
 
 			onExtractedHTML(links, error) {
 
+				if(error){
+					throw this.Error('Es ist ein Fehler aufgereten!');
+				}
+
+				this.model.links.push(links);
+
+				console.log(this.informationen.model.title);
+			}
+
+			@model('change:links') onChangeLinks(oldValue, newValue) {
+
+				this.view.links = newValue;
 			}
 
 			/**
@@ -121,7 +144,5 @@ describe.skip('@pipe decorator', () => {
 			}
 
 		}
-
 	});
-
 });
