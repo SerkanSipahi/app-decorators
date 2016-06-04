@@ -85,9 +85,9 @@ describe.skip('@pipe decorator', () => {
 			}
 
 			@on('get-links')
-			@if @cond(this.request.url)
+			@$if @cond(this.request.url)
 				@request(this.request.url)
-			@else
+			@$else
 				@request('http://bing.com')
 			@extractFromString(/<a href="(.*)"<\/>/gm)
 
