@@ -35,6 +35,13 @@
     "mixin"
   ],
   "devDependencies": {
+    "core-js": "2.4.0",
+    "webcomponents.js": "0.7.22",
+    "handlebars": "4.0.5",
+    "immutable": "3.8.1",
+    "pouchdb": "5.2.1",
+    "bluebird": "3.3.5",
+
     "babel-cli": "6.9.0",
     "babel-eslint": "6.0.4",
     "babel-plugin-transform-class-properties": "6.9.1",
