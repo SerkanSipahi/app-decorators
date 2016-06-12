@@ -71,17 +71,26 @@ describe('@on decorator', () => {
 		it('should contain registered events over @on', () => {
 
 			class Snack {
+				// local scope
 				@on('click .a') onClick_a() {}
 				@on('click .b') onClick_b() {}
+				// custom scope (window)
+				@on('resize', window) onResize(){}
+				@on('wheel', window) onWheel(){}
 			}
 
-			let events = Snack.prototype.$appDecorators.on.events.local;
+			let localEvents = Snack.prototype.$appDecorators.on.events.local;
+			let windowEvents = Snack.prototype.$appDecorators.on.events[window];
 			let prototype = Snack.prototype;
 
-			events.should.have.propertyByPath("click .a").eql(prototype.onClick_a);
-			events.should.have.propertyByPath("click .b").eql(prototype.onClick_b);
+			localEvents.should.have.propertyByPath("click .a").eql(prototype.onClick_a);
+			localEvents.should.have.propertyByPath("click .b").eql(prototype.onClick_b);
 
-			Object.keys(events).should.have.length(2);
+			windowEvents.should.have.propertyByPath("resize").eql(prototype.onResize);
+			windowEvents.should.have.propertyByPath("wheel").eql(prototype.onWheel);
+
+			Object.keys(localEvents).should.have.length(2);
+			Object.keys(windowEvents).should.have.length(2);
 
 		});
 
