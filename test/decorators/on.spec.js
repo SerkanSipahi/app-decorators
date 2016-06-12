@@ -44,14 +44,6 @@ describe('@on decorator', () => {
 
 		describe('registerEvent', () => {
 
-			it('should throw an error because eventtype already exists', () => {
-
-				(function(){
-					on.helper.registerEvent(mockTarget, 'some-event', function(){})
-				}).should.throw('The Event: "some-event" already exists!');
-
-			});
-
 			it('should build event object based on registered namespaces', () => {
 
 				let result = on.helper.registerEvent(mockTarget, 'some-other-event', mockFunction);

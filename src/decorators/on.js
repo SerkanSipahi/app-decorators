@@ -76,8 +76,8 @@ on.helper = {
 	 */
 	registerEvent: (target, eventDomain, callback = function(){}, listenerElement = 'local') => {
 
-		if(target.$appDecorators.on.events[listenerElement][eventDomain]) {
-			throw new Error(`The Event: "${eventDomain}" already exists!`);
+		if(!target.$appDecorators.on.events[listenerElement]) {
+			target.$appDecorators.on.events[listenerElement] = {};
 		}
 
 		// define events
