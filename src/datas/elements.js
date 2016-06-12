@@ -1,5 +1,5 @@
 
-let w = window;
+let w = System.global.window;
 
 export default {
 
