@@ -19,7 +19,7 @@ describe('@on decorator', () => {
 		it('should create namespace object´s', () => {
 
 			on.helper.registerNamespaces({}).should.have.containEql({
-				$appDecorators: { on: { events: {} } },
+				$appDecorators: { on: { events: { local: {} } } },
 				$onCreated:  { on: [] },
 				$onAttached: { on: [] },
 				$onDetached: { on: [] },
@@ -34,7 +34,7 @@ describe('@on decorator', () => {
 		// Mock target
 		let mockTarget = {
 			$appDecorators: {
-				on: { events: { 'some-event' : () => {} } }
+				on: { events: { local: { 'some-event' : () => {} } } }
 			},
 			$onCreated: {
 				on: []
@@ -55,7 +55,7 @@ describe('@on decorator', () => {
 			it('should build event object based on registered namespaces', () => {
 
 				let result = on.helper.registerEvent(mockTarget, 'some-other-event', mockFunction);
-				result.should.have.propertyByPath('$appDecorators', 'on', 'events', 'some-other-event').equal(mockFunction);
+				result.should.have.propertyByPath('$appDecorators', 'on', 'events', 'local', 'some-other-event').equal(mockFunction);
 
 			});
 
@@ -83,7 +83,7 @@ describe('@on decorator', () => {
 				@on('click .b') onClick_b() {}
 			}
 
-			let events = Snack.prototype.$appDecorators.on.events;
+			let events = Snack.prototype.$appDecorators.on.events.local;
 			let prototype = Snack.prototype;
 
 			events.should.have.propertyByPath("click .a").eql(prototype.onClick_a);

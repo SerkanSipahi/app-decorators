@@ -122,6 +122,9 @@ export default class Eventhandler {
 			if(!events.hasOwnProperty(eventDomain)){
 				continue;
 			}
+			if(Object.classof(events[eventDomain]) !== 'Function'){
+				continue;
+			}
 			// bind and assign bindObject
 			contextBindObject[eventDomain] = bindObject::events[eventDomain];
 		}

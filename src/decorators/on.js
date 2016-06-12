@@ -7,7 +7,7 @@ import Eventhandler from '../libs/eventhandler';
  * @param  {Any} ...args
  * @return {Function}
  */
-export default function on(eventDomain, context) {
+export default function on(eventDomain, listenerElement) {
 
 	if(!eventDomain){
 		throw new Error('Please pass an event type e.g "click"');
@@ -18,7 +18,7 @@ export default function on(eventDomain, context) {
 		// register namespaces
 		on.helper.registerNamespaces(target);
 		// register events
-		on.helper.registerEvent(target, eventDomain, descriptor.value);
+		on.helper.registerEvent(target, eventDomain, descriptor.value, listenerElement);
 
 		/**
 		 * ### Ensure "registerCallback('created', ..." (see below) registered only once ###
@@ -30,16 +30,20 @@ export default function on(eventDomain, context) {
 			return;
 		}
 
+		let events = target.$appDecorators.on.events.local;
+
 		on.helper.registerCallback('created', target, ( domNode ) => {
 
+			// register local (domNode) events
 			let eventHandler = Eventhandler.create({
-				events: domNode.$appDecorators.on.events,
+				events: events,
 				element: domNode,
 				bind: domNode,
 			});
 
 			// define namespace for eventhandler
 			domNode.$ ? null : domNode.$ = {};
+			// add eventhandler
 			domNode.$.eventHandler = eventHandler;
 
 		});
@@ -70,14 +74,14 @@ on.helper = {
 	 * @param  {Function} callback
 	 * @return {Function} target
 	 */
-	registerEvent: (target, eventDomain, callback = function(){}) => {
+	registerEvent: (target, eventDomain, callback = function(){}, listenerElement = 'local') => {
 
-		if(target.$appDecorators.on.events[eventDomain]) {
+		if(target.$appDecorators.on.events[listenerElement][eventDomain]) {
 			throw new Error(`The Event: "${eventDomain}" already exists!`);
 		}
 
 		// define events
-		target.$appDecorators.on.events[eventDomain] = callback;
+		target.$appDecorators.on.events[listenerElement][eventDomain] = callback;
 
 		return target;
 
@@ -109,7 +113,7 @@ on.helper = {
 		if(!target.$appDecorators) target.$appDecorators = {};
 		if(!target.$appDecorators.on) {
 			target.$appDecorators.on = {
-				events : {},
+				events : { local: {} },
 			};
 		}
 

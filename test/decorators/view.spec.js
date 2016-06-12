@@ -412,13 +412,13 @@ describe('@view decorator', () => {
 		let spy_createdMySpecialCom = sinon.spy(MySpecialCom.prototype, "created");
 		let spy_createdMyAwesomeCom = sinon.spy(MyAwesomeCom.prototype, "created");
 
-		let spy_viewRenderedMyQuxust = sinon.spy(MyQuxust.prototype.$appDecorators.on.events, "view-rendered");
-		let spy_viewRenderedMySpecialCom = sinon.spy(MySpecialCom.prototype.$appDecorators.on.events, "view-rendered");
-		let spy_viewRenderedMyAwesomeCom = sinon.spy(MyAwesomeCom.prototype.$appDecorators.on.events, "view-rendered");
+		let spy_viewRenderedMyQuxust = sinon.spy(MyQuxust.prototype.$appDecorators.on.events.local, "view-rendered");
+		let spy_viewRenderedMySpecialCom = sinon.spy(MySpecialCom.prototype.$appDecorators.on.events.local, "view-rendered");
+		let spy_viewRenderedMyAwesomeCom = sinon.spy(MyAwesomeCom.prototype.$appDecorators.on.events.local, "view-rendered");
 
-		let spy_viewAlreadyRenderedMyQuxust = sinon.spy(MyQuxust.prototype.$appDecorators.on.events, "view-already-rendered");
-		let spy_viewAlreadyRenderedMySpecialCom = sinon.spy(MySpecialCom.prototype.$appDecorators.on.events, "view-already-rendered");
-		let spy_viewAlreadyRenderedMyAwesomeCom = sinon.spy(MyAwesomeCom.prototype.$appDecorators.on.events, "view-already-rendered");
+		let spy_viewAlreadyRenderedMyQuxust = sinon.spy(MyQuxust.prototype.$appDecorators.on.events.local, "view-already-rendered");
+		let spy_viewAlreadyRenderedMySpecialCom = sinon.spy(MySpecialCom.prototype.$appDecorators.on.events.local, "view-already-rendered");
+		let spy_viewAlreadyRenderedMyAwesomeCom = sinon.spy(MyAwesomeCom.prototype.$appDecorators.on.events.local, "view-already-rendered");
 
 		// setup nested components
 		$('body').append(`
