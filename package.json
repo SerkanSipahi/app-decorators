@@ -48,7 +48,7 @@
     "gulp-concat": "2.6.0",
     "gulp-replace": "0.5.4",
     "gulp-sourcemaps": "1.6.0",
-    "jspm": "0.17.0-beta.17",
+    "jspm": "0.17.0-beta.19",
     "karma": "0.13.22",
     "karma-chrome-launcher": "1.0.1",
     "karma-firefox-launcher": "1.0.0",
