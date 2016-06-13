@@ -1,6 +1,7 @@
 
 // internal libs
 import Eventhandler from '../libs/eventhandler';
+import namespace from '../helpers/namespace';
 
 /**
  * on (EventHandler)
@@ -33,9 +34,14 @@ export default function on(eventDomain, listenerElement) {
 		on.helper.registerCallback('created', target, ( domNode ) => {
 
 			// register local (domNode) events
-			on.helper.addLocalEventListener(target.$appDecorators.on.events, domNode);
+			let eventHandler = on.helper.createLocalEventHandler(target.$appDecorators.on.events, domNode);
+			domNode = namespace.create(domNode, '$.eventHandler.local', eventHandler);
+
 			// register custom events
-			on.helper.addCustomEventListener(target.$appDecorators.on.events, domNode)
+			domNode = on.helper.createCustomEventHandler(target.$appDecorators.on.events, domNode, (eventHandler, scope, event) => {
+				namespace.create(domNode, `$.eventHandler.${scope}_${event}`, eventHandler);
+			});
+
 		});
 
 		on.helper.registerCallback('attached', target, (domNode) => {
@@ -45,8 +51,10 @@ export default function on(eventDomain, listenerElement) {
 		on.helper.registerCallback('detached', target, (domNode) => {
 
 			// cleanup: remove all eventhandler
-			domNode.$.eventHandler.local.reset();
-			domNode.$.eventHandler.local = null;
+			Object.keys(domNode.$.eventHandler).each((value) => {
+				domNode.$.eventHandler[value].reset();
+				domNode.$.eventHandler[value] = null;
+			});
 
 		});
 
@@ -128,44 +136,12 @@ on.helper = {
 	},
 
 	/**
-	 * registerCustomNamespace
-	 * @example on.helper.registerCustomNamespace(domNode, '$.eventHandler.local', eventHandler);
-	 * @param  {object} target
-	 * @param  {string} name
-	 * @param  {any} assign
-	 * @return {undefined}
-	 */
-	registerCustomNamespace: (target, name, assign) => {
-
-		on.helper.registerCustomNamespace(domNode, '$.eventHandler.local', eventHandler);
-	},
-
-
-	/**
-	 * getLocalEvents
-	 * @param  {object} events
-	 * @return {object} localEvents
-	 */
-	getLocalEvents: (events) => {
-
-	},
-
-	/**
-	 * getCustomEvents
-	 * @param  {object} events
-	 * @return {object} customoEvents
-	 */
-	getCustomEvents: (events) => {
-
-	},
-
-	/**
-	 * addLocalEventListener
+	 * createLocalEventHandler
 	 * @param  {object} events
 	 * @param  {Element} element
-	 * @return {undefined}
+	 * @return {object} eventHandler
 	 */
-	addLocalEventListener: (events, domNode) => {
+	createLocalEventHandler: (events, domNode) => {
 
 		let localScopeEvents = events.local;
 		let eventHandler = Eventhandler.create({
@@ -174,19 +150,16 @@ on.helper = {
 			bind: domNode,
 		});
 
-		// define namespace for eventhandler
-		domNode.$ ? null : domNode.$ = {};
-		domNode.$.eventHandler ? null : domNode.$.eventHandler = {};
-		domNode.$.eventHandler.local = eventHandler
+		return eventHandler;
 	},
 
 	/**
-	 * addCustomEventListener
+	 * createCustomEventHandler
 	 * @param  {object} events
 	 * @param  {Element} element
 	 * @return {undefined}
 	 */
-	addCustomEventListener: (events, domNode) => {
+	createCustomEventHandler: (events, domNode, callback = () => {}) => {
 
 		for(let scope of Object.keys(events)){
 
@@ -207,11 +180,12 @@ on.helper = {
 					bind: domNode,
 				});
 
-				// define namespace for eventhandler
-				domNode.$ ? null : domNode.$ = {};
-				domNode.$.eventHandler ? null : domNode.$.eventHandler = {};
-				domNode.$.eventHandler[`${scope}_${event}`] = eventHandler;
+				callback(eventHandler, scope, event);
+
 			}
 		}
+
+		return domNode;
 	},
+
 };
