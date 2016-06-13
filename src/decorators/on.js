@@ -30,13 +30,13 @@ export default function on(eventDomain, listenerElement) {
 			return;
 		}
 
-		let events = target.$appDecorators.on.events.local;
+		let localScopeEvents = target.$appDecorators.on.events.local;
 
 		on.helper.registerCallback('created', target, ( domNode ) => {
 
 			// register local (domNode) events
 			let eventHandler = Eventhandler.create({
-				events: events,
+				events: localScopeEvents,
 				element: domNode,
 				bind: domNode,
 			});
@@ -45,6 +45,38 @@ export default function on(eventDomain, listenerElement) {
 			domNode.$ ? null : domNode.$ = {};
 			// add eventhandler
 			domNode.$.eventHandler = eventHandler;
+
+			let events = target.$appDecorators.on.events;
+
+			for(let scope of Object.keys(events)){
+
+				if(scope === 'local') {
+					continue;
+				}
+
+				for(let event of Object.keys(events[scope])) {
+
+					let [ handler, element ] = events[scope][event];
+					let eventHandlerConfig = {
+						[ event ]: handler
+					};
+
+					let eventHandler = Eventhandler.create({
+						events: eventHandlerConfig,
+						element: element,
+						bind: domNode,
+					});
+
+					// define namespace for eventhandler
+					domNode.$ ? null : domNode.$ = {};
+					domNode.$.$eventHandler ? null : domNode.$.$eventHandler = {};
+					if(!domNode.$.$eventHandler[`${scope}_${event}`]) {
+						domNode.$.$eventHandler[`${scope}_${event}`] = {};
+					}
+					domNode.$.$eventHandler[`${scope}_${event}`] = eventHandler;
+
+				}
+			}
 
 		});
 
@@ -81,7 +113,11 @@ on.helper = {
 		}
 
 		// define events
-		target.$appDecorators.on.events[listenerElement][eventDomain] = callback;
+		if(listenerElement === 'local'){
+			target.$appDecorators.on.events[listenerElement][eventDomain] = callback;
+		} else {
+			target.$appDecorators.on.events[listenerElement][eventDomain] = [ callback, listenerElement ];
+		}
 
 		return target;
 

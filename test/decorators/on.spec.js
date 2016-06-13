@@ -6,6 +6,7 @@ import { component, view, on } from 'src/app-decorators';
 import sinon from 'sinon';
 
 let isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+let isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
 // init special innerHTML for test
 String.prototype.removeGutter = function(){
@@ -83,11 +84,19 @@ describe('@on decorator', () => {
 			let windowEvents = Snack.prototype.$appDecorators.on.events[window];
 			let prototype = Snack.prototype;
 
+			localEvents.should.have.propertyByPath("click .a").Function();
+			localEvents.should.have.propertyByPath("click .b").Function();
+
 			localEvents.should.have.propertyByPath("click .a").eql(prototype.onClick_a);
 			localEvents.should.have.propertyByPath("click .b").eql(prototype.onClick_b);
 
-			windowEvents.should.have.propertyByPath("resize").eql(prototype.onResize);
-			windowEvents.should.have.propertyByPath("wheel").eql(prototype.onWheel);
+			windowEvents.should.have.propertyByPath("resize").Array();
+			windowEvents.should.have.propertyByPath("resize", 0).eql(prototype.onResize);
+			windowEvents.should.have.propertyByPath("resize", 1).eql(window);
+
+			windowEvents.should.have.propertyByPath("wheel").Array();
+			windowEvents.should.have.propertyByPath("wheel", 0).eql(prototype.onWheel);
+			windowEvents.should.have.propertyByPath("wheel", 1).eql(window);
 
 			Object.keys(localEvents).should.have.length(2);
 			Object.keys(windowEvents).should.have.length(2);
@@ -211,8 +220,9 @@ describe('@on decorator', () => {
 
 		});
 
-		it.skip('should trigger window events but is instanec of Context and Element', () => {
+		it('should trigger window events but is instanec of Context and Element', () => {
 
+			@view(`<div class="foo"></div>`)
 			@component()
 			class Context {
 
@@ -223,25 +233,30 @@ describe('@on decorator', () => {
 				callFoo(){
 					return this;
 				}
+				@on('click .foo') onClick(event){
+					this.callFoo();
+				}
 
 			}
 
 			let context = Context.create();
-			let context_clickCallbacks = context.$.eventHandler.getHandlers('resize');
-			let onResize = context_clickCallbacks[0][null];
+
+			let prefixName = Object.prototype.toString.call(window);
+			let context_resize_Callbacks = context.$.$eventHandler[`${prefixName}_resize`].getHandlers('resize');
+			let onResize = context_resize_Callbacks[0][null];
 
 			document.body.appendChild(context);
 
-			// test Context
+			// test instanceof Context
 			should(onResize() instanceof Context).be.true();
 			should(context.callFoo() instanceof Context).be.true();
 
-			// test Element
+			// test instance Element
 			should(onResize() instanceof Element).be.true();
 			should(context.callFoo() instanceof Element).be.true();
 
 			// spy for context resize
-			let context_function_spy = sinon.spy(context_clickCallbacks[0], null);
+			let context_function_spy = sinon.spy(context_resize_Callbacks[0], null);
 			let callFoo_function_spy = sinon.spy(Context.prototype, 'callFoo');
 
 			// trigger resize
@@ -249,12 +264,34 @@ describe('@on decorator', () => {
 			window.dispatchEvent(resizeEvent);
 
 			// test
-			context_function_spy.callCount.should.eql(1);
-			callFoo_function_spy.callCount.should.eql(1);
+			context_function_spy.callCount.should.equal(1);
+			callFoo_function_spy.callCount.should.equal(1);
+
+			// test passed resize event object
+			context_function_spy.args[0][0].type.should.equal('resize');
+			should(context_function_spy.args[0][0] instanceof Event).be.true();
+			if(!isFirefox){
+				should(context_function_spy.args[0][0].currentTarget === window).be.true();
+			}
+
+			// test click event
+			let context_clickCallbacks = context.$.eventHandler.getHandlers('click');
+			let context_click_function_spy = sinon.spy(context_clickCallbacks[0], ".foo");
+
+			context.querySelector('.foo').click();
+			context_click_function_spy.callCount.should.equal(1);
+			callFoo_function_spy.callCount.should.equal(2);
+
+			// test that have different instances and are not in context of window
+			let context2 = Context.create();
+			should(context2.onResize() === context2.callFoo()).be.true();
+			should(context.onResize() === context2.onResize()).be.false();
+			should(context.callFoo() === context2.callFoo()).be.false();
 
 			// cleanup
 			context_function_spy.restore();
 			callFoo_function_spy.restore();
+			context_click_function_spy.restore();
 
 		});
 

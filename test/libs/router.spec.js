@@ -261,7 +261,7 @@ describe('Class Router', () => {
 			spy_urlchange.callCount.should.equal(4);
 
 			// test pushstate works. If not work we are on different site (out of tests)
-			document.querySelectorAll('.foo').should.length(1);
+			element.querySelectorAll('.foo').should.length(1);
 
 			// test popstate
 			// chrome: with karma + mocha it does not work (.back/forward)!
