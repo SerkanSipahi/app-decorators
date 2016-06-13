@@ -119,7 +119,7 @@ describe('@on decorator', () => {
 			let milkey_1 = Milkey.create({cid: 1});
 
 			// spy for milkey_1
-			let milkey_1_clickCallbacks = milkey_1.$.eventHandler.getHandlers('click');
+			let milkey_1_clickCallbacks = milkey_1.$.eventHandler.local.getHandlers('click');
 			let milkey_1_a_function_spy = sinon.spy(milkey_1_clickCallbacks[0], ".a");
 			let milkey_1_b_function_spy = sinon.spy(milkey_1_clickCallbacks[1], ".b");
 
@@ -204,7 +204,7 @@ describe('@on decorator', () => {
 			let ritter = Ritter.create();
 
 			// spy for Ritter onFoo_a
-			let ritter_clickCallbacks = ritter.$.eventHandler.getHandlers('click');
+			let ritter_clickCallbacks = ritter.$.eventHandler.local.getHandlers('click');
 			let ritter_function_spy = sinon.spy(ritter_clickCallbacks[0], ".a");
 			// spy for Ritter baseMethod
 			let ritter_baseMethod_spy = sinon.spy(Ritter.prototype, "baseMethod");
@@ -242,7 +242,7 @@ describe('@on decorator', () => {
 			let context = Context.create();
 
 			let prefixName = Object.prototype.toString.call(window);
-			let context_resize_Callbacks = context.$.$eventHandler[`${prefixName}_resize`].getHandlers('resize');
+			let context_resize_Callbacks = context.$.eventHandler[`${prefixName}_resize`].getHandlers('resize');
 			let onResize = context_resize_Callbacks[0][null];
 
 			document.body.appendChild(context);
@@ -275,7 +275,7 @@ describe('@on decorator', () => {
 			}
 
 			// test click event
-			let context_clickCallbacks = context.$.eventHandler.getHandlers('click');
+			let context_clickCallbacks = context.$.eventHandler.local.getHandlers('click');
 			let context_click_function_spy = sinon.spy(context_clickCallbacks[0], ".foo");
 
 			context.querySelector('.foo').click();
