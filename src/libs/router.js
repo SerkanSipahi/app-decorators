@@ -310,12 +310,15 @@ export default class Router {
 	 */
 	_onAction( event ){
 
+		// prevent default behavior if click a-tag
 		if(event instanceof Event){
 			event.preventDefault();
 			this.shadowEvent ? event.stopPropagation() : null;
 		}
 
+		// extract event_action_type e.g. "click" from "click a"
 		let [ event_action_type ] = this.event.action.split(' ');
+		// check if event triggered "click" or triggered by back/forward button
 		let urlObject = this.createURL(
 			event.type === event_action_type ? event.target.href : this.helper.location.href
 		);
