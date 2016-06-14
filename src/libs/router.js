@@ -124,8 +124,8 @@ export default class Router {
 			throw 'Please pass at least type e.g urlchange, Foo, Bar, ...';
 		}
 
-		let [ routeName, route ] = type.split(' ');
-		let promise = this.addRouteListener(routeName, route, handler);
+		let [ eventName, route ] = type.split(' ');
+		let promise = this.addRouteListener(eventName, route, handler);
 
 		return promise;
 
@@ -167,32 +167,37 @@ export default class Router {
 			this.scope.off(event);
 		}
 	}
-
-	addRouteListener(routeName, route, handler = null){
+	/**
+	 * addRouteListener
+	 * @param {string} eventName
+	 * @param {string} route
+	 * @param {Promise} promise
+	 */
+	addRouteListener(eventName, route, handler = null){
 
 		// add route
 		// is required for: if route matched then we
-		// can take routename for triggering
-		this.addRoute(routeName, route);
+		// can take eventType for triggering
+		this.addRoute(eventName, route);
 
 		// add event, its required if we want to destroy the router
-		this.addEvent(routeName);
+		this.addEvent(eventName);
 
 		// create promise if handler not exists
 		let promise = null;
 		if(!handler){
 
-			if(!this.promise[routeName]){
-				this.promise[routeName] = [];
+			if(!this.promise[eventName]){
+				this.promise[eventName] = [];
 			}
 
 			promise = this.Promise(resolve => {
-				this.promise[routeName].push(resolve);
+				this.promise[eventName].push(resolve);
 			});
 
 		}
 
-		this.scope.on(routeName, event => {
+		this.scope.on(eventName, event => {
 
 			let params = event.detail || {};
 
@@ -200,7 +205,7 @@ export default class Router {
 				handler(params);
 			}
 			// resolve promise
-			this._promiseHandler(routeName, params);
+			this._promiseHandler(eventName, params);
 		});
 
 		return promise;
@@ -208,13 +213,13 @@ export default class Router {
 
 	/**
 	 * addRoute
-	 * @param {string} routeName
+	 * @param {string} eventName
 	 * @param {string} route
 	 */
-	addRoute(routeName, route){
+	addRoute(eventName, route){
 
-		if(route && !this._routes[routeName]) {
-			this._routes[route] = routeName;
+		if(route && !this._routes[eventName]) {
+			this._routes[route] = eventName;
 		}
 
 	}
@@ -223,10 +228,10 @@ export default class Router {
 	 * addEvent
 	 * @param {undefined} type
 	 */
-	addEvent(type){
+	addEvent(eventName){
 
-		if(!this._events[type]){
-			this._events[type] = null;
+		if(!this._events[eventName]){
+			this._events[eventName] = null;
 		}
 
 	}
@@ -335,11 +340,13 @@ export default class Router {
 
 		// createURL === URL object
 		if(event.detail instanceof this.helper.createURL){
+
 			let { fragment } = event.detail;
-			let { routeName, params } = this._matchURL(fragment);
-			if(routeName){
-				this.scope.trigger(routeName, params);
+			let { eventName, params } = this._matchURL(fragment);
+			if(eventName){
+				this.scope.trigger(eventName, params);
 			}
+
 		}
 
 	}
@@ -351,15 +358,14 @@ export default class Router {
 	 */
 	_matchURL(fragment){
 
-		let matchedObject = { params: {} };
-		// test for bestcase (static url)
-		if(this._routes[fragment]){
-			matchedObject = {
-				routeName : this._routes[fragment],
-			}
-		}
-		else {
+		let matchedObject = { params: {}, eventName: null };
 
+		// bestcase (static url)
+		let eventName = this._routes[fragment];
+		if(eventName){
+			matchedObject = { eventName };
+		} else {
+			// if matched, then add dynamic url to white list
 		}
 
 		return matchedObject;
