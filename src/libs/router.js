@@ -78,18 +78,6 @@ export default class Router {
 	_lastFragment = null;
 
 	/**
-	 * _lastEvent
-	 * @type {String}
-	 */
-	_lastEvent = null;
-
-	/**
-	 * _lastRoute
-	 * @type {String|RegExp}
-	 */
-	_lastRoute = null;
-
-	/**
 	 * routes
 	 * @type {Object}
 	 */
@@ -98,12 +86,6 @@ export default class Router {
 		dynamic: {},
 		compiled: {},
 	};
-
-	/**
-	 * _events description
-	 * @type {Object}
-	 */
-	_events = {};
 
 	/**
 	 * constructor
