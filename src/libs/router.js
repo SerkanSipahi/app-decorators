@@ -66,6 +66,7 @@ export default class Router {
 		encodeURI: null,
 		location: null,
 		Promise: null,
+		XRegExp: null,
 	};
 
 	promise = {}
