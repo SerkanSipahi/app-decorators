@@ -11,15 +11,27 @@ describe('Class Router', () => {
 
 			let router = Router.create();
 
+			// add static routes
 			router._addRoute('/this/is/a/route/1', 'name1');
 			router._addRoute('/this/is/a/route/2', 'name2');
+			router._addRoute('/this/is/{{a}}/route/4', 'name4');
+			router._addRoute('/this/is/{{b}}/route/5', 'name5');
+			router._addRoute('/this/is/{{c}}/route/6', 'name6');
+
 			// this should not be added because it can exists only one route
 			router._addRoute('/this/is/a/route/2', 'name2');
+			router._addRoute('/this/is/{{a}}/route/4', 'name4');
 
 			// Test: contain correct added routes
-			router._routes.static.should.containEql({
+			router.getRoutes('static').should.containEql({
 				'/this/is/a/route/1': 'name1',
 				'/this/is/a/route/2': 'name2',
+			});
+
+			router.getRoutes('dynamic').should.containEql({
+				'/this/is/{{a}}/route/4': 'name4',
+				'/this/is/{{b}}/route/5': 'name5',
+				'/this/is/{{c}}/route/6': 'name6',
 			});
 
 			router.destroy();
