@@ -419,6 +419,19 @@ export default class Router {
 
 	}
 
+	/**
+	 * _hasVariableInURL
+	 * @param  {string} url
+	 * @return {Boolean} hasVariableInURL;
+	 */
+	_hasVariableInURL(url = '') {
+
+		let hasVariableInURL = /{{[a-z]+}}/.test(url);
+		return hasVariableInURL;
+
+	}
+
+	/**
 	 * redirect
 	 * @return {undefined}
 	 */

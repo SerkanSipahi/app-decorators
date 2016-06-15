@@ -226,6 +226,21 @@ describe('Class Router', () => {
 
 	});
 
+	describe('_hasVariableInURL method', () => {
+
+		it('should return true if has variable in url otherwise false', () => {
+
+			let router = Router.create();
+
+			router._hasVariableInURL('{{a}}').should.be.true();
+			router._hasVariableInURL('a').should.be.false();
+
+			router.destroy();
+
+		});
+
+	});
+
 	describe('_convertURLToRegex method', () => {
 
 		it('should convert passed url to regex', () => {
