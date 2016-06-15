@@ -27,7 +27,31 @@ describe('Class Router', () => {
 		});
 
 	});
-	
+
+	describe('prototype._addPromise', () => {
+
+		it('should add and create promise collection on prototype.promise', () => {
+
+			let router = Router.create();
+
+			let promise1 = router._addPromise('name1');
+			let promise2 = router._addPromise('name2');
+
+			promise1.should.be.Promise();
+			promise2.should.be.Promise();
+
+			router.promise.should.have.propertyByPath('name1', 0).and.is.Function(); // resolve function
+			router.promise.should.have.propertyByPath('name2', 0).and.is.Function(); // resolve function
+
+			// cleanup: resolve promises
+			router.promise.name1[0]();
+			router.promise.name2[0]();
+			// cleanup: destroy router
+			router.destroy();
+
+		});
+	});
+
 	describe('prototype.createURL', () => {
 
 		it('should return url object with additional "fragment" property', () => {
