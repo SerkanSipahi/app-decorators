@@ -322,6 +322,28 @@ describe('Class Router', () => {
 
 	});
 
+	describe('prototype._matchURL', () => {
+
+		it('should return matchedObject by passed fragment', () => {
+
+			let router = Router.create();
+			router._addRoute('/this/is/a/route/1', 'route1');
+
+			// return matched object
+			router._matchURL('/this/is/a/route/1').should.containEql({
+				name: 'route1', params: {}
+			});
+			// return not matched object
+			router._matchURL('/not/added/route').should.containEql({
+				name: null, params: {}
+			});
+
+			router.destroy();
+
+		});
+
+	});
+
 	describe('click on anchor or brower.back()', () => {
 
 		it('should call handler _onUrlchange', () => {
