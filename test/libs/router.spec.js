@@ -52,6 +52,24 @@ describe('Class Router', () => {
 		});
 	});
 
+	describe('prototype._urlFragmentChanged', () => {
+
+		it('should check if fragment is changed in combination with _setURLFragment', () => {
+
+			let router = Router.create();
+
+			router._setURLFragment('/');
+			router._urlFragmentChanged('/some/url/fragment').should.be.true();
+
+			router._setURLFragment('/some/url/fragment');
+			router._urlFragmentChanged('/some/url/fragment').should.be.false();
+
+			router.destroy();
+
+		});
+
+	});
+
 	describe('prototype.createURL', () => {
 
 		it('should return url object with additional "fragment" property', () => {

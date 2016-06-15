@@ -334,19 +334,41 @@ export default class Router {
 
 		// extract event_action_type e.g. "click" from "click a"
 		let [ event_action_type ] = this.event.action.split(' ');
-		// check if event triggered "click" or triggered by back/forward button
+		// check if event triggered by "click" or triggered by back/forward button
+		// and then build an urlObject
 		let urlObject = this.createURL(
 			event.type === event_action_type ? event.target.href : this.helper.location.href
 		);
 
-		if(urlObject.fragment !== this._lastFragment) {
+		if(this._urlFragmentChanged(urlObject.fragment)) {
 			if(event.type === event_action_type){
 				this.pushState(null, null, this.encodeURI(urlObject.fragment));
 			}
 			this.scope.trigger(this.event.urlchange, urlObject);
 		}
+		this._setURLFragment(urlObject.fragment);
 
-		this._lastFragment = urlObject.fragment;
+	}
+
+	/**
+	 * _urlFragmentChanged
+	 * @return {boolean}
+	 */
+	_urlFragmentChanged(currentFragment){
+
+		let urlFragmentChanged = ( currentFragment !== this._lastFragment );
+		return urlFragmentChanged;
+
+	}
+
+	/**
+	 * _setFragment
+	 * @param {string} fragment
+	 * @param {undefined}
+	 */
+	_setURLFragment(fragment) {
+
+		this._lastFragment = fragment;
 
 	}
 
