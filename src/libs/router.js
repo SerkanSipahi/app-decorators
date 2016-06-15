@@ -124,8 +124,8 @@ export default class Router {
 			throw 'Please pass at least type e.g urlchange, Foo, Bar, ...';
 		}
 
-		let [ eventName, route ] = type.split(' ');
-		let promise = this.addRouteListener(eventName, route, handler);
+		let [ name, route ] = type.split(' ');
+		let promise = this.addRouteListener(name, route, handler);
 
 		return promise;
 
