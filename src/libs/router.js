@@ -138,7 +138,9 @@ export default class Router {
 	* @return {undefined}
 	*/
 	off(event) {
+
 		this.scope.off(event);
+
 	}
 
 	/**
@@ -242,7 +244,9 @@ export default class Router {
 	 * @return {Object}
 	 */
 	getRoutes(){
+
 		return this._routes;
+
 	}
 
 	/**
@@ -251,7 +255,9 @@ export default class Router {
 	 * @return {String}
 	 */
 	encodeURI(uri){
+
 		return this.helper.encodeURI(uri);
+
 	}
 
 	/**
@@ -279,6 +285,7 @@ export default class Router {
 		}
 
 		return new this.helper.Promise(handler);
+		
 	}
 
 	/**
