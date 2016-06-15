@@ -1,10 +1,11 @@
 
 // internal libs
 import Router from 'src/apps/router';
+import { XRegExp } from 'src/libs/dependencies';
 
 describe('Class Router', () => {
 
-	describe('prototype.addRoute', () => {
+	describe('prototype._addRoute', () => {
 
 		it('should add route and name to prototype._routes', () => {
 
@@ -20,6 +21,8 @@ describe('Class Router', () => {
 				'/this/is/a/route1': 'name1',
 				'/this/is/a/route2': 'name2',
 			});
+
+			router.destroy();
 
 		});
 
