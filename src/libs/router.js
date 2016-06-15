@@ -399,17 +399,17 @@ export default class Router {
 	 */
 	_matchURL(fragment){
 
-		let matchedObject = { params: {}, name: null };
+		let matchedURLObject = { name: null, params: {} };
 
 		// bestcase (static url)
 		let name = this._routes[fragment];
 		if(name){
-			matchedObject = { name };
+			matchedURLObject = Object.assign(matchedURLObject, { name });
 		} else {
 			// if matched, then add dynamic url to white list
 		}
 
-		return matchedObject;
+		return matchedURLObject;
 
 	}
 
