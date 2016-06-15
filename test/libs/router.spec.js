@@ -5,6 +5,29 @@ import { XRegExp } from 'src/libs/dependencies';
 
 describe('Class Router', () => {
 
+	describe('prototype.addRoute', () => {
+
+		it('should add route and name to prototype._routes', () => {
+
+			let router = Router.create();
+
+			router._addRoute('/this/is/a/route1', 'name1');
+			router._addRoute('/this/is/a/route2', 'name2');
+			// this should not be added because it can exists only one route
+			router._addRoute('/this/is/a/route2', 'name2');
+
+			// Test: contain correct added routes
+			router._routes.should.containEql({
+				'/this/is/a/route1': 'name1',
+				'/this/is/a/route2': 'name2',
+			});
+
+		});
+
+	});
+
+
+
 	describe('prototype.createURL', () => {
 
 		it('should return url object with additional "fragment" property', () => {
