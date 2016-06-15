@@ -281,6 +281,15 @@ export default class Router {
 	}
 
 	/**
+	 * XRegExp
+	 */
+	get XRegExp() {
+
+		return this.helper.XRegExp;
+
+	}
+
+	/**
 	 * _init
 	 * @return {Undefined}
 	 */
@@ -396,6 +405,20 @@ export default class Router {
 	}
 
 	/**
+	 * _convertURLToXRegexExp
+	 * @param  {string} url
+	 * @return {XRegExp-String} url
+	 */
+	_convertURLToXRegexExp(url = ''){
+
+		let variableURLRegex = this.XRegExp('{{(?<variableURL>[a-z]+)}}', 'g');
+		url = url.replace(/\//g, '\\/');
+		url = this.XRegExp.replace(url, variableURLRegex, '(?<${variableURL}>.*?)');
+
+		return url;
+
+	}
+
 	 * redirect
 	 * @return {undefined}
 	 */

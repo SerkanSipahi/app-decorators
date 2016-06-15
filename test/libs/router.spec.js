@@ -1,6 +1,7 @@
 
 // internal libs
 import Router from 'src/apps/router';
+import { XRegExp } from 'src/libs/dependencies';
 
 describe('Class Router', () => {
 
@@ -220,6 +221,22 @@ describe('Class Router', () => {
 			router.trigger('Google');
 			router.trigger('AbsoluteURL');
 			router.trigger('RelativeURL');
+
+		});
+
+	});
+
+	describe('_convertURLToRegex method', () => {
+
+		it('should convert passed url to regex', () => {
+
+			let router = Router.create();
+
+			router._convertURLToXRegexExp('{{year}}').should.be.equal('(?<year>.*?)');
+			router._convertURLToXRegexExp('{{hour}}:{{min}}').should.be.equal('(?<hour>.*?):(?<min>.*?)');
+			router._convertURLToXRegexExp('{{a}}/{{b}}/{{c}}').should.be.equal('(?<a>.*?)\\/(?<b>.*?)\\/(?<c>.*?)');
+
+			router.destroy();
 
 		});
 
