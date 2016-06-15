@@ -11,15 +11,15 @@ describe('Class Router', () => {
 
 			let router = Router.create();
 
-			router._addRoute('/this/is/a/route1', 'name1');
-			router._addRoute('/this/is/a/route2', 'name2');
+			router._addRoute('/this/is/a/route/1', 'name1');
+			router._addRoute('/this/is/a/route/2', 'name2');
 			// this should not be added because it can exists only one route
-			router._addRoute('/this/is/a/route2', 'name2');
+			router._addRoute('/this/is/a/route/2', 'name2');
 
 			// Test: contain correct added routes
-			router._routes.should.containEql({
-				'/this/is/a/route1': 'name1',
-				'/this/is/a/route2': 'name2',
+			router._routes.static.should.containEql({
+				'/this/is/a/route/1': 'name1',
+				'/this/is/a/route/2': 'name2',
 			});
 
 			router.destroy();
@@ -227,12 +227,12 @@ describe('Class Router', () => {
 			router.on('Configurator /configurator.html');
 
 			// test routes count
-			Object.keys(router.getRoutes()).should.be.length(4);
+			Object.keys(router.getRoutes('static')).should.be.length(4);
 
 			// add registered route
 			router.on('Detailpage /details.html');
 			// routes count must be the same
-			Object.keys(router.getRoutes()).should.be.length(4);
+			Object.keys(router.getRoutes('static')).should.be.length(4);
 
 			// cleanup
 			router.destroy();
@@ -291,14 +291,14 @@ describe('Class Router', () => {
 
 	});
 
-	describe('prototype._hasVariableInURL method', () => {
+	describe('prototype._isDynamicURL method', () => {
 
 		it('should return true if has variable in url otherwise false', () => {
 
 			let router = Router.create();
 
-			router._hasVariableInURL('{{a}}').should.be.true();
-			router._hasVariableInURL('a').should.be.false();
+			router._isDynamicURL('{{a}}').should.be.true();
+			router._isDynamicURL('a').should.be.false();
 
 			router.destroy();
 

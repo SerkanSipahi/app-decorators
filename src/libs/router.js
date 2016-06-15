@@ -93,7 +93,11 @@ export default class Router {
 	 * routes
 	 * @type {Object}
 	 */
-	_routes = {};
+	_routes = {
+		static: {},
+		dynamic: {},
+		compiled: {},
+	};
 
 	/**
 	 * _events description
@@ -166,10 +170,14 @@ export default class Router {
 		this.scope.off(this.event.urlchange);
 
 		// remove registered events
-		for(let route of Object.keys(this._routes)){
-			let event = this._routes[route];
+		let allRoutes = Object.assign({}, this._routes.static, this._routes.dynamic);
+		for(let route of Object.keys(allRoutes)){
+
+			let event = allRoutes[route];
 			this.scope.off(event);
+
 		}
+
 	}
 	/**
 	 * addRouteListener
@@ -213,8 +221,14 @@ export default class Router {
 	 */
 	_addRoute(route, name){
 
-		if(route && !this._routes[route]) {
-			this._routes[route] = name;
+		if(this._isDynamicURL(route)) {
+			if(!this._routes.dynamic[route]){
+				this._routes.dynamic[route] = name;
+			}
+		} else {
+			if(!this._routes.static[route]){
+				this._routes.static[route] = name;
+			}
 		}
 
 	}
@@ -242,9 +256,9 @@ export default class Router {
 	 * getRoutes
 	 * @return {Object}
 	 */
-	getRoutes(){
+	getRoutes(type = 'static'){
 
-		return this._routes;
+		return this._routes[type];
 
 	}
 
@@ -402,7 +416,7 @@ export default class Router {
 		let matchedURLObject = { name: null, params: {} };
 
 		// bestcase (static url)
-		let name = this._routes[fragment];
+		let name = this._routes.static[fragment];
 		if(name){
 			matchedURLObject = Object.assign(matchedURLObject, { name });
 		} else {
@@ -449,14 +463,14 @@ export default class Router {
 	}
 
 	/**
-	 * _hasVariableInURL
+	 * _isDynamicURL
 	 * @param  {string} url
-	 * @return {Boolean} hasVariableInURL;
+	 * @return {Boolean} _isDynamicURL;
 	 */
-	_hasVariableInURL(url = '') {
+	_isDynamicURL(url = '') {
 
-		let hasVariableInURL = /{{[a-z]+}}/.test(url);
-		return hasVariableInURL;
+		let isDynamicURL = /{{[a-z]+}}/.test(url);
+		return isDynamicURL;
 
 	}
 
