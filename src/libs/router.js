@@ -384,7 +384,7 @@ export default class Router {
 
 			let { fragment } = event.detail;
 			let { name, params } = this._matchURL(fragment);
-			if(name){
+			if(name !== null){
 				this.scope.trigger(name, params);
 			}
 
