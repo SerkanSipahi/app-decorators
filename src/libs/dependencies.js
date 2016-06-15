@@ -5,3 +5,4 @@ export { default as Immutable } from '../../node_modules/immutable/dist/immutabl
 export { default as Webcomponents } from '../../node_modules/webcomponents.js/webcomponents-lite';
 export { default as Pouchdb } from '../../node_modules/pouchdb/dist/pouchdb';
 export { default as Promise } from '../../node_modules/bluebird/js/browser/bluebird';
+export { default as XRegExp } from '../../node_modules/xregexp/src/index';

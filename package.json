@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/SerkanSipahi/app-decorators#readme",
   "scripts": {
-    "postinstall": "npm install core-js@2.4.0 webcomponents.js@0.7.22 handlebars@4.0.5 immutable@3.8.1 pouchdb@5.2.1 bluebird@3.3.5",
+    "postinstall": "npm install xregexp@3.1.1 core-js@2.4.0 webcomponents.js@0.7.22 handlebars@4.0.5 immutable@3.8.1 pouchdb@5.2.1 bluebird@3.3.5",
     "test": "./node_modules/.bin/karma start --browsers FirefoxEnableWebComponents --single-run"
   },
   "keywords": [
@@ -41,6 +41,7 @@
     "immutable": "3.8.1",
     "pouchdb": "5.2.1",
     "bluebird": "3.3.5",
+    "xregexp": "3.1.1",
 
     "babel-cli": "6.9.0",
     "babel-eslint": "6.0.4",

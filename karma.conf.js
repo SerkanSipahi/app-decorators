@@ -67,6 +67,8 @@ module.exports = function (config) {
 				'node_modules/webcomponents.js/webcomponents-lite.js',
 				'node_modules/pouchdb/dist/pouchdb.js',
 				'node_modules/bluebird/js/browser/bluebird.js',
+				'node_modules/xregexp/src/index.js',
+				'node_modules/xregexp/src/**/*.js',
 			]
 		},
 		autoWatch: true,
