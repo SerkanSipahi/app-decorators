@@ -5,6 +5,21 @@ import { XRegExp } from 'src/libs/dependencies';
 
 describe('Class Router', () => {
 
+	describe('prototype._isDynamicURL method', () => {
+
+		it('should return true if has variable in url otherwise false', () => {
+
+			let router = Router.create();
+
+			router._isDynamicURL('{{a}}').should.be.true();
+			router._isDynamicURL('a').should.be.false();
+
+			router.destroy();
+
+		});
+
+	});
+
 	describe('prototype._addRoute', () => {
 
 		it('should add route and name to prototype._routes', () => {
@@ -298,21 +313,6 @@ describe('Class Router', () => {
 			router.trigger('Google');
 			router.trigger('AbsoluteURL');
 			router.trigger('RelativeURL');
-
-		});
-
-	});
-
-	describe('prototype._isDynamicURL method', () => {
-
-		it('should return true if has variable in url otherwise false', () => {
-
-			let router = Router.create();
-
-			router._isDynamicURL('{{a}}').should.be.true();
-			router._isDynamicURL('a').should.be.false();
-
-			router.destroy();
 
 		});
 
