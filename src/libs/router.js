@@ -181,10 +181,10 @@ export default class Router {
 		// add route
 		// is required for: if route matched then we
 		// can take eventType for triggering
-		this.addRoute(name, route);
+		this._addRoute(route, name);
 
 		// add event, its required if we want to destroy the router
-		this.addEvent(name);
+		this._addEvent(name);
 
 		// create promise if handler not exists
 		let promise = null;
@@ -215,23 +215,23 @@ export default class Router {
 	}
 
 	/**
-	 * addRoute
-	 * @param {string} name
+	 * _addRoute
 	 * @param {string} route
+	 * @param {string} name
 	 */
-	addRoute(name, route){
+	_addRoute(route, name){
 
-		if(route && !this._routes[name]) {
+		if(route && !this._routes[route]) {
 			this._routes[route] = name;
 		}
 
 	}
 
 	/**
-	 * addEvent
+	 * _addEvent
 	 * @param {undefined} type
 	 */
-	addEvent(name){
+	_addEvent(name){
 
 		if(!this._events[name]){
 			this._events[name] = null;
