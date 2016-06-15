@@ -189,15 +189,7 @@ export default class Router {
 		// create promise if handler not exists
 		let promise = null;
 		if(!handler){
-
-			if(!this.promise[name]){
-				this.promise[name] = [];
-			}
-
-			promise = this.Promise(resolve => {
-				this.promise[name].push(resolve);
-			});
-
+			promise = this._addPromise(name);
 		}
 
 		this.scope.on(name, event => {
@@ -236,6 +228,25 @@ export default class Router {
 		if(!this._events[name]){
 			this._events[name] = null;
 		}
+
+	}
+
+	/**
+	 * _addPromise
+	 * @param {string} name
+	 * @return {Promise} promise
+	 */
+	_addPromise(name) {
+
+		if(!this.promise[name]){
+			this.promise[name] = [];
+		}
+
+		let promise = this.Promise(resolve => {
+			this.promise[name].push(resolve);
+		});
+
+		return promise;
 
 	}
 
