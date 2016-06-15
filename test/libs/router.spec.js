@@ -1,7 +1,6 @@
 
 // internal libs
 import Router from 'src/apps/router';
-import { XRegExp } from 'src/libs/dependencies';
 
 describe('Class Router', () => {
 
