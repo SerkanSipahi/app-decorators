@@ -27,29 +27,7 @@ describe('Class Router', () => {
 		});
 
 	});
-
-	describe('prototype._addEvent', () => {
-
-		it('should add eventname to prototype._events', () => {
-
-			let router = Router.create();
-
-			router._addEvent('name1');
-			router._addEvent('name2');
-			// this should not be added because it can exists only one events
-			router._addEvent('name2');
-
-			// Test: contain correct added routes
-			router._events.should.containEql({
-				'name1': null,
-				'name2': null,
-			});
-
-			router.destroy();
-
-		});
-	});
-
+	
 	describe('prototype.createURL', () => {
 
 		it('should return url object with additional "fragment" property', () => {

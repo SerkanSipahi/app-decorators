@@ -166,7 +166,8 @@ export default class Router {
 		this.scope.off(this.event.urlchange);
 
 		// remove registered events
-		for(let event of Object.keys(this._events)){
+		for(let route of Object.keys(this._routes)){
+			let event = this._routes[route];
 			this.scope.off(event);
 		}
 	}
@@ -178,13 +179,12 @@ export default class Router {
 	 */
 	addRouteListener(name, route, handler = null){
 
-		// add route
-		// is required for: if route matched then we
-		// can take eventType for triggering
+		/**
+		 * _addRoute is required for:
+		 * 1. if route matched then we can take name for triggering event
+		 * 2. if router should destroy, see .destroy()
+		 */
 		this._addRoute(route, name);
-
-		// add event, its required if we want to destroy the router
-		this._addEvent(name);
 
 		// create promise if handler not exists
 		let promise = null;
@@ -215,18 +215,6 @@ export default class Router {
 
 		if(route && !this._routes[route]) {
 			this._routes[route] = name;
-		}
-
-	}
-
-	/**
-	 * _addEvent
-	 * @param {undefined} type
-	 */
-	_addEvent(name){
-
-		if(!this._events[name]){
-			this._events[name] = null;
 		}
 
 	}
@@ -296,7 +284,7 @@ export default class Router {
 		}
 
 		return new this.helper.Promise(handler);
-		
+
 	}
 
 	/**
