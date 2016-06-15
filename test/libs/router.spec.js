@@ -291,7 +291,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('_hasVariableInURL method', () => {
+	describe('prototype._hasVariableInURL method', () => {
 
 		it('should return true if has variable in url otherwise false', () => {
 
@@ -306,7 +306,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('_convertURLToRegex method', () => {
+	describe('prototype._convertURLToRegex method', () => {
 
 		it('should convert passed url to regex', () => {
 
@@ -398,7 +398,7 @@ describe('Class Router', () => {
 
 		});
 
-		it('should match registered route (pathname) without dynamic parameter', (done) => {
+		it('should match registered route (static pathname) without dynamic parameter', (done) => {
 
 			let element = null;
 			element = document.createElement("div");
