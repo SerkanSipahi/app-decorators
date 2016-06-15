@@ -303,15 +303,15 @@ export default class Router {
 	// sollte in start umbenannt werden
 	_init(){
 
-		this._bindEvents();
+		this._bindInternalCoreEvents();
 
 	}
 
 	/**
-	 * _bindEvents
+	 * _bindInternalCoreEvents
 	 * @return {Undefined}
 	 */
-	_bindEvents(){
+	_bindInternalCoreEvents(){
 
 		this.scope.on(this.event.action, ::this._onAction);
 		this.scope.on(this.event.urlchange, ::this._onUrlchange);
