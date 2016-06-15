@@ -2,6 +2,7 @@
 import Eventhandler from '../libs/eventhandler';
 import Router from '../libs/router';
 import { Promise } from '../libs/dependencies';
+import { XRegExp } from '../libs/dependencies';
 
 /**
  * create
@@ -35,7 +36,8 @@ Router.create = function(config = {}){
 			createURL: config.createURL || window.URL,
 			encodeURI: config.encodeURI || window.encodeURI,
 			location: config.location || window.location,
-			Promise: config.Promise || window.Promise,
+			Promise: config.Promise || Promise,
+			XRegExp: config.XRegExp || XRegExp,
 		},
 	};
 
