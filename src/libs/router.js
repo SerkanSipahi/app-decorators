@@ -517,7 +517,7 @@ export default class Router {
 	 */
 	_stopPropagation(event){
 
-		if(this.shadowEvent){
+		if(this.mode.stealth && event instanceof Event){
 			event.stopPropagation();
 		}
 
