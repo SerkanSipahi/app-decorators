@@ -2,6 +2,8 @@
 // internal libs
 import Router from 'src/apps/router';
 import { XRegExp } from 'src/libs/dependencies';
+import { Event } from 'test/mocks/event';
+import { Location } from 'test/mocks/location';
 
 describe('Class Router', () => {
 
@@ -50,6 +52,73 @@ describe('Class Router', () => {
 				'/this/is/{{c}}/route/6': 'name6',
 			});
 
+			router.destroy();
+
+		});
+
+	});
+
+	describe('prototype._getDefinedEventAction', () => {
+
+		it('should get defined event action', () => {
+
+			let router = Router.create({
+				event_action: 'my-action pattern'
+			});
+
+			router._getDefinedEventAction().should.be.equal('my-action');
+			router.destroy();
+
+		});
+
+	});
+
+	describe('prototype._isDefinedEventAction', () => {
+
+		it('should check if passed event_type is euqal to our defined event type', () => {
+
+			let router = Router.create({
+				event_action: 'my-action pattern'
+			});
+
+			router._isDefinedEventAction('my-action').should.be.true();
+			router._isDefinedEventAction('other-action').should.be.false();
+
+			router.destroy();
+
+		});
+
+	});
+
+	describe('prototype._getCurrentHref', () => {
+
+		it('should get current href by passed event', () => {
+
+			// mock location ( see above import)
+			let locationMock = new Location({
+				href : 'http://mockdomain.com/event/pushState/href.html'
+			});
+			// setup
+			let router = Router.create({
+				 event_action: 'myEvent a',
+				 location: locationMock,
+			});
+
+			//*** Test click event ***
+			// mock click event ( see above import)
+			let eventClickMock = new Event('myEvent', {
+				target: {
+					href: 'http://mockdomain.com/event/click/href.html'
+				}
+			});
+			router._getCurrentHref(eventClickMock).should.be.equal('http://mockdomain.com/event/click/href.html');
+
+			//*** Test pushstate event ***
+			// mock pushstate event  ( see above import)
+			let eventPushstateMock = new Event('pushstate');
+			router._getCurrentHref(eventPushstateMock).should.be.equal('http://mockdomain.com/event/pushState/href.html');
+
+			// cleanup
 			router.destroy();
 
 		});
@@ -133,7 +202,15 @@ describe('Class Router', () => {
 
 	});
 
-	describe('prototype.off', () => {
+	describe('prototype.addRouteListener', () => {
+
+		it('should do the same like prototype.on', () => {
+
+			// It´s not necessary to test it, it´s almost the same
+			// like prototype.on. The only difference is
+			// the argument signature
+
+		});
 
 	});
 
@@ -318,6 +395,15 @@ describe('Class Router', () => {
 		});
 
 	});
+
+	describe('prototype.off', () => {
+
+		it('should remove registered route', () => {
+
+		});
+
+	});
+
 
 	describe('prototype._convertURLToRegex method', () => {
 
