@@ -296,7 +296,6 @@ export default class Router {
 	 * _init
 	 * @return {Undefined}
 	 */
-	// sollte in start umbenannt werden
 	_init(){
 
 		this._bindInternalCoreEvents();
@@ -321,15 +320,8 @@ export default class Router {
 	 */
 	_onAction(event){
 
-		// prevent default behavior if click a-tag
-		if(event instanceof Event){
-			event.preventDefault();
-		}
-
-		// prevent propagation if multiple route instances are nested
-		if(this.shadowEvent){
-			event.stopPropagation();
-		}
+		this._preventDefault(event);
+		this._stopPropagation(event);
 
 		this._applyActionEvent(event);
 
@@ -341,7 +333,7 @@ export default class Router {
 	 * @param  {String} type
 	 * @return {Undefined}
 	 */
-	 _applyActionEvent( event ){
+	_applyActionEvent( event ){
 
 		let href =  this._getCurrentHref(event);
 		let urlObject = this.createURL(href);
@@ -506,10 +498,40 @@ export default class Router {
 	}
 
 	/**
-	 * redirect
+	 * _preventDefault
+	 * @param  {Event} event
 	 * @return {undefined}
 	 */
-	redirect(){
+	_preventDefault(event){
+
+		if(event instanceof Event){
+			event.preventDefault();
+		}
+
+	}
+
+	/**
+	 * _stopPropagation
+	 * @param  {Event} event
+	 * @return {undefined}
+	 */
+	_stopPropagation(event){
+
+		if(this.shadowEvent){
+			event.stopPropagation();
+		}
+
+	}
+
+	/**
+	 * recognize
+	 * @param  {String} path
+	 * @return {object}
+	 */
+	recognize(url){
+
+		let matchedUrlObject =  this._matchURL(url);
+		return matchedUrlObject;
 
 	}
 
@@ -520,6 +542,14 @@ export default class Router {
 	 * @return {String}
 	 */
 	constructURL(route, params = {}){
+
+	}
+
+	/**
+	 * redirect
+	 * @return {undefined}
+	 */
+	redirect(){
 
 	}
 
@@ -536,16 +566,6 @@ export default class Router {
 	 * @return {Undefined}
 	 */
 	stop(){
-
-	}
-
-	/**
-	 * var result2 = router.recognize("/product/detail/1");
-	 * result2 === { handler: showPost, params: { id: "1" }, name: 'product::detail'};
-	 *
-	 * @param  {String} path
-	 */
-	recognize(path){
 
 	}
 }
