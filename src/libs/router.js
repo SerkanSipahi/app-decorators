@@ -92,7 +92,7 @@ export default class Router {
 	 * @param  {Object} config
 	 * @return {Router}
 	 */
-	constructor(config){
+	constructor(config = {}){
 
 		Object.assign(this, config);
 		this._init();
