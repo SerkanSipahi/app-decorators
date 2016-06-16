@@ -26,7 +26,7 @@ Router.create = function(config = {}){
 		scope: Eventhandler.create({ element: config.scope || document && body || null }),
 
 		event: {
-			action: config.event_host || 'click a',
+			action: config.event_action || 'click a',
 			urlchange: config.event_urlchange || 'urlchange',
 		},
 		mode: {
