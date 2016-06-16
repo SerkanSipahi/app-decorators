@@ -316,33 +316,82 @@ export default class Router {
 
 	/**
 	 * _onAction
-	 * @param  {Element} target
-	 * @param  {String} type
-	 * @return {Undefined}
+	 * @param  {Event} event
+	 * @return {undefined}
 	 */
-	_onAction( event ){
+	_onAction(event){
 
 		// prevent default behavior if click a-tag
 		if(event instanceof Event){
 			event.preventDefault();
-			this.shadowEvent ? event.stopPropagation() : null;
 		}
 
-		// extract event_action_type e.g. "click" from "click a"
-		let [ event_action_type ] = this.event.action.split(' ');
-		// check if event triggered by "click" or triggered by back/forward button
-		// and then build an urlObject
-		let urlObject = this.createURL(
-			event.type === event_action_type ? event.target.href : this.helper.location.href
-		);
+		// prevent propagation if multiple route instances are nested
+		if(this.shadowEvent){
+			event.stopPropagation();
+		}
 
-		if(this._urlFragmentChanged(urlObject.fragment)) {
-			if(event.type === event_action_type){
-				this.pushState(null, null, this.encodeURI(urlObject.fragment));
+		this._applyActionEvent(event);
+
+	}
+
+	/**
+	 * _onActionController
+	 * @param  {Element} target
+	 * @param  {String} type
+	 * @return {Undefined}
+	 */
+	 _applyActionEvent( event ){
+
+		let href =  this._getCurrentHref(event);
+		let urlObject = this.createURL(href);
+		let urlFragment = urlObject.fragment;
+
+		if(this._urlFragmentChanged(urlFragment)) {
+			if(this._isDefinedEventAction(event.type)){
+				this.pushState(null, null, this.encodeURI(urlFragment));
 			}
 			this.scope.trigger(this.event.urlchange, urlObject);
 		}
-		this._setURLFragment(urlObject.fragment);
+		this._setURLFragment(urlFragment);
+
+	}
+
+	/**
+	 * _isDefinedEventAction
+	 * @param  {string} event_type
+	 * @return {Boolean} _isDefinedEventAction
+	 */
+	_isDefinedEventAction(event_type){
+
+		let _isDefinedEventAction = event_type === this._getDefinedEventAction();
+		return _isDefinedEventAction;
+
+	}
+
+	/**
+	 * _getCurrentHref
+	 * @param  {Event} event
+	 * @return {string}
+	 */
+	_getCurrentHref(event) {
+
+		// extract defined_event_action e.g. "click" from "click a"
+		let defined_event_action = this._getDefinedEventAction();
+		// check if event is triggered by "click" or triggered by back/forward button and return href
+		let href = event.type === defined_event_action ? event.target.href : this.helper.location.href;
+		return href;
+
+	}
+
+	/**
+	 * _getDefinedEventAction
+	 * @return {string} defined_event_action
+	 */
+	_getDefinedEventAction(){
+
+		let [ defined_event_action ] = this.event.action.split(' ');
+		return defined_event_action;
 
 	}
 
