@@ -1,6 +1,6 @@
 
 import Eventhandler from '../libs/eventhandler';
-import Router from '../libs/router';
+import { Router } from '../libs/router';
 import { Promise } from '../libs/dependencies';
 import { XRegExp } from '../libs/dependencies';
 
@@ -50,4 +50,4 @@ Router.create = function(config = {}){
 
 }
 
-export default Router;
+export { Route };

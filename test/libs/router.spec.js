@@ -1,6 +1,6 @@
 
 // internal libs
-import Router from 'src/apps/router';
+import { Router } from 'src/apps/router';
 import { XRegExp } from 'src/libs/dependencies';
 import { Event } from 'test/mocks/event';
 import { Location } from 'test/mocks/location';

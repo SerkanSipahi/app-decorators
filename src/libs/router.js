@@ -1,5 +1,5 @@
 
-export default class Router {
+export class Router {
 
 	/**
 	 * foward()
