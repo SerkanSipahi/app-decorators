@@ -58,6 +58,52 @@ describe('Class Router', () => {
 
 	});
 
+	describe('prototype._applyActionEvent (integration test)', () => {
+
+		/**
+		 * We check only pushstate, all other methods are tested
+		 */
+
+		it('should call pushstate if click event passed', () => {
+
+			let router = Router.create({ event_action: 'click a' });
+			let spy_pushState = sinon.spy(router, "pushState");
+			let event = new Event('click', {
+				target: {
+					href: 'http://www.domain.com/some/path.html',
+				}
+			});
+
+			router._applyActionEvent(event);
+			spy_pushState.callCount.should.equal(1);
+
+			// cleanup
+			router.pushState.restore();
+			router.destroy();
+
+		});
+
+		it('should not call pushstate if pushstate event passed', () => {
+
+			let router = Router.create({ event_action: 'click a' });
+			let spy_pushState = sinon.spy(router, "pushState");
+			let event = new Event('pushState', {
+				target: {
+					href: 'http://www.domain.com/some/path.html',
+				}
+			});
+
+			router._applyActionEvent(event);
+			spy_pushState.callCount.should.equal(0);
+
+			// cleanup
+			router.pushState.restore();
+			router.destroy();
+
+		});
+
+	});
+
 	describe('prototype._getDefinedEventAction', () => {
 
 		it('should get defined event action', () => {
