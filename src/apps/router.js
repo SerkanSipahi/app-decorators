@@ -50,4 +50,4 @@ Router.create = function(config = {}){
 
 }
 
-export { Route };
+export { Router };
