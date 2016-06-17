@@ -1,19 +1,14 @@
 
 // internal libs
 import { component, view, on } from 'src/app-decorators';
+import { isFirefox, isSafari } from 'src/helpers/browser-detect';
+import { removeGutter } from 'src/helpers/string';
 
 // external libs
 import sinon from 'sinon';
 
-let isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
-let isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-
-// init special innerHTML for test
-String.prototype.removeGutter = function(){
-	return this.replace(/[\t\n\r]/gm, '');
-}
-
 describe('@on decorator', () => {
+
 
 	describe('view.helper.registerNamespaces', () => {
 
