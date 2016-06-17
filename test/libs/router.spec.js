@@ -35,18 +35,18 @@ describe('Class Router', () => {
 			router._addRoute('/this/is/{{b}}/route/5', 'name5');
 			router._addRoute('/this/is/{{c}}/route/6', 'name6');
 
-			// this should not be added because it can exists only one route
-			router._addRoute('/this/is/a/route/2', 'name2');
-			router._addRoute('/this/is/{{a}}/route/4', 'name4');
+			// should throw error because route is already exists
+			(() => { router._addRoute('/this/is/a/route/2', 'name2'); }).should.throw();
+			(() => { router._addRoute('/this/is/{{a}}/route/4', 'name4'); }).should.throw();
 
 			// Test static routes
-			router.getRoutes('static').should.containEql({
+			router._getRoutes('static').should.containEql({
 				'/this/is/a/route/1': 'name1',
 				'/this/is/a/route/2': 'name2',
 			});
 
 			// Test dynamic routes
-			router.getRoutes('dynamic').should.containEql({
+			router._getRoutes('dynamic').should.containEql({
 				'/this/is/{{a}}/route/4': 'name4',
 				'/this/is/{{b}}/route/5': 'name5',
 				'/this/is/{{c}}/route/6': 'name6',
@@ -332,12 +332,13 @@ describe('Class Router', () => {
 			router.on('Configurator /configurator.html');
 
 			// test routes count
-			Object.keys(router.getRoutes('static')).should.be.length(4);
+			Object.keys(router._getRoutes('static')).should.be.length(4);
 
-			// add registered route
-			router.on('Detailpage /details.html');
+			// should throw error because route is already exists
+			(() => { router.on('Detailpage /details.html'); }).should.throw();
+
 			// routes count must be the same
-			Object.keys(router.getRoutes('static')).should.be.length(4);
+			Object.keys(router._getRoutes('static')).should.be.length(4);
 
 			// cleanup
 			router.destroy();
@@ -430,11 +431,13 @@ describe('Class Router', () => {
 
 			// return matched object
 			router._matchURL('/this/is/a/route/1').should.containEql({
-				name: 'route1', params: {}
+				name: 'route1', route: null, params: {},
+				fragment: '/this/is/a/route/1',
 			});
 			// return not matched object
 			router._matchURL('/not/added/route').should.containEql({
-				name: null, params: {}
+				name: null, route: null, params: {},
+				fragment: '/not/added/route',
 			});
 
 			router.destroy();
@@ -519,7 +522,8 @@ describe('Class Router', () => {
 			router.on('Index /index.html', spy_index_handler);
 			router.on('SomePathURL /some/path/url.html', spy_somePathURL_handler);
 			// register by promise
-			router.on('SomePathURL /some/path/url.html').then(() => {
+
+			router.on('SomePathURL').then(() => {
 				return 'matched';
 			}).should.be.finally.eql('matched');
 

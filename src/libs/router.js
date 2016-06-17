@@ -205,14 +205,14 @@ export class Router {
 	 */
 	_addRoute(route, name){
 
+		if(this._routes.dynamic[route] || this._routes.static[route]) {
+			throw `route: "${route} already exists!"`;
+		}
+
 		if(this._isDynamicURL(route)) {
-			if(!this._routes.dynamic[route]){
-				this._routes.dynamic[route] = name;
-			}
+			this._routes.dynamic[route] = name;
 		} else {
-			if(!this._routes.static[route]){
-				this._routes.static[route] = name;
-			}
+			this._routes.static[route] = name;
 		}
 
 	}
@@ -237,10 +237,10 @@ export class Router {
 	}
 
 	/**
-	 * getRoutes
+	 * _getRoutes
 	 * @return {Object}
 	 */
-	getRoutes(type = 'static'){
+	_getRoutes(type = 'static'){
 
 		return this._routes[type];
 
@@ -422,9 +422,10 @@ export class Router {
 		if(event.detail instanceof this.helper.createURL){
 
 			let { fragment } = event.detail;
-			let { name, params } = this._matchURL(fragment);
+			let matchedURLObject = this._matchURL(fragment);
+			let { name, params } = matchedURLObject;
 			if(name !== null){
-				this.scope.trigger(name, params);
+				this.scope.trigger(name, matchedURLObject);
 			}
 
 		}
@@ -438,15 +439,27 @@ export class Router {
 	 */
 	_matchURL(fragment){
 
-		let matchedURLObject = { name: null, params: {} };
+		let matchedURLObject = {
+			fragment: fragment,
+			route: null,
+			name: null,
+			params: {},
+		};
+		let name = null;
 
-		// bestcase (static url)
-		let name = this._routes.static[fragment];
+		// static url
+		name = this._getRoutes('static')[fragment];
 		if(name){
-			matchedURLObject = Object.assign(matchedURLObject, { name });
-		} else {
-			// if matched, then add dynamic url to white list
+			return matchedURLObject = Object.assign(matchedURLObject, { name });
 		}
+
+		// compiled url
+		name = this._getRoutes('compiled')[fragment];
+		if(name){
+			return matchedURLObject = Object.assign(matchedURLObject, { name });
+		}
+
+		// try to match from _routes
 
 		return matchedURLObject;
 
