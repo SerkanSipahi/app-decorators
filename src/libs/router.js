@@ -174,7 +174,9 @@ export class Router {
 		 * 1. if route matched then we can take name for triggering event
 		 * 2. if router should destroy, see .destroy()
 		 */
-		this._addRoute(route, name);
+		if(route && name) {
+			this._addRoute(route, name);
+		}
 
 		// create promise if handler not exists
 		let promise = null;
