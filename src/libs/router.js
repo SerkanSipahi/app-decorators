@@ -180,7 +180,7 @@ export class Router {
 
 		// create promise if handler not exists
 		let promise = null;
-		if(!handler){
+		if(name && !handler){
 			promise = this._addPromise(name);
 		}
 
