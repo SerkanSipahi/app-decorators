@@ -48,7 +48,7 @@ describe('Class Router', () => {
 			router._addRoute('/this/is/a/route/1', 'name1');
 			router._addRoute('/this/is/a/route/2', 'name2');
 			router._addRoute('/this/is/{{a}}/route/4', 'name4');
-			router._addRoute('/this/is/{{b}}/route/5', 'name5');
+			router._addRoute('/this/is/{{b}}/{{c}}/route/5', 'name5');
 
 			// should throw error because route is already exists
 			(() => { router._addRoute('/this/is/a/route/2', 'name2'); }).should.throw();
@@ -59,12 +59,14 @@ describe('Class Router', () => {
 				'/this/is/a/route/1': {
 					name: 'name1',
 					route: '/this/is/a/route/1',
+					regex: null,
 					params: {},
 					fragment: null,
 				},
 				'/this/is/a/route/2': {
 					name: 'name2',
 					route: '/this/is/a/route/2',
+					regex: null,
 					params: {},
 					fragment: null,
 				},
@@ -75,12 +77,14 @@ describe('Class Router', () => {
 				'/this/is/{{a}}/route/4': {
 					name: 'name4',
 					route: '/this/is/{{a}}/route/4',
+					regex: '\\/this\\/is\\/(?<a>.*?)\\/route\\/4',
 					params: {},
 					fragment: null,
 				},
-				'/this/is/{{b}}/route/5': {
+				'/this/is/{{b}}/{{c}}/route/5': {
 					name: 'name5',
-					route: '/this/is/{{b}}/route/5',
+					route: '/this/is/{{b}}/{{c}}/route/5',
+					regex: '\\/this\\/is\\/(?<b>.*?)\\/(?<c>.*?)\\/route\\/5',
 					params: {},
 					fragment: null,
 				},

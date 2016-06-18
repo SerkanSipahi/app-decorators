@@ -84,7 +84,7 @@ export class Router {
 	_routes = {
 		static: {},
 		dynamic: {},
-		compiled: {},
+		cache: {},
 	};
 
 	/**
@@ -201,18 +201,20 @@ export class Router {
 		}
 
 		if(this._isDynamicURL(route)) {
-			this._routes.dynamic[route] = this._buildRouteObject(name, route);
+			let regex = this._convertRouteToXRegexExp(route);
+			this._routes.dynamic[route] = this._createRouteObject(name, route, regex);
 		} else {
-			this._routes.static[route] = this._buildRouteObject(name, route);
+			this._routes.static[route]  = this._createRouteObject(name, route);
 		}
 
 	}
 
-	_buildRouteObject(name, route){
+	_createRouteObject(name, route, regex = null){
 
 		return {
-			name,
-			route,
+			name: name,
+			route: route,
+			regex: regex,
 			params: {},
 			fragment: null,
 		};
@@ -468,13 +470,45 @@ export class Router {
 	 */
 	_matchURL(fragment){
 
-		// static url
+		// load from cache
+		let routeCacheObject = this._getRouteCache(fragment);
+		if(routeCacheObject){
+			return routeCacheObject;
+		}
+
+		// match static url
 		let matchedURLObject = this._getRoutes('static')[fragment] || null;
 		if(matchedURLObject) {
 			matchedURLObject = Object.assign({}, matchedURLObject, { fragment });
-			// this._addRouteCache();
+			this._addRouteCache(fragment, matchedURLObject);
 		}
+
+		// match dynamic url
+
+
 		return matchedURLObject;
+
+	}
+
+	/**
+	 * _addRouteCache
+	 * @param {string} fragment
+	 * @param {object} cacheObject
+	 */
+	_addRouteCache(fragment, cacheObject){
+
+		this._routes.cache[fragment] = cacheObject;
+
+	}
+
+	/**
+	 * _getRouteCache
+	 * @param  {string} fragment
+	 * @return {object} cacheRouteObject
+	 */
+	_getRouteCache(fragment) {
+
+		return this._routes.cache[fragment] || null;
 
 	}
 
@@ -499,11 +533,11 @@ export class Router {
 	}
 
 	/**
-	 * _convertURLToXRegexExp
+	 * _convertRouteToXRegexExp
 	 * @param  {string} url
 	 * @return {XRegExp-String} url
 	 */
-	_convertURLToXRegexExp(url = ''){
+	_convertRouteToXRegexExp(url = ''){
 
 		let variableURLRegex = this.XRegExp('{{(?<variableURL>[a-z]+)}}', 'g');
 		url = url.replace(/\//g, '\\/');
