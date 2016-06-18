@@ -201,10 +201,21 @@ export class Router {
 		}
 
 		if(this._isDynamicURL(route)) {
-			this._routes.dynamic[route] = name;
+			this._routes.dynamic[route] = this._buildRouteObject(name, route);
 		} else {
-			this._routes.static[route] = name;
+			this._routes.static[route] = this._buildRouteObject(name, route);
 		}
+
+	}
+
+	_buildRouteObject(name, route){
+
+		return {
+			name,
+			route,
+			params: {},
+			fragment: null,
+		};
 
 	}
 
