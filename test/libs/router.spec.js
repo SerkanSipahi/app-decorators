@@ -22,6 +22,22 @@ describe('Class Router', () => {
 
 	});
 
+	describe('prototype._convertURLToRegex method', () => {
+
+		it('should convert passed url to regex', () => {
+
+			let router = Router.create();
+
+			router._convertRouteToXRegexExp('{{year}}').should.be.equal('(?<year>.*?)');
+			router._convertRouteToXRegexExp('{{hour}}:{{min}}').should.be.equal('(?<hour>.*?):(?<min>.*?)');
+			router._convertRouteToXRegexExp('{{a}}/{{b}}/{{c}}').should.be.equal('(?<a>.*?)\\/(?<b>.*?)\\/(?<c>.*?)');
+
+			router.destroy();
+
+		});
+
+	});
+
 	describe('prototype._addRoute', () => {
 
 		it('should add route and name to prototype._routes', () => {
@@ -69,6 +85,30 @@ describe('Class Router', () => {
 					fragment: null,
 				},
 			});
+
+			router.destroy();
+
+		});
+
+	});
+
+	describe('prototype._matchURL', () => {
+
+		it('should return matchedObject by passed fragment', () => {
+
+			let router = Router.create();
+			router._addRoute('/this/is/a/route/1', 'route1');
+
+			// return matched object
+			router._matchURL('/this/is/a/route/1').should.containEql({
+				name: 'route1',
+				route: '/this/is/a/route/1',
+				params: {},
+				fragment: '/this/is/a/route/1',
+			});
+			// return not matched object
+			should(router._matchURL('/not/added/route')).be.exactly(null);
+			router._matchURL('/not/added/route');
 
 			router.destroy();
 
@@ -456,46 +496,6 @@ describe('Class Router', () => {
 			router.trigger('Google');
 			router.trigger('AbsoluteURL');
 			router.trigger('RelativeURL');
-
-		});
-
-	});
-
-	describe('prototype._convertURLToRegex method', () => {
-
-		it('should convert passed url to regex', () => {
-
-			let router = Router.create();
-
-			router._convertURLToXRegexExp('{{year}}').should.be.equal('(?<year>.*?)');
-			router._convertURLToXRegexExp('{{hour}}:{{min}}').should.be.equal('(?<hour>.*?):(?<min>.*?)');
-			router._convertURLToXRegexExp('{{a}}/{{b}}/{{c}}').should.be.equal('(?<a>.*?)\\/(?<b>.*?)\\/(?<c>.*?)');
-
-			router.destroy();
-
-		});
-
-	});
-
-	describe('prototype._matchURL', () => {
-
-		it('should return matchedObject by passed fragment', () => {
-
-			let router = Router.create();
-			router._addRoute('/this/is/a/route/1', 'route1');
-
-			// return matched object
-			router._matchURL('/this/is/a/route/1').should.containEql({
-				name: 'route1',
-				route: '/this/is/a/route/1',
-				params: {},
-				fragment: '/this/is/a/route/1',
-			});
-			// return not matched object
-			should(router._matchURL('/not/added/route')).be.exactly(null);
-			router._matchURL('/not/added/route');
-
-			router.destroy();
 
 		});
 
