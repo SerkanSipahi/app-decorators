@@ -387,8 +387,8 @@ export class Router {
 	 */
 	_isDefinedEventAction(event_type){
 
-		let _isDefinedEventAction = event_type === this._getDefinedEventAction();
-		return _isDefinedEventAction;
+		let isDefinedEventAction = event_type === this._getDefinedEventAction();
+		return isDefinedEventAction;
 
 	}
 
