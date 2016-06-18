@@ -461,15 +461,6 @@ describe('Class Router', () => {
 
 	});
 
-	describe('prototype.off', () => {
-
-		it('should remove registered route', () => {
-
-		});
-
-	});
-
-
 	describe('prototype._convertURLToRegex method', () => {
 
 		it('should convert passed url to regex', () => {
@@ -510,9 +501,9 @@ describe('Class Router', () => {
 
 	});
 
-	describe('click on anchor or brower.back()', () => {
+	describe('click on anchor or brower.back() and .destroy() remove events', () => {
 
-		it('should call handler _onUrlchange', () => {
+		it('should call handler _onUrlchange', (done) => {
 
 			// setup
 			// http://stackoverflow.com/questions/25578112/spying-on-a-method-with-sinon-method-bound-to-event-listener-method-was-execut#25578185
@@ -545,22 +536,41 @@ describe('Class Router', () => {
 
 			spy_urlchange.callCount.should.equal(4);
 
+			spy_urlchange.args[0][0].fragment.should.equal('/index');
+			spy_urlchange.args[1][0].fragment.should.equal('/index/details');
+			spy_urlchange.args[2][0].fragment.should.equal('/index/details?a=1&b=2');
+			spy_urlchange.args[3][0].fragment.should.equal('/index/details?a=1&b=2#c=3;d=4');
+
 			// test pushstate works. If not work we are on different site (out of tests)
 			element.querySelectorAll('.foo').should.length(1);
 
-			// test popstate
-			// chrome: with karma + mocha it does not work (.back/forward)!
-			// Dont know why!? I have tested for Chrome manually and its works
+			// test native popstate
 			router.back();
 			router.back();
 			router.back();
 
-			console.log('Should 7:', spy_onUrlchange.callCount);
+			// should be 2 because internal bind(_onUrlchange) and from
+			// outside (router.on('urlchange'))
+			router.scope.getHandlers('urlchange').should.be.length(2);
 
 			// cleanup
 			document.body.removeChild(element);
 			router._onUrlchange.restore();
-			router.destroy();
+
+			setTimeout(() => {
+
+				spy_onUrlchange.callCount.should.equal(7);
+				spy_urlchange.args[4][0].fragment.should.equal('/index/details?a=1&b=2');
+				spy_urlchange.args[5][0].fragment.should.equal('/index/details');
+				spy_urlchange.args[6][0].fragment.should.equal('/index');
+
+				// cleanup check
+				router.destroy();
+				// after destroy registered events should be removed
+				should(router.scope.getHandlers('urlchange')).be.exactly(null);
+				done();
+
+			}, 100);
 
 		});
 
@@ -601,6 +611,16 @@ describe('Class Router', () => {
 			element.querySelector('.some-path-url').click();
 
 			spy_index_handler.callCount.should.equal(1);
+			spy_somePathURL_handler.callCount.should.equal(2);
+
+			// test off method
+			router.off('Index');
+			element.querySelector('.index').click();
+			spy_index_handler.callCount.should.equal(1);
+
+			// test off method
+			router.off('SomePathURL');
+			element.querySelector('.some-path-url').click();
 			spy_somePathURL_handler.callCount.should.equal(2);
 
 			// need this timeout for promise tests

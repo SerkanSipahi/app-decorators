@@ -447,15 +447,16 @@ export class Router {
 	 */
 	_onUrlchange(event){
 
-		if(event.detail instanceof this.helper.createURL){
+		if(!(event.detail instanceof this.helper.createURL)){
+			return;
+		}
 
-			let { fragment } = event.detail;
-			let matchedURL = this._matchURL(fragment);
-			if(matchedURL){
-				let { name } = matchedURL;
-				this.scope.trigger(name, matchedURL);
-			}
-
+		let { fragment } = event.detail;
+		let matchedURL = this._matchURL(fragment);
+		if(matchedURL){
+			let { name } = matchedURL;
+			matchedURL.URL = event.detail;
+			this.scope.trigger(name, matchedURL);
 		}
 
 	}
@@ -485,14 +486,14 @@ export class Router {
 	 */
 	_promiseHandler(type, event){
 
-		if(this.promise[type]){
+		if(!this.promise[type]){
+			return;
+		}
 
-			let resolve;
-			// promise can resolved only once therefore shift()
-			while((resolve = this.promise[type].shift()) !== undefined){
-				resolve(event);
-			}
-
+		let resolve;
+		// promise can resolved only once therefore shift()
+		while((resolve = this.promise[type].shift()) !== undefined){
+			resolve(event);
 		}
 
 	}
