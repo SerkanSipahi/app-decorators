@@ -147,20 +147,11 @@ export class Router {
 	 */
 	destroy() {
 
-		// remove internal events
-		this.scope.off(this.event.action);
-		this.scope.off(this.event.urlchange);
-
-		// remove registered events
-		let allRoutes = Object.assign({}, this._routes.static, this._routes.dynamic);
-		for(let route of Object.keys(allRoutes)){
-
-			let event = allRoutes[route];
-			this.scope.off(event);
-
-		}
+		this._removeInternalCoreEvents();
+		this._removeRegisteredEvents();
 
 	}
+
 	/**
 	 * addRouteListener
 	 * @param {string} name
@@ -312,6 +303,33 @@ export class Router {
 
 		this.scope.on(this.event.action, ::this._onAction);
 		this.scope.on(this.event.urlchange, ::this._onUrlchange);
+
+	}
+
+	/**
+	 * _removeInternalCoreEvents
+	 * @return {undefined}
+	 */
+	_removeInternalCoreEvents(){
+
+		this.scope.off(this.event.action);
+		this.scope.off(this.event.urlchange);
+
+	}
+
+	/**
+	 * _removeRegisteredEvents
+	 * @return {undefined}
+	 */
+	_removeRegisteredEvents(){
+
+		let allRoutes = Object.assign({}, this._routes.static, this._routes.dynamic);
+		for(let route of Object.keys(allRoutes)){
+
+			let { name } = allRoutes[route];
+			this.scope.off(name);
+
+		}
 
 	}
 
