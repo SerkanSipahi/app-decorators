@@ -447,14 +447,13 @@ export class Router {
 	 */
 	_onUrlchange(event){
 
-		// createURL === URL object
 		if(event.detail instanceof this.helper.createURL){
 
 			let { fragment } = event.detail;
-			let matchedURLObject = this._matchURL(fragment);
-			let { name, params } = matchedURLObject;
-			if(name !== null){
-				this.scope.trigger(name, matchedURLObject);
+			let matchedURL = this._matchURL(fragment);
+			if(matchedURL){
+				let { name } = matchedURL;
+				this.scope.trigger(name, matchedURL);
 			}
 
 		}
@@ -468,28 +467,12 @@ export class Router {
 	 */
 	_matchURL(fragment){
 
-		let matchedURLObject = {
-			fragment: fragment,
-			route: null,
-			name: null,
-			params: {},
-		};
-		let name = null;
-
 		// static url
-		name = this._getRoutes('static')[fragment];
-		if(name){
-			return matchedURLObject = Object.assign(matchedURLObject, { name });
+		let matchedURLObject = this._getRoutes('static')[fragment] || null;
+		if(matchedURLObject) {
+			matchedURLObject = Object.assign({}, matchedURLObject, { fragment });
+			// this._addRouteCache();
 		}
-
-		// compiled url
-		name = this._getRoutes('compiled')[fragment];
-		if(name){
-			return matchedURLObject = Object.assign(matchedURLObject, { name });
-		}
-
-		// try to match from _routes
-
 		return matchedURLObject;
 
 	}
