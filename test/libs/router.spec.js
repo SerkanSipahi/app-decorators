@@ -33,7 +33,6 @@ describe('Class Router', () => {
 			router._addRoute('/this/is/a/route/2', 'name2');
 			router._addRoute('/this/is/{{a}}/route/4', 'name4');
 			router._addRoute('/this/is/{{b}}/route/5', 'name5');
-			router._addRoute('/this/is/{{c}}/route/6', 'name6');
 
 			// should throw error because route is already exists
 			(() => { router._addRoute('/this/is/a/route/2', 'name2'); }).should.throw();
@@ -41,15 +40,34 @@ describe('Class Router', () => {
 
 			// Test static routes
 			router._getRoutes('static').should.containEql({
-				'/this/is/a/route/1': 'name1',
-				'/this/is/a/route/2': 'name2',
+				'/this/is/a/route/1': {
+					name: 'name1',
+					route: '/this/is/a/route/1',
+					params: {},
+					fragment: null,
+				},
+				'/this/is/a/route/2': {
+					name: 'name2',
+					route: '/this/is/a/route/2',
+					params: {},
+					fragment: null,
+				},
 			});
 
 			// Test dynamic routes
 			router._getRoutes('dynamic').should.containEql({
-				'/this/is/{{a}}/route/4': 'name4',
-				'/this/is/{{b}}/route/5': 'name5',
-				'/this/is/{{c}}/route/6': 'name6',
+				'/this/is/{{a}}/route/4': {
+					name: 'name4',
+					route: '/this/is/{{a}}/route/4',
+					params: {},
+					fragment: null,
+				},
+				'/this/is/{{b}}/route/5': {
+					name: 'name5',
+					route: '/this/is/{{b}}/route/5',
+					params: {},
+					fragment: null,
+				},
 			});
 
 			router.destroy();
@@ -477,14 +495,14 @@ describe('Class Router', () => {
 
 			// return matched object
 			router._matchURL('/this/is/a/route/1').should.containEql({
-				name: 'route1', route: null, params: {},
+				name: 'route1',
+				route: '/this/is/a/route/1',
+				params: {},
 				fragment: '/this/is/a/route/1',
 			});
 			// return not matched object
-			router._matchURL('/not/added/route').should.containEql({
-				name: null, route: null, params: {},
-				fragment: '/not/added/route',
-			});
+			should(router._matchURL('/not/added/route')).be.exactly(null);
+			router._matchURL('/not/added/route');
 
 			router.destroy();
 
