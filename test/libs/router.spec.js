@@ -318,6 +318,46 @@ describe('Class Router', () => {
 			// like prototype.on. The only difference is
 			// the argument signature
 
+
+	describe('stop', () => {
+
+		it('it should stop if router running', () => {
+
+			sinon.spy(Router.prototype, '_applyActionEvent');
+			let router = Router.create();
+			router.on('action', ::router._onAction);
+
+			router.stop();
+			router.trigger('action');
+			router._applyActionEvent.callCount.should.be.equal(0);
+
+			router._applyActionEvent.restore();
+			router.destroy();
+
+		});
+
+	});
+
+	describe('start', () => {
+
+		it('it should start if router stoped', () => {
+
+			sinon.spy(Router.prototype, '_applyActionEvent');
+			let router = Router.create();
+			router.on('action', ::router._onAction);
+
+			router.stop();
+			router.trigger('action');
+			router._applyActionEvent.callCount.should.be.equal(0);
+
+			router.start();
+			router.trigger('action');
+			router._applyActionEvent.callCount.should.be.equal(1);
+
+			router._applyActionEvent.restore();
+			router.destroy();
+
+
 		});
 
 	});
