@@ -7,7 +7,7 @@ import { Location } from 'test/mocks/location';
 
 describe('Class Router', () => {
 
-	describe('prototype._isDynamicURL method', () => {
+	describe('_isDynamicURL method', () => {
 
 		it('should return true if has variable in url otherwise false', () => {
 
@@ -22,7 +22,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('prototype._convertURLToRegex method', () => {
+	describe('_convertURLToRegex method', () => {
 
 		it('should convert passed url to regex', () => {
 
@@ -38,7 +38,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('prototype._addRoute', () => {
+	describe('_addRoute method', () => {
 
 		it('should add route and name to prototype._routes', () => {
 
@@ -96,7 +96,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('prototype._matchURL', () => {
+	describe('_matchStaticURL method', () => {
 
 		it('should return matchedObject by passed fragment', () => {
 
@@ -120,7 +120,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('prototype._applyActionEvent (integration test)', () => {
+	describe('_applyActionEvent (integration test) method', () => {
 
 		/**
 		 * We check only pushstate, all other methods are tested
@@ -166,7 +166,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('prototype._getDefinedEventAction', () => {
+	describe('_getDefinedEventAction method', () => {
 
 		it('should get defined event action', () => {
 
@@ -181,7 +181,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('prototype._isDefinedEventAction', () => {
+	describe('_isDefinedEventAction method', () => {
 
 		it('should check if passed event_type is euqal to our defined event type', () => {
 
@@ -198,7 +198,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('prototype._getCurrentHref', () => {
+	describe('_getCurrentHref method', () => {
 
 		it('should get current href by passed event', () => {
 
@@ -233,7 +233,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('prototype._addPromise', () => {
+	describe('_addPromise method', () => {
 
 		it('should add and create promise collection on prototype.promise', () => {
 
@@ -257,7 +257,7 @@ describe('Class Router', () => {
 		});
 	});
 
-	describe('prototype._urlFragmentChanged', () => {
+	describe('_urlFragmentChanged method', () => {
 
 		it('should check if fragment is changed in combination with _setURLFragment', () => {
 
@@ -275,7 +275,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('prototype.createURL', () => {
+	describe('createURL method', () => {
 
 		it('should return url object with additional "fragment" property', () => {
 
@@ -293,7 +293,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('prototype.Promise', () => {
+	describe('Promise method', () => {
 
 		it('should return promise object', () => {
 
@@ -310,7 +310,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('prototype.addRouteListener', () => {
+	describe('addRouteListener method', () => {
 
 		it('should do the same like prototype.on', () => {
 
@@ -322,7 +322,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('prototype.on', () => {
+	describe('on method', () => {
 
 		it('should throw an error if no argeument passed', () => {
 
