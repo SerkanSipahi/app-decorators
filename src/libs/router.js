@@ -561,6 +561,8 @@ export class Router {
 
 		}
 
+		return null;
+
 	}
 
 	/**
