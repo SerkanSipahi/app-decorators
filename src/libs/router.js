@@ -225,8 +225,9 @@ export class Router {
 			name: name,
 			route: route,
 			regex: regex,
-			params: {},
+			params: null,
 			fragment: null,
+			cache: false,
 		};
 
 	}
@@ -481,25 +482,84 @@ export class Router {
 	 * @param  {string} fragment
 	 * @return {object}
 	 */
-	_matchURL(fragment){
+	_matchURL(fragment, cache = true){
+
+		let matchedURLObject = null;
 
 		// load from cache
-		let routeCacheObject = this._getRouteCache(fragment);
-		if(routeCacheObject){
-			return routeCacheObject;
+		matchedURLObject = this._getRouteCache(fragment);
+		if(matchedURLObject && cache){
+			return matchedURLObject;
 		}
 
 		// match static url
-		let matchedURLObject = this._getRoutes('static')[fragment] || null;
+		matchedURLObject = this._matchStaticURL(fragment);
 		if(matchedURLObject) {
-			matchedURLObject = Object.assign({}, matchedURLObject, { fragment });
-			this._addRouteCache(fragment, matchedURLObject);
+			return matchedURLObject;
 		}
 
 		// match dynamic url
+		matchedURLObject = this._matchDynamicURL(fragment);
+		if(matchedURLObject) {
+			this._addRouteCache(fragment, matchedURLObject);
+			return matchedURLObject;
+		}
 
+		return null;
+
+	}
+
+	/**
+	 * _matchStaticURL
+	 * @param  {string} fragment
+	 * @return {object}
+	 */
+	_matchStaticURL(fragment){
+
+		let matchedURLObject = this._getRoutes('static')[fragment] || null;
+		if(matchedURLObject) {
+			matchedURLObject = Object.assign({}, matchedURLObject, { fragment });
+		}
 
 		return matchedURLObject;
+	}
+
+	/**
+	 * _matchDynamicURL
+	 * @param  {string} fragment
+	 * @return {object}
+	 */
+	_matchDynamicURL(fragment){
+
+		for(let route of Object.keys(this._routes.dynamic)){
+
+			// parepare datas for matching
+			let routeObject = this._routes.dynamic[route];
+			// match regex
+			let compiledRegex = this.XRegExp(routeObject.regex);
+			let matchedRegex = this.XRegExp.exec(fragment, compiledRegex);
+
+			// return if not matched
+			if(matchedRegex === null){
+				continue;
+			}
+
+			// convert matched to object-object
+			let params = {};
+			delete matchedRegex.index;
+			delete matchedRegex.input;
+			for(let param in matchedRegex){
+				params[param] = matchedRegex[param];
+			}
+
+			// resolve reference
+			routeObject = JSON.parse(JSON.stringify(routeObject));
+
+			// build matchedURLObject
+			let matchedURLObject = Object.assign(routeObject, { params }, { fragment });
+			return matchedURLObject;
+
+		}
 
 	}
 
@@ -510,6 +570,8 @@ export class Router {
 	 */
 	_addRouteCache(fragment, cacheObject){
 
+		cacheObject = JSON.parse(JSON.stringify(cacheObject));
+		cacheObject.cache = true;
 		this._routes.cache[fragment] = cacheObject;
 
 	}
