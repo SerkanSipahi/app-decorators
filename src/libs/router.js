@@ -76,6 +76,12 @@ export class Router {
 	promise = {}
 
 	/**
+	 * _runRoute
+	 * @type {Boolean}
+	 */
+	_runRoute = true;
+
+	/**
 	 * _lastFragment
 	 * @type {String}
 	 */
@@ -358,6 +364,9 @@ export class Router {
 	_onAction(event){
 
 		this._preventDefault(event);
+		if(!this._runRoute) {
+			return;
+		}
 		this._stopPropagation(event);
 
 		this._applyActionEvent(event);
@@ -625,6 +634,8 @@ export class Router {
 	 */
 	start(){
 
+		this._runRoute = true;
+
 	}
 
 	/**
@@ -632,6 +643,8 @@ export class Router {
 	 * @return {Undefined}
 	 */
 	stop(){
+
+		this._runRoute = false;
 
 	}
 }
