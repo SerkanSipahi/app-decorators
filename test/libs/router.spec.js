@@ -60,15 +60,17 @@ describe('Class Router', () => {
 					name: 'name1',
 					route: '/this/is/a/route/1',
 					regex: null,
-					params: {},
+					params: null,
 					fragment: null,
+					cache: false,
 				},
 				'/this/is/a/route/2': {
 					name: 'name2',
 					route: '/this/is/a/route/2',
 					regex: null,
-					params: {},
+					params: null,
 					fragment: null,
+					cache: false,
 				},
 			});
 
@@ -78,15 +80,17 @@ describe('Class Router', () => {
 					name: 'name4',
 					route: '/this/is/{{a}}/route/4',
 					regex: '\\/this\\/is\\/(?<a>.*?)\\/route\\/4',
-					params: {},
+					params: null,
 					fragment: null,
+					cache: false,
 				},
 				'/this/is/{{b}}/{{c}}/route/5': {
 					name: 'name5',
 					route: '/this/is/{{b}}/{{c}}/route/5',
 					regex: '\\/this\\/is\\/(?<b>.*?)\\/(?<c>.*?)\\/route\\/5',
-					params: {},
+					params: null,
 					fragment: null,
+					cache: false,
 				},
 			});
 
@@ -103,17 +107,109 @@ describe('Class Router', () => {
 			let router = Router.create();
 			router._addRoute('/this/is/a/route/1', 'route1');
 
-			// return matched object
-			router._matchURL('/this/is/a/route/1').should.containEql({
+			router._matchStaticURL('/this/is/a/route/1').should.containEql({
 				name: 'route1',
 				route: '/this/is/a/route/1',
-				params: {},
+				params: null,
+				regex: null,
 				fragment: '/this/is/a/route/1',
+				cache: false,
 			});
-			// return not matched object
-			should(router._matchURL('/not/added/route')).be.exactly(null);
-			router._matchURL('/not/added/route');
 
+			should(router._matchStaticURL('/not/added/route')).be.exactly(null);
+			router._matchStaticURL('/not/added/route');
+
+			router.destroy();
+
+		});
+
+	});
+
+	describe('_matchDynamicURL method', () => {
+
+		it('should return matchedObject by passed fragment', () => {
+
+			let router = Router.create();
+			router._addRoute('/{{a}}/b/{{c}}/d', 'route1');
+
+			router._matchDynamicURL('/foo/b/bar/d').should.containEql({
+				name: 'route1',
+				route: '/{{a}}/b/{{c}}/d',
+				regex: '\\/(?<a>.*?)\\/b\\/(?<c>.*?)\\/d',
+				params: {
+					0: '/foo/b/bar/d',
+					1: 'foo', 2: 'bar',
+					a: 'foo', c: 'bar'
+				},
+				fragment: '/foo/b/bar/d',
+				cache: false,
+			});
+
+			router.destroy();
+
+		})
+
+	});
+
+	describe('_matchURL method', () => {
+
+		let router = null;
+
+		it('should return only valid value from _matchStaticURL by passed static path', () => {
+
+			router = Router.create();
+			router._addRoute('/some/static/path', 'route1');
+
+			// test: it should call _matchStaticURL
+			router._matchURL('/some/static/path');
+			router._matchStaticURL.returnValues[0].name.should.be.equal('route1');
+			router._matchDynamicURL.returnValues.should.be.length(0);
+			should(router._getRouteCache.returnValues[0]).be.null();
+
+		});
+
+		it('should return only valid value from _matchDynamicURL by passed dynamic path', () => {
+
+			router = Router.create();
+			router._addRoute('/{{dynamic}}/b/{{path}}/d', 'route2');
+
+			// test: it should call _matchDynamicURL
+			router._matchURL('/hey/b/there/d');
+			should(router._matchStaticURL.returnValues[0]).be.null();
+			router._matchDynamicURL.returnValues[0].name.should.be.equal('route2');
+			router._matchDynamicURL.returnValues[0].cache.should.be.false();
+			should(router._getRouteCache.returnValues[0]).be.null();
+
+		});
+
+		it('should return on second call from cache by passed dynamic path', () => {
+
+			router = Router.create();
+			router._addRoute('/{{dynamic}}/b/{{path}}/d', 'route2');
+
+			// test: returned not from cache
+			router._matchURL('/hey/b/there/d');
+			router._matchDynamicURL.returnValues[0].cache.should.be.false();
+
+			// test: returned from cache
+			router._matchURL('/hey/b/there/d');
+			router._getRouteCache.returnValues[1].cache.should.be.true();
+
+		});
+
+		// setup
+		beforeEach(() => {
+
+			sinon.spy(Router.prototype, '_matchStaticURL');
+			sinon.spy(Router.prototype, '_matchDynamicURL');
+			sinon.spy(Router.prototype, '_getRouteCache');
+
+		});
+		afterEach(() => {
+
+			router._matchStaticURL.restore();
+			router._matchDynamicURL.restore();
+			router._getRouteCache.restore();
 			router.destroy();
 
 		});
