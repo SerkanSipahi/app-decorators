@@ -117,7 +117,6 @@ describe('Class Router', () => {
 			});
 
 			should(router._matchStaticURL('/not/added/route')).be.exactly(null);
-			router._matchStaticURL('/not/added/route');
 
 			router.destroy();
 
