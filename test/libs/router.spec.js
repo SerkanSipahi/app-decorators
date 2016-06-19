@@ -144,6 +144,8 @@ describe('Class Router', () => {
 				cache: false,
 			});
 
+			should(router._matchDynamicURL('/not/added/route')).be.exactly(null);
+
 			router.destroy();
 
 		})
