@@ -69,6 +69,10 @@ export class Router {
 		XRegExp: null,
 	};
 
+	/**
+	 * promise
+	 * @type {Object}
+	 */
 	promise = {}
 
 	/**
