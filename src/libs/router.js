@@ -668,13 +668,13 @@ export class Router {
 	}
 
 	/**
-	 * recognize
+	 * whoami
 	 * @param  {String} path
 	 * @return {object}
 	 */
-	recognize(url){
+	whoami(url){
 
-		let matchedUrlObject =  this._matchURL(url);
+		let matchedUrlObject =  this._matchURL(url, false);
 		return matchedUrlObject;
 
 	}

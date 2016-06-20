@@ -521,6 +521,44 @@ describe('Class Router', () => {
 
 	});
 
+	describe('whoami method', () => {
+
+		it('it should return route information by passed fragment', () => {
+
+			// setup
+			let router = Router.create();
+			router.on('myRoute1 /some/path.html', () => {});
+			router.on('myRoute2 /some/{{variable}}/path.html', () => {});
+
+			// test 1 - positiv
+			router.whoami('/some/path.html').should.be.containEql({
+				name: 'myRoute1',
+				regex: null,
+				cache: false,
+			});
+
+			// test 2 - positiv
+			router.whoami('/some/123/path.html').should.be.containEql({
+				name: 'myRoute2',
+				route: '/some/{{variable}}/path.html',
+				params: {
+					0: '/some/123/path.html',
+					1: '123',
+					variable: '123'
+				},
+				cache: false,
+			});
+
+			// test 3 - negativ
+			should(router.whoami('/unknown/path.html')).be.exactly(null);
+
+			// cleanup
+			router.destroy();
+
+		});
+
+	});
+
 	describe('on method, no arguments passed', () => {
 
 		it('should throw an error', () => {
