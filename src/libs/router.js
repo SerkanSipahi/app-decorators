@@ -518,6 +518,11 @@ export class Router {
 
 		let matchedURLObject = this._getRoutes('static')[fragment] || null;
 		if(matchedURLObject) {
+
+			// resolve reference
+			matchedURLObject = JSON.parse(JSON.stringify(matchedURLObject));
+
+			// build matchedURLObject
 			matchedURLObject = Object.assign({}, matchedURLObject, { fragment });
 		}
 
