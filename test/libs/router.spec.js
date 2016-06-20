@@ -11,11 +11,14 @@ describe('Class Router', () => {
 
 		it('should return true if has variable in url otherwise false', () => {
 
+			// setup
 			let router = Router.create();
 
+			// test
 			router._isDynamicURL('{{a}}').should.be.true();
 			router._isDynamicURL('a').should.be.false();
 
+			// cleanup
 			router.destroy();
 
 		});
@@ -26,12 +29,15 @@ describe('Class Router', () => {
 
 		it('should convert passed url to regex', () => {
 
+			// setup
 			let router = Router.create();
 
+			// test
 			router._convertRouteToXRegexExp('{{year}}').should.be.equal('(?<year>.*?)');
 			router._convertRouteToXRegexExp('{{hour}}:{{min}}').should.be.equal('(?<hour>.*?):(?<min>.*?)');
 			router._convertRouteToXRegexExp('{{a}}/{{b}}/{{c}}').should.be.equal('(?<a>.*?)\\/(?<b>.*?)\\/(?<c>.*?)');
 
+			//cleanup
 			router.destroy();
 
 		});
@@ -42,19 +48,19 @@ describe('Class Router', () => {
 
 		it('should add route and name to prototype._routes', () => {
 
+			// setup
 			let router = Router.create();
-
 			// add static routes
 			router._addRoute('/this/is/a/route/1', 'name1');
 			router._addRoute('/this/is/a/route/2', 'name2');
 			router._addRoute('/this/is/{{a}}/route/4', 'name4');
 			router._addRoute('/this/is/{{b}}/{{c}}/route/5', 'name5');
 
-			// should throw error because route is already exists
+			// test: should throw error because route is already exists
 			(() => { router._addRoute('/this/is/a/route/2', 'name2'); }).should.throw();
 			(() => { router._addRoute('/this/is/{{a}}/route/4', 'name4'); }).should.throw();
 
-			// Test static routes
+			// test: static routes
 			router._getRoutes('static').should.containEql({
 				'/this/is/a/route/1': {
 					name: 'name1',
@@ -74,7 +80,7 @@ describe('Class Router', () => {
 				},
 			});
 
-			// Test dynamic routes
+			// test: dynamic routes
 			router._getRoutes('dynamic').should.containEql({
 				'/this/is/{{a}}/route/4': {
 					name: 'name4',
@@ -94,6 +100,7 @@ describe('Class Router', () => {
 				},
 			});
 
+			// cleanup
 			router.destroy();
 
 		});
@@ -104,9 +111,11 @@ describe('Class Router', () => {
 
 		it('should return matchedObject by passed fragment', () => {
 
+			// setup
 			let router = Router.create();
 			router._addRoute('/this/is/a/route/1', 'route1');
 
+			// test: positiv
 			router._matchStaticURL('/this/is/a/route/1').should.containEql({
 				name: 'route1',
 				route: '/this/is/a/route/1',
@@ -116,8 +125,10 @@ describe('Class Router', () => {
 				cache: false,
 			});
 
+			// test: negativ
 			should(router._matchStaticURL('/not/added/route')).be.exactly(null);
 
+			// cleanup
 			router.destroy();
 
 		});
@@ -128,9 +139,11 @@ describe('Class Router', () => {
 
 		it('should return matchedObject by passed fragment', () => {
 
+			// setup
 			let router = Router.create();
 			router._addRoute('/{{a}}/b/{{c}}/d', 'route1');
 
+			// test: positiv
 			router._matchDynamicURL('/foo/b/bar/d').should.containEql({
 				name: 'route1',
 				route: '/{{a}}/b/{{c}}/d',
@@ -144,8 +157,10 @@ describe('Class Router', () => {
 				cache: false,
 			});
 
+			// test: negativ
 			should(router._matchDynamicURL('/not/added/route')).be.exactly(null);
 
+			// cleanup
 			router.destroy();
 
 		})
@@ -158,6 +173,7 @@ describe('Class Router', () => {
 
 		it('should return only valid value from _matchStaticURL by passed static path', () => {
 
+			// setup
 			router = Router.create();
 			router._addRoute('/some/static/path', 'route1');
 
@@ -171,6 +187,7 @@ describe('Class Router', () => {
 
 		it('should return only valid value from _matchDynamicURL by passed dynamic path', () => {
 
+			// setup
 			router = Router.create();
 			router._addRoute('/{{dynamic}}/b/{{path}}/d', 'route2');
 
@@ -185,6 +202,7 @@ describe('Class Router', () => {
 
 		it('should return on second call from cache by passed dynamic path', () => {
 
+			// setup
 			router = Router.create();
 			router._addRoute('/{{dynamic}}/b/{{path}}/d', 'route2');
 
@@ -195,6 +213,9 @@ describe('Class Router', () => {
 			// test: returned from cache
 			router._matchURL('/hey/b/there/d');
 			router._getRouteCache.returnValues[1].cache.should.be.true();
+
+			// cleanup
+			router.destroy();
 
 		});
 
@@ -220,19 +241,23 @@ describe('Class Router', () => {
 	describe('_applyActionEvent (integration test) method', () => {
 
 		/**
-		 * We check only pushstate, all other methods are tested
+		 * We check only pushstate inside of _applyActionEvent,
+		 * all other methods are tested.
 		 */
 
 		it('should call pushstate if click event passed', () => {
 
+			// setup
 			let router = Router.create({ event_action: 'click a' });
 			let spy_pushState = sinon.spy(router, "pushState");
+			// mock click event
 			let event = new Event('click', {
 				target: {
 					href: 'http://www.domain.com/some/path.html',
 				}
 			});
 
+			// test
 			router._applyActionEvent(event);
 			spy_pushState.callCount.should.equal(1);
 
@@ -244,14 +269,17 @@ describe('Class Router', () => {
 
 		it('should not call pushstate if pushstate event passed', () => {
 
+			// setup
 			let router = Router.create({ event_action: 'click a' });
 			let spy_pushState = sinon.spy(router, "pushState");
+			// mock pushState vent
 			let event = new Event('pushState', {
 				target: {
 					href: 'http://www.domain.com/some/path.html',
 				}
 			});
 
+			// test
 			router._applyActionEvent(event);
 			spy_pushState.callCount.should.equal(0);
 
@@ -267,11 +295,15 @@ describe('Class Router', () => {
 
 		it('should get defined event action', () => {
 
+			//setup
 			let router = Router.create({
 				event_action: 'my-action pattern'
 			});
 
+			// test
 			router._getDefinedEventAction().should.be.equal('my-action');
+
+			// cleanup
 			router.destroy();
 
 		});
@@ -282,13 +314,16 @@ describe('Class Router', () => {
 
 		it('should check if passed event_type is euqal to our defined event type', () => {
 
+			// setup
 			let router = Router.create({
 				event_action: 'my-action pattern'
 			});
 
+			// test
 			router._isDefinedEventAction('my-action').should.be.true();
 			router._isDefinedEventAction('other-action').should.be.false();
 
+			// cleanup
 			router.destroy();
 
 		});
@@ -334,14 +369,16 @@ describe('Class Router', () => {
 
 		it('should add and create promise collection on prototype.promise', () => {
 
+			// setup
 			let router = Router.create();
-
 			let promise1 = router._addPromise('name1');
 			let promise2 = router._addPromise('name2');
 
+			// test 1
 			promise1.should.be.Promise();
 			promise2.should.be.Promise();
 
+			// test 2
 			router.promise.should.have.propertyByPath('name1', 0).and.is.Function(); // resolve function
 			router.promise.should.have.propertyByPath('name2', 0).and.is.Function(); // resolve function
 
@@ -358,14 +395,18 @@ describe('Class Router', () => {
 
 		it('should check if fragment is changed in combination with _setURLFragment', () => {
 
+			// setup
 			let router = Router.create();
 
+			// test 1
 			router._setURLFragment('/');
 			router._urlFragmentChanged('/some/url/fragment').should.be.true();
 
+			// test 2
 			router._setURLFragment('/some/url/fragment');
 			router._urlFragmentChanged('/some/url/fragment').should.be.false();
 
+			// cleanup
 			router.destroy();
 
 		});
@@ -380,9 +421,11 @@ describe('Class Router', () => {
 			let router = Router.create({
 				scope: document.createElement('div'),
 			});
+
 			// test
 			let url = router.createURL('http://www.mydomain.com/path/to/somewhere.html?a=1&b=2');
 			url.fragment.should.equal('/path/to/somewhere.html?a=1&b=2');
+
 			// cleanup
 			router.destroy();
 
@@ -398,8 +441,10 @@ describe('Class Router', () => {
 			let router = Router.create({
 				scope: document.createElement('div'),
 			});
+
 			// test
 			router.Promise(function(){}).should.be.Promise();
+
 			// cleanup
 			router.destroy();
 
@@ -415,19 +460,32 @@ describe('Class Router', () => {
 			// like prototype.on. The only difference is
 			// the argument signature
 
+			// NOTE: jetzt könnte getested werden auf
+			// 1.) wenn nur name übergeben wird, dann karma-sinon
+			// keine this._routes.static,dynamic gebaut werden
+			// sondern nur der Eventhandler wird befüllt
+			// 2.) wenn name und route dann kann this._routes
+			// und Eventhandler befüllt werden.
+
+		});
+
+	});
 
 	describe('stop', () => {
 
 		it('it should stop if router running', () => {
 
+			// setup
 			sinon.spy(Router.prototype, '_applyActionEvent');
 			let router = Router.create();
 			router.on('action', ::router._onAction);
 
+			// test
 			router.stop();
 			router.trigger('action');
 			router._applyActionEvent.callCount.should.be.equal(0);
 
+			//cleanup
 			router._applyActionEvent.restore();
 			router.destroy();
 
@@ -439,18 +497,22 @@ describe('Class Router', () => {
 
 		it('it should start if router stoped', () => {
 
+			// setup
 			sinon.spy(Router.prototype, '_applyActionEvent');
 			let router = Router.create();
 			router.on('action', ::router._onAction);
 
+			// test 1
 			router.stop();
 			router.trigger('action');
 			router._applyActionEvent.callCount.should.be.equal(0);
 
+			// test 2
 			router.start();
 			router.trigger('action');
 			router._applyActionEvent.callCount.should.be.equal(1);
 
+			// cleanup
 			router._applyActionEvent.restore();
 			router.destroy();
 
@@ -467,8 +529,10 @@ describe('Class Router', () => {
 			let router = Router.create({
 				scope: document.createElement('div'),
 			});
+
 			// test
 			(() => { router.on() }).should.throw();
+
 			// cleanup
 			router.destroy();
 
@@ -480,8 +544,10 @@ describe('Class Router', () => {
 			let router = Router.create({
 				scope: document.createElement('div'),
 			});
+
 			// test
 			(() => { router.on('urlchange') }).should.not.throw();
+
 			// cleanup
 			router.destroy();
 
@@ -493,8 +559,10 @@ describe('Class Router', () => {
 			let router = Router.create({
 				scope: document.createElement('div'),
 			});
+
 			// test
 			(() => { router.on('someevent', () => {}) }).should.not.throw();
+
 			// cleanup
 			router.destroy();
 
@@ -506,9 +574,11 @@ describe('Class Router', () => {
 			let router = Router.create({
 				scope: document.createElement('div'),
 			});
+
 			// test
 			router.on('urlchange').should.be.Promise();
 			router.on('urlchange').then(() => {}).should.be.Promise();
+
 			// cleanup
 			router.destroy();
 
@@ -520,8 +590,10 @@ describe('Class Router', () => {
 			let router = Router.create({
 				scope: document.createElement('div'),
 			});
+
 			// test
 			should(router.on('my route', (event) => {})).be.null();
+
 			// cleanup
 			router.destroy();
 
@@ -534,7 +606,6 @@ describe('Class Router', () => {
 				scope: document.createElement('div'),
 			});
 			let spy_handler = sinon.spy(() => {});
-			// test wihout trigger args
 			router.on('urlchange', spy_handler);
 
 			// test if promise resolved
@@ -543,9 +614,11 @@ describe('Class Router', () => {
 			router.on('urlchange').then(({thats}) => {
 				return `#${thats}#`;
 			}).should.be.finally.eql('#nice#');
+
 			// test promise count
 			router.promise.urlchange.should.be.length(3);
 
+			// test triggering of urlchange
 			router.trigger('urlchange', { thats: 'nice' });
 			spy_handler.callCount.should.equal(1);
 			router.promise.urlchange.should.be.length(0);
@@ -570,7 +643,6 @@ describe('Class Router', () => {
 			let router = Router.create({
 				scope: document.createElement('div'),
 			});
-
 			router.on('Startpage /index.html');
 			router.on('Resultpage /results.html');
 			router.on('Detailpage /details.html');
@@ -592,10 +664,11 @@ describe('Class Router', () => {
 
 		it('should trigger correct handler on explicitly triggering', () => {
 
+			// setup
 			let router = Router.create({
 				scope: document.createElement('div'),
 			});
-
+			// spyies
 			let spy_startpage_handler = sinon.spy(() => {});
 			let spy_resultpage_handler = sinon.spy(() => {});
 			let spy_detailpage_handler = sinon.spy(() => {});
@@ -620,16 +693,17 @@ describe('Class Router', () => {
 			spy_detailpage_handler.callCount.should.equal(1);
 			spy_configurator_handler.callCount.should.equal(1);
 
+			// cleanup
 			router.destroy();
 
 		});
 
 		it.skip('should route to correct href if handler is linkname (idea not implemented)', () => {
 
+			// setup
 			let router = Router.create({
 				scope: document.createElement('div'),
 			});
-
 			router.on('Google /index.html', 'https://www.google.de');
 			router.on('AbsoluteURL /absolute.html', '/absolute-internal-url.html');
 			router.on('RelativeURL /relative.html', 'relative-internal-url.html');
@@ -647,7 +721,6 @@ describe('Class Router', () => {
 		it('should call handler _onUrlchange', (done) => {
 
 			// setup
-			// http://stackoverflow.com/questions/25578112/spying-on-a-method-with-sinon-method-bound-to-event-listener-method-was-execut#25578185
 			let spy_onUrlchange = sinon.spy(Router.prototype, "_onUrlchange");
 			let spy_urlchange = sinon.spy(() => {});
 			let element = null;
