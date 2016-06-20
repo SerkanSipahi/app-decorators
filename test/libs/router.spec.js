@@ -552,7 +552,7 @@ describe('Class Router', () => {
 			// setup
 			let router = Router.create();
 			router.on('myRoute1 /some/path.html', () => {});
-			router.on('myRoute2 /some/{{variable}}/path.html', () => {});
+			router.on('myRoute2 /some/{{integer}}/{{float}}/path.html', () => {});
 
 			// test 1 - positiv
 			router.whoami('/some/path.html').should.be.containEql({
@@ -562,13 +562,17 @@ describe('Class Router', () => {
 			});
 
 			// test 2 - positiv
-			router.whoami('/some/123/path.html').should.be.containEql({
+			router.whoami('/some/123/4.34/path.html').should.be.containEql({
 				name: 'myRoute2',
-				route: '/some/{{variable}}/path.html',
+				fragment: '/some/123/4.34/path.html',
+				route: '/some/{{integer}}/{{float}}/path.html',
+				regex: '\\/some\\/(?<integer>.*?)\\/(?<float>.*?)\\/path.html',
 				params: {
-					0: '/some/123/path.html',
-					1: '123',
-					variable: '123'
+					0: '/some/123/4.34/path.html',
+					1: 123,
+					2: 4.34,
+					integer: 123,
+					float:  4.34,
 				},
 				cache: false,
 			});
