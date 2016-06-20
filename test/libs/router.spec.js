@@ -471,7 +471,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('stop', () => {
+	describe('stop method', () => {
 
 		it('it should stop if router running', () => {
 
@@ -493,7 +493,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('start', () => {
+	describe('start method', () => {
 
 		it('it should start if router stoped', () => {
 
@@ -521,9 +521,9 @@ describe('Class Router', () => {
 
 	});
 
-	describe('on method', () => {
+	describe('on method, no arguments passed', () => {
 
-		it('should throw an error if no argeument passed', () => {
+		it('should throw an error', () => {
 
 			// setup
 			let router = Router.create({
@@ -538,7 +538,11 @@ describe('Class Router', () => {
 
 		});
 
-		it('should not throw an error if no handler passed', () => {
+	});
+
+	describe('on method, no handler passed', () => {
+
+		it('should not throw an error', () => {
 
 			// setup
 			let router = Router.create({
@@ -553,7 +557,11 @@ describe('Class Router', () => {
 
 		});
 
-		it('should not throw an error if passed event with handler', () => {
+	});
+
+	describe('on method, eventType and handler passed', () => {
+
+		it('should not throw an error', () => {
 
 			// setup
 			let router = Router.create({
@@ -568,7 +576,11 @@ describe('Class Router', () => {
 
 		});
 
-		it('should return promise if passed only event', () => {
+	});
+
+	describe('on method, passed only eventType', () => {
+
+		it('should return promise', () => {
 
 			// setup
 			let router = Router.create({
@@ -584,7 +596,11 @@ describe('Class Router', () => {
 
 		});
 
-		it('should return null if passed event and handler', () => {
+	});
+
+	describe('on method, passed eventType and handler', () => {
+
+		it('should return null', () => {
 
 			// setup
 			let router = Router.create({
@@ -598,6 +614,10 @@ describe('Class Router', () => {
 			router.destroy();
 
 		});
+
+	});
+
+	describe('on method', () => {
 
 		it('should handle promise or handler correctly', (done) => {
 
@@ -637,6 +657,10 @@ describe('Class Router', () => {
 
 		});
 
+	});
+
+	describe('on method, registered many events', () => {
+
 		it('should assign routes correctly', () => {
 
 			// setup
@@ -662,7 +686,11 @@ describe('Class Router', () => {
 
 		});
 
-		it('should trigger correct handler on explicitly triggering without params', () => {
+	});
+
+	describe('on method, if explicitly triggering without params', () => {
+
+		it('should trigger correct handler', () => {
 
 			// setup
 			let router = Router.create({
@@ -688,7 +716,11 @@ describe('Class Router', () => {
 
 		});
 
-		it.skip('should trigger correct handler on explicitly triggering with params', () => {
+	});
+
+	describe('on method, explicitly triggering with params', () => {
+
+		it.skip('should trigger correct handler', () => {
 
 			// setup
 			let router = Router.create({
@@ -713,7 +745,11 @@ describe('Class Router', () => {
 
 		});
 
-		it.skip('should route to correct href if handler is linkname (idea not implemented)', () => {
+	});
+
+	describe('on method, passed handler as href', () => {
+
+		it.skip('should route to href', () => {
 
 			// setup
 			let router = Router.create({
@@ -802,6 +838,10 @@ describe('Class Router', () => {
 			}, 100);
 
 		});
+
+	});
+
+	describe('on method', () => {
 
 		it('should match registered route (static pathname) without dynamic parameter', (done) => {
 
