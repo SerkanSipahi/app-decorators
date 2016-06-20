@@ -554,7 +554,11 @@ export class Router {
 			delete matchedRegex.index;
 			delete matchedRegex.input;
 			for(let param in matchedRegex){
-				params[param] = matchedRegex[param];
+				let value = matchedRegex[param];
+				if(this._isNumberic(value)){
+					value = parseFloat(value);
+				}
+				params[param] = value;
 			}
 
 			// resolve reference
@@ -664,6 +668,17 @@ export class Router {
 		if(this.mode.stealth && event instanceof Event){
 			event.stopPropagation();
 		}
+
+	}
+
+	/**
+	 * _isNumberic
+	 * @param  {string|number} value
+	 * @return {Boolean}
+	 */
+	_isNumberic(value) {
+
+		return /^[+-]?\d+(\.\d+)?$/.test(value);
 
 	}
 
