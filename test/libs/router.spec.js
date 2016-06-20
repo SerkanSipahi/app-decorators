@@ -787,50 +787,36 @@ describe('Class Router', () => {
 				<a class="foo" href="/index"> Index </a>
 				<a class="bar" href="/index/details"> Details </a>
 				<a class="baz" href="/index/details?a=1&b=2"> Params </a>
-				<a class="qux" href="/index/details?a=1&b=2#c=3;d=4"> Params </a>
 			`;
 
 			document.body.appendChild(element);
 
 			// run test
-			element.querySelector('.foo').click(); spy_onUrlchange.callCount.should.equal(1);
-			element.querySelector('.bar').click(); spy_onUrlchange.callCount.should.equal(2);
-			element.querySelector('.baz').click(); spy_onUrlchange.callCount.should.equal(3);
-			element.querySelector('.qux').click(); spy_onUrlchange.callCount.should.equal(4);
-			element.querySelector('.qux').click(); spy_onUrlchange.callCount.should.equal(4);
+			element.querySelector('.foo').click(); // 1
+			element.querySelector('.bar').click(); // 2
+			element.querySelector('.baz').click(); // 3
+			element.querySelector('.baz').click(); // 3
 
-			spy_urlchange.callCount.should.equal(4);
-
-			spy_urlchange.args[0][0].fragment.should.equal('/index');
-			spy_urlchange.args[1][0].fragment.should.equal('/index/details');
-			spy_urlchange.args[2][0].fragment.should.equal('/index/details?a=1&b=2');
-			spy_urlchange.args[3][0].fragment.should.equal('/index/details?a=1&b=2#c=3;d=4');
-
-			// test pushstate works. If not work we are on different site (out of tests)
-			element.querySelectorAll('.foo').should.length(1);
+			spy_urlchange.callCount.should.equal(3);
 
 			// test native popstate
 			router.back();
 			router.back();
 			router.back();
 
-			// should be 2 because internal bind(_onUrlchange) and from
-			// outside (router.on('urlchange'))
-			router.scope.getHandlers('urlchange').should.be.length(2);
-
-			// cleanup
-			document.body.removeChild(element);
-			router._onUrlchange.restore();
-
 			setTimeout(() => {
 
-				spy_onUrlchange.callCount.should.equal(7);
-				spy_urlchange.args[4][0].fragment.should.equal('/index/details?a=1&b=2');
-				spy_urlchange.args[5][0].fragment.should.equal('/index/details');
-				spy_urlchange.args[6][0].fragment.should.equal('/index');
+				spy_urlchange.args[0][0].fragment.should.equal('/index');
+				spy_urlchange.args[1][0].fragment.should.equal('/index/details');
+				spy_urlchange.args[2][0].fragment.should.equal('/index/details?a=1&b=2');
+				spy_urlchange.args[3][0].fragment.should.equal('/index/details');
+				spy_urlchange.args[4][0].fragment.should.equal('/index');
 
 				// cleanup check
 				router.destroy();
+				document.body.removeChild(element);
+				router._onUrlchange.restore();
+
 				// after destroy registered events should be removed
 				should(router.scope.getHandlers('urlchange')).be.exactly(null);
 				done();
