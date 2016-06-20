@@ -413,6 +413,30 @@ describe('Class Router', () => {
 
 	});
 
+	describe('_isFloat', () => {
+
+		it('should check if passed value is number or not', () => {
+
+			// setup
+			let router = Router.create();
+
+			// test positiv: integer
+			router._isNumberic(123).should.be.true();
+			router._isNumberic('123').should.be.true();
+			router._isNumberic(123.45).should.be.true();
+			router._isNumberic('123.45').should.be.true();
+
+			// test negativ: integer
+			router._isNumberic('123.45a').should.be.false();
+			router._isNumberic('123b').should.be.false();
+
+			// cleanup
+			router.destroy();
+
+		});
+
+	});
+
 	describe('createURL method', () => {
 
 		it('should return url object with additional "fragment" property', () => {
