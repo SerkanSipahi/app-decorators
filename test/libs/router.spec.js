@@ -421,14 +421,14 @@ describe('Class Router', () => {
 			let router = Router.create();
 
 			// test positiv: integer
-			router._isNumberic(123).should.be.true();
-			router._isNumberic('123').should.be.true();
-			router._isNumberic(123.45).should.be.true();
-			router._isNumberic('123.45').should.be.true();
+			router._isNumeric(123).should.be.true();
+			router._isNumeric('123').should.be.true();
+			router._isNumeric(123.45).should.be.true();
+			router._isNumeric('123.45').should.be.true();
 
 			// test negativ: integer
-			router._isNumberic('123.45a').should.be.false();
-			router._isNumberic('123b').should.be.false();
+			router._isNumeric('123.45a').should.be.false();
+			router._isNumeric('123b').should.be.false();
 
 			// cleanup
 			router.destroy();

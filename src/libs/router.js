@@ -555,7 +555,7 @@ export class Router {
 			delete matchedRegex.input;
 			for(let param in matchedRegex){
 				let value = matchedRegex[param];
-				if(this._isNumberic(value)){
+				if(this._isNumeric(value)){
 					value = parseFloat(value);
 				}
 				params[param] = value;
@@ -672,11 +672,11 @@ export class Router {
 	}
 
 	/**
-	 * _isNumberic
+	 * _isNumeric
 	 * @param  {string|number} value
 	 * @return {Boolean}
 	 */
-	_isNumberic(value) {
+	_isNumeric(value) {
 
 		return /^[+-]?\d+(\.\d+)?$/.test(value);
 
