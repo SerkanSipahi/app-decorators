@@ -64,6 +64,7 @@ describe('Class Router', () => {
 			router._getRoutes('static').should.containEql({
 				'/this/is/a/route/1': {
 					name: 'name1',
+					type: 'static',
 					route: '/this/is/a/route/1',
 					regex: null,
 					params: null,
@@ -72,6 +73,7 @@ describe('Class Router', () => {
 				},
 				'/this/is/a/route/2': {
 					name: 'name2',
+					type: 'static',
 					route: '/this/is/a/route/2',
 					regex: null,
 					params: null,
@@ -84,6 +86,7 @@ describe('Class Router', () => {
 			router._getRoutes('dynamic').should.containEql({
 				'/this/is/{{a}}/route/4': {
 					name: 'name4',
+					type: 'dynamic',
 					route: '/this/is/{{a}}/route/4',
 					regex: '\\/this\\/is\\/(?<a>.*?)\\/route\\/4',
 					params: null,
@@ -92,6 +95,7 @@ describe('Class Router', () => {
 				},
 				'/this/is/{{b}}/{{c}}/route/5': {
 					name: 'name5',
+					type: 'dynamic',
 					route: '/this/is/{{b}}/{{c}}/route/5',
 					regex: '\\/this\\/is\\/(?<b>.*?)\\/(?<c>.*?)\\/route\\/5',
 					params: null,
@@ -118,6 +122,7 @@ describe('Class Router', () => {
 			// test: positiv
 			router._matchStaticURL('/this/is/a/route/1').should.containEql({
 				name: 'route1',
+				type: 'static',
 				route: '/this/is/a/route/1',
 				params: null,
 				regex: null,
@@ -146,6 +151,7 @@ describe('Class Router', () => {
 			// test: positiv
 			router._matchDynamicURL('/foo/b/bar/d').should.containEql({
 				name: 'route1',
+				type: 'dynamic',
 				route: '/{{a}}/b/{{c}}/d',
 				regex: '\\/(?<a>.*?)\\/b\\/(?<c>.*?)\\/d',
 				params: {
@@ -557,6 +563,7 @@ describe('Class Router', () => {
 			// test 1 - positiv
 			router.whoami('/some/path.html').should.be.containEql({
 				name: 'myRoute1',
+				type: 'static',
 				regex: null,
 				cache: false,
 			});
@@ -564,6 +571,7 @@ describe('Class Router', () => {
 			// test 2 - positiv
 			router.whoami('/some/123/4.34/path.html').should.be.containEql({
 				name: 'myRoute2',
+				type: 'dynamic',
 				fragment: '/some/123/4.34/path.html',
 				route: '/some/{{integer}}/{{float}}/path.html',
 				regex: '\\/some\\/(?<integer>.*?)\\/(?<float>.*?)\\/path.html',
@@ -598,6 +606,7 @@ describe('Class Router', () => {
 			// test 1 - positiv
 			router.which('myRoute1').should.be.containEql({
 				name: 'myRoute1',
+				type: 'dynamic',
 				fragment: null,
 				route: '/some/{{integer}}/{{float}}/path.html',
 				regex: '\\/some\\/(?<integer>.*?)\\/(?<float>.*?)\\/path.html',
