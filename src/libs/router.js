@@ -212,16 +212,17 @@ export class Router {
 
 		if(this._isDynamicURL(route)) {
 			let regex = this._convertRouteToXRegexExp(route);
-			this._routes.dynamic[route] = this._createRouteObject(name, route, regex);
+			this._routes.dynamic[route] = this._createRouteObject(name, route, regex, 'dynamic');
 		} else {
-			this._routes.static[route]  = this._createRouteObject(name, route);
+			this._routes.static[route]  = this._createRouteObject(name, route, null,  'static');
 		}
 
 	}
 
-	_createRouteObject(name, route, regex = null){
+	_createRouteObject(name, route, regex = null, type){
 
 		return {
+			type: type,
 			name: name,
 			route: route,
 			regex: regex,
