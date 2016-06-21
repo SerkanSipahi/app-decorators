@@ -519,9 +519,6 @@ export class Router {
 		let matchedURLObject = this._getRoutes('static')[fragment] || null;
 		if(matchedURLObject) {
 
-			// resolve reference
-			matchedURLObject = JSON.parse(JSON.stringify(matchedURLObject));
-
 			// build matchedURLObject
 			matchedURLObject = Object.assign({}, matchedURLObject, { fragment });
 		}
@@ -561,11 +558,8 @@ export class Router {
 				params[param] = value;
 			}
 
-			// resolve reference
-			routeObject = JSON.parse(JSON.stringify(routeObject));
-
 			// build matchedURLObject
-			let matchedURLObject = Object.assign(routeObject, { params }, { fragment });
+			let matchedURLObject = Object.assign({}, routeObject, { params, fragment });
 			return matchedURLObject;
 
 		}
