@@ -145,9 +145,9 @@ export class Router {
 	 * @param  {Object} options
 	 * @return {Undefined}
 	 */
-	trigger(event = '', options = null){
+	trigger(event = '', params = {}){
 
-		this.scope.trigger(event, options);
+		this.scope.trigger(event, params);
 
 	}
 
