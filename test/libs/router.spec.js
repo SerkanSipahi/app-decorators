@@ -587,6 +587,34 @@ describe('Class Router', () => {
 
 	});
 
+	describe('which method', () => {
+
+		it('it should return route information by passed name', () => {
+
+			// setup
+			let router = Router.create();
+			router.on('myRoute1 /some/{{integer}}/{{float}}/path.html', () => {});
+
+			// test 1 - positiv
+			router.which('myRoute1').should.be.containEql({
+				name: 'myRoute1',
+				fragment: null,
+				route: '/some/{{integer}}/{{float}}/path.html',
+				regex: '\\/some\\/(?<integer>.*?)\\/(?<float>.*?)\\/path.html',
+				params: null,
+				cache: false,
+			});
+
+			// test 2 - negativ
+			should(router.which('unknownRoute')).be.exactly(null);
+
+			// cleanup
+			router.destroy();
+
+		});
+
+	});
+
 	describe('on method, no arguments passed', () => {
 
 		it('should throw an error', () => {
