@@ -716,6 +716,15 @@ export class Router {
 	 */
 	constructURL(route, params = {}){
 
+		if(!route){
+			throw 'Please pass at least route';
+		}
+
+		let routeObject = this.which(route);
+		if(routeObject && routeObject.type === 'static'){
+			return routeObject.route;
+		}
+
 	}
 
 	/**
