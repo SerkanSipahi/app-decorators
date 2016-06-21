@@ -689,6 +689,25 @@ export class Router {
 	}
 
 	/**
+	 * which
+	 * @param  {string} name
+	 * @return {object|null}
+	 */
+	which(name){
+
+		let allRoutes = Object.assign({}, this._routes.static, this._routes.dynamic);
+		for(let route of Object.keys(allRoutes)){
+			let routeObject = allRoutes[route];
+			if(routeObject.name === name){
+				return routeObject;
+			}
+		}
+
+		return null;
+
+	}
+
+	/**
 	 * constructURL
 	 * @param  {String} route
 	 * @param  {Object} params
