@@ -823,7 +823,7 @@ describe('Class Router', () => {
 
 	describe('on method, explicitly triggering with params', () => {
 
-		it.skip('should trigger correct handler', () => {
+		it('should trigger correct handler', () => {
 
 			// setup
 			let router = Router.create({
@@ -839,9 +839,6 @@ describe('Class Router', () => {
 			router.trigger('Product', { id: 123, name: 'foo' });
 			router.trigger('Product', { id: 456, name: 'bar' });
 			spy_configurator_handler.callCount.should.equal(2);
-
-			// test: negativ
-			(() => { router.trigger('Product', { id: 123 }) }).should.not.throw();
 
 			// cleanup
 			router.destroy();
