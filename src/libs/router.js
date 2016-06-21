@@ -385,15 +385,15 @@ export class Router {
 
 		let href =  this._getCurrentHref(event);
 		let urlObject = this.createURL(href);
-		let urlFragment = urlObject.fragment;
+		let { fragment } = urlObject;
 
-		if(this._urlFragmentChanged(urlFragment)) {
+		if(this._urlFragmentChanged(fragment)) {
 			if(this._isDefinedEventAction(event.type)){
-				this.pushState(null, null, this.encodeURI(urlFragment));
+				this.pushState(null, null, this.encodeURI(fragment));
 			}
 			this.scope.trigger(this.event.urlchange, urlObject);
 		}
-		this._setURLFragment(urlFragment);
+		this._setURLFragment(fragment);
 
 	}
 
