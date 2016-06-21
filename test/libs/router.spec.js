@@ -624,6 +624,34 @@ describe('Class Router', () => {
 
 	});
 
+	describe('constructURL method', () => {
+
+		it('should construct url by passed static routename', () => {
+
+			// setup
+			let router = Router.create();
+			router.on('myRoute1 /some/static/path.html', () => {});
+
+			// test 1
+			router.constructURL('myRoute1').should.be.equal('/some/static/path.html');
+
+			// test 2 - ingores params
+			router.constructURL('myRoute1', { a:1, b:2 }).should.be.equal('/some/static/path.html');
+
+			// test 2 - throw
+			(() => { router.constructURL() }).should.throw();
+
+			// cleanup
+			router.destroy();
+
+		});
+
+		it('should construct url by passed dynmic routename and params ', () => {
+
+		});
+
+	});
+
 	describe('on method, no arguments passed', () => {
 
 		it('should throw an error', () => {
