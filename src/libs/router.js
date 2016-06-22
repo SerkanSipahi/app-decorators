@@ -720,10 +720,21 @@ export class Router {
 			throw 'Please pass at least route';
 		}
 
+		let url = null;
 		let routeObject = this.which(route);
 		if(routeObject && routeObject.type === 'static'){
-			return routeObject.route;
+			url = routeObject.route;
 		}
+
+		if(routeObject && routeObject.type === 'dynamic'){
+			url = this._constructDynamicURL(routeObject, params);
+		}
+
+		if(!url) {
+			throw `Something gone wrong with "${route}, ${JSON.stringify(params)}"`;
+		}
+
+		return url;
 
 	}
 
