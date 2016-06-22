@@ -638,8 +638,12 @@ describe('Class Router', () => {
 			// test 2 - ingores params
 			router.constructURL('myRoute1', { a:1, b:2 }).should.be.equal('/some/static/path.html');
 
-			// test 2 - throw
+			// test 3 - throw
 			(() => { router.constructURL() }).should.throw();
+
+			// test 4 - throw
+			(() => { router.constructURL('myRoute99') }).should.throw();
+			(() => { router.constructURL('myRoute99', {c:3, d:4}) }).should.throw();
 
 			// cleanup
 			router.destroy();
