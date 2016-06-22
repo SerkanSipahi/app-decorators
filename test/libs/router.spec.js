@@ -1007,63 +1007,115 @@ describe('Class Router', () => {
 
 	describe('on method', () => {
 
-		it('should match registered route (static pathname) without dynamic parameter', (done) => {
+		it('should match registered static and dynamic url route', (done) => {
 
-			let element = null;
-			element = document.createElement("div");
-			let router = Router.create({
+			/**
+			 * Static Test
+			 */
+
+			// register
+			router.on('Index /index.html', spy_index_handler);
+			router.on('SomePathURL /some/path/url.html', spy_somePathURL_handler);
+
+			// trigger events by clicking
+			element.querySelector('.index').click();
+			element.querySelector('.some-path-url').click();
+			element.querySelector('.not-registered-url').click();
+			element.querySelector('.some-path-url').click();
+
+			// test
+			spy_index_handler.callCount.should.equal(1);
+			spy_somePathURL_handler.callCount.should.equal(2);
+
+			/**
+			 * Dynamic Test
+			 */
+
+			// register
+			router.on('SomeDynamicURL /{{name}}/{{surname}}/123', ({ params, fragment }) => {
+				params.name.should.be.equal('serkan');
+				params.surname.should.be.equal('sipahi');
+				fragment.should.be.equal('/serkan/sipahi/123');
+				done();
+			});
+
+			// trigger events by clicking
+			element.querySelector('.some-dynamic-path').click();
+
+		});
+
+		it('should trigger registered promise event', (done) => {
+
+			// test 1
+			router.on('SomePathURL /some/path/url.html').then(({fragment, id}) => {
+				return `${fragment}?id=${id}`;
+			}).should.be.finally.eql('/some/path/url.html?id=123');
+
+			router.trigger('SomePathURL', { fragment: '/some/path/url.html', id: 123 });
+
+			setTimeout(done, 200);
+
+		});
+
+		// Setup
+		let element, spy_index_handler, spy_somePathURL_handler, spy_dynamicPath_handler, router;
+
+		beforeEach(() => {
+
+			router = Router.create({
 				scope: element,
 			});
+
+			spy_index_handler = sinon.spy(() => {});
+			spy_somePathURL_handler = sinon.spy(() => {});
+			spy_dynamicPath_handler = sinon.spy(() => {});
+
+			element = document.createElement("div");
 			element.classList.add('anchor-container');
 			element.innerHTML = `
 				<a class="index" href="/index.html"> Index </a>
 				<a class="some-path-url" href="/some/path/url.html"> Some path URL </a>
+				<a class="some-dynamic-path" href="/serkan/sipahi/123"> Some Dynamic URL </a>
 				<a class="not-registered-url" href="/not/registered/url.html"> Not registered URL </a>
 			`;
 			document.body.appendChild(element);
 
-			let spy_index_handler = sinon.spy(() => {});
-			let spy_somePathURL_handler = sinon.spy(() => {});
+		});
 
-			// register by handler
-			router.on('Index /index.html', spy_index_handler);
-			router.on('SomePathURL /some/path/url.html', spy_somePathURL_handler);
-			// register by promise
+		afterEach(() => {
 
-			router.on('SomePathURL').then(() => {
-				return 'matched';
-			}).should.be.finally.eql('matched');
+			// cleanup
+			document.body.removeChild(element);
+			router.destroy();
 
-			element.querySelector('.index').click();
-			element.querySelector('.some-path-url').click();
-			element.querySelector('.not-registered-url').click();
+		});
 
-			spy_index_handler.callCount.should.equal(1);
-			spy_somePathURL_handler.callCount.should.equal(1);
+	});
 
-			element.querySelector('.some-path-url').click();
+	describe('off method', () => {
 
-			spy_index_handler.callCount.should.equal(1);
-			spy_somePathURL_handler.callCount.should.equal(2);
+		it('should remove event by passed eventType', () => {
 
-			// test off method
-			router.off('Index');
-			element.querySelector('.index').click();
-			spy_index_handler.callCount.should.equal(1);
+		});
 
-			// test off method
-			router.off('SomePathURL');
-			element.querySelector('.some-path-url').click();
-			spy_somePathURL_handler.callCount.should.equal(2);
+		it('should throw error if not eventType passed', () => {
 
-			// need this timeout for promise tests
-			setTimeout(() => {
-				// cleanup
-				document.body.removeChild(element);
-				router.destroy();
-				done();
-			}, 10);
+		});
 
+	});
+
+	describe('destroy method', () => {
+
+		it('should remove all registered events', () => {
+
+		});
+
+	});
+
+	describe('create() function', () => {
+
+		it('should register many routes at once', () => {
+			
 		});
 
 	});
