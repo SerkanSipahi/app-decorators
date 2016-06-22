@@ -678,6 +678,16 @@ export class Router {
 	}
 
 	/**
+	 * _constructDynamicURL
+	 * @param  {object} routeObject
+	 * @param  {object} params
+	 * @return {string} url
+	 */
+	_constructDynamicURL(routeObject, params){
+
+	}
+
+	/**
 	 * whoami
 	 * @param  {String} path
 	 * @return {object}
