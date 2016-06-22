@@ -930,39 +930,29 @@ describe('Class Router', () => {
 
 	});
 
-	describe('click on anchor or brower.back() and .destroy() remove events', () => {
+	describe('_onUrlchange method', () => {
 
-		it('should call handler _onUrlchange', (done) => {
+		it('should call registered callback on element.click()', () => {
 
-			// setup
-			let spy_onUrlchange = sinon.spy(Router.prototype, "_onUrlchange");
-			let spy_urlchange = sinon.spy(() => {});
-			let element = null;
-			element = document.createElement("div");
-			let router = Router.create({
-				scope: element,
-			});
-
-			router.on('urlchange', spy_urlchange);
-
-			element.classList.add('anchor-container');
-			element.innerHTML = `
-				<a class="foo" href="/index"> Index </a>
-				<a class="bar" href="/index/details"> Details </a>
-				<a class="baz" href="/index/details?a=1&b=2"> Params </a>
-			`;
-
-			document.body.appendChild(element);
-
-			// run test
-			element.querySelector('.foo').click(); // 1
-			element.querySelector('.bar').click(); // 2
-			element.querySelector('.baz').click(); // 3
-			element.querySelector('.baz').click(); // 3
+			element.querySelector('.foo').click();
+			element.querySelector('.bar').click();
+			element.querySelector('.baz').click();
+			element.querySelector('.baz').click();
 
 			spy_urlchange.callCount.should.equal(3);
 
-			// test native popstate
+			spy_urlchange.args[0][0].fragment.should.equal('/index');
+			spy_urlchange.args[1][0].fragment.should.equal('/index/details');
+			spy_urlchange.args[2][0].fragment.should.equal('/index/details?a=1&b=2');
+
+		});
+
+		it('should call registered callback on router.back()', (done) => {
+
+			element.querySelector('.foo').click();
+			element.querySelector('.bar').click();
+			element.querySelector('.baz').click();
+
 			router.back();
 			router.back();
 			router.back();
@@ -975,16 +965,41 @@ describe('Class Router', () => {
 				spy_urlchange.args[3][0].fragment.should.equal('/index/details');
 				spy_urlchange.args[4][0].fragment.should.equal('/index');
 
-				// cleanup check
-				router.destroy();
-				document.body.removeChild(element);
-				router._onUrlchange.restore();
-
-				// after destroy registered events should be removed
-				should(router.scope.getHandlers('urlchange')).be.exactly(null);
 				done();
 
 			}, 100);
+
+		});
+
+		// Setup
+		let router, spy_onUrlchange, spy_urlchange, element;
+
+		beforeEach(() => {
+
+			spy_onUrlchange = sinon.spy(Router.prototype, "_onUrlchange");
+			spy_urlchange = sinon.spy(() => {});
+			element = document.createElement("div");
+			router = Router.create({
+				scope: element,
+			});
+			router.on('urlchange', spy_urlchange);
+
+			element.classList.add('anchor-container');
+			element.innerHTML = `
+				<a class="foo" href="/index"> Index </a>
+				<a class="bar" href="/index/details"> Details </a>
+				<a class="baz" href="/index/details?a=1&b=2"> Params </a>
+			`;
+			document.body.appendChild(element);
+
+		});
+
+		afterEach(() => {
+
+			// cleanup check
+			router.destroy();
+			document.body.removeChild(element);
+			router._onUrlchange.restore();
 
 		});
 
