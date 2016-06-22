@@ -155,9 +155,8 @@ describe('Class Router', () => {
 				route: '/{{a}}/b/{{c}}/d',
 				regex: '\\/(?<a>.*?)\\/b\\/(?<c>.*?)\\/d',
 				params: {
-					0: '/foo/b/bar/d',
-					1: 'foo', 2: 'bar',
-					a: 'foo', c: 'bar'
+					a: 'foo',
+					c: 'bar',
 				},
 				fragment: '/foo/b/bar/d',
 				cache: false,
@@ -576,9 +575,6 @@ describe('Class Router', () => {
 				route: '/some/{{integer}}/{{float}}/path.html',
 				regex: '\\/some\\/(?<integer>.*?)\\/(?<float>.*?)\\/path.html',
 				params: {
-					0: '/some/123/4.34/path.html',
-					1: 123,
-					2: 4.34,
 					integer: 123,
 					float:  4.34,
 				},
