@@ -542,21 +542,28 @@ export class Router {
 			let compiledRegex = this.XRegExp(routeObject.regex);
 			let matchedRegex = this.XRegExp.exec(fragment, compiledRegex);
 
-			// return if not matched
+			// continue if not matched
 			if(matchedRegex === null){
 				continue;
 			}
 
-			// convert matched to object-object
 			let params = {};
-			delete matchedRegex.index;
-			delete matchedRegex.input;
-			for(let param in matchedRegex){
-				let value = matchedRegex[param];
+			for(let attribute in matchedRegex){
+
+				// Skip index, input and numeric attributes.
+				// We just want the group named regex
+				if(/index|input/.test(attribute)){
+					continue;
+				} else if(this._isNumeric(attribute)){
+					continue;
+				}
+
+				let value = matchedRegex[attribute];
+				// convert to real number if attribute is numeric
 				if(this._isNumeric(value)){
 					value = parseFloat(value);
 				}
-				params[param] = value;
+				params[attribute] = value;
 			}
 
 			// build matchedURLObject
