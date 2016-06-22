@@ -742,7 +742,27 @@ export class Router {
 	 * redirect
 	 * @return {undefined}
 	 */
-	redirect(){
+	redirect(route, params = {}){
+
+		if(!route){
+			throw 'Please pass at least route';
+		}
+
+		let url = null;
+		let routeObject = this.which(route);
+		if(routeObject && routeObject.type === 'static'){
+			url = routeObject.route;
+		}
+
+		if(routeObject && routeObject.type === 'dynamic'){
+			url = this._constructDynamicURL(routeObject, params);
+		}
+
+		if(!url) {
+			throw `Something gone wrong with "${route}, ${JSON.stringify(params)}"`;
+		}
+
+		this.pushState(null, null, this.encodeURI(url));
 
 	}
 
