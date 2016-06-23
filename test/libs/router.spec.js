@@ -573,7 +573,7 @@ describe('Class Router', () => {
 				type: 'dynamic',
 				fragment: '/some/123/4.34/path.html',
 				route: '/some/{{integer}}/{{float}}/path.html',
-				regex: '\\/some\\/(?<integer>.*?)\\/(?<float>.*?)\\/path.html',
+				regex: '\\/some\\/(?<integer>.*?)\\/(?<float>.*?)\\/path\\.html',
 				params: {
 					integer: 123,
 					float:  4.34,
@@ -605,7 +605,7 @@ describe('Class Router', () => {
 				type: 'dynamic',
 				fragment: null,
 				route: '/some/{{integer}}/{{float}}/path.html',
-				regex: '\\/some\\/(?<integer>.*?)\\/(?<float>.*?)\\/path.html',
+				regex: '\\/some\\/(?<integer>.*?)\\/(?<float>.*?)\\/path\\.html',
 				params: null,
 				cache: false,
 			});
