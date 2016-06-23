@@ -61,6 +61,7 @@ describe('Class Router', () => {
 			router._addRoute('/this/is/a/route/2', 'name2');
 			router._addRoute('/this/is/{{a}}/route/4', 'name4');
 			router._addRoute('/this/is/{{b}}/{{c}}/route/5', 'name5');
+			router._addRoute('/page?id={{id}}&name={{name}}', 'name6');
 
 			// test: should throw error because route is already exists
 			(() => { router._addRoute('/this/is/a/route/2', 'name2'); }).should.throw();
@@ -108,6 +109,15 @@ describe('Class Router', () => {
 					fragment: null,
 					cache: false,
 				},
+				'/page?id={{id}}&name={{name}}': {
+					name: 'name6',
+					type: 'dynamic',
+					route: '/page?id={{id}}&name={{name}}',
+					regex: '\\/page\\?id=(?<id>.*?)&name=(?<name>.*?)',
+					params: null,
+					fragment: null,
+					cache: false,
+				}
 			});
 
 			// cleanup
