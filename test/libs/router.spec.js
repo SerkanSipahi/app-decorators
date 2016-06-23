@@ -36,6 +36,12 @@ describe('Class Router', () => {
 			router._convertRouteToXRegexExp('{{year}}').should.be.equal('(?<year>.*?)');
 			router._convertRouteToXRegexExp('{{hour}}:{{min}}').should.be.equal('(?<hour>.*?):(?<min>.*?)');
 			router._convertRouteToXRegexExp('{{a}}/{{b}}/{{c}}').should.be.equal('(?<a>.*?)\\/(?<b>.*?)\\/(?<c>.*?)');
+			router._convertRouteToXRegexExp('?id={{id}}&name={{name}}').should.be.equal('\\?id=(?<id>.*?)&name=(?<name>.*?)');
+			router._convertRouteToXRegexExp('/details?page={{page}}').should.be.equal('\\/details\\?page=(?<page>.*?)');
+			router._convertRouteToXRegexExp('/details?page={{a}}|{{b}}').should.be.equal('\\/details\\?page=(?<a>.*?)\\|(?<b>.*?)');
+			router._convertRouteToXRegexExp('/calc?add={{a}}+{{b}}').should.be.equal('\\/calc\\?add=(?<a>.*?)\\+(?<b>.*?)');
+			router._convertRouteToXRegexExp('/calc?multi={{a}}*{{b}}').should.be.equal('\\/calc\\?multi=(?<a>.*?)\\*(?<b>.*?)');
+			router._convertRouteToXRegexExp('/group?that=({{group}})').should.be.equal('\\/group\\?that=\\((?<group>.*?)\\)');
 
 			//cleanup
 			router.destroy();
