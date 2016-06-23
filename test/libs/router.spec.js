@@ -495,13 +495,6 @@ describe('Class Router', () => {
 			// like prototype.on. The only difference is
 			// the argument signature
 
-			// NOTE: jetzt könnte getested werden auf
-			// 1.) wenn nur name übergeben wird, dann karma-sinon
-			// keine this._routes.static,dynamic gebaut werden
-			// sondern nur der Eventhandler wird befüllt
-			// 2.) wenn name und route dann kann this._routes
-			// und Eventhandler befüllt werden.
-
 		});
 
 	});
