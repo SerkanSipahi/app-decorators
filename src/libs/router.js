@@ -628,7 +628,7 @@ export class Router {
 	_convertRouteToXRegexExp(url = ''){
 
 		let variableURLRegex = this.XRegExp('{{(?<variableURL>[a-z]+)}}', 'g');
-		url = url.replace(/\//g, '\\/');
+		url = url.replace(/[\/|+*?.()]/g, '\\$&');
 		url = this.XRegExp.replace(url, variableURLRegex, '(?<${variableURL}>.*?)');
 
 		return url;
