@@ -33,15 +33,15 @@ describe('Class Router', () => {
 			let router = Router.create();
 
 			// test
-			router._convertRouteToXRegexExp('{{year}}').should.be.equal('(?<year>.*?)');
-			router._convertRouteToXRegexExp('{{hour}}:{{min}}').should.be.equal('(?<hour>.*?):(?<min>.*?)');
-			router._convertRouteToXRegexExp('{{a}}/{{b}}/{{c}}').should.be.equal('(?<a>.*?)\\/(?<b>.*?)\\/(?<c>.*?)');
-			router._convertRouteToXRegexExp('?id={{id}}&name={{name}}').should.be.equal('\\?id=(?<id>.*?)&name=(?<name>.*?)');
-			router._convertRouteToXRegexExp('/details?page={{page}}').should.be.equal('\\/details\\?page=(?<page>.*?)');
-			router._convertRouteToXRegexExp('/details?page={{a}}|{{b}}').should.be.equal('\\/details\\?page=(?<a>.*?)\\|(?<b>.*?)');
-			router._convertRouteToXRegexExp('/calc?add={{a}}+{{b}}').should.be.equal('\\/calc\\?add=(?<a>.*?)\\+(?<b>.*?)');
-			router._convertRouteToXRegexExp('/calc?multi={{a}}*{{b}}').should.be.equal('\\/calc\\?multi=(?<a>.*?)\\*(?<b>.*?)');
-			router._convertRouteToXRegexExp('/group?that=({{group}})').should.be.equal('\\/group\\?that=\\((?<group>.*?)\\)');
+			router._convertRouteToXRegexExp('{{year}}').should.be.equal('(?<year>[\\d\\w?()|{}_.,-]+)');
+			router._convertRouteToXRegexExp('{{hour}}:{{min}}').should.be.equal('(?<hour>[\\d\\w?()|{}_.,-]+):(?<min>[\\d\\w?()|{}_.,-]+)');
+			router._convertRouteToXRegexExp('{{a}}/{{b}}/{{c}}').should.be.equal('(?<a>[\\d\\w?()|{}_.,-]+)\\/(?<b>[\\d\\w?()|{}_.,-]+)\\/(?<c>[\\d\\w?()|{}_.,-]+)');
+			router._convertRouteToXRegexExp('?id={{id}}&name={{name}}').should.be.equal('\\?id=(?<id>[\\d\\w?()|{}_.,-]+)&name=(?<name>[\\d\\w?()|{}_.,-]+)');
+			router._convertRouteToXRegexExp('/details?page={{page}}').should.be.equal('\\/details\\?page=(?<page>[\\d\\w?()|{}_.,-]+)');
+			router._convertRouteToXRegexExp('/details?page={{a}}|{{b}}').should.be.equal('\\/details\\?page=(?<a>[\\d\\w?()|{}_.,-]+)\\|(?<b>[\\d\\w?()|{}_.,-]+)');
+			router._convertRouteToXRegexExp('/calc?add={{a}}+{{b}}').should.be.equal('\\/calc\\?add=(?<a>[\\d\\w?()|{}_.,-]+)\\+(?<b>[\\d\\w?()|{}_.,-]+)');
+			router._convertRouteToXRegexExp('/calc?multi={{a}}*{{b}}').should.be.equal('\\/calc\\?multi=(?<a>[\\d\\w?()|{}_.,-]+)\\*(?<b>[\\d\\w?()|{}_.,-]+)');
+			router._convertRouteToXRegexExp('/group?that=({{group}})').should.be.equal('\\/group\\?that=\\((?<group>[\\d\\w?()|{}_.,-]+)\\)');
 
 			//cleanup
 			router.destroy();
@@ -95,7 +95,7 @@ describe('Class Router', () => {
 					name: 'name4',
 					type: 'dynamic',
 					route: '/this/is/{{a}}/route/4',
-					regex: '\\/this\\/is\\/(?<a>.*?)\\/route\\/4',
+					regex: '\\/this\\/is\\/(?<a>[\\d\\w?()|{}_.,-]+)\\/route\\/4',
 					params: null,
 					fragment: null,
 					cache: false,
@@ -104,7 +104,7 @@ describe('Class Router', () => {
 					name: 'name5',
 					type: 'dynamic',
 					route: '/this/is/{{b}}/{{c}}/route/5',
-					regex: '\\/this\\/is\\/(?<b>.*?)\\/(?<c>.*?)\\/route\\/5',
+					regex: '\\/this\\/is\\/(?<b>[\\d\\w?()|{}_.,-]+)\\/(?<c>[\\d\\w?()|{}_.,-]+)\\/route\\/5',
 					params: null,
 					fragment: null,
 					cache: false,
@@ -113,7 +113,7 @@ describe('Class Router', () => {
 					name: 'name6',
 					type: 'dynamic',
 					route: '/page?id={{id}}&name={{name}}',
-					regex: '\\/page\\?id=(?<id>.*?)&name=(?<name>.*?)',
+					regex: '\\/page\\?id=(?<id>[\\d\\w?()|{}_.,-]+)&name=(?<name>[\\d\\w?()|{}_.,-]+)',
 					params: null,
 					fragment: null,
 					cache: false,
@@ -163,18 +163,33 @@ describe('Class Router', () => {
 			// setup
 			let router = Router.create();
 			router._addRoute('/{{a}}/b/{{c}}/d', 'route1');
+			router._addRoute('?id={{id}}&name={{name}}', 'route2');
 
-			// test: positiv
+			// test 1: positiv
 			router._matchDynamicURL('/foo/b/bar/d').should.containEql({
 				name: 'route1',
 				type: 'dynamic',
 				route: '/{{a}}/b/{{c}}/d',
-				regex: '\\/(?<a>.*?)\\/b\\/(?<c>.*?)\\/d',
+				regex: '\\/(?<a>[\\d\\w?()|{}_.,-]+)\\/b\\/(?<c>[\\d\\w?()|{}_.,-]+)\\/d',
 				params: {
 					a: 'foo',
 					c: 'bar',
 				},
 				fragment: '/foo/b/bar/d',
+				cache: false,
+			});
+
+			// test 2: positiv (with queryString)
+			router._matchDynamicURL('/a/b/c/page?id=26&name=mars&update=true').should.containEql({
+				name: 'route2',
+				type: 'dynamic',
+				route: '?id={{id}}&name={{name}}',
+				regex: '\\?id=(?<id>[\\d\\w?()|{}_.,-]+)&name=(?<name>[\\d\\w?()|{}_.,-]+)',
+				params: {
+					id: 26,
+					name: 'mars',
+				},
+				fragment: '/a/b/c/page?id=26&name=mars&update=true',
 				cache: false,
 			});
 
@@ -184,7 +199,7 @@ describe('Class Router', () => {
 			// cleanup
 			router.destroy();
 
-		})
+		});
 
 	});
 
@@ -582,7 +597,7 @@ describe('Class Router', () => {
 				type: 'dynamic',
 				fragment: '/some/123/4.34/path.html',
 				route: '/some/{{integer}}/{{float}}/path.html',
-				regex: '\\/some\\/(?<integer>.*?)\\/(?<float>.*?)\\/path\\.html',
+				regex: '\\/some\\/(?<integer>[\\d\\w?()|{}_.,-]+)\\/(?<float>[\\d\\w?()|{}_.,-]+)\\/path\\.html',
 				params: {
 					integer: 123,
 					float:  4.34,
@@ -614,7 +629,7 @@ describe('Class Router', () => {
 				type: 'dynamic',
 				fragment: null,
 				route: '/some/{{integer}}/{{float}}/path.html',
-				regex: '\\/some\\/(?<integer>.*?)\\/(?<float>.*?)\\/path\\.html',
+				regex: '\\/some\\/(?<integer>[\\d\\w?()|{}_.,-]+)\\/(?<float>[\\d\\w?()|{}_.,-]+)\\/path\\.html',
 				params: null,
 				cache: false,
 			});
