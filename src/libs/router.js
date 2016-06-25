@@ -759,7 +759,7 @@ export class Router {
 	 * redirect
 	 * @return {undefined}
 	 */
-	redirect(route, params = {}){
+	go(route, params = {}){
 
 		if(!route){
 			throw 'Please pass at least route';

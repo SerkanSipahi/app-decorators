@@ -685,35 +685,35 @@ describe('Class Router', () => {
 
 	});
 
-	describe('redirect method', () => {
+	describe('go method', () => {
 
-		it('should redirect by passed static routename', () => {
+		it('should go by passed static routename', () => {
 
 			let router = Router.create();
 			router.on('myRoute1 /some/static/path.html', () => {});
 			sinon.spy(router, "pushState");
 
 			// test 1
-			router.redirect('myRoute1');
+			router.go('myRoute1');
 			router.pushState.callCount.should.be.equal(1);
 
 			// test 2 - ingores params
-			router.redirect('myRoute1', { a:1, b:2 });
+			router.go('myRoute1', { a:1, b:2 });
 			router.pushState.callCount.should.be.equal(2);
 
 			// test 3 - throw
-			(() => { router.redirect() }).should.throw();
+			(() => { router.go() }).should.throw();
 
 			// test 4 - throw
-			(() => { router.redirect('myRoute99') }).should.throw();
-			(() => { router.redirect('myRoute99', {c:3, d:4}) }).should.throw();
+			(() => { router.go('myRoute99') }).should.throw();
+			(() => { router.go('myRoute99', {c:3, d:4}) }).should.throw();
 
 			router.pushState.restore();
 			router.destroy();
 
 		});
 
-		it('should redirect by passed dynmic routename and params ', () => {
+		it('should go by passed dynmic routename and params ', () => {
 
 		});
 
