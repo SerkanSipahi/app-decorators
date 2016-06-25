@@ -690,7 +690,24 @@ export class Router {
 	 * @param  {object} params
 	 * @return {string} url
 	 */
-	_constructDynamicURL(routeObject, params){
+	_constructDynamicURL(route = '', params = {}){
+
+		let curlyBracketsRegex = /\{\{|\}\}/;
+		let constructredURL = null;
+		let url = route;
+
+		for(let param of Object.keys(params)){
+			url = url.replace(`{{${param}}}`, () => params[param]);
+		}
+
+		if(curlyBracketsRegex.test(url)){
+			throw `
+				Someting gone wrong. Cant resolve passed params: "${JSON.stringify(params)}".
+				Generated url: "${url}";
+			`;
+		}
+
+		return url;
 
 	}
 
