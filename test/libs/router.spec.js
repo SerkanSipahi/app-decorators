@@ -52,22 +52,25 @@ describe('Class Router', () => {
 
 	describe('_addRoute method', () => {
 
-		it('should add route and name to prototype._routes', () => {
+		// setup
+		let router = null;
+
+		beforeEach(() => {
 
 			// setup
-			let router = Router.create();
+			router = Router.create();
 			// add static routes
 			router._addRoute('/this/is/a/route/1', 'name1');
 			router._addRoute('/this/is/a/route/2', 'name2');
 			router._addRoute('/this/is/{{a}}/route/4', 'name4');
 			router._addRoute('/this/is/{{b}}/{{c}}/route/5', 'name5');
 			router._addRoute('/page?id={{id}}&name={{name}}', 'name6');
+		});
 
-			// test: should throw error because route is already exists
-			(() => { router._addRoute('/this/is/a/route/2', 'name2'); }).should.throw();
-			(() => { router._addRoute('/this/is/{{a}}/route/4', 'name4'); }).should.throw();
+		afterEach(() => router.destroy() );
 
-			// test: static routes
+		it('should return registered static routes', () => {
+
 			router._getRoutes('static').should.containEql({
 				'/this/is/a/route/1': {
 					name: 'name1',
@@ -89,7 +92,10 @@ describe('Class Router', () => {
 				},
 			});
 
-			// test: dynamic routes
+		});
+
+		it('should return registered dynamic routes', () => {
+
 			router._getRoutes('dynamic').should.containEql({
 				'/this/is/{{a}}/route/4': {
 					name: 'name4',
@@ -119,10 +125,12 @@ describe('Class Router', () => {
 					cache: false,
 				}
 			});
+		});
 
-			// cleanup
-			router.destroy();
+		it('should throw error if duplicate route added', () => {
 
+			(() => { router._addRoute('/this/is/a/route/2', 'name2'); }).should.throw();
+			(() => { router._addRoute('/this/is/{{a}}/route/4', 'name4'); }).should.throw();
 		});
 
 	});
@@ -1139,7 +1147,11 @@ describe('Class Router', () => {
 	describe('create() function', () => {
 
 		it('should register many routes at once', () => {
-			
+
+		});
+
+		it('should bind scope to handlers', () => {
+
 		});
 
 	});
