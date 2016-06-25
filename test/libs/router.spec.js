@@ -211,6 +211,33 @@ describe('Class Router', () => {
 
 	});
 
+	describe('_normalizeMatchedXRegex method', () => {
+
+		it('it should normalize matched XRegex object', () => {
+
+			// setup
+			let router = Router.create();
+
+			let mockXRegexMatchedObject = [
+				'/a/b/c/d', 'a', 'c'
+			];
+			mockXRegexMatchedObject.index = 2;
+			mockXRegexMatchedObject.input = 0;
+			mockXRegexMatchedObject.name = 'b';
+			mockXRegexMatchedObject.surename = 'd';
+
+			router._normalizeMatchedXRegex(mockXRegexMatchedObject).should.containEql({
+				name: 'b',
+				surename: 'd',
+			});
+
+			// cleanup
+			router.destroy();
+
+		});
+
+	});
+
 	describe('_matchURL method', () => {
 
 		let router = null;
