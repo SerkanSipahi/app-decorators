@@ -652,6 +652,53 @@ describe('Class Router', () => {
 
 	});
 
+	describe('_constructDynamicURL', () => {
+
+		it('should construct url by passt dynamic routename', () => {
+
+			// setup
+			let routeObject = null;
+			let router = Router.create();
+			router._addRoute('/person/{{name}}/{{surename}}/id/{{id}}', 'myRoute1');
+			router._addRoute('?page={{page}}&id={{id}}', 'myRoute2');
+
+			// test 1
+			routeObject = router.which('myRoute1');
+			router._constructDynamicURL(routeObject.route,
+				{ name: 'serkan', surename: 'sipahi', id: 333 }
+			).should.equal('/person/serkan/sipahi/id/333');
+
+			// test 2
+			routeObject = router.which('myRoute2');
+			router._constructDynamicURL(routeObject.route,
+				{ page: 'details', id: 999 }
+			).should.equal('?page=details&id=999');
+
+			// cleanup
+			router.destroy();
+
+		});
+
+		it('should throw error if something gone wrong', () => {
+
+			// setup
+			let router = Router.create();
+			router._addRoute('/person/{{name}}/{{surename}}/id/{{id}}', 'myRoute1');
+			let routeObject = router.which('myRoute1');
+
+			// should throw if not params passed
+			(() => { router._constructDynamicURL(routeObject.route) }).should.throw();
+
+			// should throw if param is missing
+			(() => { router._constructDynamicURL(routeObject.route, { id: 1 }) }).should.throw();
+
+			// cleanup
+			router.destroy();
+
+		});
+
+	});
+
 	describe('constructURL method', () => {
 
 		it('should construct url by passed static routename', () => {
