@@ -547,24 +547,7 @@ export class Router {
 				continue;
 			}
 
-			let params = {};
-			for(let attribute in matchedRegex){
-
-				// Skip index, input and numeric attributes.
-				// We just want the group named regex
-				if(/index|input/.test(attribute)){
-					continue;
-				} else if(this._isNumeric(attribute)){
-					continue;
-				}
-
-				let value = matchedRegex[attribute];
-				// convert to real number if attribute is numeric
-				if(this._isNumeric(value)){
-					value = parseFloat(value);
-				}
-				params[attribute] = value;
-			}
+			let params = this._normalizeMatchedXRegex(matchedRegex);
 
 			// build matchedURLObject
 			let matchedURLObject = Object.assign({}, routeObject, { params, fragment });
@@ -573,6 +556,36 @@ export class Router {
 		}
 
 		return null;
+
+	}
+
+	/**
+	 * _normalizeMatchedXRegex
+	 * @param  {object} matchedObject
+	 * @return {object}
+	 */
+	_normalizeMatchedXRegex(matchedRegex){
+
+		let params = {};
+		for(let attribute in matchedRegex){
+
+			// Skip index, input and numeric attributes.
+			// We just want the group named regex
+			if(/index|input/.test(attribute)){
+				continue;
+			} else if(this._isNumeric(attribute)){
+				continue;
+			}
+
+			let value = matchedRegex[attribute];
+			// convert to real number if attribute is numeric
+			if(this._isNumeric(value)){
+				value = parseFloat(value);
+			}
+			params[attribute] = value;
+		}
+
+		return params;
 
 	}
 
