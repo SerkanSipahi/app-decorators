@@ -457,7 +457,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('_isFloat', () => {
+	describe('_isNumeric', () => {
 
 		it('should check if passed value is number or not', () => {
 
