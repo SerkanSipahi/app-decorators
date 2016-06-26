@@ -1391,8 +1391,66 @@ describe('Class Router', () => {
 
 		it('should register many routes at once', () => {
 
+			let spy_myRoute1 = sinon.spy(() => {});
+			let spy_myRoute2 = sinon.spy(() => {});
+
+			let router = Router.create({
+				routes: {
+					'myRoute1 /some/path/': spy_myRoute1,
+					'myRoute2 /{{a}}/{{b}}/': spy_myRoute2,
+				},
+				scope: document.createElement('div'),
+			});
+
+			router.trigger('myRoute1');
+			router.trigger('myRoute2', { a: 'hello', b: 'world' });
+
+			//test
+			spy_myRoute1.callCount.should.be.equal(1);
+			spy_myRoute2.callCount.should.be.equal(1);
+			spy_myRoute2.args[0][0].should.be.containEql({ a: 'hello', b: 'world' });
+
+			router.destroy();
+
+		});
+
+		it('should register many routes at once + bindObject', () => {
+
+			class BindObject {
+				x(){ this.y() }
+				y(){}
+			}
+			// spies
+			let spy_x = sinon.spy(BindObject.prototype, 'x');
+			let spy_y = sinon.spy(BindObject.prototype, 'y');
+			let spy_myRoute1 = sinon.spy(function() { this.x() });
+
+			let bindObject = new BindObject();
+
+			let router = Router.create({
+				routes: {
+					'myRoute1 /{{a}}/{{b}}/': spy_myRoute1,
+				},
+				scope: document.createElement('div'),
+				bind: bindObject,
+			});
+
+			router.trigger('myRoute1', { a: 'hello', b: 'world' });
+
+			//test
+			spy_myRoute1.callCount.should.be.equal(1);
+			spy_x.callCount.should.be.equal(1);
+			spy_y.callCount.should.be.equal(1);
+
+			spy_myRoute1.thisValues[0].should.be.equal(bindObject);
+			spy_myRoute1.args[0][0].should.be.containEql({ a: 'hello', b: 'world' });
+
+			//cleanup
+			router.destroy();
+			spy_x.restore();
+			spy_y.restore();
+
 		});
 
 	});
-
 });
