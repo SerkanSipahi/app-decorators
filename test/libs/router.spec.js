@@ -1336,9 +1336,37 @@ describe('Class Router', () => {
 
 		it('should remove event by passed eventType', () => {
 
+			// setup
+			let spy_myRoute = sinon.spy(() => {});
+			let router = Router.create({
+				scope: document.createElement('div'),
+			});
+
+			router.on('myRoute /some/path.html', spy_myRoute);
+			router.trigger('myRoute');
+			router.off('myRoute');
+			router.trigger('myRoute');
+
+			// test
+			spy_myRoute.callCount.should.be.equal(1);
+
+			// cleanup
+			router.destroy();
+
 		});
 
 		it('should throw error if not eventType passed', () => {
+
+			// setup
+			let router = Router.create({
+				scope: document.createElement('div'),
+			});
+
+			// test
+			(() => { router.off() }).should.throw();
+
+			// cleanup
+			router.destroy();
 
 		});
 
@@ -1347,6 +1375,28 @@ describe('Class Router', () => {
 	describe('destroy method', () => {
 
 		it('should remove all registered events', () => {
+
+			// setup
+			let spy_myRoute1 = sinon.spy(() => {});
+			let spy_myRoute2 = sinon.spy(() => {});
+			let router = Router.create({
+				scope: document.createElement('div'),
+			});
+
+			router.on('myRoute1 /some/path1.html', spy_myRoute1);
+			router.on('myRoute2 /some/path2.html', spy_myRoute2);
+			router.trigger('myRoute1');
+			router.trigger('myRoute2');
+
+			// test
+			router.destroy();
+			router.trigger('myRoute1');
+			router.trigger('myRoute2');
+			spy_myRoute1.callCount.should.be.equal(1);
+			spy_myRoute2.callCount.should.be.equal(1);
+
+			// cleanup
+			router.destroy();
 
 		});
 
