@@ -185,6 +185,11 @@ export class Router {
 			promise = this._addPromise(name);
 		}
 
+		// bind bindObject if exsits
+		if(this.bind){
+			handler = this.bind::handler;
+		}
+
 		this.scope.on(name, event => {
 
 			let params = event.detail || {};

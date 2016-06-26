@@ -18,12 +18,16 @@ Router.create = function(config = {}){
 	let routerConfig = {
 
 		routes: config.routes,
+		bind: config.bind || null,
+
 		pushState: ::history.pushState,
 		replaceState: ::history.replaceState,
 		forward: ::history.forward,
 		back: ::history.back,
 
-		scope: Eventhandler.create({ element: config.scope || document && body || null }),
+		scope: Eventhandler.create({
+			element: config.scope || document && body || null
+		}),
 
 		event: {
 			action: config.event_action || 'click a',
