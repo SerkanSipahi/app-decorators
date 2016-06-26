@@ -860,13 +860,18 @@ describe('Class Router', () => {
 
 		it('should go by passed static routename', () => {
 
+			//reset location.href
+			history.pushState(null, null, '/');
+
 			let router = Router.create();
 			router.on('myRoute1 /some/static/path.html', () => {});
 			sinon.spy(router, "pushState");
 
 			// test 1
 			router.go('myRoute1');
-			router.pushState.callCount.should.be.equal(1);
+
+			let url = router.createURL(location.href);
+			url.fragment.should.equal('/some/static/path.html');
 
 			// test 2 - ingores params
 			router.go('myRoute1', { a:1, b:2 });
@@ -879,6 +884,9 @@ describe('Class Router', () => {
 
 		it('should go by passed dynmic routename and params ', () => {
 
+			//reset location.href
+			history.pushState(null, null, '/');
+
 			let router = Router.create();
 			router.on('myRoute1 /{{static}}/path.html?id={{id}}', () => {});
 			sinon.spy(router, "pushState");
@@ -886,6 +894,9 @@ describe('Class Router', () => {
 			// test 1
 			router.go('myRoute1', { static: 'foo', id:44 });
 			router.pushState.callCount.should.be.equal(1);
+
+			let url = router.createURL(location.href);
+			url.fragment.should.equal('/foo/path.html?id=44');
 
 			router.pushState.restore();
 			router.destroy();
