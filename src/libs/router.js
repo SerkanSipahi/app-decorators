@@ -564,7 +564,7 @@ export class Router {
 	 * @param  {object} matchedObject
 	 * @return {object}
 	 */
-	_normalizeMatchedXRegex(matchedRegex){
+	_normalizeMatchedXRegex(matchedRegex = {}){
 
 		let params = {};
 		for(let attribute in matchedRegex){
@@ -596,9 +596,20 @@ export class Router {
 	 */
 	_addRouteCache(fragment, cacheObject){
 
-		cacheObject = JSON.parse(JSON.stringify(cacheObject));
+		cacheObject = this._immutable(cacheObject);
 		cacheObject.cache = true;
 		this._routes.cache[fragment] = cacheObject;
+
+	}
+
+	/**
+	 * _immutable
+	 * @param  {object} object
+	 * @return {object}
+	 */
+	_immutable(object) {
+
+		return JSON.parse(JSON.stringify(object));
 
 	}
 
@@ -698,6 +709,47 @@ export class Router {
 	}
 
 	/**
+	 * _constructURL
+	 * @param  {string} route
+	 * @params {object} params
+	 * @return {string}
+	 */
+	_constructURL(route = '', params){
+
+		if(!route){
+			throw 'Please pass at least route';
+		}
+
+		let routeObject = this.which(route);
+		if(routeObject === null) {
+			throw `route: ${route} does not exists!`;
+		}
+
+		let url = null;
+		if(routeObject && routeObject.type === 'static'){
+			url = this._constructStaticURL(routeObject.route);
+		}
+		if(routeObject && routeObject.type === 'dynamic'){
+			url = this._constructDynamicURL(routeObject.route, params);
+		}
+
+		return url;
+
+	}
+
+	/**
+	 * _constructStaticURL
+	 * @param  {object} routeObject
+	 * @return {string} staticUrl
+	 */
+	_constructStaticURL(route = ''){
+
+		let staticURL = route;
+		return staticURL;
+
+	}
+
+	/**
 	 * _constructDynamicURL
 	 * @param  {object} routeObject
 	 * @param  {object} params
@@ -706,7 +758,6 @@ export class Router {
 	_constructDynamicURL(route = '', params = {}){
 
 		let curlyBracketsRegex = /\{\{|\}\}/;
-		let constructredURL = null;
 		let url = route;
 
 		for(let param of Object.keys(params)){
@@ -716,7 +767,7 @@ export class Router {
 		if(curlyBracketsRegex.test(url)){
 			throw `
 				Someting gone wrong. Cant resolve passed params: "${JSON.stringify(params)}".
-				Generated url: "${url}";
+				Generated url: "${url}" by method _constructDynamicURL;
 			`;
 		}
 
@@ -727,7 +778,7 @@ export class Router {
 	/**
 	 * whoami
 	 * @param  {String} path
-	 * @return {object}
+	 * @return {object|null}
 	 */
 	whoami(url){
 
@@ -763,24 +814,7 @@ export class Router {
 	 */
 	constructURL(route, params = {}){
 
-		if(!route){
-			throw 'Please pass at least route';
-		}
-
-		let url = null;
-		let routeObject = this.which(route);
-		if(routeObject && routeObject.type === 'static'){
-			url = routeObject.route;
-		}
-
-		if(routeObject && routeObject.type === 'dynamic'){
-			url = this._constructDynamicURL(routeObject, params);
-		}
-
-		if(!url) {
-			throw `Something gone wrong with "${route}, ${JSON.stringify(params)}"`;
-		}
-
+		let url = this._constructURL(route, params);
 		return url;
 
 	}
@@ -791,25 +825,26 @@ export class Router {
 	 */
 	go(route, params = {}){
 
-		if(!route){
-			throw 'Please pass at least route';
-		}
-
-		let url = null;
-		let routeObject = this.which(route);
-		if(routeObject && routeObject.type === 'static'){
-			url = routeObject.route;
-		}
-
-		if(routeObject && routeObject.type === 'dynamic'){
-			url = this._constructDynamicURL(routeObject, params);
-		}
-
-		if(!url) {
-			throw `Something gone wrong with "${route}, ${JSON.stringify(params)}"`;
-		}
-
+		let url = this._constructURL(route, params);
 		this.pushState(null, null, this.encodeURI(url));
+
+	}
+
+	/**
+	 * redirect
+	 * @param {string} url
+	 * @param {boolean} soft
+	 * @return {undefined}
+	 */
+	redirect(url, soft = true){
+
+		let encodedURI = this.encodeURI(url);
+
+		if(soft){
+			this.pushState(null, null, this.encodeURI(encodedURI));
+		} else {
+			this.location.href = encodedURI;
+		}
 
 	}
 

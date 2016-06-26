@@ -508,6 +508,20 @@ describe('Class Router', () => {
 
 	});
 
+	describe('_immutable', () => {
+
+		it('should make passed object immutable', () => {
+
+			// setup
+			let myObject = { a: 1 };
+			let router = Router.create();
+
+			router._immutable(myObject).should.not.equal(myObject);
+
+		});
+
+	});
+
 	describe('createURL method', () => {
 
 		it('should return url object with additional "fragment" property', () => {
@@ -679,25 +693,20 @@ describe('Class Router', () => {
 
 	});
 
-	describe('_constructDynamicURL', () => {
+	describe('_constructDynamicURL method', () => {
 
 		it('should construct url by passt dynamic routename', () => {
 
 			// setup
-			let routeObject = null;
 			let router = Router.create();
-			router._addRoute('/person/{{name}}/{{surename}}/id/{{id}}', 'myRoute1');
-			router._addRoute('?page={{page}}&id={{id}}', 'myRoute2');
 
 			// test 1
-			routeObject = router.which('myRoute1');
-			router._constructDynamicURL(routeObject.route,
+			router._constructDynamicURL('/person/{{name}}/{{surename}}/id/{{id}}',
 				{ name: 'serkan', surename: 'sipahi', id: 333 }
 			).should.equal('/person/serkan/sipahi/id/333');
 
 			// test 2
-			routeObject = router.which('myRoute2');
-			router._constructDynamicURL(routeObject.route,
+			router._constructDynamicURL('?page={{page}}&id={{id}}',
 				{ page: 'details', id: 999 }
 			).should.equal('?page=details&id=999');
 
@@ -710,14 +719,99 @@ describe('Class Router', () => {
 
 			// setup
 			let router = Router.create();
-			router._addRoute('/person/{{name}}/{{surename}}/id/{{id}}', 'myRoute1');
-			let routeObject = router.which('myRoute1');
 
 			// should throw if not params passed
-			(() => { router._constructDynamicURL(routeObject.route) }).should.throw();
+			(() => { router._constructDynamicURL('/person/{{name}}') }).should.throw();
 
 			// should throw if param is missing
-			(() => { router._constructDynamicURL(routeObject.route, { id: 1 }) }).should.throw();
+			(() => { router._constructDynamicURL('/person/{{name}}', { id: 1 }) }).should.throw();
+
+			// cleanup
+			router.destroy();
+
+		});
+
+	});
+
+	describe('_constructStaticURL method', () => {
+
+		it('should return static url', () => {
+
+			// setup
+			let router = Router.create();
+
+			// test 1
+			router._constructStaticURL('/static/path/').should.equal('/static/path/');
+
+			// cleanup
+			router.destroy();
+
+		});
+
+	});
+
+	describe('_constructURL method', () => {
+
+		it('should call _constructStaticURL if static route passed', () => {
+
+			// setup
+			sinon.spy(Router.prototype, '_constructStaticURL');
+			sinon.spy(Router.prototype, '_constructDynamicURL');
+			let router = Router.create();
+			router.on('myRoute /static/path',() => {});
+
+			// test 1
+			router._constructURL('myRoute');
+			router._constructStaticURL.callCount.should.equal(1);
+			router._constructDynamicURL.callCount.should.equal(0);
+
+			// cleanup
+			router.destroy();
+			router._constructStaticURL.restore();
+			router._constructDynamicURL.restore();
+
+		});
+
+		it('should call _constructDynamicURL if dynamic route passed', () => {
+
+			// setup
+			sinon.spy(Router.prototype, '_constructStaticURL');
+			sinon.spy(Router.prototype, '_constructDynamicURL');
+			let router = Router.create();
+			router.on('myRoute /{{dynamic}}/{{path}}',() => {});
+
+			// test 1
+			router._constructURL('myRoute', { dynamic: 'hello', path: 'world' });
+			router._constructStaticURL.callCount.should.equal(0);
+			router._constructDynamicURL.callCount.should.equal(1);
+
+			// cleanup
+			router.destroy();
+			router._constructStaticURL.restore();
+			router._constructDynamicURL.restore();
+
+		});
+
+		it('should throw error if no route passed', () => {
+
+			// setup
+			let router = Router.create();
+
+			// test 1
+			(() => { router._constructURL() }).should.throw();
+
+			// cleanup
+			router.destroy();
+
+		});
+
+		it('should throw error if route not exists', () => {
+
+			// setup
+			let router = Router.create();
+
+			// test 1
+			(() => { router._constructURL('notExistsRoute') }).should.throw();
 
 			// cleanup
 			router.destroy();
@@ -740,13 +834,6 @@ describe('Class Router', () => {
 			// test 2 - ingores params
 			router.constructURL('myRoute1', { a:1, b:2 }).should.be.equal('/some/static/path.html');
 
-			// test 3 - throw
-			(() => { router.constructURL() }).should.throw();
-
-			// test 4 - throw
-			(() => { router.constructURL('myRoute99') }).should.throw();
-			(() => { router.constructURL('myRoute99', {c:3, d:4}) }).should.throw();
-
 			// cleanup
 			router.destroy();
 
@@ -754,6 +841,16 @@ describe('Class Router', () => {
 
 		it('should construct url by passed dynmic routename and params ', () => {
 
+			// setup
+			let router = Router.create();
+			router.on('myRoute1 /{{static}}/path.html?id={{id}}', () => {});
+
+			// test 1
+			router.constructURL('myRoute1', { static: 'foo', id:44 }).should.be.equal('/foo/path.html?id=44');
+			router.constructURL('myRoute1', { static: 'bar', id:66 }).should.be.equal('/bar/path.html?id=66');
+
+			// cleanup
+			router.destroy();
 
 		});
 
@@ -775,19 +872,31 @@ describe('Class Router', () => {
 			router.go('myRoute1', { a:1, b:2 });
 			router.pushState.callCount.should.be.equal(2);
 
-			// test 3 - throw
-			(() => { router.go() }).should.throw();
-
-			// test 4 - throw
-			(() => { router.go('myRoute99') }).should.throw();
-			(() => { router.go('myRoute99', {c:3, d:4}) }).should.throw();
-
 			router.pushState.restore();
 			router.destroy();
 
 		});
 
 		it('should go by passed dynmic routename and params ', () => {
+
+			let router = Router.create();
+			router.on('myRoute1 /{{static}}/path.html?id={{id}}', () => {});
+			sinon.spy(router, "pushState");
+
+			// test 1
+			router.go('myRoute1', { static: 'foo', id:44 });
+			router.pushState.callCount.should.be.equal(1);
+
+			router.pushState.restore();
+			router.destroy();
+
+		});
+
+	});
+
+	describe('redirect method', () => {
+
+		it('description', () => {
 
 		});
 
@@ -1195,6 +1304,20 @@ describe('Class Router', () => {
 			router.destroy();
 
 		});
+
+	});
+
+	describe.skip('separate between normal url path and queryString', () => {
+
+		// addURL1 = ?a=1&b=2              is allowed
+		// addURL2 = /a/b/c/d.html         is allowed
+		// addURL  = /a/b/c/d.html?a=1&b=2 not allowed
+		//
+		// If called /a/b/c/d.html?a=1&b=2 it should call handler
+		// for addURL1 and addURL2, but if next if changing onyl queryParam
+		// they should call only addURL2 but not addURL1
+
+
 
 	});
 
