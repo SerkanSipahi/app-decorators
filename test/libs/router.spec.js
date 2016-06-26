@@ -35,6 +35,7 @@ describe('Class Router', () => {
 			// test
 			router._convertRouteToXRegexExp('{{year}}').should.be.equal('(?<year>[\\d\\w?()|{}_.,-]+)');
 			router._convertRouteToXRegexExp('{{hour}}:{{min}}').should.be.equal('(?<hour>[\\d\\w?()|{}_.,-]+):(?<min>[\\d\\w?()|{}_.,-]+)');
+			// test - convert special regex characters
 			router._convertRouteToXRegexExp('/|+*?.()').should.be.equal('\\/\\|\\+\\*\\?\\.\\(\\)');
 
 			//cleanup
