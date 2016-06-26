@@ -1354,11 +1354,42 @@ describe('Class Router', () => {
 
 	describe('create() function', () => {
 
-		it('should register many routes at once', () => {
+		it('should bind scope to handlers', () => {
+
+			class BindObject {
+				x(){ this.y() }
+				y(){}
+			}
+			// spies
+			let spy_x = sinon.spy(BindObject.prototype, 'x');
+			let spy_y = sinon.spy(BindObject.prototype, 'y');
+			let spy_myRoute = sinon.spy(function() { this.x() });
+
+			let bindObject = new BindObject();
+
+			let router = Router.create({
+				scope: document.createElement('div'),
+				bind: bindObject,
+			});
+
+			router.on('myRoute /some/path.html', spy_myRoute);
+			router.trigger('myRoute');
+
+			// test
+			spy_myRoute.callCount.should.be.equal(1);
+			spy_x.callCount.should.be.equal(1);
+			spy_y.callCount.should.be.equal(1);
+
+			spy_myRoute.thisValues[0].should.be.equal(bindObject);
+
+			// cleanup
+			router.destroy();
+			spy_x.restore();
+			spy_y.restore();
 
 		});
 
-		it('should bind scope to handlers', () => {
+		it('should register many routes at once', () => {
 
 		});
 
