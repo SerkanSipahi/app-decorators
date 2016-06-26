@@ -17,7 +17,7 @@ Router.create = function(config = {}){
 
 	let routerConfig = {
 
-		routes: config.routes,
+		routes: config.routes || null,
 		bind: config.bind || null,
 
 		pushState: ::history.pushState,
