@@ -26,6 +26,12 @@ export class Router {
 	replaceState = null;
 
 	/**
+	 * routes
+	 * @type {object}
+	 */
+	routes = {};
+
+	/**
 	 * forceUrlchange
 	 * @type {Boolean}
 	 */
@@ -322,6 +328,7 @@ export class Router {
 	_init(){
 
 		this._bindInternalCoreEvents();
+		this._initRoutes();
 
 	}
 
@@ -358,6 +365,29 @@ export class Router {
 
 			let { name } = allRoutes[route];
 			this.scope.off(name);
+
+		}
+
+	}
+
+	/**
+	 * _initRoutes
+	 * @param  {object} routes
+	 * @return {undefined}
+	 */
+	_initRoutes(){
+
+		if(!this.routes){
+			return;
+		}
+
+		for(let route of Object.keys(this.routes)){
+
+			let handler = this.routes[route];
+			if(this.bind){
+				handler = this.bind::handler;
+			}
+			this.on(route, handler);
 
 		}
 
