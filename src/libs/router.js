@@ -141,6 +141,10 @@ export class Router {
 	*/
 	off(event) {
 
+		if(!event) {
+			throw `No event passed`;
+		}
+
 		this.scope.off(event);
 
 	}
