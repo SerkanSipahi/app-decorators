@@ -221,6 +221,13 @@ export class Router {
 	 */
 	_addRoute(route, name){
 
+		if(!this._isValidRoute(route)){
+			throw `
+				Passed "${route}" is not valid. Please
+				pass only pathname, search or hash.
+			`;
+		}
+
 		if(this._routes.dynamic[route] || this._routes.static[route]) {
 			throw `route: "${route} already exists!"`;
 		}
@@ -234,6 +241,15 @@ export class Router {
 
 	}
 
+	/**
+	 * _createRouteObject
+	 * @param name
+	 * @param route
+	 * @param regex
+	 * @param type
+	 * @returns {{type: *, name: *, route: *, regex: *, params: null, fragment: null, cache: boolean}}
+     * @private
+     */
 	_createRouteObject(name, route, regex = null, type){
 
 		return {
@@ -376,7 +392,6 @@ export class Router {
 
 	/**
 	 * _initRoutes
-	 * @param  {object} routes
 	 * @return {undefined}
 	 */
 	_initRoutes(){
@@ -416,8 +431,7 @@ export class Router {
 
 	/**
 	 * _onActionController
-	 * @param  {Element} target
-	 * @param  {String} type
+	 * @param  {Event} event
 	 * @return {Undefined}
 	 */
 	_applyActionEvent( event ){
@@ -426,10 +440,15 @@ export class Router {
 		let urlObject = this.createURL(href);
 		let { fragment } = urlObject;
 
-		if(this._urlFragmentChanged(fragment)) {
+		let { changed, changepart } = this._diffFragment(fragment, this._lastFragment);
+		urlObject.changepart = changepart;
+
+		if(changed) {
+
 			if(this._isDefinedEventAction(event.type)){
 				this.pushState(null, null, this.encodeURI(fragment));
 			}
+
 			this.scope.trigger(this.event.urlchange, urlObject);
 		}
 		this._setURLFragment(fragment);
@@ -475,13 +494,24 @@ export class Router {
 	}
 
 	/**
-	 * _urlFragmentChanged
-	 * @return {boolean}
+	 * _diffFragment
+	 * @return {object} diff
 	 */
-	_urlFragmentChanged(currentFragment){
+	_diffFragment(currentFragment, lastFragment){
 
-		let urlFragmentChanged = ( currentFragment !== this._lastFragment );
-		return urlFragmentChanged;
+		let diff = {
+			changed: false,
+			changepart: []
+		};
+
+		if(lastFragment === null) {
+			diff.changed = true;
+			return diff;
+		}
+
+		diff.changed = currentFragment !== lastFragment;
+
+		return diff;
 
 	}
 
@@ -520,6 +550,7 @@ export class Router {
 	/**
 	 * _matchURL description
 	 * @param  {string} fragment
+	 * @param  {boolean} cache
 	 * @return {object}
 	 */
 	_matchURL(fragment, cache = true){
@@ -707,6 +738,37 @@ export class Router {
 
 		let isDynamicURL = /{{[a-z]+}}/.test(url);
 		return isDynamicURL;
+
+	}
+
+	/**
+	 * _isValidRoute
+	 * @param  {string} route
+	 * @return {Boolean} validRoute
+	 */
+	_isValidRoute(route = ''){
+
+		let { pathname, search, hash } = this.createURL(`http://x.x${route}`);
+		let validRoute = null;
+
+		// only pathname
+		if(pathname[1] && !search && !hash){
+			validRoute = true;
+		}
+		// only search
+		else if(!pathname[1] && search && !hash){
+			validRoute = true;
+		}
+		// only hash
+		else if(!pathname[1] && !search && hash){
+			validRoute = true;
+		}
+		// not valid route
+		else {
+			validRoute = false;
+		}
+
+		return validRoute;
 
 	}
 

@@ -59,7 +59,7 @@ describe('Class Router', () => {
 			router._addRoute('/this/is/a/route/2', 'name2');
 			router._addRoute('/this/is/{{a}}/route/4', 'name4');
 			router._addRoute('/this/is/{{b}}/{{c}}/route/5', 'name5');
-			router._addRoute('/page?id={{id}}&name={{name}}', 'name6');
+			router._addRoute('?id={{id}}&name={{name}}', 'name6');
 		});
 
 		afterEach(() => router.destroy() );
@@ -110,11 +110,11 @@ describe('Class Router', () => {
 					fragment: null,
 					cache: false,
 				},
-				'/page?id={{id}}&name={{name}}': {
+				'?id={{id}}&name={{name}}': {
 					name: 'name6',
 					type: 'dynamic',
-					route: '/page?id={{id}}&name={{name}}',
-					regex: '\\/page\\?id=(?<id>[\\d\\w?()|{}_.,-]+)&name=(?<name>[\\d\\w?()|{}_.,-]+)',
+					route: '?id={{id}}&name={{name}}',
+					regex: '\\?id=(?<id>[\\d\\w?()|{}_.,-]+)&name=(?<name>[\\d\\w?()|{}_.,-]+)',
 					params: null,
 					fragment: null,
 					cache: false,
@@ -126,6 +126,13 @@ describe('Class Router', () => {
 
 			(() => { router._addRoute('/this/is/a/route/2', 'name2'); }).should.throw();
 			(() => { router._addRoute('/this/is/{{a}}/route/4', 'name4'); }).should.throw();
+		});
+
+		it('should throw error if not valid route passed', () => {
+
+			(() => { router._addRoute('/a/b?id=5', 'name1'); }).should.throw();
+			(() => { router._addRoute('/a/b?id=5#foo', 'name2'); }).should.throw();
+			(() => { router._addRoute('?id=5#foo', 'name3'); }).should.throw();
 		});
 
 	});
@@ -457,20 +464,37 @@ describe('Class Router', () => {
 		});
 	});
 
-	describe('_urlFragmentChanged method', () => {
+	describe('_setURLFragment method', () => {
 
 		it('should check if fragment is changed in combination with _setURLFragment', () => {
 
 			// setup
 			let router = Router.create();
+			let result = null;
 
 			// test 1
-			router._setURLFragment('/');
-			router._urlFragmentChanged('/some/url/fragment').should.be.true();
+			router._diffFragment('/', '/a/b/c').should.containEql({
+				changed: true,
+				//changepart: ['path']
+			});
 
 			// test 2
-			router._setURLFragment('/some/url/fragment');
-			router._urlFragmentChanged('/some/url/fragment').should.be.false();
+			router._diffFragment('/a/c/c', '/a/c/c?a=b&c=d#foo').should.containEql({
+				changed: true,
+				//changepart: ['search', 'hash']
+			});
+
+			// test 3
+			router._diffFragment('/a/c/c?a=b&c=d#foo', '/a/c/c?a=b&c=d#foo').should.containEql({
+				changed: false,
+				//changepart: []
+			});
+
+			// test 4
+			router._diffFragment('/a/c/c', '/a/c/c?a=b&c=d#foo').should.containEql({
+				changed: true,
+				//changepart: ['path']
+			});
 
 			// cleanup
 			router.destroy();
@@ -838,11 +862,11 @@ describe('Class Router', () => {
 
 			// setup
 			let router = Router.create();
-			router.on('myRoute1 /{{static}}/path.html?id={{id}}', () => {});
+			router.on('myRoute1 /{{static}}/path/{{id}}.html', () => {});
 
 			// test 1
-			router.constructURL('myRoute1', { static: 'foo', id:44 }).should.be.equal('/foo/path.html?id=44');
-			router.constructURL('myRoute1', { static: 'bar', id:66 }).should.be.equal('/bar/path.html?id=66');
+			router.constructURL('myRoute1', { static: 'foo', id:44 }).should.be.equal('/foo/path/44.html');
+			router.constructURL('myRoute1', { static: 'bar', id:66 }).should.be.equal('/bar/path/66.html');
 
 			// cleanup
 			router.destroy();
@@ -883,7 +907,7 @@ describe('Class Router', () => {
 			history.pushState(null, null, '/');
 
 			let router = Router.create();
-			router.on('myRoute1 /{{static}}/path.html?id={{id}}', () => {});
+			router.on('myRoute1 /{{static}}/{{id}}.html', () => {});
 			sinon.spy(router, "pushState");
 
 			// test 1
@@ -891,7 +915,7 @@ describe('Class Router', () => {
 			router.pushState.callCount.should.be.equal(1);
 
 			let url = router.createURL(location.href);
-			url.fragment.should.equal('/foo/path.html?id=44');
+			url.fragment.should.equal('/foo/44.html');
 
 			router.pushState.restore();
 			router.destroy();
@@ -995,7 +1019,7 @@ describe('Class Router', () => {
 			});
 
 			// test
-			should(router.on('my route', (event) => {})).be.null();
+			should(router.on('myRoute', (event) => {})).be.null();
 
 			// cleanup
 			router.destroy();
@@ -1313,17 +1337,40 @@ describe('Class Router', () => {
 
 	});
 
-	describe.skip('separate between normal url path and queryString', () => {
+	describe('separate between normal url path and queryString', () => {
 
-		// addURL1 = ?a=1&b=2              is allowed
-		// addURL2 = /a/b/c/d.html         is allowed
-		// addURL  = /a/b/c/d.html?a=1&b=2 not allowed
-		//
-		// If called /a/b/c/d.html?a=1&b=2 it should call handler
-		// for addURL1 and addURL2, but if next if changing onyl queryParam
-		// they should call only addURL2 but not addURL1
+		describe('_isValidRoute', () => {
 
+			it('should return true if route starts with "/,? or #"', () => {
 
+				// setup
+				let router = Router.create();
+
+				// test
+				router._isValidRoute('/a/b.html').should.be.true();
+				router._isValidRoute('?a=1&b=2').should.be.true();
+				router._isValidRoute('#helloworld').should.be.true();
+
+				// cleanup
+				router.destroy();
+
+			});
+
+			it('should return false if route starts with "/,?,#" but also contain "/,?,#"', () => {
+
+				// setup
+				let router = Router.create();
+
+				// test
+				router._isValidRoute('/a/b.html?a=1&b=2').should.be.false();
+				router._isValidRoute('?a/b.html#helloworld').should.be.false();
+
+				// cleanup
+				router.destroy();
+
+			});
+
+		});
 
 	});
 
