@@ -1,6 +1,5 @@
 SystemJS.config({
-  transpiler: false,
-  packages: {}
+  transpiler: false
 });
 
 SystemJS.config({
