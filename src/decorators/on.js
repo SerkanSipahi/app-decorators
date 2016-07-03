@@ -34,11 +34,13 @@ export default function on(eventDomain, listenerElement) {
 		on.helper.registerCallback('created', target, ( domNode ) => {
 
 			// register local (domNode) events
-			let eventHandler = on.helper.createLocalEventHandler(target.$appDecorators.on.events, domNode);
+			let { local } = target.$appDecorators.on.events;
+			let eventHandler = on.helper.createLocalEventHandler(local, domNode);
 			domNode = namespace.create(domNode, '$.eventHandler.local', eventHandler);
 
 			// register custom events
-			domNode = on.helper.createCustomEventHandler(target.$appDecorators.on.events, domNode, (eventHandler, scope, event) => {
+			let events = target.$appDecorators.on.events;
+			domNode = on.helper.createCustomEventHandler(events, domNode, (eventHandler, scope, event) => {
 				namespace.create(domNode, `$.eventHandler.${scope}_${event}`, eventHandler);
 			});
 
@@ -141,9 +143,8 @@ on.helper = {
 	 * @param  {Element} element
 	 * @return {object} eventHandler
 	 */
-	createLocalEventHandler: (events, domNode) => {
+	createLocalEventHandler: (localScopeEvents, domNode) => {
 
-		let localScopeEvents = events.local;
 		let eventHandler = Eventhandler.create({
 			events: localScopeEvents,
 			element: domNode,
