@@ -1261,6 +1261,52 @@ describe('Class Router', () => {
 
 	describe('on method', () => {
 
+		it('should match registered route on manually start() calling method', () => {
+
+			let spy_home_handler = sinon.spy(() => {});
+
+			// setup
+			let router = Router.create({
+				scope: document.createElement('div'),
+			});
+
+			router.pushState(null, null, '/');
+			router.on('myRoute /', spy_home_handler);
+			router.start();
+
+			// test
+			spy_home_handler.callCount.should.equal(1);
+
+			// cleanup
+			router.destroy();
+
+		});
+
+		it('should not match registered route on manually start() calling method', () => {
+
+			let spy_home_handler = sinon.spy(() => {});
+
+			// setup
+			let router = Router.create({
+				scope: document.createElement('div'),
+			});
+
+			router.pushState(null, null, '/');
+			router.on('myRoute /a/b/c', spy_home_handler);
+			router.start();
+
+			// test
+			spy_home_handler.callCount.should.equal(0);
+
+			// cleanup
+			router.destroy();
+
+		});
+
+	});
+
+	describe('on method', () => {
+
 		it('should match registered static and dynamic url route', (done) => {
 
 			/**
