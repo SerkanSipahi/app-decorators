@@ -751,19 +751,23 @@ export class Router {
 		let { pathname, search, hash } = this.createURL(`http://x.x${route}`);
 		let validRoute = null;
 
-		// only pathname
-		if(pathname[1] && !search && !hash){
+		// only "/"
+		if(!pathname[1] && !search && !hash){
 			validRoute = true;
 		}
-		// only search
+		// only pathname e.g. /a/b.html
+		else if(pathname[1] && !search && !hash){
+			validRoute = true;
+		}
+		// only search e.g. ?a=1&b=2
 		else if(!pathname[1] && search && !hash){
 			validRoute = true;
 		}
-		// only hash
+		// only hash e.g. #myhash
 		else if(!pathname[1] && !search && hash){
 			validRoute = true;
 		}
-		// not valid route
+		// not valid route e.g. /a/b.html?a=1&b2
 		else {
 			validRoute = false;
 		}
