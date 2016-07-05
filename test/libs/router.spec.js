@@ -648,11 +648,12 @@ describe('Class Router', () => {
 
 			// setup
 			let router = Router.create();
-			router.on('myRoute1 /some/path.html', () => {});
-			router.on('myRoute2 /some/{{integer}}/{{float}}/path.html', () => {});
+			router.on('myRoute1 /', () => {});
+			router.on('myRoute2 /some/path.html', () => {});
+			router.on('myRoute3 /some/{{integer}}/{{float}}/path.html', () => {});
 
 			// test 1 - positiv
-			router.whoami('/some/path.html').should.be.containEql({
+			router.whoami('/').should.be.containEql({
 				name: 'myRoute1',
 				type: 'static',
 				regex: null,
@@ -660,8 +661,16 @@ describe('Class Router', () => {
 			});
 
 			// test 2 - positiv
-			router.whoami('/some/123/4.34/path.html').should.be.containEql({
+			router.whoami('/some/path.html').should.be.containEql({
 				name: 'myRoute2',
+				type: 'static',
+				regex: null,
+				cache: false,
+			});
+
+			// test 3 - positiv
+			router.whoami('/some/123/4.34/path.html').should.be.containEql({
+				name: 'myRoute3',
 				type: 'dynamic',
 				fragment: '/some/123/4.34/path.html',
 				route: '/some/{{integer}}/{{float}}/path.html',
