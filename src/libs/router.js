@@ -441,7 +441,7 @@ export class Router {
 		let { fragment } = urlObject;
 
 		let { changed, changepart } = this._diffFragment(fragment, this._lastFragment);
-		urlObject.changepart = changepart;
+		Object.assign(urlObject, { changepart });
 
 		if(changed) {
 
