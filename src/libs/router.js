@@ -961,6 +961,15 @@ export class Router {
 
 		this._runRoute = true;
 
+		let href = this.helper.location.href;
+		let { fragment } = this.createURL(href);
+		let routeObject = this.whoami(fragment);
+
+		if(routeObject) {
+			this.trigger(routeObject.name);
+		}
+
+
 	}
 
 	/**
