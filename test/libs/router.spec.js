@@ -466,7 +466,7 @@ describe('Class Router', () => {
 
 	describe('_convertFragmentToParts method', () => {
 
-		it.only('should convert fragment into parts', () => {
+		it('should convert fragment into parts', () => {
 
 			// setup
 			let router = Router.create();
