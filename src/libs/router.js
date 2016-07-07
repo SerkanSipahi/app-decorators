@@ -523,12 +523,12 @@ export class Router {
      */
 	_convertFragmentToParts(fragment = '') {
 
-		let urlObject = this.createURL(`http://x.com${fragment}`);
+		let urlObject = this.createURL(`http://x.x${fragment}`);
 
 		return {
-			pathname: urlObject.pathname || null,
-			search: urlObject.search || null,
-			hash: urlObject.hash || null
+			pathname: urlObject.pathname,
+			search: urlObject.search,
+			hash: urlObject.hash
 		};
 	}
 

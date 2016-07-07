@@ -473,12 +473,12 @@ describe('Class Router', () => {
 
 			// test 1
 			router._convertFragmentToParts('/a/b/c').should.containEql({
-				pathname: '/a/b/c', search: null, hash: null
+				pathname: '/a/b/c', search: '', hash: ''
 			});
 
 			// test 2
 			router._convertFragmentToParts('/a/b/c?a=1&b=2').should.containEql({
-				pathname: '/a/b/c', search: '?a=1&b=2', hash: null
+				pathname: '/a/b/c', search: '?a=1&b=2', hash: ''
 			});
 
 			// test 3
@@ -488,7 +488,7 @@ describe('Class Router', () => {
 
 			// test 4
 			router._convertFragmentToParts('/a/b/c?a=1&b=2').should.containEql({
-				pathname: '/a/b/c', search: '?a=1&b=2', hash: null
+				pathname: '/a/b/c', search: '?a=1&b=2', hash: ''
 			});
 
 			// test 5
@@ -503,17 +503,17 @@ describe('Class Router', () => {
 
 			// test 7
 			router._convertFragmentToParts('#hello-world').should.containEql({
-				pathname: '/', search: null, hash: '#hello-world'
+				pathname: '/', search: '', hash: '#hello-world'
 			});
 
 			// test 8
 			router._convertFragmentToParts('/#hello-world').should.containEql({
-				pathname: '/', search: null, hash: '#hello-world'
+				pathname: '/', search: '', hash: '#hello-world'
 			});
 
 			// test 9
 			router._convertFragmentToParts('/').should.containEql({
-				pathname: '/', search: null, hash: null
+				pathname: '/', search: '', hash: ''
 			});
 
 		});
