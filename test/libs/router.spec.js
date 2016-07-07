@@ -464,13 +464,68 @@ describe('Class Router', () => {
 		});
 	});
 
-	describe('_setURLFragment method', () => {
+	describe('_convertFragmentToParts method', () => {
+
+		it.only('should convert fragment into parts', () => {
+
+			// setup
+			let router = Router.create();
+
+			// test 1
+			router._convertFragmentToParts('/a/b/c').should.containEql({
+				pathname: '/a/b/c', search: null, hash: null
+			});
+
+			// test 2
+			router._convertFragmentToParts('/a/b/c?a=1&b=2').should.containEql({
+				pathname: '/a/b/c', search: '?a=1&b=2', hash: null
+			});
+
+			// test 3
+			router._convertFragmentToParts('/a/b/c?a=1&b=2#hello-world').should.containEql({
+				pathname: '/a/b/c', search: '?a=1&b=2', hash: '#hello-world'
+			});
+
+			// test 4
+			router._convertFragmentToParts('/a/b/c?a=1&b=2').should.containEql({
+				pathname: '/a/b/c', search: '?a=1&b=2', hash: null
+			});
+
+			// test 5
+			router._convertFragmentToParts('/?a=1&b=2#hello-world').should.containEql({
+				pathname: '/', search: '?a=1&b=2', hash: '#hello-world'
+			});
+
+			// test 6
+			router._convertFragmentToParts('?a=1&b=2#hello-world').should.containEql({
+				pathname: '/', search: '?a=1&b=2', hash: '#hello-world'
+			});
+
+			// test 7
+			router._convertFragmentToParts('#hello-world').should.containEql({
+				pathname: '/', search: null, hash: '#hello-world'
+			});
+
+			// test 8
+			router._convertFragmentToParts('/#hello-world').should.containEql({
+				pathname: '/', search: null, hash: '#hello-world'
+			});
+
+			// test 9
+			router._convertFragmentToParts('/').should.containEql({
+				pathname: '/', search: null, hash: null
+			});
+
+		});
+
+	});
+
+	describe('_diffFragment method', () => {
 
 		it('should check if fragment is changed in combination with _setURLFragment', () => {
 
 			// setup
 			let router = Router.create();
-			let result = null;
 
 			// test 1
 			router._diffFragment('/', '/a/b/c').should.containEql({
