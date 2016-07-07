@@ -516,6 +516,23 @@ export class Router {
 	}
 
 	/**
+	 * _convertFragmentToParts
+	 * @param fragment
+	 * @returns {fragmentObject}
+     * @private
+     */
+	_convertFragmentToParts(fragment = '') {
+
+		let urlObject = this.createURL(`http://x.com${fragment}`);
+
+		return {
+			pathname: urlObject.pathname || null,
+			search: urlObject.search || null,
+			hash: urlObject.hash || null
+		};
+	}
+
+	/**
 	 * _setFragment
 	 * @param {string} fragment
 	 * @param {undefined}
