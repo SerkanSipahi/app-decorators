@@ -570,25 +570,25 @@ describe('Class Router', () => {
 			// test 1
 			router._diffFragment('/', '/a/b/c').should.containEql({
 				changed: true,
-				//changepart: ['path']
+				changepart: ['pathname']
 			});
 
 			// test 2
 			router._diffFragment('/a/c/c', '/a/c/c?a=b&c=d#foo').should.containEql({
 				changed: true,
-				//changepart: ['search', 'hash']
+				changepart: ['search', 'hash']
 			});
 
 			// test 3
 			router._diffFragment('/a/c/c?a=b&c=d#foo', '/a/c/c?a=b&c=d#foo').should.containEql({
 				changed: false,
-				//changepart: []
+				changepart: []
 			});
 
 			// test 4
-			router._diffFragment('/a/c/c', '/a/c/c?a=b&c=d#foo').should.containEql({
+			router._diffFragment('/a/c/c?a=b&c=d#foo', '/a/c/e?a=b&c=d#foo').should.containEql({
 				changed: true,
-				//changepart: ['path']
+				changepart: ['pathname']
 			});
 
 			// cleanup
