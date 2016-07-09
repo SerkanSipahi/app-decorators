@@ -232,11 +232,13 @@ export class Router {
 			throw `route: "${route} already exists!"`;
 		}
 
+		let routeType = this._getRouteType(route);
+
 		if(this._isDynamicURL(route)) {
 			let regex = this._convertRouteToXRegexExp(route);
-			this._routes.dynamic[route] = this._createRouteObject(name, route, regex, 'dynamic');
+			this._routes.dynamic[route] = this._createRouteObject(name, route, regex, 'dynamic', routeType);
 		} else {
-			this._routes.static[route]  = this._createRouteObject(name, route, null,  'static');
+			this._routes.static[route]  = this._createRouteObject(name, route, null,  'static', routeType);
 		}
 
 	}
@@ -250,13 +252,14 @@ export class Router {
 	 * @returns {{type: *, name: *, route: *, regex: *, params: null, fragment: null, cache: boolean}}
      * @private
      */
-	_createRouteObject(name, route, regex = null, type){
+	_createRouteObject(name, route, regex = null, type, routeType){
 
 		return {
-			type: type,
-			name: name,
-			route: route,
-			regex: regex,
+			type,
+			name,
+			route,
+			routeType,
+			regex,
 			params: null,
 			fragment: null,
 			cache: false,
@@ -780,33 +783,46 @@ export class Router {
 
 	/**
 	 * _isValidRoute
+	 * @param route
+	 * @returns {boolean}
+     * @private
+     */
+	_isValidRoute(route) {
+
+		let result = !!this._getRouteType(route);
+		return result;
+
+	}
+
+	/**
+	 * _getRouteType
 	 * @param  {string} route
 	 * @return {Boolean} validRoute
 	 */
-	_isValidRoute(route = ''){
+	_getRouteType(route = ''){
 
 		let { pathname, search, hash } = this.createURL(`http://x.x${route}`);
 		let validRoute = null;
 
 		// only "/"
 		if(!pathname[1] && !search && !hash){
-			validRoute = true;
+			validRoute = 'path';
 		}
 		// only pathname e.g. /a/b.html
 		else if(pathname[1] && !search && !hash){
-			validRoute = true;
+			validRoute = 'path';
 		}
 		// only search e.g. ?a=1&b=2
 		else if(!pathname[1] && search && !hash){
-			validRoute = true;
+			validRoute = 'search';
 		}
 		// only hash e.g. #myhash
 		else if(!pathname[1] && !search && hash){
-			validRoute = true;
+			validRoute = 'hash';
 		}
 		// not valid route e.g. /a/b.html?a=1&b2
 		else {
-			validRoute = false;
+			validRoute = null;
 		}
 
 		return validRoute;

@@ -60,6 +60,7 @@ describe('Class Router', () => {
 			router._addRoute('/this/is/{{a}}/route/4', 'name4');
 			router._addRoute('/this/is/{{b}}/{{c}}/route/5', 'name5');
 			router._addRoute('?id={{id}}&name={{name}}', 'name6');
+			router._addRoute('#im-{{foo}}', 'name7');
 		});
 
 		afterEach(() => router.destroy() );
@@ -71,6 +72,7 @@ describe('Class Router', () => {
 					name: 'name1',
 					type: 'static',
 					route: '/this/is/a/route/1',
+					routeType: 'path',
 					regex: null,
 					params: null,
 					fragment: null,
@@ -80,6 +82,7 @@ describe('Class Router', () => {
 					name: 'name2',
 					type: 'static',
 					route: '/this/is/a/route/2',
+					routeType: 'path',
 					regex: null,
 					params: null,
 					fragment: null,
@@ -96,6 +99,7 @@ describe('Class Router', () => {
 					name: 'name4',
 					type: 'dynamic',
 					route: '/this/is/{{a}}/route/4',
+					routeType: 'path',
 					regex: '\\/this\\/is\\/(?<a>[\\d\\w?()|{}_.,-]+)\\/route\\/4',
 					params: null,
 					fragment: null,
@@ -105,6 +109,7 @@ describe('Class Router', () => {
 					name: 'name5',
 					type: 'dynamic',
 					route: '/this/is/{{b}}/{{c}}/route/5',
+					routeType: 'path',
 					regex: '\\/this\\/is\\/(?<b>[\\d\\w?()|{}_.,-]+)\\/(?<c>[\\d\\w?()|{}_.,-]+)\\/route\\/5',
 					params: null,
 					fragment: null,
@@ -114,7 +119,18 @@ describe('Class Router', () => {
 					name: 'name6',
 					type: 'dynamic',
 					route: '?id={{id}}&name={{name}}',
+					routeType: 'search',
 					regex: '\\?id=(?<id>[\\d\\w?()|{}_.,-]+)&name=(?<name>[\\d\\w?()|{}_.,-]+)',
+					params: null,
+					fragment: null,
+					cache: false,
+				},
+				'#im-{{foo}}': {
+					name: 'name7',
+					type: 'dynamic',
+					route: '#im-{{foo}}',
+					routeType: 'hash',
+					regex: '#im-(?<foo>[\\d\\w?()|{}_.,-]+)',
 					params: null,
 					fragment: null,
 					cache: false,
@@ -150,6 +166,7 @@ describe('Class Router', () => {
 				name: 'route1',
 				type: 'static',
 				route: '/this/is/a/route/1',
+				routeType: 'path',
 				params: null,
 				regex: null,
 				fragment: '/this/is/a/route/1',
@@ -180,6 +197,7 @@ describe('Class Router', () => {
 				name: 'route1',
 				type: 'dynamic',
 				route: '/{{a}}/b/{{c}}/d',
+				routeType: 'path',
 				regex: '\\/(?<a>[\\d\\w?()|{}_.,-]+)\\/b\\/(?<c>[\\d\\w?()|{}_.,-]+)\\/d',
 				params: {
 					a: 'foo',
@@ -194,6 +212,7 @@ describe('Class Router', () => {
 				name: 'route2',
 				type: 'dynamic',
 				route: '?id={{id}}&name={{name}}',
+				routeType: 'search',
 				regex: '\\?id=(?<id>[\\d\\w?()|{}_.,-]+)&name=(?<name>[\\d\\w?()|{}_.,-]+)',
 				params: {
 					id: 26,
@@ -752,6 +771,8 @@ describe('Class Router', () => {
 				name: 'myRoute1',
 				type: 'static',
 				regex: null,
+				route: '/',
+				routeType: 'path',
 				cache: false,
 			});
 
@@ -760,6 +781,8 @@ describe('Class Router', () => {
 				name: 'myRoute2',
 				type: 'static',
 				regex: null,
+				route: '/some/path.html',
+				routeType: 'path',
 				cache: false,
 			});
 
@@ -769,6 +792,7 @@ describe('Class Router', () => {
 				type: 'dynamic',
 				fragment: '/some/123/4.34/path.html',
 				route: '/some/{{integer}}/{{float}}/path.html',
+				routeType: 'path',
 				regex: '\\/some\\/(?<integer>[\\d\\w?()|{}_.,-]+)\\/(?<float>[\\d\\w?()|{}_.,-]+)\\/path\\.html',
 				params: {
 					integer: 123,
@@ -801,6 +825,7 @@ describe('Class Router', () => {
 				type: 'dynamic',
 				fragment: null,
 				route: '/some/{{integer}}/{{float}}/path.html',
+				routeType: 'path',
 				regex: '\\/some\\/(?<integer>[\\d\\w?()|{}_.,-]+)\\/(?<float>[\\d\\w?()|{}_.,-]+)\\/path\\.html',
 				params: null,
 				cache: false,
@@ -1487,38 +1512,69 @@ describe('Class Router', () => {
 
 	});
 
-	describe('separate between normal url path and queryString', () => {
+	describe('_getRouteType', () => {
 
-		describe('_isValidRoute', () => {
+		it('should return route type by passed route', () => {
 
-			it('should return true if route starts with "/,? or #"', () => {
+			// setup
+			let router = Router.create();
 
-				// setup
-				let router = Router.create();
+			// test
+			router._getRouteType('/').should.be.equal('path');
+			router._getRouteType('/a/b.html').should.be.equal('path');
+			router._getRouteType('?a=1&b=2').should.be.equal('search');
+			router._getRouteType('#helloworld').should.be.equal('hash');
 
-				// test
-				router._isValidRoute('/a/b.html').should.be.true();
-				router._isValidRoute('?a=1&b=2').should.be.true();
-				router._isValidRoute('#helloworld').should.be.true();
+			// cleanup
+			router.destroy();
 
-				// cleanup
-				router.destroy();
+		});
 
-			});
+		it('should not return route type by passed route', () => {
 
-			it('should return false if route starts with "/,?,#" but also contain "/,?,#"', () => {
+			// setup
+			let router = Router.create();
 
-				// setup
-				let router = Router.create();
+			// test
+			should(router._getRouteType('/a/b.html?a=1&b=2')).be.null();
+			should(router._getRouteType('?a/b.html#helloworld')).be.null();
 
-				// test
-				router._isValidRoute('/a/b.html?a=1&b=2').should.be.false();
-				router._isValidRoute('?a/b.html#helloworld').should.be.false();
+			// cleanup
+			router.destroy();
 
-				// cleanup
-				router.destroy();
+		});
 
-			});
+	});
+
+	describe('_isValidRoute', () => {
+
+		it('should return true if route starts with "/,? or #"', () => {
+
+			// setup
+			let router = Router.create();
+
+			// test
+			router._isValidRoute('/').should.be.true();
+			router._isValidRoute('/a/b.html').should.be.true();
+			router._isValidRoute('?a=1&b=2').should.be.true();
+			router._isValidRoute('#helloworld').should.be.true();
+
+			// cleanup
+			router.destroy();
+
+		});
+
+		it('should return false if route starts with "/,?,#" but also contain "/,?,#"', () => {
+
+			// setup
+			let router = Router.create();
+
+			// test
+			router._isValidRoute('/a/b.html?a=1&b=2').should.be.false();
+			router._isValidRoute('?a/b.html#helloworld').should.be.false();
+
+			// cleanup
+			router.destroy();
 
 		});
 
