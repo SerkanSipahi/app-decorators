@@ -512,9 +512,49 @@ describe('Class Router', () => {
 			});
 
 			// test 9
-			router._convertFragmentToParts('/').should.containEql({
+			router._convertFragmentToParts('/').should.containDeep({
 				pathname: '/', search: '', hash: ''
 			});
+
+			// cleanup
+			router.destroy();
+
+		});
+
+	});
+
+	describe('_diffFragmentParts method', () => {
+
+		it('should diff passed object', () => {
+
+			// setup
+			let router = Router.create();
+			let fragmentPart1, fragmentPart2;
+
+			// test 1
+			fragmentPart1 = { pathname: '/', search: '', hash: ''};
+			fragmentPart2 = { pathname: '/', search: '', hash: ''};
+			router._diffFragmentParts(fragmentPart1, fragmentPart2).should.containDeep([]);
+
+			// test 2
+			fragmentPart1 = { pathname: '/', search: '', hash: ''};
+			fragmentPart2 = { pathname: '/', search: 'b', hash: ''};
+			router._diffFragmentParts(fragmentPart1, fragmentPart2).should.containDeep(['search']);
+			router._diffFragmentParts(fragmentPart1, fragmentPart2).should.not.containDeep(['pathname', 'hash']);
+
+			// test 3
+			fragmentPart1 = { pathname: '/', search: '', hash: ''};
+			fragmentPart2 = { pathname: '/a', search: 'b', hash: ''};
+			router._diffFragmentParts(fragmentPart1, fragmentPart2).should.containDeep(['pathname', 'search']);
+			router._diffFragmentParts(fragmentPart1, fragmentPart2).should.not.containDeep(['hash']);
+
+			// test 4
+			fragmentPart1 = { pathname: '/', search: '', hash: ''};
+			fragmentPart2 = { pathname: '/a', search: 'b', hash: 'c'};
+			router._diffFragmentParts(fragmentPart1, fragmentPart2).should.containDeep(['pathname', 'search', 'hash']);
+
+			// cleanup
+			router.destroy();
 
 		});
 

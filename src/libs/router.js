@@ -504,12 +504,13 @@ export class Router {
 			changepart: []
 		};
 
-		if(lastFragment === null) {
-			diff.changed = true;
-			return diff;
-		}
+		diff.changed = currentFragment !== lastFragment || lastFragment === null;
 
-		diff.changed = currentFragment !== lastFragment;
+		let currentFragmentParts = this._convertFragmentToParts(currentFragment);
+		let lastFragmentParts = this._convertFragmentToParts(lastFragment);
+		let diffParts = this._diffFragmentParts(currentFragmentParts, lastFragmentParts);
+
+		diff.changepart = diffParts;
 
 		return diff;
 
@@ -530,6 +531,25 @@ export class Router {
 			search: urlObject.search,
 			hash: urlObject.hash
 		};
+	}
+
+	/**
+	 * _diffFragmentParts
+	 * @param ...args
+	 * @private
+     */
+	_diffFragmentParts(fragment1, fragment2){
+
+		let parts = [];
+		for(let part of Object.keys(fragment1)){
+			if(fragment1[part] === fragment2[part]){
+				continue;
+			}
+			parts.push(part);
+		}
+
+		return parts;
+
 	}
 
 	/**
