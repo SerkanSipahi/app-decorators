@@ -1,5 +1,5 @@
 
-import extractDecoratorProperties from '../../src/helpers/extract-decorator-properties';
+import { extractDecoratorProperties } from '../../src/helpers/extract-decorator-properties';
 
 describe('extractDecoratorProperties', () => {
 

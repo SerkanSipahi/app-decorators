@@ -1,5 +1,5 @@
 
-import View from 'src/libs/view';
+import { View } from 'src/libs/view';
 import { Handlebars } from '../../src/libs/dependencies';
 
 describe('View Class', () => {

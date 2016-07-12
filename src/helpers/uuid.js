@@ -1,5 +1,5 @@
 
-export default function uuid(){
+function uuid(){
     var d = new Date().getTime();
     if(window.performance && typeof window.performance.now === "function"){
         d += performance.now();; //use high-precision timer if available
@@ -11,3 +11,7 @@ export default function uuid(){
     });
     return uuid;
 }
+
+export {
+    uuid,
+};

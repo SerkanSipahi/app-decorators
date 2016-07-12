@@ -1,7 +1,7 @@
 
 // internal libs
-import View from '../libs/view';
-import extractDecoratorProperties from '../helpers/extract-decorator-properties';
+import { View } from '../libs/view';
+import { extractDecoratorProperties } from '../helpers/extract-decorator-properties';
 
 // external libs
 import { Handlebars } from '../libs/dependencies';
@@ -212,4 +212,6 @@ view.helper = {
 
 };
 
-export default view;
+export {
+	view
+};

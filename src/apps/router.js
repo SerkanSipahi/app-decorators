@@ -1,5 +1,5 @@
 
-import Eventhandler from '../libs/eventhandler';
+import { Eventhandler} from '../libs/eventhandler';
 import { Router } from '../libs/router';
 import { Promise } from '../libs/dependencies';
 import { XRegExp } from '../libs/dependencies';
@@ -52,6 +52,8 @@ Router.create = function(config = {}){
 
 	return router;
 
-}
+};
 
-export { Router };
+export {
+	Router
+};

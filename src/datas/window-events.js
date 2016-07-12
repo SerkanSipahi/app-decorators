@@ -29,6 +29,5 @@ let windowEvents = {
 };
 
 export {
-	windowEvents,
-	windowEvents as default
+	windowEvents
 };

@@ -1,5 +1,5 @@
 
-export class Router {
+class Router {
 
 	/**
 	 * foward()
@@ -1035,3 +1035,7 @@ export class Router {
 
 	}
 }
+
+export {
+	Router
+};

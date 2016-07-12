@@ -31,6 +31,5 @@ let namespace = {
 };
 
 export {
-	namespace,
-	namespace as default
+	namespace
 };

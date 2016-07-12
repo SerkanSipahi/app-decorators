@@ -1,14 +1,14 @@
 
 // internal libs
-import Eventhandler from '../libs/eventhandler';
-import namespace from '../helpers/namespace';
+import { Eventhandler } from '../libs/eventhandler';
+import { namespace } from '../helpers/namespace';
 
 /**
  * on (EventHandler)
  * @param  {Any} ...args
  * @return {Function}
  */
-export default function on(eventDomain, listenerElement) {
+function on(eventDomain, listenerElement) {
 
 	if(!eventDomain){
 		throw new Error('Please pass an event type e.g "click"');
@@ -189,4 +189,8 @@ on.helper = {
 		return domNode;
 	},
 
+};
+
+export {
+	on
 };

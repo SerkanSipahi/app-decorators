@@ -1,7 +1,7 @@
 
 let w = System.global.window;
 
-export default {
+let Elements = {
 
 	// regular tag
 	'a': w.HTMLAnchorElement,
@@ -96,4 +96,8 @@ export default {
 	'track': w.HTMLTrackElement,
 	'video': w.HTMLVideoElement,
 
-}
+};
+
+export {
+	Elements
+};

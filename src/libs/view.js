@@ -1,5 +1,5 @@
 
-export default class View {
+export class View {
 
 	/**
 	 * Create an instance of View Class
@@ -361,3 +361,7 @@ export default class View {
 	}
 
 }
+
+export {
+	View
+};

@@ -2,10 +2,10 @@
 
 // external libs
 import { Immutable } from 'src/libs/dependencies';
-import Elements from 'src/datas/elements';
+import { Elements } from 'src/datas/elements';
 
 // internal libs
-import CustomElement from 'src/libs/customelement';
+import { CustomElement } from 'src/libs/customelement';
 
 // external libs
 import sinon from 'sinon';

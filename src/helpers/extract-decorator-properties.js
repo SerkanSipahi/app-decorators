@@ -6,7 +6,7 @@
  * @param  {Boolean} removeDomAttributes
  * @return {Object}
  */
-export default function extractDecoratorProperties(domNode, type, removeDomAttributes = false) {
+function extractDecoratorProperties(domNode, type, removeDomAttributes = false) {
 
 	const expressions = {
 		['@on']: /^@on\((\S+)\)$/i,
@@ -48,3 +48,7 @@ export default function extractDecoratorProperties(domNode, type, removeDomAttri
 	return domViewAttributes;
 
 }
+
+export {
+	extractDecoratorProperties
+};

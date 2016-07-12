@@ -1,5 +1,5 @@
 
-export default class Eventhandler {
+class Eventhandler {
 
 	constructor(config = {}) {
 		this._init(config);
@@ -285,7 +285,7 @@ export default class Eventhandler {
 
 		// add events eventlistener
 		for(let type in this.config.events){
-			if(!events.hasOwnProperty(type)){
+			if(!this.config.events.hasOwnProperty(type)){
 				continue;
 			}
 			this.off(type);
@@ -293,4 +293,8 @@ export default class Eventhandler {
 
 	}
 
+}
+
+export {
+	Eventhandler
 }

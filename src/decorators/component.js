@@ -1,7 +1,7 @@
 
 // internal libs
-import Elements from '../datas/elements';
-import CustomElement from '../libs/customelement';
+import { Elements } from '../datas/elements';
+import { CustomElement } from '../libs/customelement';
 
 // external libs
 import { Immutable } from '../libs/dependencies';
@@ -13,9 +13,13 @@ import { Immutable } from '../libs/dependencies';
  * @param  {Any} ...args
  * @return {Function}
  */
-export default function component(config = {}) {
+function component(config = {}) {
 	return function decorator(ComponentClass) {
 		Object.assign(config, { Elements, Immutable })
 		CustomElement.register(ComponentClass, config);
 	}
 }
+
+export {
+	component
+};

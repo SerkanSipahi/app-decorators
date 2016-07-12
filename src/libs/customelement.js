@@ -1,5 +1,5 @@
 
-export default class CustomElement {
+class CustomElement {
 
 	/**
 	 * Default prefix
@@ -407,3 +407,7 @@ export default class CustomElement {
 	}
 
 }
+
+export {
+	CustomElement
+};
