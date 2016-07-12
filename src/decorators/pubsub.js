@@ -22,5 +22,6 @@ function subscribe(...args) {
 };
 
 export {
-    model
+    publish,
+    subscribe
 };
