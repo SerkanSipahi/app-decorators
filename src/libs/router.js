@@ -444,9 +444,10 @@ class Router {
 		let { fragment } = urlObject;
 
 		let { changed, changepart } = this._diffFragment(fragment, this._lastFragment);
-		Object.assign(urlObject, { changepart });
 
 		if(changed) {
+
+			Object.assign(urlObject, { changepart });
 
 			if(this._isDefinedEventAction(event.type)){
 				this.pushState(null, null, this.encodeURI(fragment));
