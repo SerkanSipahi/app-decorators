@@ -172,8 +172,14 @@ describe('Class Router', () => {
 
 		it('should throw error if duplicate route added', () => {
 
+			(() => { router._addRoute('/this/is/a/route/1', 'name1'); }).should.throw();
 			(() => { router._addRoute('/this/is/a/route/2', 'name2'); }).should.throw();
+			(() => { router._addRoute('/this/is/{{a}}/route/3', 'name3'); }).should.throw();
 			(() => { router._addRoute('/this/is/{{b}}/{{c}}/route/4', 'name4'); }).should.throw();
+			(() => { router._addRoute('?id={{id}}&name={{name}}', 'name5'); }).should.throw();
+			(() => { router._addRoute('?name=serkan', 'name6'); }).should.throw();
+			(() => { router._addRoute('#im-{{foo}}', 'name7'); }).should.throw();
+			(() => { router._addRoute('#scroll-to-foo', 'name8'); }).should.throw();
 		});
 
 		it('should throw error if not valid route passed', () => {
