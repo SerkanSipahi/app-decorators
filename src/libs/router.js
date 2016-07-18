@@ -98,9 +98,17 @@ class Router {
 	 * @type {Object}
 	 */
 	_routes = {
-		static: {},
-		dynamic: {},
-		cache: {},
+		static: {
+			pathname: {},
+			search: {},
+			hash: {}
+		},
+		dynamic: {
+			pathname: {},
+			search: {},
+			hash: {}
+		},
+		cache: {}
 	};
 
 	/**
@@ -228,37 +236,40 @@ class Router {
 			`;
 		}
 
-		if(this._routes.dynamic[route] || this._routes.static[route]) {
-			throw `route: "${route} already exists!"`;
-		}
+		let urlpart = this._getURLType(route);
 
-		let routeType = this._getRouteType(route);
+		if(this._routes.dynamic[urlpart][route] || this._routes.static[urlpart][route]) {
+			throw `route: "${route}" related to urlpart "${urlpart}" already exists!`;
+		}
 
 		if(this._isDynamicURL(route)) {
 			let regex = this._convertRouteToXRegexExp(route);
-			this._routes.dynamic[route] = this._createRouteObject(name, route, regex, 'dynamic', routeType);
+			let args = [ name, route, regex, 'dynamic', urlpart ];
+			this._routes.dynamic[urlpart][route] = this._createRouteObject(...args);
 		} else {
-			this._routes.static[route]  = this._createRouteObject(name, route, null,  'static', routeType);
+			let args = [ name, route, null,  'static', urlpart ];
+			this._routes.static[urlpart][route] = this._createRouteObject(...args);
 		}
 
 	}
 
 	/**
-	 * _createRouteObject
+	 *
 	 * @param name
 	 * @param route
 	 * @param regex
 	 * @param type
-	 * @returns {{type: *, name: *, route: *, regex: *, params: null, fragment: null, cache: boolean}}
+	 * @param urlpart
+	 * @returns {object}
      * @private
      */
-	_createRouteObject(name, route, regex = null, type, routeType){
+	_createRouteObject(name, route, regex = null, type, urlpart){
 
 		return {
 			type,
 			name,
 			route,
-			routeType,
+			urlpart,
 			regex,
 			params: null,
 			fragment: null,
@@ -383,14 +394,15 @@ class Router {
 	 */
 	_removeRegisteredEvents(){
 
-		let allRoutes = Object.assign({}, this._routes.static, this._routes.dynamic);
-		for(let route of Object.keys(allRoutes)){
+		let allParts = Object.assign({}, this._routes.static, this._routes.dynamic);
+		for(let part of Object.keys(allParts)){
 
-			let { name } = allRoutes[route];
-			this.scope.off(name);
-
+			let routes = allParts[part];
+			for(let route of Object.keys(routes)){
+				let { name } = routes[route];
+				this.scope.off(name);
+			}
 		}
-
 	}
 
 	/**
@@ -790,28 +802,28 @@ class Router {
      */
 	_isValidRoute(route) {
 
-		let result = !!this._getRouteType(route);
+		let result = !!this._getURLType(route);
 		return result;
 
 	}
 
 	/**
-	 * _getRouteType
+	 * _getURLType
 	 * @param  {string} route
 	 * @return {Boolean} validRoute
 	 */
-	_getRouteType(route = ''){
+	_getURLType(route = ''){
 
 		let { pathname, search, hash } = this.createURL(`http://x.x${route}`);
 		let validRoute = null;
 
 		// only "/"
 		if(!pathname[1] && !search && !hash){
-			validRoute = 'path';
+			validRoute = 'pathname';
 		}
 		// only pathname e.g. /a/b.html
 		else if(pathname[1] && !search && !hash){
-			validRoute = 'path';
+			validRoute = 'pathname';
 		}
 		// only search e.g. ?a=1&b=2
 		else if(!pathname[1] && search && !hash){

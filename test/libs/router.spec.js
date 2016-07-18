@@ -57,91 +57,123 @@ describe('Class Router', () => {
 			// add static routes
 			router._addRoute('/this/is/a/route/1', 'name1');
 			router._addRoute('/this/is/a/route/2', 'name2');
-			router._addRoute('/this/is/{{a}}/route/4', 'name4');
-			router._addRoute('/this/is/{{b}}/{{c}}/route/5', 'name5');
-			router._addRoute('?id={{id}}&name={{name}}', 'name6');
+			router._addRoute('/this/is/{{a}}/route/3', 'name3');
+			router._addRoute('/this/is/{{b}}/{{c}}/route/4', 'name4');
+			router._addRoute('?id={{id}}&name={{name}}', 'name5');
+			router._addRoute('?name=serkan', 'name6');
 			router._addRoute('#im-{{foo}}', 'name7');
+			router._addRoute('#scroll-to-foo', 'name8');
 		});
 
 		afterEach(() => router.destroy() );
 
-		it('should return registered static routes', () => {
+		it('should return registered routes', () => {
 
-			router._getRoutes('static').should.containEql({
-				'/this/is/a/route/1': {
-					name: 'name1',
-					type: 'static',
-					route: '/this/is/a/route/1',
-					routeType: 'path',
-					regex: null,
-					params: null,
-					fragment: null,
-					cache: false,
+			router._routes.should.containEql({
+				static: {
+					pathname: {
+						'/this/is/a/route/1': {
+							name: 'name1',
+							type: 'static',
+							route: '/this/is/a/route/1',
+							urlpart: 'pathname',
+							regex: null,
+							params: null,
+							fragment: null,
+							cache: false,
+						},
+						'/this/is/a/route/2': {
+							name: 'name2',
+							type: 'static',
+							route: '/this/is/a/route/2',
+							urlpart: 'pathname',
+							regex: null,
+							params: null,
+							fragment: null,
+							cache: false,
+						}
+					},
+					search: {
+						'?name=serkan': {
+							name: 'name6',
+							type: 'static',
+							route: '?name=serkan',
+							urlpart: 'search',
+							regex: null,
+							params: null,
+							fragment: null,
+							cache: false,
+						}
+					},
+					hash: {
+						'#scroll-to-foo': {
+							name: 'name8',
+							type: 'static',
+							route: '#scroll-to-foo',
+							urlpart: 'hash',
+							regex: null,
+							params: null,
+							fragment: null,
+							cache: false,
+						}
+					}
 				},
-				'/this/is/a/route/2': {
-					name: 'name2',
-					type: 'static',
-					route: '/this/is/a/route/2',
-					routeType: 'path',
-					regex: null,
-					params: null,
-					fragment: null,
-					cache: false,
-				},
-			});
-
-		});
-
-		it('should return registered dynamic routes', () => {
-
-			router._getRoutes('dynamic').should.containEql({
-				'/this/is/{{a}}/route/4': {
-					name: 'name4',
-					type: 'dynamic',
-					route: '/this/is/{{a}}/route/4',
-					routeType: 'path',
-					regex: '\\/this\\/is\\/(?<a>[\\d\\w?()|{}_.,-]+)\\/route\\/4',
-					params: null,
-					fragment: null,
-					cache: false,
-				},
-				'/this/is/{{b}}/{{c}}/route/5': {
-					name: 'name5',
-					type: 'dynamic',
-					route: '/this/is/{{b}}/{{c}}/route/5',
-					routeType: 'path',
-					regex: '\\/this\\/is\\/(?<b>[\\d\\w?()|{}_.,-]+)\\/(?<c>[\\d\\w?()|{}_.,-]+)\\/route\\/5',
-					params: null,
-					fragment: null,
-					cache: false,
-				},
-				'?id={{id}}&name={{name}}': {
-					name: 'name6',
-					type: 'dynamic',
-					route: '?id={{id}}&name={{name}}',
-					routeType: 'search',
-					regex: '\\?id=(?<id>[\\d\\w?()|{}_.,-]+)&name=(?<name>[\\d\\w?()|{}_.,-]+)',
-					params: null,
-					fragment: null,
-					cache: false,
-				},
-				'#im-{{foo}}': {
-					name: 'name7',
-					type: 'dynamic',
-					route: '#im-{{foo}}',
-					routeType: 'hash',
-					regex: '#im-(?<foo>[\\d\\w?()|{}_.,-]+)',
-					params: null,
-					fragment: null,
-					cache: false,
+				dynamic: {
+					pathname: {
+						'/this/is/{{a}}/route/3': {
+							name: 'name3',
+							type: 'dynamic',
+							route: '/this/is/{{a}}/route/3',
+							urlpart: 'pathname',
+							regex: '\\/this\\/is\\/(?<a>[\\d\\w?()|{}_.,-]+)\\/route\\/3',
+							params: null,
+							fragment: null,
+							cache: false,
+						},
+						'/this/is/{{b}}/{{c}}/route/4': {
+							name: 'name4',
+							type: 'dynamic',
+							route: '/this/is/{{b}}/{{c}}/route/4',
+							urlpart: 'pathname',
+							regex: '\\/this\\/is\\/(?<b>[\\d\\w?()|{}_.,-]+)\\/(?<c>[\\d\\w?()|{}_.,-]+)\\/route\\/4',
+							params: null,
+							fragment: null,
+							cache: false,
+						}
+					},
+					search: {
+						'?id={{id}}&name={{name}}': {
+							name: 'name5',
+							type: 'dynamic',
+							route: '?id={{id}}&name={{name}}',
+							urlpart: 'search',
+							regex: '\\?id=(?<id>[\\d\\w?()|{}_.,-]+)&name=(?<name>[\\d\\w?()|{}_.,-]+)',
+							params: null,
+							fragment: null,
+							cache: false,
+						}
+					},
+					hash: {
+						'#im-{{foo}}': {
+							name: 'name7',
+							type: 'dynamic',
+							route: '#im-{{foo}}',
+							urlpart: 'hash',
+							regex: '#im-(?<foo>[\\d\\w?()|{}_.,-]+)',
+							params: null,
+							fragment: null,
+							cache: false,
+						}
+					}
 				}
 			});
+
 		});
 
 		it('should throw error if duplicate route added', () => {
 
 			(() => { router._addRoute('/this/is/a/route/2', 'name2'); }).should.throw();
-			(() => { router._addRoute('/this/is/{{a}}/route/4', 'name4'); }).should.throw();
+			(() => { router._addRoute('/this/is/{{b}}/{{c}}/route/4', 'name4'); }).should.throw();
 		});
 
 		it('should throw error if not valid route passed', () => {
@@ -1513,7 +1545,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('_getRouteType', () => {
+	describe('_getURLType', () => {
 
 		it('should return route type by passed route', () => {
 
@@ -1521,10 +1553,10 @@ describe('Class Router', () => {
 			let router = Router.create();
 
 			// test
-			router._getRouteType('/').should.be.equal('path');
-			router._getRouteType('/a/b.html').should.be.equal('path');
-			router._getRouteType('?a=1&b=2').should.be.equal('search');
-			router._getRouteType('#helloworld').should.be.equal('hash');
+			router._getURLType('/').should.be.equal('pathname');
+			router._getURLType('/a/b.html').should.be.equal('pathname');
+			router._getURLType('?a=1&b=2').should.be.equal('search');
+			router._getURLType('#helloworld').should.be.equal('hash');
 
 			// cleanup
 			router.destroy();
@@ -1537,8 +1569,8 @@ describe('Class Router', () => {
 			let router = Router.create();
 
 			// test
-			should(router._getRouteType('/a/b.html?a=1&b=2')).be.null();
-			should(router._getRouteType('?a/b.html#helloworld')).be.null();
+			should(router._getURLType('/a/b.html?a=1&b=2')).be.null();
+			should(router._getURLType('?a/b.html#helloworld')).be.null();
 
 			// cleanup
 			router.destroy();
