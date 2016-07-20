@@ -1,10 +1,10 @@
-## Decorate.js
+## app-decorates
 [![devDependency Status](https://david-dm.org/SerkanSipahi/app-decorators/dev-status.svg)](https://david-dm.org/SerkanSipahi/app-decorators#info=devDependencies)
 
 ## Getting Started
 
 ```
-npm install app-decorators --save
+npm install app-decorators@0.6.91 --save
 ```
 
 Mapping with systemjs
