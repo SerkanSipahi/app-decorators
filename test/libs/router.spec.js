@@ -198,21 +198,36 @@ describe('Class Router', () => {
 			// setup
 			let router = Router.create();
 			router._addRoute('/this/is/a/route/1', 'route1');
+			router._addRoute('?name=serkan', 'route2');
 
-			// test: positiv
-			router._matchStaticURL('/this/is/a/route/1').should.containEql({
+			// test 1: positiv
+			router._matchStaticURL('/this/is/a/route/1', 'pathname').should.containEql({
 				name: 'route1',
 				type: 'static',
 				route: '/this/is/a/route/1',
-				routeType: 'path',
+				urlpart: 'pathname',
 				params: null,
 				regex: null,
 				fragment: '/this/is/a/route/1',
 				cache: false,
 			});
 
+			// test 2: positiv
+			router._matchStaticURL('?name=serkan', 'search').should.containEql({
+				name: 'route2',
+				type: 'static',
+				route: '?name=serkan',
+				urlpart: 'search',
+				params: null,
+				regex: null,
+				fragment: '?name=serkan',
+				cache: false,
+			});
+
 			// test: negativ
-			should(router._matchStaticURL('/not/added/route')).be.exactly(null);
+			should(router._matchStaticURL('/not/added/route', 'pathname')).be.exactly(null);
+			should(router._matchStaticURL('?name=foo', 'search')).be.exactly(null);
+			should(router._matchStaticURL('#liya', 'hash')).be.exactly(null);
 
 			// cleanup
 			router.destroy();

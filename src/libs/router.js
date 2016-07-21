@@ -644,9 +644,9 @@ class Router {
 	 * @param  {string} fragment
 	 * @return {object}
 	 */
-	_matchStaticURL(fragment){
+	_matchStaticURL(fragment, part){
 
-		let matchedURLObject = this._getRoutes('static')[fragment] || null;
+		let matchedURLObject = this._routes.static[part][fragment] || null;
 		if(matchedURLObject) {
 
 			// build matchedURLObject
