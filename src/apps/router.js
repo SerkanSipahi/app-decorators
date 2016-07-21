@@ -25,6 +25,8 @@ Router.create = function(config = {}){
 		forward: ::history.forward,
 		back: ::history.back,
 
+		tmpDomain: 'http://x.x',
+
 		scope: Eventhandler.create({
 			element: config.scope || document && body || null
 		}),

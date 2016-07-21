@@ -112,6 +112,12 @@ class Router {
 	};
 
 	/**
+	 * tmpDomain
+	 * @type {string}
+     */
+	tmpDomain = '';
+
+	/**
 	 * constructor
 	 * @param  {Object} config
 	 * @return {Router}
@@ -540,7 +546,7 @@ class Router {
      */
 	_convertFragmentToParts(fragment = '') {
 
-		let urlObject = this.createURL(`http://x.x${fragment}`);
+		let urlObject = this.createURL(`${this.tmpDomain}${fragment}`);
 
 		return {
 			pathname: urlObject.pathname,
@@ -814,7 +820,7 @@ class Router {
 	 */
 	_getURLType(route = ''){
 
-		let { pathname, search, hash } = this.createURL(`http://x.x${route}`);
+		let { pathname, search, hash } = this.createURL(`${this.tmpDomain}${route}`);
 		let validRoute = null;
 
 		// only "/"
