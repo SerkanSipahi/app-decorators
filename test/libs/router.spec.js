@@ -246,11 +246,11 @@ describe('Class Router', () => {
 			router._addRoute('?id={{id}}&name={{name}}', 'route2');
 
 			// test 1: positiv
-			router._matchDynamicURL('/foo/b/bar/d').should.containEql({
+			router._matchDynamicURL('/foo/b/bar/d', 'pathname').should.containEql({
 				name: 'route1',
 				type: 'dynamic',
 				route: '/{{a}}/b/{{c}}/d',
-				routeType: 'path',
+				urlpart: 'pathname',
 				regex: '\\/(?<a>[\\d\\w?()|{}_.,-]+)\\/b\\/(?<c>[\\d\\w?()|{}_.,-]+)\\/d',
 				params: {
 					a: 'foo',
@@ -261,22 +261,24 @@ describe('Class Router', () => {
 			});
 
 			// test 2: positiv (with queryString)
-			router._matchDynamicURL('/a/b/c/page?id=26&name=mars&update=true').should.containEql({
+			router._matchDynamicURL('?id=26&name=mars&update=true', 'search').should.containEql({
 				name: 'route2',
 				type: 'dynamic',
 				route: '?id={{id}}&name={{name}}',
-				routeType: 'search',
+				urlpart: 'search',
 				regex: '\\?id=(?<id>[\\d\\w?()|{}_.,-]+)&name=(?<name>[\\d\\w?()|{}_.,-]+)',
 				params: {
 					id: 26,
 					name: 'mars',
 				},
-				fragment: '/a/b/c/page?id=26&name=mars&update=true',
+				fragment: '?id=26&name=mars&update=true',
 				cache: false,
 			});
 
 			// test: negativ
-			should(router._matchDynamicURL('/not/added/route')).be.exactly(null);
+			should(router._matchDynamicURL('/not/added/route', 'pathname')).be.exactly(null);
+			should(router._matchDynamicURL('?x=1', 'search')).be.exactly(null);
+			should(router._matchDynamicURL('#this-hash', 'hash')).be.exactly(null);
 
 			// cleanup
 			router.destroy();

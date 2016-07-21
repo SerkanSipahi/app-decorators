@@ -642,6 +642,7 @@ class Router {
 	/**
 	 * _matchStaticURL
 	 * @param  {string} fragment
+	 * @param  {string} part
 	 * @return {object}
 	 */
 	_matchStaticURL(fragment, part){
@@ -659,14 +660,16 @@ class Router {
 	/**
 	 * _matchDynamicURL
 	 * @param  {string} fragment
+	 * @param  {string} part
 	 * @return {object}
 	 */
-	_matchDynamicURL(fragment){
+	_matchDynamicURL(fragment, part){
 
-		for(let route of Object.keys(this._routes.dynamic)){
+		let dynamicRoutes = Object.keys(this._routes.dynamic[part] || {});
+		for(let route of dynamicRoutes){
 
 			// parepare datas for matching
-			let routeObject = this._routes.dynamic[route];
+			let routeObject = this._routes.dynamic[part][route];
 			// match regex
 			let compiledRegex = this.XRegExp(routeObject.regex);
 			let matchedRegex = this.XRegExp.exec(fragment, compiledRegex);
