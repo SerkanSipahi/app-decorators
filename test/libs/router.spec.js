@@ -325,7 +325,7 @@ describe('Class Router', () => {
 			router._addRoute('/some/static/path', 'route1');
 
 			// test: it should call _matchStaticURL
-			router._matchURL('/some/static/path');
+			router._matchURL('/some/static/path', ['pathname']);
 			router._matchStaticURL.returnValues[0].name.should.be.equal('route1');
 			router._matchDynamicURL.returnValues.should.be.length(0);
 			should(router._getRouteCache.returnValues[0]).be.null();
@@ -339,7 +339,7 @@ describe('Class Router', () => {
 			router._addRoute('/{{dynamic}}/b/{{path}}/d', 'route2');
 
 			// test: it should call _matchDynamicURL
-			router._matchURL('/hey/b/there/d');
+			router._matchURL('/hey/b/there/d', ['pathname']);
 			should(router._matchStaticURL.returnValues[0]).be.null();
 			router._matchDynamicURL.returnValues[0].name.should.be.equal('route2');
 			router._matchDynamicURL.returnValues[0].cache.should.be.false();
@@ -354,11 +354,11 @@ describe('Class Router', () => {
 			router._addRoute('/{{dynamic}}/b/{{path}}/d', 'route2');
 
 			// test: returned not from cache
-			router._matchURL('/hey/b/there/d');
+			router._matchURL('/hey/b/there/d', ['pathname']);
 			router._matchDynamicURL.returnValues[0].cache.should.be.false();
 
 			// test: returned from cache
-			router._matchURL('/hey/b/there/d');
+			router._matchURL('/hey/b/there/d', ['pathname']);
 			router._getRouteCache.returnValues[1].cache.should.be.true();
 
 			// cleanup

@@ -609,33 +609,42 @@ class Router {
 	/**
 	 * _matchURL description
 	 * @param  {string} fragment
+	 * @param  {array} changepart
 	 * @param  {boolean} cache
 	 * @return {object}
 	 */
-	_matchURL(fragment, cache = true){
+	_matchURL(fragment, changepart = [], cache = true){
 
-		let matchedURLObject = null;
+		let matchedUrlObjects = [];
+		for(let part of changepart) {
 
-		// load from cache
-		matchedURLObject = this._getRouteCache(fragment);
-		if(matchedURLObject && cache){
-			return matchedURLObject;
+			let matchedURLObject = null;
+			let url = `${this.tmpDomain}${fragment}`;
+			let fragmentPart = this.createURL(url)[part];
+
+			// load from cache
+			matchedURLObject = this._getRouteCache(fragmentPart);
+			if(matchedURLObject && cache){
+				matchedUrlObjects.push(matchedURLObject);
+				continue;
+			}
+
+			// match static url
+			matchedURLObject = this._matchStaticURL(fragmentPart, part);
+			if(matchedURLObject) {
+				matchedUrlObjects.push(matchedURLObject);
+				continue;
+			}
+
+			// match dynamic url
+			matchedURLObject = this._matchDynamicURL(fragmentPart, part);
+			if(matchedURLObject) {
+				this._addRouteCache(fragment, matchedURLObject);
+				matchedUrlObjects.push(matchedURLObject);
+			}
 		}
 
-		// match static url
-		matchedURLObject = this._matchStaticURL(fragment);
-		if(matchedURLObject) {
-			return matchedURLObject;
-		}
-
-		// match dynamic url
-		matchedURLObject = this._matchDynamicURL(fragment);
-		if(matchedURLObject) {
-			this._addRouteCache(fragment, matchedURLObject);
-			return matchedURLObject;
-		}
-
-		return null;
+		return matchedUrlObjects;
 
 	}
 
