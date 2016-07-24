@@ -98,17 +98,10 @@ class Router {
 	 * @type {Object}
 	 */
 	_routes = {
-		static: {
-			pathname: {},
-			search: {},
-			hash: {}
-		},
-		dynamic: {
-			pathname: {},
-			search: {},
-			hash: {}
-		},
-		cache: {}
+		pathname: {},
+		search: {},
+		hash: {},
+		cache: {},
 	};
 
 	/**
@@ -244,32 +237,30 @@ class Router {
 
 		let urlpart = this._getURLType(route);
 
-		if(this._routes.dynamic[urlpart][route] || this._routes.static[urlpart][route]) {
+		if(this._routes[urlpart][route]) {
 			throw `route: "${route}" related to urlpart "${urlpart}" already exists!`;
 		}
 
-		if(this._isDynamicURL(route)) {
-			let regex = this._convertRouteToXRegexExp(route);
-			let args = [ name, route, regex, 'dynamic', urlpart ];
-			this._routes.dynamic[urlpart][route] = this._createRouteObject(...args);
-		} else {
-			let args = [ name, route, null,  'static', urlpart ];
-			this._routes.static[urlpart][route] = this._createRouteObject(...args);
-		}
+		let type = this._isDynamicURL(route) ? 'dynamic' : 'static';
+		let strict = urlpart === 'pathname';
+		let regex = this._convertRouteToXRegexExp(route, strict);
+		let routeObjectArgs = { name, route, regex, type, urlpart };
+
+		this._routes[urlpart][route] = this._createRouteObject(routeObjectArgs);
 
 	}
 
 	/**
-	 *
-	 * @param name
-	 * @param route
-	 * @param regex
-	 * @param type
-	 * @param urlpart
+	 * _createRouteObject
+	 * @param name {string}
+	 * @param route  {string}
+	 * @param regex  {string}
+	 * @param type  {string}
+	 * @param urlpart  {string}
 	 * @returns {object}
      * @private
      */
-	_createRouteObject(name, route, regex = null, type, urlpart){
+	_createRouteObject({ name, route, regex, type, urlpart }){
 
 		return {
 			type,
@@ -304,12 +295,23 @@ class Router {
 	}
 
 	/**
-	 * _getRoutes
+	 * getRoutes
 	 * @return {Object}
 	 */
-	_getRoutes(type = 'static'){
+	getRoutes(urlpart = null){
 
-		return this._routes[type];
+		let routes = null;
+		if(urlpart) {
+			routes = this._routes[urlpart];
+		} else {
+			routes = Object.assign({},
+				this._routes.pathname,
+				this._routes.search,
+				this._routes.hash
+			);
+		}
+
+		return routes;
 
 	}
 
@@ -400,14 +402,11 @@ class Router {
 	 */
 	_removeRegisteredEvents(){
 
-		let allParts = Object.assign({}, this._routes.static, this._routes.dynamic);
-		for(let part of Object.keys(allParts)){
+		let allRoutes = this.getRoutes();
 
-			let routes = allParts[part];
-			for(let route of Object.keys(routes)){
-				let { name } = routes[route];
-				this.scope.off(name);
-			}
+		for(let route of Object.keys(allRoutes)){
+			let { name } = allRoutes[route];
+			this.scope.off(name);
 		}
 	}
 
@@ -596,12 +595,17 @@ class Router {
 			return;
 		}
 
-		let { fragment } = event.detail;
-		let matchedURL = this._matchURL(fragment);
-		if(matchedURL){
-			let { name } = matchedURL;
-			matchedURL.URL = event.detail;
-			this.scope.trigger(name, matchedURL);
+		let { fragment, changepart } = event.detail;
+
+		let matchedUrlObjects = this._matchURL(fragment, changepart, false);
+		if(matchedUrlObjects.length){
+
+			for(let matchedURL of matchedUrlObjects) {
+				let { name } = matchedURL;
+				matchedURL.URL = event.detail;
+				this.trigger(name, matchedURL);
+			}
+
 		}
 
 	}
@@ -629,15 +633,8 @@ class Router {
 				continue;
 			}
 
-			// match static url
-			matchedURLObject = this._matchStaticURL(fragmentPart, part);
-			if(matchedURLObject) {
-				matchedUrlObjects.push(matchedURLObject);
-				continue;
-			}
-
 			// match dynamic url
-			matchedURLObject = this._matchDynamicURL(fragmentPart, part);
+			matchedURLObject = this._match(fragmentPart, part);
 			if(matchedURLObject) {
 				this._addRouteCache(fragment, matchedURLObject);
 				matchedUrlObjects.push(matchedURLObject);
@@ -649,36 +646,18 @@ class Router {
 	}
 
 	/**
-	 * _matchStaticURL
+	 * _match
 	 * @param  {string} fragment
 	 * @param  {string} part
 	 * @return {object}
 	 */
-	_matchStaticURL(fragment, part){
+	_match(fragment, part){
 
-		let matchedURLObject = this._routes.static[part][fragment] || null;
-		if(matchedURLObject) {
-
-			// build matchedURLObject
-			matchedURLObject = Object.assign({}, matchedURLObject, { fragment });
-		}
-
-		return matchedURLObject;
-	}
-
-	/**
-	 * _matchDynamicURL
-	 * @param  {string} fragment
-	 * @param  {string} part
-	 * @return {object}
-	 */
-	_matchDynamicURL(fragment, part){
-
-		let dynamicRoutes = Object.keys(this._routes.dynamic[part] || {});
+		let dynamicRoutes = Object.keys(this._routes[part] || {});
 		for(let route of dynamicRoutes){
 
 			// parepare datas for matching
-			let routeObject = this._routes.dynamic[part][route];
+			let routeObject = this._routes[part][route];
 			// match regex
 			let compiledRegex = this.XRegExp(routeObject.regex);
 			let matchedRegex = this.XRegExp.exec(fragment, compiledRegex);
@@ -788,13 +767,18 @@ class Router {
 	/**
 	 * _convertRouteToXRegexExp
 	 * @param  {string} url
+	 * @param  {string} strict
 	 * @return {XRegExp-String} url
 	 */
-	_convertRouteToXRegexExp(url = ''){
+	_convertRouteToXRegexExp(url = '', strict = false){
 
 		let variableURLRegex = this.XRegExp('{{(?<variableURL>[a-z]+)}}', 'g');
 		url = url.replace(/[\/|+*?.()]/g, '\\$&');
 		url = this.XRegExp.replace(url, variableURLRegex, '(?<${variableURL}>[\\d\\w?()|{}_.,-]+)');
+
+		if(strict){
+			url = `^${url}$`;
+		}
 
 		return url;
 
@@ -969,10 +953,12 @@ class Router {
 	 * @param  {String} path
 	 * @return {object|null}
 	 */
-	whoami(url){
+	whoami(fragment){
 
-		let matchedUrlObject =  this._matchURL(url, false);
-		return matchedUrlObject;
+		let changepart = ['pathname', 'search', 'hash'];
+		let matchedUrlObjects =  this._matchURL(fragment, changepart, false);
+
+		return matchedUrlObjects;
 
 	}
 
@@ -983,7 +969,8 @@ class Router {
 	 */
 	which(name){
 
-		let allRoutes = Object.assign({}, this._routes.static, this._routes.dynamic);
+		let allRoutes = this.getRoutes();
+
 		for(let route of Object.keys(allRoutes)){
 			let routeObject = allRoutes[route];
 			if(routeObject.name === name){
@@ -1047,13 +1034,15 @@ class Router {
 
 		let href = this.helper.location.href;
 		let { fragment } = this.createURL(href);
-		let routeObject = this.whoami(fragment);
+		let matchedUrlObjects = this.whoami(fragment);
 
-		if(routeObject) {
-			this.trigger(routeObject.name);
+		if(matchedUrlObjects.length) {
+
+			for(let matchedURL of matchedUrlObjects) {
+				let { name } = matchedURL;
+				this.trigger(name, matchedURL);
+			}
 		}
-
-
 	}
 
 	/**

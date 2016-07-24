@@ -35,8 +35,13 @@ describe('Class Router', () => {
 			// test
 			router._convertRouteToXRegexExp('{{year}}').should.be.equal('(?<year>[\\d\\w?()|{}_.,-]+)');
 			router._convertRouteToXRegexExp('{{hour}}:{{min}}').should.be.equal('(?<hour>[\\d\\w?()|{}_.,-]+):(?<min>[\\d\\w?()|{}_.,-]+)');
+
 			// test - convert special regex characters
 			router._convertRouteToXRegexExp('/|+*?.()').should.be.equal('\\/\\|\\+\\*\\?\\.\\(\\)');
+
+			// test - strict
+			router._convertRouteToXRegexExp('abc', true).should.be.equal('^abc$');
+
 
 			//cleanup
 			router.destroy();
@@ -70,100 +75,90 @@ describe('Class Router', () => {
 		it('should return registered routes', () => {
 
 			router._routes.should.containEql({
-				static: {
-					pathname: {
-						'/this/is/a/route/1': {
-							name: 'name1',
-							type: 'static',
-							route: '/this/is/a/route/1',
-							urlpart: 'pathname',
-							regex: null,
-							params: null,
-							fragment: null,
-							cache: false,
-						},
-						'/this/is/a/route/2': {
-							name: 'name2',
-							type: 'static',
-							route: '/this/is/a/route/2',
-							urlpart: 'pathname',
-							regex: null,
-							params: null,
-							fragment: null,
-							cache: false,
-						}
+				pathname: {
+					'/this/is/{{a}}/route/3': {
+						name: 'name3',
+						type: 'dynamic',
+						route: '/this/is/{{a}}/route/3',
+						urlpart: 'pathname',
+						regex: '^\\/this\\/is\\/(?<a>[\\d\\w?()|{}_.,-]+)\\/route\\/3$',
+						params: null,
+						fragment: null,
+						cache: false,
 					},
-					search: {
-						'?name=serkan': {
-							name: 'name6',
-							type: 'static',
-							route: '?name=serkan',
-							urlpart: 'search',
-							regex: null,
-							params: null,
-							fragment: null,
-							cache: false,
-						}
+					'/this/is/{{b}}/{{c}}/route/4': {
+						name: 'name4',
+						type: 'dynamic',
+						route: '/this/is/{{b}}/{{c}}/route/4',
+						urlpart: 'pathname',
+						regex: '^\\/this\\/is\\/(?<b>[\\d\\w?()|{}_.,-]+)\\/(?<c>[\\d\\w?()|{}_.,-]+)\\/route\\/4$',
+						params: null,
+						fragment: null,
+						cache: false,
 					},
-					hash: {
-						'#scroll-to-foo': {
-							name: 'name8',
-							type: 'static',
-							route: '#scroll-to-foo',
-							urlpart: 'hash',
-							regex: null,
-							params: null,
-							fragment: null,
-							cache: false,
-						}
+					'/this/is/a/route/1': {
+						name: 'name1',
+						type: 'static',
+						route: '/this/is/a/route/1',
+						urlpart: 'pathname',
+						regex: '^\\/this\\/is\\/a\\/route\\/1$',
+						params: null,
+						fragment: null,
+						cache: false,
+					},
+					'/this/is/a/route/2': {
+						name: 'name2',
+						type: 'static',
+						route: '/this/is/a/route/2',
+						urlpart: 'pathname',
+						regex: '^\\/this\\/is\\/a\\/route\\/2$',
+						params: null,
+						fragment: null,
+						cache: false,
 					}
 				},
-				dynamic: {
-					pathname: {
-						'/this/is/{{a}}/route/3': {
-							name: 'name3',
-							type: 'dynamic',
-							route: '/this/is/{{a}}/route/3',
-							urlpart: 'pathname',
-							regex: '\\/this\\/is\\/(?<a>[\\d\\w?()|{}_.,-]+)\\/route\\/3',
-							params: null,
-							fragment: null,
-							cache: false,
-						},
-						'/this/is/{{b}}/{{c}}/route/4': {
-							name: 'name4',
-							type: 'dynamic',
-							route: '/this/is/{{b}}/{{c}}/route/4',
-							urlpart: 'pathname',
-							regex: '\\/this\\/is\\/(?<b>[\\d\\w?()|{}_.,-]+)\\/(?<c>[\\d\\w?()|{}_.,-]+)\\/route\\/4',
-							params: null,
-							fragment: null,
-							cache: false,
-						}
+				search: {
+					'?id={{id}}&name={{name}}': {
+						name: 'name5',
+						type: 'dynamic',
+						route: '?id={{id}}&name={{name}}',
+						urlpart: 'search',
+						regex: '\\?id=(?<id>[\\d\\w?()|{}_.,-]+)&name=(?<name>[\\d\\w?()|{}_.,-]+)',
+						params: null,
+						fragment: null,
+						cache: false,
 					},
-					search: {
-						'?id={{id}}&name={{name}}': {
-							name: 'name5',
-							type: 'dynamic',
-							route: '?id={{id}}&name={{name}}',
-							urlpart: 'search',
-							regex: '\\?id=(?<id>[\\d\\w?()|{}_.,-]+)&name=(?<name>[\\d\\w?()|{}_.,-]+)',
-							params: null,
-							fragment: null,
-							cache: false,
-						}
+					'?name=serkan': {
+						name: 'name6',
+						type: 'static',
+						route: '?name=serkan',
+						urlpart: 'search',
+						regex: '\\?name=serkan',
+						params: null,
+						fragment: null,
+						cache: false,
+					}
+				},
+				hash: {
+					'#im-{{foo}}': {
+						name: 'name7',
+						type: 'dynamic',
+						route: '#im-{{foo}}',
+						urlpart: 'hash',
+						regex: '#im-(?<foo>[\\d\\w?()|{}_.,-]+)',
+						params: null,
+						fragment: null,
+						cache: false,
 					},
-					hash: {
-						'#im-{{foo}}': {
-							name: 'name7',
-							type: 'dynamic',
-							route: '#im-{{foo}}',
-							urlpart: 'hash',
-							regex: '#im-(?<foo>[\\d\\w?()|{}_.,-]+)',
-							params: null,
-							fragment: null,
-							cache: false,
-						}
+					'#scroll-to-foo': {
+						name: 'name8',
+						type: 'static',
+						route: '#scroll-to-foo',
+						urlpart: 'hash',
+						regex: '#scroll-to-foo',
+						params: null,
+						fragment: null,
+						cache: false,
 					}
 				}
 			});
@@ -191,52 +186,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('_matchStaticURL method', () => {
-
-		it('should return matchedObject by passed fragment', () => {
-
-			// setup
-			let router = Router.create();
-			router._addRoute('/this/is/a/route/1', 'route1');
-			router._addRoute('?name=serkan', 'route2');
-
-			// test 1: positiv
-			router._matchStaticURL('/this/is/a/route/1', 'pathname').should.containEql({
-				name: 'route1',
-				type: 'static',
-				route: '/this/is/a/route/1',
-				urlpart: 'pathname',
-				params: null,
-				regex: null,
-				fragment: '/this/is/a/route/1',
-				cache: false,
-			});
-
-			// test 2: positiv
-			router._matchStaticURL('?name=serkan', 'search').should.containEql({
-				name: 'route2',
-				type: 'static',
-				route: '?name=serkan',
-				urlpart: 'search',
-				params: null,
-				regex: null,
-				fragment: '?name=serkan',
-				cache: false,
-			});
-
-			// test: negativ
-			should(router._matchStaticURL('/not/added/route', 'pathname')).be.exactly(null);
-			should(router._matchStaticURL('?name=foo', 'search')).be.exactly(null);
-			should(router._matchStaticURL('#liya', 'hash')).be.exactly(null);
-
-			// cleanup
-			router.destroy();
-
-		});
-
-	});
-
-	describe('_matchDynamicURL method', () => {
+	describe('_match method', () => {
 
 		it('should return matchedObject by passed fragment', () => {
 
@@ -244,14 +194,16 @@ describe('Class Router', () => {
 			let router = Router.create();
 			router._addRoute('/{{a}}/b/{{c}}/d', 'route1');
 			router._addRoute('?id={{id}}&name={{name}}', 'route2');
+			router._addRoute('/this/is/a/route/1', 'route3');
+			router._addRoute('?name=serkan', 'route4');
 
 			// test 1: positiv
-			router._matchDynamicURL('/foo/b/bar/d', 'pathname').should.containEql({
+			router._match('/foo/b/bar/d', 'pathname').should.containEql({
 				name: 'route1',
 				type: 'dynamic',
 				route: '/{{a}}/b/{{c}}/d',
 				urlpart: 'pathname',
-				regex: '\\/(?<a>[\\d\\w?()|{}_.,-]+)\\/b\\/(?<c>[\\d\\w?()|{}_.,-]+)\\/d',
+				regex: '^\\/(?<a>[\\d\\w?()|{}_.,-]+)\\/b\\/(?<c>[\\d\\w?()|{}_.,-]+)\\/d$',
 				params: {
 					a: 'foo',
 					c: 'bar',
@@ -260,8 +212,8 @@ describe('Class Router', () => {
 				cache: false,
 			});
 
-			// test 2: positiv (with queryString)
-			router._matchDynamicURL('?id=26&name=mars&update=true', 'search').should.containEql({
+			// test 2: positiv
+			router._match('?id=26&name=mars&update=true', 'search').should.containEql({
 				name: 'route2',
 				type: 'dynamic',
 				route: '?id={{id}}&name={{name}}',
@@ -275,10 +227,34 @@ describe('Class Router', () => {
 				cache: false,
 			});
 
+			// test 3: positiv
+			router._match('/this/is/a/route/1', 'pathname').should.containEql({
+				name: 'route3',
+				type: 'static',
+				route: '/this/is/a/route/1',
+				urlpart: 'pathname',
+				params: {},
+				regex: '^\\/this\\/is\\/a\\/route\\/1$',
+				fragment: '/this/is/a/route/1',
+				cache: false,
+			});
+
+			// test 4: positiv
+			router._match('?name=serkan', 'search').should.containEql({
+				name: 'route4',
+				type: 'static',
+				route: '?name=serkan',
+				urlpart: 'search',
+				params: {},
+				regex: '\\?name=serkan',
+				fragment: '?name=serkan',
+				cache: false,
+			});
+
 			// test: negativ
-			should(router._matchDynamicURL('/not/added/route', 'pathname')).be.exactly(null);
-			should(router._matchDynamicURL('?x=1', 'search')).be.exactly(null);
-			should(router._matchDynamicURL('#this-hash', 'hash')).be.exactly(null);
+			should(router._match('/not/added/route', 'pathname')).be.exactly(null);
+			should(router._match('?x=1', 'search')).be.exactly(null);
+			should(router._match('#this-hash', 'hash')).be.exactly(null);
 
 			// cleanup
 			router.destroy();
@@ -314,35 +290,34 @@ describe('Class Router', () => {
 
 	});
 
-	describe('_matchURL method', () => {
+	describe('_matchURL method (integration test)', () => {
 
 		let router = null;
 
-		it('should return only valid value from _matchStaticURL by passed static path', () => {
+		it('should return only valid value from _match by passed static path', () => {
 
 			// setup
 			router = Router.create();
 			router._addRoute('/some/static/path', 'route1');
 
-			// test: it should call _matchStaticURL
+			// test: it should call _match
 			router._matchURL('/some/static/path', ['pathname']);
-			router._matchStaticURL.returnValues[0].name.should.be.equal('route1');
-			router._matchDynamicURL.returnValues.should.be.length(0);
+			router._match.returnValues[0].name.should.be.equal('route1');
+			router._match.returnValues[0].cache.should.be.false();
 			should(router._getRouteCache.returnValues[0]).be.null();
 
 		});
 
-		it('should return only valid value from _matchDynamicURL by passed dynamic path', () => {
+		it('should return only valid value from _match by passed dynamic path', () => {
 
 			// setup
 			router = Router.create();
 			router._addRoute('/{{dynamic}}/b/{{path}}/d', 'route2');
 
-			// test: it should call _matchDynamicURL
+			// test: it should call _match
 			router._matchURL('/hey/b/there/d', ['pathname']);
-			should(router._matchStaticURL.returnValues[0]).be.null();
-			router._matchDynamicURL.returnValues[0].name.should.be.equal('route2');
-			router._matchDynamicURL.returnValues[0].cache.should.be.false();
+			router._match.returnValues[0].name.should.be.equal('route2');
+			router._match.returnValues[0].cache.should.be.false();
 			should(router._getRouteCache.returnValues[0]).be.null();
 
 		});
@@ -355,7 +330,7 @@ describe('Class Router', () => {
 
 			// test: returned not from cache
 			router._matchURL('/hey/b/there/d', ['pathname']);
-			router._matchDynamicURL.returnValues[0].cache.should.be.false();
+			router._match.returnValues[0].cache.should.be.false();
 
 			// test: returned from cache
 			router._matchURL('/hey/b/there/d', ['pathname']);
@@ -366,18 +341,75 @@ describe('Class Router', () => {
 
 		});
 
+		it('should return array with matched object', () => {
+
+			// setup
+			router = Router.create();
+			router._addRoute('/{{dynamic}}/b/{{path}}/d', 'route1');
+			router._addRoute('?name=test', 'route2');
+			router._addRoute('#im-hash', 'route3');
+
+			// test 1
+			router._matchURL('/hey/b/there/d', ['pathname'])[0].should.containEql({
+				name: 'route1',
+				cache: false,
+			});
+
+			// test 2
+			router._matchURL('?name=test&whats=up', ['search'])[0].should.containEql({
+				name: 'route2',
+				cache: false,
+			});
+
+			// cleanup
+			router.destroy();
+
+		});
+
+		it('should return array with matched parts', () => {
+
+			// setup
+			let changepart, matchedResults;
+
+			router = Router.create();
+			router._addRoute('/{{dynamic}}/b/{{path}}/d', 'route1');
+			router._addRoute('?name={{name}}', 'route2');
+			router._addRoute('#im-hash', 'route3');
+
+			// test 1 if only changed
+			changepart = ['pathname', 'search', 'hash'];
+
+			matchedResults = router._matchURL('/hey/b/there/d?name=serkan#im-hash', changepart);
+			matchedResults.should.be.length(3);
+
+			matchedResults[0].should.containEql({ name: 'route1' });
+			matchedResults[1].should.containEql({ name: 'route2' });
+			matchedResults[2].should.containEql({ name: 'route3' });
+
+			// test 2 if only changed
+			changepart = ['search', 'hash'];
+
+			matchedResults = router._matchURL('/hey/b/there/d?name=serkan#im-hash', changepart);
+			matchedResults.should.be.length(2);
+
+			matchedResults[0].should.containEql({ name: 'route2' });
+			matchedResults[1].should.containEql({ name: 'route3' });
+
+			// cleanup
+			router.destroy();
+
+		});
+
 		// setup
 		beforeEach(() => {
 
-			sinon.spy(Router.prototype, '_matchStaticURL');
-			sinon.spy(Router.prototype, '_matchDynamicURL');
+			sinon.spy(Router.prototype, '_match');
 			sinon.spy(Router.prototype, '_getRouteCache');
 
 		});
 		afterEach(() => {
 
-			router._matchStaticURL.restore();
-			router._matchDynamicURL.restore();
+			router._match.restore();
 			router._getRouteCache.restore();
 			router.destroy();
 
@@ -720,8 +752,11 @@ describe('Class Router', () => {
 			});
 
 			// test
-			let url = router.createURL('http://www.mydomain.com/path/to/somewhere.html?a=1&b=2');
-			url.fragment.should.equal('/path/to/somewhere.html?a=1&b=2');
+			let url = router.createURL('http://www.mydomain.com/path/to/somewhere.html?a=1&b=2#foo');
+			url.pathname.should.equal('/path/to/somewhere.html');
+			url.search.should.equal('?a=1&b=2');
+			url.hash.should.equal('#foo');
+			url.fragment.should.equal('/path/to/somewhere.html?a=1&b=2#foo');
 
 			// cleanup
 			router.destroy();
@@ -816,39 +851,38 @@ describe('Class Router', () => {
 		it('it should return route information by passed fragment', () => {
 
 			// setup
-			let router = Router.create();
+			let router = Router.create(), result;
 			router.on('myRoute1 /', () => {});
 			router.on('myRoute2 /some/path.html', () => {});
 			router.on('myRoute3 /some/{{integer}}/{{float}}/path.html', () => {});
+			router.on('myRoute4 /{{a}}/b', () => {});
+			router.on('myRoute5 ?c=d&e=f', () => {});
+			router.on('myRoute6 #hash-{{hash}}', () => {});
 
 			// test 1 - positiv
-			router.whoami('/').should.be.containEql({
+			result = router.whoami('/');
+			result.should.be.length(1);
+			result[0].should.be.containEql({
 				name: 'myRoute1',
-				type: 'static',
-				regex: null,
-				route: '/',
-				routeType: 'path',
+				params: {},
 				cache: false,
 			});
 
 			// test 2 - positiv
-			router.whoami('/some/path.html').should.be.containEql({
+			result = router.whoami('/some/path.html');
+			result.should.be.length(1);
+			result[0].should.be.containEql({
 				name: 'myRoute2',
-				type: 'static',
-				regex: null,
-				route: '/some/path.html',
-				routeType: 'path',
+				params: {},
 				cache: false,
 			});
 
+
 			// test 3 - positiv
-			router.whoami('/some/123/4.34/path.html').should.be.containEql({
+			result = router.whoami('/some/123/4.34/path.html');
+			result.should.be.length(1);
+			result[0].should.be.containEql({
 				name: 'myRoute3',
-				type: 'dynamic',
-				fragment: '/some/123/4.34/path.html',
-				route: '/some/{{integer}}/{{float}}/path.html',
-				routeType: 'path',
-				regex: '\\/some\\/(?<integer>[\\d\\w?()|{}_.,-]+)\\/(?<float>[\\d\\w?()|{}_.,-]+)\\/path\\.html',
 				params: {
 					integer: 123,
 					float:  4.34,
@@ -856,8 +890,28 @@ describe('Class Router', () => {
 				cache: false,
 			});
 
+			// test 4 - positiv
+			result = router.whoami('/im/b?c=d&e=f#hash-tag');
+			result.should.be.length(3);
+			result[0].should.be.containEql({
+				name: 'myRoute4',
+				params: { a: 'im' },
+				cache: false,
+			});
+			result[1].should.be.containEql({
+				name: 'myRoute5',
+				params: {},
+				cache: false,
+			});
+			result[2].should.be.containEql({
+				name: 'myRoute6',
+				params: { hash: 'tag' },
+				cache: false,
+			});
+
 			// test 3 - negativ
-			should(router.whoami('/unknown/path.html')).be.exactly(null);
+			router.whoami('/im/b/c').should.be.length(0);
+			router.whoami('/unknown/path.html').should.be.length(0);
 
 			// cleanup
 			router.destroy();
@@ -873,6 +927,7 @@ describe('Class Router', () => {
 			// setup
 			let router = Router.create();
 			router.on('myRoute1 /some/{{integer}}/{{float}}/path.html', () => {});
+			router.on('myRoute1 /a/b/c.html', () => {});
 
 			// test 1 - positiv
 			router.which('myRoute1').should.be.containEql({
@@ -880,8 +935,8 @@ describe('Class Router', () => {
 				type: 'dynamic',
 				fragment: null,
 				route: '/some/{{integer}}/{{float}}/path.html',
-				routeType: 'path',
-				regex: '\\/some\\/(?<integer>[\\d\\w?()|{}_.,-]+)\\/(?<float>[\\d\\w?()|{}_.,-]+)\\/path\\.html',
+				urlpart: 'pathname',
+				regex: '^\\/some\\/(?<integer>[\\d\\w?()|{}_.,-]+)\\/(?<float>[\\d\\w?()|{}_.,-]+)\\/path\\.html$',
 				params: null,
 				cache: false,
 			});
@@ -1268,13 +1323,11 @@ describe('Class Router', () => {
 			router.on('Configurator /configurator.html');
 
 			// test routes count
-			Object.keys(router._getRoutes('static')).should.be.length(4);
+			// INFO: _getRoutes umbenennen in getRoutes
+			Object.keys(router._routes.pathname).should.be.length(4);
 
 			// should throw error because route is already exists
 			(() => { router.on('Detailpage /details.html'); }).should.throw();
-
-			// routes count must be the same
-			Object.keys(router._getRoutes('static')).should.be.length(4);
 
 			// cleanup
 			router.destroy();
