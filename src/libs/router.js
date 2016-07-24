@@ -406,7 +406,7 @@ class Router {
 
 		for(let route of Object.keys(allRoutes)){
 			let { name } = allRoutes[route];
-			this.scope.off(name);
+			this.off(name);
 		}
 	}
 

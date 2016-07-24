@@ -1538,38 +1538,69 @@ describe('Class Router', () => {
 
 		it('should match registered static and dynamic url route', (done) => {
 
-			/**
-			 * Static Test
-			 */
-
-			// register
+			// register events
 			router.on('Index /index.html', spy_index_handler);
 			router.on('SomePathURL /some/path/url.html', spy_somePathURL_handler);
+			router.on('SomeDynamicURL1 /{{name}}/{{surname}}/123', spy_dynamicPath_handler1);
+			router.on('Route1 /im/{{name}}', spy_route1_handler);
+			router.on('Route2 ?have=some', spy_route2_handler);
+			router.on('Route3 #hash-{{id}}', spy_route3_handler);
 
 			// trigger events by clicking
-			element.querySelector('.index').click();
-			element.querySelector('.some-path-url').click();
-			element.querySelector('.not-registered-url').click();
-			element.querySelector('.some-path-url').click();
+			setTimeout(() => element.querySelector('.index').click(), 0);
+			setTimeout(() => element.querySelector('.some-path-url').click(), 30);
+			setTimeout(() => element.querySelector('.not-registered-url').click(), 60);
+			setTimeout(() => element.querySelector('.some-path-url').click(), 90);
+			setTimeout(() => element.querySelector('.some-dynamic-path').click(), 120);
+			setTimeout(() => element.querySelector('.some-mixed-path').click(), 150);
+			setTimeout(() => element.querySelector('.some-partial-mixed-path').click(), 180);
 
-			// test
-			// spy_index_handler.callCount.should.equal(1);
-			// spy_somePathURL_handler.callCount.should.equal(2);
+			setTimeout(() => {
 
-			/**
-			 * Dynamic Test
-			 */
+				// test results of static paths
+				spy_index_handler.callCount.should.equal(1);
+				spy_index_handler.args[0][0].name.should.be.equal('Index');
+				spy_index_handler.args[0][0].fragment.should.be.equal('/index.html');
 
-			// register
-			router.on('SomeDynamicURL /{{name}}/{{surname}}/123', ({ params, fragment }) => {
-				params.name.should.be.equal('serkan');
-				params.surname.should.be.equal('sipahi');
-				fragment.should.be.equal('/serkan/sipahi/123');
+				spy_somePathURL_handler.callCount.should.equal(2);
+				spy_somePathURL_handler.args[0][0].name.should.be.equal('SomePathURL');
+				spy_somePathURL_handler.args[0][0].fragment.should.be.equal('/some/path/url.html');
+
+				// test results of dynamic path
+				spy_dynamicPath_handler1.args[0][0].name.should.be.equal('SomeDynamicURL1');
+				spy_dynamicPath_handler1.args[0][0].fragment.should.be.equal('/serkan/sipahi/123');
+				spy_dynamicPath_handler1.args[0][0].params.should.be.containEql({
+					name: 'serkan', surname: 'sipahi',
+				});
+
+				// test results of mix route path
+				spy_route1_handler.args[0][0].name.should.be.equal('Route1');
+				spy_route1_handler.args[0][0].fragment.should.be.equal('/im/foo');
+				spy_route1_handler.args[0][0].params.should.be.containEql({
+					name: 'foo',
+				});
+
+				spy_route2_handler.args[0][0].name.should.be.equal('Route2');
+				spy_route2_handler.args[0][0].fragment.should.be.equal('?have=some&things=here');
+				spy_route2_handler.args[0][0].params.should.be.containEql({});
+
+				spy_route3_handler.args[0][0].name.should.be.equal('Route3');
+				spy_route3_handler.args[0][0].fragment.should.be.equal('#hash-tag');
+				spy_route3_handler.args[0][0].params.should.be.containEql({
+					id: 'tag',
+				});
+
+				// test results of partial route path ( onyl pathname changed )
+				spy_route1_handler.args[0][0].name.should.be.equal('Route1');
+				spy_route1_handler.args[1][0].fragment.should.be.equal('/im/bar');
+				spy_route1_handler.args[1][0].params.should.be.containEql({
+					name: 'bar',
+				});
+				spy_route2_handler.args.should.be.length(1); // nothing changed, same args
+				spy_route3_handler.args.should.be.length(1); // nothing changed, same args
+
 				done();
-			});
-
-			// trigger events by clicking
-			element.querySelector('.some-dynamic-path').click();
+			}, 250);
 
 		});
 
@@ -1587,9 +1618,16 @@ describe('Class Router', () => {
 		});
 
 		// Setup
-		let element, spy_index_handler, spy_somePathURL_handler, spy_dynamicPath_handler, router;
+		let element;
+		let spy_index_handler;
+		let spy_somePathURL_handler;
+		let spy_dynamicPath_handler1;
+		let spy_route1_handler, spy_route2_handler, spy_route3_handler;
+		let router;
 
 		beforeEach(() => {
+
+			element = document.createElement("div");
 
 			router = Router.create({
 				scope: element,
@@ -1597,14 +1635,18 @@ describe('Class Router', () => {
 
 			spy_index_handler = sinon.spy(() => {});
 			spy_somePathURL_handler = sinon.spy(() => {});
-			spy_dynamicPath_handler = sinon.spy(() => {});
+			spy_dynamicPath_handler1 = sinon.spy(() => {});
+			spy_route1_handler = sinon.spy(() => {});
+			spy_route2_handler = sinon.spy(() => {});
+			spy_route3_handler = sinon.spy(() => {});
 
-			element = document.createElement("div");
 			element.classList.add('anchor-container');
 			element.innerHTML = `
 				<a class="index" href="/index.html"> Index </a>
 				<a class="some-path-url" href="/some/path/url.html"> Some path URL </a>
 				<a class="some-dynamic-path" href="/serkan/sipahi/123"> Some Dynamic URL </a>
+				<a class="some-mixed-path" href="/im/foo?have=some&things=here#hash-tag"> Some Mixed URL </a>
+				<a class="some-partial-mixed-path" href="/im/bar?have=some&things=here#hash-tag"> Some Partial Mixed URL </a>
 				<a class="not-registered-url" href="/not/registered/url.html"> Not registered URL </a>
 			`;
 			document.body.appendChild(element);
