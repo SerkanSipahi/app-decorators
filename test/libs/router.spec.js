@@ -1591,7 +1591,7 @@ describe('Class Router', () => {
 				});
 
 				// test results of partial route path ( onyl pathname changed )
-				spy_route1_handler.args[0][0].name.should.be.equal('Route1');
+				spy_route1_handler.args[1][0].name.should.be.equal('Route1');
 				spy_route1_handler.args[1][0].fragment.should.be.equal('/im/bar');
 				spy_route1_handler.args[1][0].params.should.be.containEql({
 					name: 'bar',
