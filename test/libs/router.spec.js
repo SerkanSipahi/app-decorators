@@ -184,6 +184,46 @@ describe('Class Router', () => {
 			(() => { router._addRoute('?id=5#foo', 'name3'); }).should.throw();
 		});
 
+		it('should throw error if eventName already exists', () => {
+
+			(() => { router._addRoute('/x/y?id=11', 'name1'); }).should.throw();
+
+		});
+
+	});
+
+	describe('_existsEvent method', () => {
+
+		// setup
+		let router = null;
+
+		beforeEach(() => {
+
+			// setup
+			router = Router.create();
+			// add static routes
+			router._addRoute('/this/is/a/route/1', 'name1');
+			router._addRoute('?id={{id}}&name={{name}}', 'name2');
+			router._addRoute('?name=serkan', 'name3');
+			router._addRoute('#im-{{foo}}', 'name4');
+		});
+
+		afterEach(() => router.destroy() );
+
+		it('should check if event already exists', () => {
+
+			router._existsEvent('name1').should.be.true();
+			router._existsEvent('name3').should.be.true();
+
+		});
+
+		it('should check if event not exists', () => {
+
+			router._existsEvent('name5').should.be.false();
+			router._existsEvent('name6').should.be.false();
+
+		});
+
 	});
 
 	describe('_match method', () => {
@@ -927,7 +967,7 @@ describe('Class Router', () => {
 			// setup
 			let router = Router.create();
 			router.on('myRoute1 /some/{{integer}}/{{float}}/path.html', () => {});
-			router.on('myRoute1 /a/b/c.html', () => {});
+			router.on('myRoute2 /a/b/c.html', () => {});
 
 			// test 1 - positiv
 			router.which('myRoute1').should.be.containEql({
@@ -1743,11 +1783,16 @@ describe('Class Router', () => {
 
 			router.on('myRoute /some/path.html', spy_myRoute);
 			router.trigger('myRoute');
+
+			// test that route remove from _routes
+			Object.keys(router._routes.pathname).should.be.length(1);
+
+			// test handler no more called
 			router.off('myRoute');
 			router.trigger('myRoute');
-
-			// test
 			spy_myRoute.callCount.should.be.equal(1);
+			// test that route remove from _routes
+			Object.keys(router._routes.pathname).should.be.length(0);
 
 			// cleanup
 			router.destroy();

@@ -152,7 +152,8 @@ class Router {
 			throw `No event passed`;
 		}
 
-		this.scope.off(event);
+		this._removeRoute(event);
+
 
 	}
 
@@ -238,7 +239,11 @@ class Router {
 		let urlpart = this._getURLType(route);
 
 		if(this._routes[urlpart][route]) {
-			throw `route: "${route}" related to urlpart "${urlpart}" already exists!`;
+			throw `route: "${route}" already exists!`;
+		}
+
+		if(this._existsEvent(name)){
+			throw `Eventname: "${name}" already exists!`;
 		}
 
 		let type = this._isDynamicURL(route) ? 'dynamic' : 'static';
@@ -247,6 +252,47 @@ class Router {
 		let routeObjectArgs = { name, route, regex, type, urlpart };
 
 		this._routes[urlpart][route] = this._createRouteObject(routeObjectArgs);
+
+	}
+
+	/**
+	 * _existsEvent
+	 * @param event {string}
+	 * @private
+     */
+	_existsEvent(event){
+
+		let allRoutes = this.getRoutes();
+		for(let route of Object.keys(allRoutes)){
+			let { name } = allRoutes[route];
+			if(event === name){
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * _removeRoute
+	 * @param event {string}
+	 * @private
+     */
+	_removeRoute(event) {
+
+		// remove route event from listener
+		this.scope.off(event);
+
+		// remove route event from _routes
+		let allRoutes = this.getRoutes();
+		for(let routeKey of Object.keys(allRoutes)){
+
+			let { name, urlpart, route } = allRoutes[routeKey];
+			if(name === event) {
+				delete this._routes[urlpart][route];
+				return;
+			}
+		}
 
 	}
 
