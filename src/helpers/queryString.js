@@ -1,8 +1,11 @@
 
 /**
  * queryString
+ * @author Serkan Sipahi
  */
 let queryString = {
+
+    tmpDomain: 'http://localhost',
 
     /**
      * parse
@@ -12,21 +15,32 @@ let queryString = {
     parse(query='') {
 
         // cleanup
-        query = query.replace(/^\?|#/g, '');
+        query = query.trim().replace(/^(\?|#|&)/g, '');
 
-        if(query === ''){
+        if(!query || query === ' '){
             return {};
         }
 
         // init
-        let fullURLPath = `http://x.x?${encodeURI(query)}`;
+        let fullURLPath = `${this.tmpDomain}?${decodeURIComponent(query)}`;
         let { searchParams } = new URL(fullURLPath);
-        let queryObject = {};
+        let queryObject = Object.create(null);
 
         // build
         for(let param of searchParams.entries()){
 
-            queryObject[param[0]] = param[1];
+            let key = param[0];
+            let value = param[1] || null;
+            let propertyValue = queryObject[key];
+
+            if(!propertyValue && propertyValue !== null){
+                queryObject[key] = value;
+            } else {
+                if(Object.classof(propertyValue) !== 'Array'){
+                    queryObject[key] = [ propertyValue ];
+                }
+                queryObject[key].push(value);
+            }
         }
 
         return queryObject;
