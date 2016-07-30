@@ -51,7 +51,7 @@
     "gulp-sourcemaps": "1.6.0",
     "handlebars": "4.0.5",
     "immutable": "3.8.1",
-    "jspm": "0.17.0-beta.22",
+    "jspm": "^0.17.0-beta.24",
     "karma": "0.13.22",
     "karma-chrome-launcher": "1.0.1",
     "karma-firefox-launcher": "1.0.0",
