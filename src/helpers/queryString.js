@@ -30,9 +30,12 @@ let queryString = {
             let value = param[1] || null;
             let propertyValue = queryObject[key];
 
+            // foo=bar&key=val, foo&key
             if(propertyValue === undefined && propertyValue !== null){
                 queryObject[key] = value;
-            } else {
+            }
+            else {
+                // foo=bar&foo=baz
                 if(Object.classof(propertyValue) !== 'Array'){
                     queryObject[key] = [ propertyValue ];
                 }
@@ -64,6 +67,7 @@ let queryString = {
 
         let raw_query = [];
         queryObjectKeys.forEach(key => {
+
             if(Object.classof(queryObject[key]) === 'Array'){
 
                 queryObject[key].forEach(propValue => {

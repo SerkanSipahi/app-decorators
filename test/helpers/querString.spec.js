@@ -122,7 +122,7 @@ describe('queryString', () => {
             }).should.be.equal('abc=abc');
         });
 
-        it.skip('should not encode undefined values', () => {
+        it('should not encode undefined values', () => {
             queryString.stringify({
                 abc: undefined,
                 foo: 'baz'
