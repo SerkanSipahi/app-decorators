@@ -210,13 +210,19 @@ class Router {
 
 		this.scope.on(name, event => {
 
+			// extract matched params
 			let params = event.detail || {};
 
+			// extract current searchParams and hashParams
+			let { search, hash } = this.createURL(this.helper.location.href);
+			let searchParams = this.queryString.parse(search);
+			let hashParams = this.queryString.parse(hash);
+
 			if(handler){
-				handler(params);
+				handler(params, searchParams, hashParams);
 			}
 			// resolve promise
-			this._promiseHandler(name, params);
+			this._promiseHandler(name, params, searchParams, hashParams);
 		});
 
 		return promise;
@@ -406,6 +412,12 @@ class Router {
 	get XRegExp() {
 
 		return this.helper.XRegExp;
+
+	}
+
+	get queryString(){
+
+		return this.helper.queryString;
 
 	}
 
