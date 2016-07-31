@@ -808,7 +808,7 @@ class Router {
 	 * @param  {Evemt} event
 	 * @return {undefined}
 	 */
-	_promiseHandler(type, event){
+	_promiseHandler(type, params, searchParams, hashParams){
 
 		if(!this.promise[type]){
 			return;
@@ -817,7 +817,7 @@ class Router {
 		let resolve;
 		// promise can resolved only once therefore shift()
 		while((resolve = this.promise[type].shift()) !== undefined){
-			resolve(event);
+			resolve(params, searchParams, hashParams);
 		}
 
 	}
