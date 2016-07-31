@@ -1,4 +1,4 @@
-## decorators/style.js
+### @style
 
 ## Usage
 

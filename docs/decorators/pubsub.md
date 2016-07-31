@@ -1,4 +1,4 @@
-## decorators/pubsub.js
+## @pubsub
 
 ## Usage
 
