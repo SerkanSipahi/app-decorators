@@ -40,17 +40,17 @@ router.on('Home /', () => {
     console.log('home');
 });
 
-// ** if exists, search and hash will be always passed **
 router.on('Results /products/{{category}}.html', (matched, search, hash) => {
 
     console.log(matched.params.category);
+
 });
 
-// ** if exists, search and hash will be always passed **
 router.on('Product /products/{{category}}/{{id}}.html', (matched, search, hash) => {
 
     console.log(matched.params.category);
 	console.log(matched.params.id);
+
 });
 
 // add search route
@@ -62,8 +62,11 @@ router.on('ShowArea ?show={{type}}', (matched, search, hash) => {
 // add hash route
 router.on('MarkLines #markfrom={{from}}&to={{to}}', (matched, search, hash) => {
 
-	console.log(matched.params.from);
-	console.log(matched.params.to);
+	// e.g. on click of .show-hightlight (see index.html)
+	console.log(matched.params); // log: { markfrom: 5, to: 10 }
+	console.log(search);         // log: { show: 'video', a: 'b', c: 'd' }
+	console.log(hash);           // log: { markfrom: 5, to: 10 jumpTo: 'foo' }
+
 });
 
 // start route
@@ -72,11 +75,10 @@ router.start();
 
 #### index.html
 ```html
-    <a class="home" href="/"> Home </a>
-    <a class="results" href="/products/samsung/s4"> Samsung Galaxy S4 </a>
-    <a class="show-video" href="/products/samsung/s4?show=video"> Show Video </a>
-    <a class="show-hightlight"href="/products/samsung/s4?show=video#markfrom=5&to=10"> Show Highlight </a>
-</html>
+<a class="home" href="/"> Home </a>
+<a class="results" href="/products/samsung/s4"> Samsung Galaxy S4 </a>
+<a class="show-video" href="/products/samsung/s4?show=video"> Show Video </a>
+<a class="show-hightlight"href="/products/samsung/s4?show=video&a=b&c=d#markfrom=5&to=10&jumpTo=foo"> Show Highlight </a>
 ```
 
 #### advanced usage:
@@ -187,8 +189,8 @@ let router = Router.create();
 router.on('myRoute1 /my/path/{{name}}', () => {});
 router.on('myRoute2 ?name=foo', (matched, search, hash) => {
 
-	// ** if exists, search and hash will be always passed **
 	console.log(matched.params.hello) // log: 'world'
+
 });
 
 // trigger
@@ -210,8 +212,8 @@ let router = Router.create({
 router.on('route1 /', () => {});
 router.on('route2 /some/{{name}}.html', (matched, search, hash) => {
 
-	// ** if exists, search and hash will be always passed **
 	console.log(matched.params.name); // log: path
+
 });
 
 // create CustomEvent
@@ -232,9 +234,11 @@ document.body.dispatchEvent(event);
 let router = Router.create();
 
 router.on('myRoute1 /my/path/{{name}}', (matched, search, hash) => {
+
 	console.log(matched.params) // log: { name: 'awesome' }
 	console.log(search) // log: { a:1, b:2 }
 	console.log(hash)   // log: { c:3, d:4 }
+
 });
 
 // will match
