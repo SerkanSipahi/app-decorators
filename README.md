@@ -99,7 +99,7 @@ es2015
 * [Customelement](./docs/libs/customelement.md)
 * [Eventhandler](./docs/libs/eventhandler.md)
 * [View](./docs/libs/view.md)
-* [Model](./#model) : in progress
+* Model : in progress
 
 
 ## Tests

@@ -78,16 +78,6 @@ router.start();
     <a class="show-hightlight"href="/products/samsung/s4?show=video#markfrom=5&to=10"> Show Highlight </a>
 </html>
 ```
-##### no unnecessary handler calls:
-Folgendes Scenario um den Vorteil des Routers zu zeigen. Angekommen ".results" wird angeklickt. Durch diesen click wird der von uns vorab registrieter "Results" event (siehe oben) gefeuert und unser handler
-wird aufgerufen. Nun Klicken wir auf ".show-video". Weil bereits das "Results" event gefeuert wurde und dieser auch in diesem link vorkommt wird dieser nicht aufgerufen, sondern nur der handler für "ShowArea" (siehe oben).
-
-Jetzt klicken wir wieder auf "results". Da sich der pathname für ".results" sich nicht geändert hat, wird
-kein weiteres event gefeuert. Durch diesen Verhalten schützen wir die Application vor unnnötigen aufrufen.
-
-##### cache matched routes:
-
-
 
 #### advanced usage:
 ```js
