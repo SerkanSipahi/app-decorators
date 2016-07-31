@@ -83,5 +83,92 @@ describe('queryString', () => {
 
     });
 
+    describe('stringify method', () => {
+        
+        it('stringify', () => {
+            queryString.stringify({foo: 'bar'}).should.be.equal('foo=bar');
+            queryString.stringify({foo: 'bar', 'bar': 'baz'}).should.be.equal('foo=bar&bar=baz');
+        });
+
+
+        it('different types', () => {
+            queryString.stringify('').should.be.equal('');
+            queryString.stringify(0).should.be.equal('');
+            queryString.stringify(1).should.be.equal('');
+            queryString.stringify([]).should.be.equal('');
+            queryString.stringify(true).should.be.equal('');
+        });
+
+        it('URI encode', () => {
+            queryString.stringify({'foo bar': 'baz faz'}).should.be.equal('foo%20bar=baz%20faz');
+            queryString.stringify({'foo bar': 'baz\'faz'}).should.be.equal('foo%20bar=baz%27faz');
+        });
+
+        it('no encoding', () => {
+            queryString.stringify({'foo:bar': 'baz:faz'}, false).should.be.equal('foo:bar=baz:faz');
+        });
+
+        it('handle array value', () => {
+            queryString.stringify({
+                abc: 'abc',
+                foo: ['bar', 'baz']
+            }).should.be.equal('abc=abc&foo=bar&foo=baz');
+        });
+
+        it('handle empty array value', () => {
+            queryString.stringify({
+                abc: 'abc',
+                foo: []
+            }).should.be.equal('abc=abc');
+        });
+
+        it.skip('should not encode undefined values', () => {
+            queryString.stringify({
+                abc: undefined,
+                foo: 'baz'
+            }).should.be.equal('foo=baz');
+        });
+
+        it('should encode null values as just a key', () => {
+            queryString.stringify({
+                'x y z': null,
+                'abc': null,
+                'foo': 'baz'
+            }).should.be.equal('x%20y%20z&abc&foo=baz');
+        });
+
+        it('handle null values in array', () => {
+            queryString.stringify({
+                foo: null,
+                bar: [null, 'baz']
+            }).should.be.equal('foo&bar&bar=baz');
+        });
+
+        it('handle undefined values in array', () => {
+            queryString.stringify({
+                foo: null,
+                bar: [undefined, 'baz']
+            }).should.be.equal('foo&bar=baz');
+        });
+
+        it('handle undefined and null values in array', () => {
+            queryString.stringify({
+                foo: null,
+                bar: [undefined, null, 'baz']
+            }).should.be.equal('foo&bar&bar=baz');
+        });
+
+        it('strict encoding', () => {
+            queryString.stringify({foo: '\'bar\''}).should.be.equal('foo=%27bar%27');
+            queryString.stringify({foo: ['\'bar\'', '!baz']}).should.be.equal('foo=%27bar%27&foo=!baz');
+        });
+
+        it.skip('loose encoding', () => {
+            queryString.stringify({foo: '\'bar\''}).should.be.equal('foo=\'bar\'');
+            queryString.stringify({foo: ['\'bar\'', '!baz']}).should.be.equal('foo=\'bar\'');
+        });
+
+    });
+
 });
 

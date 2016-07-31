@@ -5,8 +5,6 @@
  */
 let queryString = {
 
-    tmpDomain: 'http://localhost',
-
     /**
      * parse
      * @param {string} query
@@ -22,8 +20,7 @@ let queryString = {
         }
 
         // init
-        let fullURLPath = `${this.tmpDomain}?${decodeURIComponent(query)}`;
-        let { searchParams } = new URL(fullURLPath);
+        let searchParams = new URLSearchParams(decodeURIComponent(query));
         let queryObject = Object.create(null);
 
         // build
@@ -33,7 +30,7 @@ let queryString = {
             let value = param[1] || null;
             let propertyValue = queryObject[key];
 
-            if(!propertyValue && propertyValue !== null){
+            if(propertyValue === undefined && propertyValue !== null){
                 queryObject[key] = value;
             } else {
                 if(Object.classof(propertyValue) !== 'Array'){
@@ -48,31 +45,65 @@ let queryString = {
 
     /**
      * stringify
-     * @param {object} queryObject
-     * @returns {string} urlpath
+     * @param queryObject
+     * @param encode
+     * @returns {string} queryString
      */
-    stringify(queryObject) {
+    stringify(queryObject = {}, encode = true) {
 
-        // init
-        let urlObject = new URL('http://x.x');
+        // '', 0, 1, [], etc
+        if(Object.classof(queryObject) !== 'Object'){
+            return '';
+        }
+
+        // {}
         let queryObjectKeys = Object.keys(queryObject);
-
         if(!queryObjectKeys.length){
             return '';
         }
 
-        // build
-        for(let key of queryObjectKeys){
+        let raw_query = [];
+        queryObjectKeys.forEach(key => {
+            if(Object.classof(queryObject[key]) === 'Array'){
 
-            let value = queryObject[key];
-            urlObject.searchParams.append(
-                encodeURI(key),
-                encodeURI(value)
-            );
+                queryObject[key].forEach(propValue => {
+                    // { bar: [undefined, 'baz'] }
+                    if(propValue === undefined) return;
+                    // bar: [null, 'baz']
+                    if(propValue === null){
+                        raw_query.push(key);
+                    }
+                    // { foo: ['bar', 'baz'] }
+                    else {
+                        raw_query.push(`${key}=${propValue}`)
+                    }
+                });
+                return;
+
+            }
+            // { abc: undefined }
+            if(queryObject[key] === undefined) return;
+
+            // { 'def': null }
+            if(queryObject[key] === null){
+                raw_query.push(key);
+            }
+            // { foo: 'baz' }
+            else {
+                raw_query.push(`${key}=${queryObject[key]}`);
+            }
+
+        });
+
+        let queryString = raw_query.join('&');
+
+        if(encode){
+            let { search } = new URL(`http://localhost?${queryString}`);
+            queryString = search.replace(/^\?/g, '');
         }
 
-        let queryString = urlObject.search.replace(/^\?/g, '');
         return queryString;
+
     },
 
 };
