@@ -94,12 +94,12 @@ es2015
 * [@style] : in progress
 * [@model] : in progress
 
-##### Standalone Libraries
+##### Libraries
 * [Router](./docs/libs/router.md)
 * [Customelement](./docs/libs/customelement.md)
 * [Eventhandler](./docs/libs/eventhandler.md)
 * [View](./docs/libs/view.md)
-* [@model](./#model) : in progress
+* [Model](./#model) : in progress
 
 
 ## Tests
