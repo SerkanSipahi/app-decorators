@@ -1007,14 +1007,32 @@ class Router {
 	}
 
 	/**
+	 * match (alias for whoami)
+	 * @param {string} fragment
+	 * @param {boolean} cache
+	 * @return {undefined}
+     */
+	match(fragment, cache = true){
+
+		let matchedObjects = this.whoami(fragment, cache);
+		if(matchedObjects.length){
+			for(let matchedObject of matchedObjects){
+				let { name, params } = matchedObject;
+				this.trigger(name, params);
+			}
+		}
+
+	}
+
+	/**
 	 * whoami
 	 * @param  {String} path
 	 * @return {object|null}
 	 */
-	whoami(fragment){
+	whoami(fragment, cache = false){
 
 		let changepart = ['pathname', 'search', 'hash'];
-		let matchedUrlObjects =  this._matchURL(fragment, changepart, false);
+		let matchedUrlObjects =  this._matchURL(fragment, changepart, cache);
 
 		return matchedUrlObjects;
 
