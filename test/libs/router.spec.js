@@ -906,6 +906,7 @@ describe('Class Router', () => {
 				name: 'myRoute1',
 				params: {},
 				cache: false,
+				fragment: '/'
 			});
 
 			// test 2 - positiv
@@ -915,8 +916,8 @@ describe('Class Router', () => {
 				name: 'myRoute2',
 				params: {},
 				cache: false,
+				fragment: '/some/path.html'
 			});
-
 
 			// test 3 - positiv
 			result = router.whoami('/some/123/4.34/path.html');
@@ -928,6 +929,7 @@ describe('Class Router', () => {
 					float:  4.34,
 				},
 				cache: false,
+				fragment: '/some/123/4.34/path.html'
 			});
 
 			// test 4 - positiv
@@ -937,16 +939,19 @@ describe('Class Router', () => {
 				name: 'myRoute4',
 				params: { a: 'im' },
 				cache: false,
+				fragment: '/im/b'
 			});
 			result[1].should.be.containEql({
 				name: 'myRoute5',
 				params: {},
 				cache: false,
+				fragment: '?c=d&e=f'
 			});
 			result[2].should.be.containEql({
 				name: 'myRoute6',
 				params: { hash: 'tag' },
 				cache: false,
+				fragment: '#hash-tag'
 			});
 
 			// test 3 - negativ
