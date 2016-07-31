@@ -37,7 +37,7 @@ Router.create = function(config = {}){
 			urlchange: config.event_urlchange || 'urlchange',
 		},
 		mode: {
-			stealth: config.mode_stealth || false,
+			shadowRoute: config.shadowRoute || false,
 		},
 		helper: {
 			createURL: config.createURL || window.URL,

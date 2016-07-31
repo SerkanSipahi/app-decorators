@@ -60,7 +60,7 @@ class Router {
 	 * @type {Object}
 	 */
 	mode = {
-		stealth: null,
+		shadowRoute: null,
 	};
 
 	/**
@@ -922,7 +922,7 @@ class Router {
 	 */
 	_stopPropagation(event){
 
-		if(this.mode.stealth && event instanceof Event){
+		if(this.mode.shadowRoute && event instanceof Event){
 			event.stopPropagation();
 		}
 

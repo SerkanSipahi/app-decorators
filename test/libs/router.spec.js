@@ -1503,7 +1503,7 @@ describe('Class Router', () => {
 			element = document.createElement("div");
 			router = Router.create({
 				scope: element,
-				mode_stealth: true,
+				shadowRoute: true,
 			});
 			router.on('urlchange', spy_urlchange);
 
