@@ -32,7 +32,7 @@ import { component, view, on } from 'app-decorators';
 @component()
 class Item {
 
-	@view.bind count;
+	@view.bind count = 0;
 
 	on('click .up') onClickUp() {
 	    ++this.count
@@ -53,8 +53,7 @@ export {
 ```js
 
 let item = Item.create({
-	head: 'Some Head',
-	count: 1,
+	head: 'Some Head'
 });
 
 document.body.appendChild(item);
@@ -71,7 +70,7 @@ document.body.appendChild(item);
         <title>my com-item</title>
     </head>
     <body>
-        <com-item @view.bind.count="1"></com-item>
+        <com-item></com-item>
     </body>
 </html>
 ```
