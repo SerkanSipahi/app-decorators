@@ -875,6 +875,14 @@ class Router {
 	 */
 	_getURLType(route = ''){
 
+		if(!/^(\/|\?|#)/.test(route)) {
+			throw `
+				Something gong wrong. Cant determine ${route}. 
+				Please prefix your route with "/" for pathname,
+				"?" for search or "#" for hash route.
+			`;
+		}
+
 		let { pathname, search, hash } = this.createURL(`${this.tmpDomain}${route}`);
 		let validRoute = null;
 
