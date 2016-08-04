@@ -73,6 +73,7 @@ class Router {
 		location: null,
 		Promise: null,
 		XRegExp: null,
+		queryString: null,
 	};
 
 	/**
