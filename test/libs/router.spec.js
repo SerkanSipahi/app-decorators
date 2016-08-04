@@ -190,6 +190,13 @@ describe('Class Router', () => {
 
 		});
 
+		it('should throw error if not correct prefixed with "/, ?, #', () => {
+
+			(() => { router._addRoute('a/b.html', 'name1'); }).should.throw();
+			(() => { router._addRoute('a=b', 'name2'); }).should.throw();
+
+		});
+
 	});
 
 	describe('_existsEvent method', () => {
