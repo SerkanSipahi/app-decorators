@@ -219,13 +219,6 @@ view.helper = {
 
 		return target;
 
-		// ucFirst
-		name = name.charAt(0).toUpperCase()+name.slice(1);
-		// its created something like onCreated if passed name=created
-		target[`$on${name}`].view.push(callback);
-
-		return target;
-
 	},
 
 };

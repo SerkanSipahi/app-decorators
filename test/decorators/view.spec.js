@@ -81,27 +81,27 @@ describe('@view decorator', () => {
 	describe('in usage with @  (integration-test)', () => {
 
 		beforeEach(function() {
-	      	$('body').append('<div id="view-decorator" />');
+	      	$('body').append('<div id="view-decorator"></div>');
 	    });
 
 		afterEach(function() {
 	  		$('#view-decorator').remove();
 		});
 
-		it.skip('should also create a element if element created from out of dom', (done) => {
+		// decorate
+		@view(`<span>{{n}}</span><p>{{p}}</p>`)
+		@component()
+		class serkan {
 
-			// decorate
-			@view(`<span>{{n}}</span><p>{{p}}</p>`)
-			@component()
-			class serkan {
+			@view.bind n = 'Hello';
+			@view.bind p = 'World';
 
-				@view.bind n = 'Hello';
-				@view.bind p = 'World';
+			created(){
 
-				created(){
-
-				}
 			}
+		}
+
+		it.skip('should also create a element if element created from out of dom', (done) => {
 
 
 			// First test
@@ -119,7 +119,7 @@ describe('@view decorator', () => {
 				$vc.find('com-serkan').get(1).outerHTML.should.equal('<com-serkan rendered="true"><span>Hello</span><p>World</p></com-serkan>');
 
 				done();
-			}, 0);
+			}, 200);
 
 		});
 
@@ -170,7 +170,7 @@ describe('@view decorator', () => {
 
 		});
 
-		it.skip('should render template if call domNode.render directly or over domNode.$.view.render', (done) => {
+		it('should render template if call domNode.render directly or over domNode.$.view.render', (done) => {
 
 			let $vc = $('#view-decorator');
 			$vc.append(`<com-serkan></com-serkan>`);
