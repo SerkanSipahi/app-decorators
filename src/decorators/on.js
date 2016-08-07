@@ -5,7 +5,8 @@ import { namespace } from '../helpers/namespace';
 
 /**
  * on (EventHandler)
- * @param  {Any} ...args
+ * @param  {string} eventDomain
+ * @params {string} listenerElement
  * @return {Function}
  */
 function on(eventDomain, listenerElement) {
@@ -27,21 +28,21 @@ function on(eventDomain, listenerElement) {
 		 * but registerOnCreatedCallback can only call once because we want only Create
 		 * one eventhandler
 		 */
-		if(target.$onCreated.on.length > 0){
+		if(target.$.webcomponent.lifecycle.created.length > 0){
 			return;
 		}
 
 		on.helper.registerCallback('created', target, ( domNode ) => {
 
 			// register local (domNode) events
-			let { local } = target.$appDecorators.on.events;
+			let local = target.$.config.on.events.local;
 			let eventHandler = on.helper.createLocalEventHandler(local, domNode);
-			domNode = namespace.create(domNode, '$.eventHandler.local', eventHandler);
+			domNode = namespace.create(domNode, '$.instance.eventHandler.local', eventHandler);
 
 			// register custom events
-			let events = target.$appDecorators.on.events;
+			let events = target.$.config.on.events;
 			domNode = on.helper.createCustomEventHandler(events, domNode, (eventHandler, scope, event) => {
-				namespace.create(domNode, `$.eventHandler.${scope}_${event}`, eventHandler);
+				namespace.create(domNode, `$.instance.eventHandler.${scope}_${event}`, eventHandler);
 			});
 
 		});
@@ -53,9 +54,8 @@ function on(eventDomain, listenerElement) {
 		on.helper.registerCallback('detached', target, (domNode) => {
 
 			// cleanup: remove all eventhandler
-			Object.keys(domNode.$.eventHandler).each((value) => {
-				domNode.$.eventHandler[value].reset();
-				domNode.$.eventHandler[value] = null;
+			Object.values(domNode.$.instance.eventHandler).forEach(eventHandler => {
+				eventHandler.reset();
 			});
 
 		});
@@ -70,22 +70,63 @@ function on(eventDomain, listenerElement) {
 on.helper = {
 
 	/**
+	 * Register namespace of on decorator
+	 * @param  {object} target
+	 * @return {object} target
+	 */
+	registerNamespaces: (target) => {
+
+		// register "root" namespace
+		if(!target.$) target.$ = {};
+
+		// register "config" namespace
+		if(!target.$.config) target.$.config = {};
+
+		// register "on" namespace
+		if(!target.$.config.on) {
+			target.$.config.on = {
+				events: {
+					local: {}
+				},
+			};
+		}
+
+		// register webcomponent "lifecycle" namespace
+		if(!target.$.webcomponent) {
+			target.$.webcomponent = {
+				lifecycle: {
+					created: [],
+					attached: [],
+					detached: [],
+				},
+			};
+		}
+
+		// register "instance" namespace
+		if(!target.$.instance) target.$.instance = {};
+
+		return target;
+	},
+
+	/**
 	 * Helper for registering events
-	 * @param  {String} event
+	 * @param  {string} event
+	 * @param  {string} eventDomain
 	 * @param  {Function} callback
-	 * @return {Function} target
+	 * @param  {string} listenerElement
+	 * @return {object} target
 	 */
 	registerEvent: (target, eventDomain, callback = function(){}, listenerElement = 'local') => {
 
-		if(!target.$appDecorators.on.events[listenerElement]) {
-			target.$appDecorators.on.events[listenerElement] = {};
+		if(!target.$.config.on.events[listenerElement]) {
+			target.$.config.on.events[listenerElement] = {};
 		}
 
 		// define events
 		if(listenerElement === 'local'){
-			target.$appDecorators.on.events[listenerElement][eventDomain] = callback;
+			target.$.config.on.events[listenerElement][eventDomain] = callback;
 		} else {
-			target.$appDecorators.on.events[listenerElement][eventDomain] = [ callback, listenerElement ];
+			target.$.config.on.events[listenerElement][eventDomain] = [ callback, listenerElement ];
 		}
 
 		return target;
@@ -93,55 +134,22 @@ on.helper = {
 
 	/**
 	 * Helper for registering callbacks
-	 * @param  {String} name
-	 * @param  {Function} target
-	 * @return {Function} callack
+	 * @param  {string} name
+	 * @param  {object} target
+	 * @return {function} callack
 	 */
 	registerCallback: (name, target, callback) => {
 
-		// ucFirst
-		name = name.charAt(0).toUpperCase()+name.slice(1);
-		// its created something like onCreated if passed name=created
-		target[`$on${name}`].on.push(callback);
-
-		return target;
-	},
-
-	/**
-	 * Register namespace of on decorator
-	 * @param  {Function|Objet} target
-	 * @return {Function} target
-	 */
-	registerNamespaces: (target) => {
-
-		// define $appDecorators.on namespace
-		if(!target.$appDecorators) target.$appDecorators = {};
-		if(!target.$appDecorators.on) {
-			target.$appDecorators.on = {
-				events : { local: {} },
-			};
-		}
-
-		// define $onCreated.on namespace
-		if(!target.$onCreated) target.$onCreated = {};
-		if(!target.$onCreated.on) target.$onCreated.on = [];
-
-		// define $onDetached.on callbacks
-		if(!target.$onDetached) target.$onDetached = {};
-		if(!target.$onDetached.on) target.$onDetached.on = [];
-
-		// define $onAttached.on callbacks
-		if(!target.$onAttached) target.$onAttached = {};
-		if(!target.$onAttached.on) target.$onAttached.on = [];
+		target.$.webcomponent.lifecycle[name].push(callback);
 
 		return target;
 	},
 
 	/**
 	 * createLocalEventHandler
-	 * @param  {object} events
-	 * @param  {Element} element
-	 * @return {object} eventHandler
+	 * @param  {object} localScopeEvents
+	 * @param  {HTMLElement} domNode
+	 * @return {Eventhandler} eventHandler
 	 */
 	createLocalEventHandler: (localScopeEvents, domNode) => {
 
@@ -157,8 +165,9 @@ on.helper = {
 	/**
 	 * createCustomEventHandler
 	 * @param  {object} events
-	 * @param  {Element} element
-	 * @return {undefined}
+	 * @param  {HTMLElement} element
+	 * @param  {function} callback
+	 * @return {HTMLElement} domNode
 	 */
 	createCustomEventHandler: (events, domNode, callback = () => {}) => {
 

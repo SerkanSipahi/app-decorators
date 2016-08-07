@@ -40,7 +40,7 @@ function view(template, options = {}) {
 
 			// get and merge dom view var attributes
 			let domViewAttributes = extractDecoratorProperties(domNode, '@view.bind', true);
-			Object.assign(domNode.$appDecorators.view.bind, domViewAttributes);
+			Object.assign(domNode.$.config.view.bind, domViewAttributes);
 
 			// get the restof regular attributes
 			let regularDomAttributes = extractDecoratorProperties(domNode);
@@ -49,15 +49,14 @@ function view(template, options = {}) {
 			let view = View.create({
 				rootNode: domNode,
 				templateNode: document.createElement('div'),
-				vars: Object.assign({}, domNode.$appDecorators.view.bind, createVars, regularDomAttributes),
+				vars: Object.assign({}, domNode.$.config.view.bind, createVars, regularDomAttributes),
 				renderer: Handlebars,
 				createElement: document.createElement.bind(document),
-				template: domNode.$appDecorators.view.template[templateName],
+				template: domNode.$.config.view.template[templateName],
 			});
 
-			// define namespace for view
-			domNode.$ ? null : domNode.$ = {};
-			domNode.$.view = view;
+			// keep instance of view
+			domNode.$.instance.view = view;
 
 			// render view
 			view.render(null, { renderedFlag });
@@ -69,14 +68,14 @@ function view(template, options = {}) {
 
 			// prepare property proxy setter
 			let properties = {};
-			for(let property in domNode.$appDecorators.view.bind){
+			for(let property in domNode.$.config.view.bind){
 				properties[property] = {
 					set: function(newValue){
-						this.$.view.set(property, newValue);
-						this.$.view.render(null, {force: true});
+						this.$.instance.view.set(property, newValue);
+						this.$.instance.view.render(null, {force: true});
 					},
-					get: function(newValue){
-						return this.$.view.get(property);
+					get: function(){
+						return this.$.instance.view.get(property);
 					}
 				}
 			}
@@ -84,10 +83,10 @@ function view(template, options = {}) {
 			// prepare render proxy to $.view
 			properties.render = {
 				value: function(...args) {
-					this.$.view.set(...args);
-					this.$.view.render(null, {force: true});
+					this.$.instance.view.set(...args);
+					this.$.instance.view.render(null, {force: true});
 				}
-			}
+			};
 
 			// register setter (@view.bind properties and .$.view.render method)
 			Object.defineProperties(domNode, properties);
@@ -128,12 +127,50 @@ view.bind = (target, property, descriptor) => {
 // define namespace
 view.helper = {
 
+	/**
+	 * Register namespace of view decorator
+	 * @param  {Function|Objet} target
+	 * @return {Function} target
+	 */
+	registerNamespaces: (target) => {
+
+		// register "root" namespace
+		if(!target.$) target.$ = {};
+
+		// register "config" namespace
+		if(!target.$.config) target.$.config = {};
+
+		// register "on" namespace
+		if(!target.$.config.view) {
+			target.$.config.view = {
+				bind: {},
+				template: {},
+			};
+		}
+
+		// register webcomponent "lifecycle" namespace
+		if(!target.$.webcomponent) {
+			target.$.webcomponent = {
+				lifecycle: {
+					created: [],
+					attached: [],
+					detached: [],
+				},
+			};
+		}
+
+		// register "instance" namespace
+		if(!target.$.instance) target.$.instance = {};
+
+		return target;
+
+	},
+
 	create: (target, ...args) => {
 
-		let createdCallbacks = target.$onCreated.view;
-		for(let createdCallback of createdCallbacks) {
-			createdCallback(target, ...args);
-		}
+		target.$.webcomponent.lifecycle.created.forEach(callback => {
+			callback(target, ...args);
+		});
 
 		return target;
 
@@ -149,7 +186,7 @@ view.helper = {
 	registerBind: (target, property, value) => {
 
 		// define @view.bind property/value
-		target.$appDecorators.view.bind[property] = value;
+		target.$.config.view.bind[property] = value;
 
 		return target;
 
@@ -165,7 +202,7 @@ view.helper = {
 	registerTemplate: (target, template, templateName = 'base') => {
 
 		// add template
-		target.$appDecorators.view.template[templateName] = template;
+		target.$.config.view.template[templateName] = template;
 		return target;
 
 	},
@@ -178,6 +215,10 @@ view.helper = {
 	 */
 	registerCallback: (name, target, callback) => {
 
+		target.$.webcomponent.lifecycle[name].push(callback);
+
+		return target;
+
 		// ucFirst
 		name = name.charAt(0).toUpperCase()+name.slice(1);
 		// its created something like onCreated if passed name=created
@@ -186,29 +227,6 @@ view.helper = {
 		return target;
 
 	},
-
-	/**
-	 * Register namespace of view decorator
-	 * @param  {Function|Objet} target
-	 * @return {Function} target
-	 */
-	registerNamespaces: (target) => {
-
-		// define namespace
-		if(!target.$appDecorators) target.$appDecorators = {};
-		if(!target.$appDecorators.view){
-			target.$appDecorators.view = {
-				bind: {},
-				template: {},
-			};
-		}
-
-		// define $onCreated.on callbacks
-		if(!target.$onCreated) target.$onCreated = {};
-		if(!target.$onCreated.view) target.$onCreated.view = [];
-
-		return target;
-	}
 
 };
 

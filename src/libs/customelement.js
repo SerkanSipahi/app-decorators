@@ -243,15 +243,9 @@ class CustomElement {
 	 * @param  {Any} ...args
 	 * @return {undefined}
 	 */
-	static applyOnCreatedCallback(self, ...args){
+	static applyOnCreatedCallback(self, created = [], ...args){
 
-		if(self.$onCreated) {
-			for(let decorator of Object.keys(self.$onCreated)){
-				for(let $callback of self.$onCreated[decorator]) {
-					$callback(self, ...args);
-				}
-			}
-		}
+		created.forEach(callback => callback(self, ...args));
 	}
 
 	/**
@@ -278,7 +272,10 @@ class CustomElement {
 				let instanceProperties = CustomElement.getProperties(this._$ComponentClass);
 				Object.assign(this, instanceProperties);
 
-				CustomElement.applyOnCreatedCallback(this, ...args);
+				if(this.$ && this.$.webcomponent){
+					let createdCallbacks = this.$.webcomponent.lifecycle.created;
+					CustomElement.applyOnCreatedCallback(this, createdCallbacks, ...args);
+				}
 				this.created ? this.created(...args) : null;
 
 			},

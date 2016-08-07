@@ -104,7 +104,7 @@ class Eventhandler {
 			});
 		}
 
-		return tmpConfig;
+		return tmpConfig; 
 
 	}
 

@@ -14,11 +14,24 @@ describe('@on decorator', () => {
 
 		it('should create namespace object´s', () => {
 
-			on.helper.registerNamespaces({}).should.have.containEql({
-				$appDecorators: { on: { events: { local: {} } } },
-				$onCreated:  { on: [] },
-				$onAttached: { on: [] },
-				$onDetached: { on: [] },
+			on.helper.registerNamespaces({}).should.be.containEql({
+				$: {
+					config: {
+						on: {
+							events: {
+								local: {}
+							},
+						},
+					},
+					webcomponent: {
+						lifecycle: {
+							created: [],
+							attached: [],
+							detached: [],
+						},
+					},
+					instance: {},
+				},
 			});
 
 		});
@@ -27,42 +40,95 @@ describe('@on decorator', () => {
 
 	describe('view.helper', () => {
 
-		// Mock target
-		let mockTarget = {
-			$appDecorators: {
-				on: { events: { local: { 'some-event' : () => {} } } }
-			},
-			$onCreated: {
-				on: []
-			}
-		};
-		let mockFunction = function(){}
+		let mockFunction1, mockFunction2, mockFunction3;
+		let mockTarget;
+
+		beforeEach(function() {
+
+			mockFunction1 = function(){};
+			mockFunction2 = function(){};
+			mockFunction3 = function(){};
+
+			mockTarget = {
+				$: {
+					config: {
+						on: {
+							events: {
+								local: {}
+							},
+						},
+					},
+					webcomponent: {
+						lifecycle: {
+							created: [],
+							attached: [],
+							detached: [],
+						},
+					},
+					instance: {},
+				},
+			};
+
+			// immutable mockTarget for each it
+			mockTarget = JSON.parse(JSON.stringify(mockTarget))
+
+		});
 
 		describe('registerEvent', () => {
 
-			it('should build event object based on registered namespaces', () => {
+			it('should build config for local event', () => {
 
-				let result = on.helper.registerEvent(mockTarget, 'some-other-event', mockFunction);
-				result.should.have.propertyByPath('$appDecorators', 'on', 'events', 'local', 'some-other-event').equal(mockFunction);
+				on.helper.registerEvent(mockTarget, 'some-event-1', mockFunction1).should.have.propertyByPath(
+					'$', 'config', 'on', 'events', 'local', 'some-event-1'
+				).equal(mockFunction1);
+
+			});
+
+			it.skip('should build config for overwritten listenerElement', () => {
+
+				on.helper.registerEvent(mockTarget, 'some-event-2', mockFunction2, window).should.have.propertyByPath(
+					'$', 'config', 'on', 'events', '[object Window]', 'some-event-2'
+				).containEql([ mockFunction2, window ]);
 
 			});
 
 		});
 
-		describe('registerCallback', () => {
+		describe('registerCallback method', () => {
 
-			it('should add callback based on registered namespaces', () => {
+			it('should add register callback based', () => {
 
-				let result = on.helper.registerCallback('created', mockTarget, mockFunction);
-				result.should.have.propertyByPath('$onCreated', 'on', 0).equal(mockFunction);
+				on.helper.registerCallback('created', mockTarget, mockFunction1).should.have.propertyByPath(
+					'$', 'webcomponent', 'lifecycle', 'created', '0'
+				).equal(mockFunction1);
+
+			});
+
+			it('should add register callback based', () => {
+
+				on.helper.registerCallback('attached', mockTarget, mockFunction2).should.have.propertyByPath(
+					'$', 'webcomponent', 'lifecycle', 'attached', '0'
+				).equal(mockFunction2);
+
+			});
+
+			it('should add register callback based', () => {
+
+				on.helper.registerCallback('detached', mockTarget, mockFunction3).should.have.propertyByPath(
+					'$', 'webcomponent', 'lifecycle', 'detached', '0'
+				).equal(mockFunction3);
 
 			});
 
 		});
+
+		describe('applyOnCreatedCallback', () => {
+
+		})
 
 	});
 
-	describe('Snack.prototype.$appDecorators.on.events', () => {
+	describe('Snack.prototype.$.config.on.events', () => {
 
 		it('should contain registered events over @on', () => {
 
@@ -75,21 +141,16 @@ describe('@on decorator', () => {
 				@on('wheel', window) onWheel(){}
 			}
 
-			let localEvents = Snack.prototype.$appDecorators.on.events.local;
-			let windowEvents = Snack.prototype.$appDecorators.on.events[window];
+			let localEvents = Snack.prototype.$.config.on.events.local;
+			let windowEvents = Snack.prototype.$.config.on.events[window];
 			let prototype = Snack.prototype;
 
-			localEvents.should.have.propertyByPath("click .a").Function();
-			localEvents.should.have.propertyByPath("click .b").Function();
+			localEvents.should.have.propertyByPath("click .a").equal(prototype.onClick_a);
+			localEvents.should.have.propertyByPath("click .b").equal(prototype.onClick_b);
 
-			localEvents.should.have.propertyByPath("click .a").eql(prototype.onClick_a);
-			localEvents.should.have.propertyByPath("click .b").eql(prototype.onClick_b);
+			windowEvents.should.have.propertyByPath("resize", 0).equal(prototype.onResize);
+			windowEvents.should.have.propertyByPath("resize", 1).equal(window);
 
-			windowEvents.should.have.propertyByPath("resize").Array();
-			windowEvents.should.have.propertyByPath("resize", 0).eql(prototype.onResize);
-			windowEvents.should.have.propertyByPath("resize", 1).eql(window);
-
-			windowEvents.should.have.propertyByPath("wheel").Array();
 			windowEvents.should.have.propertyByPath("wheel", 0).eql(prototype.onWheel);
 			windowEvents.should.have.propertyByPath("wheel", 1).eql(window);
 
@@ -114,7 +175,7 @@ describe('@on decorator', () => {
 			let milkey_1 = Milkey.create({cid: 1});
 
 			// spy for milkey_1
-			let milkey_1_clickCallbacks = milkey_1.$.eventHandler.local.getHandlers('click');
+			let milkey_1_clickCallbacks = milkey_1.$.instance.eventHandler.local.getHandlers('click');
 			let milkey_1_a_function_spy = sinon.spy(milkey_1_clickCallbacks[0], ".a");
 			let milkey_1_b_function_spy = sinon.spy(milkey_1_clickCallbacks[1], ".b");
 
@@ -199,7 +260,7 @@ describe('@on decorator', () => {
 			let ritter = Ritter.create();
 
 			// spy for Ritter onFoo_a
-			let ritter_clickCallbacks = ritter.$.eventHandler.local.getHandlers('click');
+			let ritter_clickCallbacks = ritter.$.instance.eventHandler.local.getHandlers('click');
 			let ritter_function_spy = sinon.spy(ritter_clickCallbacks[0], ".a");
 			// spy for Ritter baseMethod
 			let ritter_baseMethod_spy = sinon.spy(Ritter.prototype, "baseMethod");
@@ -237,7 +298,7 @@ describe('@on decorator', () => {
 			let context = Context.create();
 
 			let prefixName = Object.prototype.toString.call(window);
-			let context_resize_Callbacks = context.$.eventHandler[`${prefixName}_resize`].getHandlers('resize');
+			let context_resize_Callbacks = context.$.instance.eventHandler[`${prefixName}_resize`].getHandlers('resize');
 			let onResize = context_resize_Callbacks[0][null];
 
 			document.body.appendChild(context);
@@ -270,7 +331,7 @@ describe('@on decorator', () => {
 			}
 
 			// test click event
-			let context_clickCallbacks = context.$.eventHandler.local.getHandlers('click');
+			let context_clickCallbacks = context.$.instance.eventHandler.local.getHandlers('click');
 			let context_click_function_spy = sinon.spy(context_clickCallbacks[0], ".foo");
 
 			context.querySelector('.foo').click();
