@@ -12,11 +12,12 @@ String.prototype.removeGutter = function(){
 
 describe('@view decorator', () => {
 
-	describe('helper.registerTemplate/registerBind/registerNamespaces and registerOnCreatedCallback  (unit-test)', () => {
+	describe('view.helper.registerNamespaces', () => {
 
-		it('should create right namespace object', () => {
+		it('should create namespaces object for @view decorator', () => {
 
 			view.helper.registerNamespaces({}).should.be.containEql({
+
 				$: {
 					config: {
 						view: {
@@ -32,47 +33,82 @@ describe('@view decorator', () => {
 						},
 					},
 					instance: {},
-				},
+				}
+
 			});
 
+		});
+	});
+
+	describe('view.helper',() => {
+
+		let target = null;
+		beforeEach(() => {
+
+			target = Object.create({});
+			view.helper.registerNamespaces(target);
 
 		});
 
-		it('should works as accepted ', (done) => {
+		describe('registerTemplate method', () => {
 
-			let target = Object.create({});
+			it('should register template ', () => {
 
-			// register namespaces target
-			view.helper.registerNamespaces(target);
+				view.helper.registerTemplate(
+					target, '<div>template</div>'
+				).should.have.propertyByPath('$', 'config', 'view', 'template', 'base').equal('<div>template</div>');
 
-			// register template
-			view.helper.registerTemplate(target, '<div class="{{className}}>{{content}}</div>');
-
-			// register binds
-			view.helper.registerBind(target, 'className', 'foo');
-			view.helper.registerBind(target, 'content', 'Hello World');
-
-			view.helper.registerCallback('created', target, function(instance, createVars){
-
-				// test registerBind
-				instance.should.have.propertyByPath('$', 'config', 'view', 'bind', 'className').eql('foo');
-				instance.should.have.propertyByPath('$', 'config', 'view', 'bind', 'content').eql('Hello World');
-
-				// test template
-				instance.should.have.propertyByPath('$', 'config', 'view', 'template', 'base').eql('<div class="{{className}}>{{content}}</div>');
-
-				// test create vars
-				createVars.should.have.propertyByPath('className').eql('baz');
-				createVars.should.have.propertyByPath('content').eql('Hello Mars');
-
-				// test instanceof
-				instance.should.instanceOf(Object);
-
-				// finish
-				done()
 			});
 
-			view.helper.create(target, { className: 'baz', 'content': 'Hello Mars' });
+		});
+
+		describe('registerBind method', () => {
+
+			it('should register view bind ', () => {
+
+				view.helper.registerBind(target, 'className', 'foo');
+				view.helper.registerBind(target, 'content', 'bar');
+
+				target.should.propertyByPath('$', 'config', 'view', 'bind', 'className').equal('foo');
+				target.should.propertyByPath('$', 'config', 'view', 'bind', 'content').equal('bar');
+
+			});
+
+		});
+
+		describe('registerCallback method', () => {
+
+			it('should register registerCallback ', (done) => {
+
+				target = {
+					$: {
+						a: 'foo',
+						b: {
+							c: 'bar'
+						},
+						webcomponent: {
+							lifecycle: {
+								created: []
+							}
+						}
+					},
+				};
+
+				view.helper.registerCallback('created', target, function(instance, createVars){
+
+					instance.should.propertyByPath('$', 'a').equal('foo');
+					instance.should.propertyByPath('$', 'b', 'c').equal('bar');
+
+					createVars.should.be.containEql({ d: 'baz' });
+					instance.should.instanceOf(Object);
+
+					done();
+
+				});
+
+				view.helper.create(target, { d: 'baz' });
+
+			});
 
 		});
 
@@ -106,20 +142,31 @@ describe('@view decorator', () => {
 
 			// First test
 			let $vc = $('#view-decorator');
-			$vc.append('<com-serkan></com-serkan><com-serkan></com-serkan>');
+			$vc.append(`
+				<com-serkan id="serkan-1"></com-serkan>
+				<com-serkan id="serkan-2"></com-serkan>
+			`);
 
 			// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
 			setTimeout(() => {
 
-				$vc.find('com-serkan').get(0).outerHTML.should.equal('<com-serkan rendered="true"><span>Hello</span><p>World</p></com-serkan>');
+				document.querySelector('com-serkan#serkan-1').outerHTML.should.match(/id="serkan-1"/);
+				document.querySelector('com-serkan#serkan-1').outerHTML.should.match(/rendered="true"/);
+				document.querySelector('com-serkan#serkan-1').outerHTML.should.match(/<span>Hello<\/span><p>World<\/p>/);
 
-				// Second test
-				$vc.find('com-serkan').get(0).p = 'Mars';
-				$vc.find('com-serkan').get(0).outerHTML.should.equal('<com-serkan rendered="true"><span>Hello</span><p>Mars</p></com-serkan>');
-				$vc.find('com-serkan').get(1).outerHTML.should.equal('<com-serkan rendered="true"><span>Hello</span><p>World</p></com-serkan>');
+				document.querySelector('com-serkan#serkan-1').p = 'Mars';
+
+			}, 50);
+
+			setTimeout(() => {
+
+				document.querySelector('com-serkan#serkan-1').outerHTML.should.match(/<span>Hello<\/span><p>Mars<\/p>/);
 
 				done();
-			}, 200);
+
+			}, 200)
+
+
 
 		});
 
