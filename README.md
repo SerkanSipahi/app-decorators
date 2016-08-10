@@ -34,11 +34,11 @@ class Item {
 
 	@view.bind count = 0;
 
-	on('click .up') onClickUp() {
+	@on('click .up') onClickUp() {
 	    ++this.count
 	}
 
-	on('click .down') onClickUp() {
+	@on('click .down') onClickUp() {
 	    --this.count
 	}
 
