@@ -30,7 +30,6 @@ describe('@on decorator', () => {
 							detached: [],
 						},
 					},
-					instance: {},
 				},
 			});
 
@@ -65,7 +64,6 @@ describe('@on decorator', () => {
 							detached: [],
 						},
 					},
-					instance: {},
 				},
 			};
 

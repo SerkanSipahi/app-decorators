@@ -32,7 +32,6 @@ describe('@view decorator', () => {
 							detached: [],
 						},
 					},
-					instance: {},
 				}
 
 			});
@@ -116,11 +115,11 @@ describe('@view decorator', () => {
 
 	describe('in usage with @  (integration-test)', () => {
 
-		beforeEach(function() {
+		beforeEach(() => {
 	      	$('body').append('<div id="view-decorator"></div>');
 	    });
 
-		afterEach(function() {
+		afterEach(() => {
 	  		$('#view-decorator').remove();
 		});
 

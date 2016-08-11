@@ -102,9 +102,6 @@ on.helper = {
 			};
 		}
 
-		// register "instance" namespace
-		if(!target.$.instance) target.$.instance = {};
-
 		return target;
 	},
 

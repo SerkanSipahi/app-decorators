@@ -56,7 +56,7 @@ function view(template, options = {}) {
 			});
 
 			// keep instance of view
-			domNode.$.instance.view = view;
+			domNode.$instance = { view };
 
 			// render view
 			view.render(null, { renderedFlag });
@@ -64,15 +64,15 @@ function view(template, options = {}) {
 		});
 
 		// register proxy that initialized on called createdCallback
-		view.helper.registerCallback('created', target, ( domNode, createVars = {} ) => {
+		view.helper.registerCallback('created', target, ( domNode ) => {
 
 			// prepare property proxy setter
 			let properties = {};
 			for(let property in domNode.$.config.view.bind){
 				properties[property] = {
 					set: function(newValue){
-						this.$.instance.view.set(property, newValue);
-						this.$.instance.view.render(null, {force: true});
+						this.$instance.view.set(property, newValue);
+						this.$instance.view.render(null, {force: true});
 					},
 					get: function(){
 						return this.$.instance.view.get(property);
@@ -83,8 +83,8 @@ function view(template, options = {}) {
 			// prepare render proxy to $.view
 			properties.render = {
 				value: function(...args) {
-					this.$.instance.view.set(...args);
-					this.$.instance.view.render(null, {force: true});
+					this.$instance.view.set(...args);
+					this.$instance.view.render(null, {force: true});
 				}
 			};
 
@@ -159,9 +159,6 @@ view.helper = {
 			};
 		}
 
-		// register "instance" namespace
-		if(!target.$.instance) target.$.instance = {};
-
 		return target;
 
 	},
@@ -203,6 +200,7 @@ view.helper = {
 
 		// add template
 		target.$.config.view.template[templateName] = template;
+
 		return target;
 
 	},
