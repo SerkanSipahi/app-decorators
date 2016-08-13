@@ -37,12 +37,12 @@ function on(eventDomain, listenerElement) {
 			// register local (domNode) events
 			let local = target.$.config.on.events.local;
 			let eventHandler = on.helper.createLocalEventHandler(local, domNode);
-			domNode = namespace.create(domNode, '$.instance.eventHandler.local', eventHandler);
+			namespace.create(domNode, '$eventHandler.local', eventHandler);
 
 			// register custom events
 			let events = target.$.config.on.events;
-			domNode = on.helper.createCustomEventHandler(events, domNode, (eventHandler, scope, event) => {
-				namespace.create(domNode, `$.instance.eventHandler.${scope}_${event}`, eventHandler);
+			on.helper.createCustomEventHandler(events, domNode, (eventHandler, scope, event) => {
+				namespace.create(domNode, `$eventHandler.${scope}_${event}`, eventHandler);
 			});
 
 		});
@@ -54,7 +54,7 @@ function on(eventDomain, listenerElement) {
 		on.helper.registerCallback('detached', target, (domNode) => {
 
 			// cleanup: remove all eventhandler
-			Object.values(domNode.$.instance.eventHandler).forEach(eventHandler => {
+			Object.values(domNode.$eventHandler).forEach(eventHandler => {
 				eventHandler.reset();
 			});
 

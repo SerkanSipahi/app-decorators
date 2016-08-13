@@ -40,56 +40,38 @@ function view(template, options = {}) {
 
 			// get and merge dom view var attributes
 			let domViewAttributes = extractDecoratorProperties(domNode, '@view.bind', true);
-			Object.assign(domNode.$.config.view.bind, domViewAttributes);
 
 			// get the restof regular attributes
 			let regularDomAttributes = extractDecoratorProperties(domNode);
 
+			let viewBinds = JSON.parse(JSON.stringify(domNode.$.config.view.bind));
+
+			let viewVars = Object.assign({},
+				viewBinds,
+				domViewAttributes,
+				createVars,
+				regularDomAttributes
+			);
+
 			// initialize view
-			let view = View.create({
+			let $view = View.create({
 				rootNode: domNode,
 				templateNode: document.createElement('div'),
-				vars: Object.assign({}, domNode.$.config.view.bind, createVars, regularDomAttributes),
+				vars: viewVars,
 				renderer: Handlebars,
 				createElement: document.createElement.bind(document),
 				template: domNode.$.config.view.template[templateName],
 			});
 
-			// keep instance of view
-			domNode.$instance = { view };
+			view.helper.registerSetGet(
+				domNode,
+				Object.assign({}, domNode.$.config.view.bind, domViewAttributes)
+			);
 
 			// render view
-			view.render(null, { renderedFlag });
+			$view.render(null, { renderedFlag });
 
-		});
-
-		// register proxy that initialized on called createdCallback
-		view.helper.registerCallback('created', target, ( domNode ) => {
-
-			// prepare property proxy setter
-			let properties = {};
-			for(let property in domNode.$.config.view.bind){
-				properties[property] = {
-					set: function(newValue){
-						this.$instance.view.set(property, newValue);
-						this.$instance.view.render(null, {force: true});
-					},
-					get: function(){
-						return this.$.instance.view.get(property);
-					}
-				}
-			}
-
-			// prepare render proxy to $.view
-			properties.render = {
-				value: function(...args) {
-					this.$instance.view.set(...args);
-					this.$instance.view.render(null, {force: true});
-				}
-			};
-
-			// register setter (@view.bind properties and .$.view.render method)
-			Object.defineProperties(domNode, properties);
+			domNode.$view = $view;
 
 		});
 
@@ -214,6 +196,46 @@ view.helper = {
 	registerCallback: (name, target, callback) => {
 
 		target.$.webcomponent.lifecycle[name].push(callback);
+
+		return target;
+
+	},
+
+	/**
+	 * registerSetGet
+	 * @param target
+	 * @param viewBinds
+	 * @returns {Object} target
+     */
+	registerSetGet: (target, viewBinds) => {
+
+		// make viewBinds immutable
+		viewBinds = JSON.parse(JSON.stringify(viewBinds));
+
+		// prepare property proxy setter
+		let properties = {};
+		for(let property in viewBinds){
+			properties[property] = {
+				set: function(newValue){
+					this.$view.set(property, newValue);
+					this.$view.render(null, {force: true});
+				},
+				get: function(){
+					return this.$view.get(property);
+				}
+			}
+		}
+
+		// prepare render proxy to $.view
+		properties.render = {
+			value: function(...args) {
+				this.$view.set(...args);
+				this.$view.render(null, {force: true});
+			}
+		};
+
+
+		Object.defineProperties(target, properties);
 
 		return target;
 

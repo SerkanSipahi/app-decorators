@@ -115,28 +115,23 @@ describe('@view decorator', () => {
 
 	describe('in usage with @  (integration-test)', () => {
 
-		beforeEach(() => {
-	      	$('body').append('<div id="view-decorator"></div>');
-	    });
+		beforeEach(() =>
+	      	$('body').append('<div id="view-decorator"></div>')
+	    );
 
-		afterEach(() => {
-	  		$('#view-decorator').remove();
-		});
+		afterEach(() =>
+	  		$('#view-decorator').remove()
+		);
 
 		// decorate
 		@view(`<span>{{n}}</span><p>{{p}}</p>`)
 		@component()
 		class serkan {
-
 			@view.bind n = 'Hello';
 			@view.bind p = 'World';
-
-			created(){
-
-			}
 		}
 
-		it.skip('should also create a element if element created from out of dom', (done) => {
+		it('should also create a element if element created from out of dom', (done) => {
 
 
 			// First test
@@ -146,69 +141,63 @@ describe('@view decorator', () => {
 				<com-serkan id="serkan-2"></com-serkan>
 			`);
 
+			let $serkan1 = $vc.find('com-serkan#serkan-1');
+			let $serkan2 = $vc.find('com-serkan#serkan-2');
+
 			// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
 			setTimeout(() => {
 
-				document.querySelector('com-serkan#serkan-1').outerHTML.should.match(/id="serkan-1"/);
-				document.querySelector('com-serkan#serkan-1').outerHTML.should.match(/rendered="true"/);
-				document.querySelector('com-serkan#serkan-1').outerHTML.should.match(/<span>Hello<\/span><p>World<\/p>/);
+				// Test-1: check if rendered
+				$serkan1.attr('rendered').should.be.equal('true');
+				$serkan1.html().should.be.equal('<span>Hello</span><p>World</p>');
 
-				document.querySelector('com-serkan#serkan-1').p = 'Mars';
+				// Test-2: check if rendered
+				$serkan2.attr('rendered').should.be.equal('true');
+				$serkan2.html().should.be.equal('<span>Hello</span><p>World</p>');
 
-			}, 50);
+				// Test-3: check if rendered on write view.bind attri
+				$serkan1.get(0).p = 'Mars';
+				$serkan2.get(0).p = 'Pluto';
 
-			setTimeout(() => {
-
-				document.querySelector('com-serkan#serkan-1').outerHTML.should.match(/<span>Hello<\/span><p>Mars<\/p>/);
+				$serkan1.html().should.be.equal('<span>Hello</span><p>Mars</p>');
+				$serkan2.html().should.be.equal('<span>Hello</span><p>Pluto</p>');
 
 				done();
 
-			}, 200)
-
-
+			}, 50);
 
 		});
 
 		it('should also create a element if element with view vars although created from out of dom', (done) => {
 
 			// decorate
-			@view(`<span>{{uid}}.)<b>{{class}}</b>{{b}}</span><p>{{c}}</p>`)
+			@view(`<span>{{id}}.)<b>{{class}}</b>{{b}}</span><p>{{c}}</p>`)
 			@component()
 			class Fire {}
 
 			let $vc = $('#view-decorator');
 			$vc.append(`
-				<com-fire uid="1" class="First" @view.bind.b="Thats" @view.bind.c="awesome!"></com-fire>
-				<com-fire uid="2" class="Second" @view.bind.b="Whats" @view.bind.c="up!"></com-fire>
+				<com-fire id="id-1" class="First" @view.bind.b="Thats" @view.bind.c="awesome!"></com-fire>
+				<com-fire id="id-2" class="Second" @view.bind.b="Whats" @view.bind.c="up!"></com-fire>
 			`);
+
+			let $fire1 = $vc.find('com-fire#id-1');
+			let $fire2 = $vc.find('com-fire#id-2');
 
 			// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
 			setTimeout(() => {
 
-				// We have to check with regex due "rendered" flag is set dynamically. Its changed his position in element!
+				$fire1.attr('rendered').should.equal('true');
+				$fire1.html().should.equal('<span>id-1.)<b>First</b>Thats</span><p>awesome!</p>');
 
-				$vc.find('com-fire').get(0).outerHTML.should.match(/uid="1"/);
-				$vc.find('com-fire').get(0).outerHTML.should.match(/class="First"/);
-				$vc.find('com-fire').get(0).outerHTML.should.match(/rendered="true"/);
-				$vc.find('com-fire').get(0).outerHTML.should.match(/<span>1\.\)<b>First<\/b>Thats<\/span><p>awesome!<\/p>/);
+				$fire2.attr('rendered').should.equal('true');
+				$fire2.html().should.equal('<span>id-2.)<b>Second</b>Whats</span><p>up!</p>');
 
-				$vc.find('com-fire').get(1).outerHTML.should.match(/uid="2"/);
-				$vc.find('com-fire').get(1).outerHTML.should.match(/class="Second"/);
-				$vc.find('com-fire').get(1).outerHTML.should.match(/rendered="true"/);
-				$vc.find('com-fire').get(1).outerHTML.should.match(/<span>2\.\)<b>Second<\/b>Whats<\/span><p>up!<\/p>/);
+				$fire1.get(0).c = 'on!';
+				$fire2.get(0).c = 'waw!';
 
-				$vc.find('com-fire').get(1).c = 'on!';
-				$vc.find('com-fire').get(1).outerHTML.should.match(/uid="2"/);
-				$vc.find('com-fire').get(1).outerHTML.should.match(/class="Second"/);
-				$vc.find('com-fire').get(1).outerHTML.should.match(/rendered="true"/);
-				$vc.find('com-fire').get(1).outerHTML.should.match(/<span>2\.\)<b>Second<\/b>Whats<\/span><p>on!<\/p>/);
-
-				// should not render because uid is not a @view property
-				$vc.find('com-fire').get(1).uid = 333;
-				$vc.find('com-fire').get(1).outerHTML.should.match(/uid="2"/);
-				$vc.find('com-fire').get(1).outerHTML.should.match(/class="Second"/);
-				$vc.find('com-fire').get(1).outerHTML.should.match(/rendered="true"/);
-				$vc.find('com-fire').get(1).outerHTML.should.match(/<span>2\.\)<b>Second<\/b>Whats<\/span><p>on!<\/p>/);
+				$fire1.html().should.equal('<span>id-1.)<b>First</b>Thats</span><p>on!</p>');
+				$fire2.html().should.equal('<span>id-2.)<b>Second</b>Whats</span><p>waw!</p>');
 
 				done();
 
@@ -227,7 +216,7 @@ describe('@view decorator', () => {
 				$vc.find('com-serkan').get(0).render({n: 'Cool', p: 'man!'}, { force: true });
 				$vc.find('com-serkan').get(0).outerHTML.should.equal('<com-serkan rendered="true"><span>Cool</span><p>man!</p></com-serkan>');
 
-				$vc.find('com-serkan').get(0).$.instance.view.render({n: 'Hey', p: 'there!'}, { force: true });
+				$vc.find('com-serkan').get(0).$view.render({n: 'Hey', p: 'there!'}, { force: true });
 				$vc.find('com-serkan').get(0).outerHTML.should.equal('<com-serkan rendered="true"><span>Hey</span><p>there!</p></com-serkan>');
 
 				done();
@@ -323,8 +312,8 @@ describe('@view decorator', () => {
 		it('should not render phone because is not part of @view.bind', () => {
 
 			let orange_0 = Orange.create();
-			orange_0.$.instance.view._template['test-tpl'] = '<div>{{name}}</div><div>{{city}}</div><div>{{country}}</div>{{phone}}';
-			orange_0.$.instance.view.render({}, 'test-tpl');
+			orange_0.$view._template['test-tpl'] = '<div>{{name}}</div><div>{{city}}</div><div>{{country}}</div>{{phone}}';
+			orange_0.$view.render({}, 'test-tpl');
 			orange_0.outerHTML.should.equal('<com-orange rendered="true"><div>A-Df</div><div>B-Df</div><div>C-Df</div></com-orange>');
 
 		});
