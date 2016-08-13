@@ -1,6 +1,6 @@
 
 // internal libs
-import { Elements } from '../datas/elements';
+import { Elements } from '../configs/elements';
 import { CustomElement } from '../libs/customelement';
 
 // external libs

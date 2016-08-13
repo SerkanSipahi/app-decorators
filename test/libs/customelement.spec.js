@@ -2,7 +2,7 @@
 
 // external libs
 import { Immutable } from 'src/libs/dependencies';
-import { Elements } from 'src/datas/elements';
+import { Elements } from 'src/configs/elements';
 
 // internal libs
 import { CustomElement } from 'src/libs/customelement';

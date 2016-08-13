@@ -59,7 +59,7 @@ module.exports = function (config) {
 				'src/decorators/*.js',
 				'src/libs/*.js',
 				'src/helpers/*.js',
-				'src/datas/*.js',
+				'src/configs/*.js',
 				'src/apps/*.js',
 				// external libs/files
 				'node_modules/core-js/**/*.js',
