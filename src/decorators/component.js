@@ -15,7 +15,7 @@ import { Immutable } from '../libs/dependencies';
  */
 function component(config = {}) {
 	return function decorator(ComponentClass) {
-		Object.assign(config, { Elements, Immutable })
+		Object.assign(config, { Elements, Immutable });
 		CustomElement.register(ComponentClass, config);
 	}
 }

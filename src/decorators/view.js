@@ -1,7 +1,7 @@
 
 // internal libs
 import { View } from '../libs/view';
-import { extractDecoratorProperties } from '../helpers/extract-decorator-properties';
+import { extractDomProperties } from '../helpers/extract-dom-properties';
 
 // external libs
 import { Handlebars } from '../libs/dependencies';
@@ -39,10 +39,12 @@ function view(template, options = {}) {
 		view.helper.registerCallback('created', target, ( domNode, createVars = {} ) => {
 
 			// get and merge dom view var attributes
-			let domViewAttributes = extractDecoratorProperties(domNode, '@view.bind', true);
+			let domViewAttributes = extractDomProperties(
+				domNode, /^@view\.bind\.(\S+)$/i, true
+			);
 
 			// get the restof regular attributes
-			let regularDomAttributes = extractDecoratorProperties(domNode);
+			let regularDomAttributes = extractDomProperties(domNode);
 
 			let viewBinds = JSON.parse(JSON.stringify(domNode.$.config.view.bind));
 

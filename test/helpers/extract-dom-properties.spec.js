@@ -1,5 +1,5 @@
 
-import { extractDecoratorProperties } from '../../src/helpers/extract-decorator-properties';
+import { extractDomProperties } from '../../src/helpers/extract-dom-properties';
 
 describe('extractDecoratorProperties', () => {
 
@@ -27,7 +27,7 @@ describe('extractDecoratorProperties', () => {
 			2: { name: '@view.bind.x', value: 'bar' },
 		});
 
-		let viewAttributeList = extractDecoratorProperties(MockDomNode, '@view.bind', true);
+		let viewAttributeList = extractDomProperties(MockDomNode, /^@view\.bind\.(\S+)$/i, true);
 
 		// positiv test
 		viewAttributeList.should.have.propertyByPath('x').eql('bar');
@@ -39,7 +39,7 @@ describe('extractDecoratorProperties', () => {
 		Object.keys(MockDomNode.attributes).should.have.length(1);
 		MockDomNode.attributes.should.have.propertyByPath(1, 'name').eql('class');
 
-		let regularAttributeList = extractDecoratorProperties(MockDomNode);
+		let regularAttributeList = extractDomProperties(MockDomNode);
 		regularAttributeList.should.have.propertyByPath('class').eql('foo');
 
 	});
@@ -52,7 +52,7 @@ describe('extractDecoratorProperties', () => {
 			2: { name: '@on(mousedown)', value: 'mousedownFunction()' },
 		});
 
-		let viewAttributeList = extractDecoratorProperties(MockDomNode, '@on', true);
+		let viewAttributeList = extractDomProperties(MockDomNode, /^@on\((\S+)\)$/i, true);
 
 		// positiv test
 		viewAttributeList.should.have.propertyByPath('click').eql('clickFunction()');
@@ -64,7 +64,7 @@ describe('extractDecoratorProperties', () => {
 		Object.keys(MockDomNode.attributes).should.have.length(1);
 		MockDomNode.attributes.should.have.propertyByPath(1, 'name').eql('id');
 
-		let regularAttributeList = extractDecoratorProperties(MockDomNode);
+		let regularAttributeList = extractDomProperties(MockDomNode);
 		regularAttributeList.should.have.propertyByPath('id').eql('bazi');
 
 	});
