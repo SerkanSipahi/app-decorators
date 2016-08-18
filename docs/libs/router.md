@@ -134,7 +134,7 @@ let router = Router.create({
 	},
 
 	// Info: scope must be an instanceof HTMLElement
-	// Now your routes will be only performe in <navigation>.
+	// Now your routes will be only perform in <navigation>.
 	scope: navigation
 });
 ```
