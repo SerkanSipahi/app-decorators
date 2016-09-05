@@ -23,16 +23,14 @@ describe('@view decorator', () => {
 						view: {
 							bind: {},
 							template: {},
+							component: {
+								created: [],
+								attached: [],
+								detached: [],
+							},
 						},
 					},
-					webcomponent: {
-						lifecycle: {
-							created: [],
-							attached: [],
-							detached: [],
-						},
-					},
-				}
+				},
 
 			});
 
@@ -85,11 +83,13 @@ describe('@view decorator', () => {
 						b: {
 							c: 'bar'
 						},
-						webcomponent: {
-							lifecycle: {
-								created: []
-							}
-						}
+						config: {
+							view: {
+								component: {
+									created: [],
+								}
+							},
+						},
 					},
 				};
 

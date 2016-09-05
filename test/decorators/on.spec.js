@@ -21,13 +21,11 @@ describe('@on decorator', () => {
 							events: {
 								local: {}
 							},
-						},
-					},
-					webcomponent: {
-						lifecycle: {
-							created: [],
-							attached: [],
-							detached: [],
+							component: {
+								created: [],
+								attached: [],
+								detached: [],
+							},
 						},
 					},
 				},
@@ -55,13 +53,11 @@ describe('@on decorator', () => {
 							events: {
 								local: {}
 							},
-						},
-					},
-					webcomponent: {
-						lifecycle: {
-							created: [],
-							attached: [],
-							detached: [],
+							component: {
+								created: [],
+								attached: [],
+								detached: [],
+							},
 						},
 					},
 				},
@@ -97,7 +93,7 @@ describe('@on decorator', () => {
 			it('should add register callback based', () => {
 
 				on.helper.registerCallback('created', mockTarget, mockFunction1).should.have.propertyByPath(
-					'$', 'webcomponent', 'lifecycle', 'created', '0'
+					'$', 'config', 'on', 'component', 'created', '0'
 				).equal(mockFunction1);
 
 			});
@@ -105,7 +101,7 @@ describe('@on decorator', () => {
 			it('should add register callback based', () => {
 
 				on.helper.registerCallback('attached', mockTarget, mockFunction2).should.have.propertyByPath(
-					'$', 'webcomponent', 'lifecycle', 'attached', '0'
+					'$', 'config', 'on', 'component', 'attached', '0'
 				).equal(mockFunction2);
 
 			});
@@ -113,7 +109,7 @@ describe('@on decorator', () => {
 			it('should add register callback based', () => {
 
 				on.helper.registerCallback('detached', mockTarget, mockFunction3).should.have.propertyByPath(
-					'$', 'webcomponent', 'lifecycle', 'detached', '0'
+					'$', 'config', 'on', 'component', 'detached', '0'
 				).equal(mockFunction3);
 
 			});

@@ -129,13 +129,7 @@ view.helper = {
 			target.$.config.view = {
 				bind: {},
 				template: {},
-			};
-		}
-
-		// register webcomponent "lifecycle" namespace
-		if(!target.$.webcomponent) {
-			target.$.webcomponent = {
-				lifecycle: {
+				component: {
 					created: [],
 					attached: [],
 					detached: [],
@@ -149,7 +143,7 @@ view.helper = {
 
 	create: (target, ...args) => {
 
-		target.$.webcomponent.lifecycle.created.forEach(callback => {
+		target.$.config.view.component.created.forEach(callback => {
 			callback(target, ...args);
 		});
 
@@ -197,7 +191,7 @@ view.helper = {
 	 */
 	registerCallback: (name, target, callback) => {
 
-		target.$.webcomponent.lifecycle[name].push(callback);
+		target.$.config.view.component[name].push(callback);
 
 		return target;
 

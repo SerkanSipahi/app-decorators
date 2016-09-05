@@ -28,7 +28,7 @@ function on(eventDomain, listenerElement) {
 		 * but registerOnCreatedCallback can only call once because we want only Create
 		 * one eventhandler
 		 */
-		if(target.$.webcomponent.lifecycle.created.length > 0){
+		if(target.$.config.on.component.created.length > 0){
 			return;
 		}
 
@@ -88,13 +88,7 @@ on.helper = {
 				events: {
 					local: {}
 				},
-			};
-		}
-
-		// register webcomponent "lifecycle" namespace
-		if(!target.$.webcomponent) {
-			target.$.webcomponent = {
-				lifecycle: {
+				component: {
 					created: [],
 					attached: [],
 					detached: [],
@@ -137,7 +131,7 @@ on.helper = {
 	 */
 	registerCallback: (name, target, callback) => {
 
-		target.$.webcomponent.lifecycle[name].push(callback);
+		target.$.config.on.component[name].push(callback);
 
 		return target;
 	},

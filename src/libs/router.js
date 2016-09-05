@@ -80,7 +80,7 @@ class Router {
 	 * promise
 	 * @type {Object}
 	 */
-	promise = {}
+	promise = {};
 
 	/**
 	 * _runRoute
