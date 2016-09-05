@@ -713,7 +713,7 @@ describe('Class Router', () => {
 
 	});
 
-	describe('_diffFragment method', () => {
+	describe('_diffFragments method', () => {
 
 		it('should check if fragment is changed in combination with _setURLFragment', () => {
 
@@ -721,25 +721,25 @@ describe('Class Router', () => {
 			let router = Router.create();
 
 			// test 1
-			router._diffFragment('/', '/a/b/c').should.containEql({
+			router._diffFragments('/', '/a/b/c').should.containEql({
 				changed: true,
 				changepart: ['pathname']
 			});
 
 			// test 2
-			router._diffFragment('/a/c/c', '/a/c/c?a=b&c=d#foo').should.containEql({
+			router._diffFragments('/a/c/c', '/a/c/c?a=b&c=d#foo').should.containEql({
 				changed: true,
 				changepart: ['search', 'hash']
 			});
 
 			// test 3
-			router._diffFragment('/a/c/c?a=b&c=d#foo', '/a/c/c?a=b&c=d#foo').should.containEql({
+			router._diffFragments('/a/c/c?a=b&c=d#foo', '/a/c/c?a=b&c=d#foo').should.containEql({
 				changed: false,
 				changepart: []
 			});
 
 			// test 4
-			router._diffFragment('/a/c/c?a=b&c=d#foo', '/a/c/e?a=b&c=d#foo').should.containEql({
+			router._diffFragments('/a/c/c?a=b&c=d#foo', '/a/c/e?a=b&c=d#foo').should.containEql({
 				changed: true,
 				changepart: ['pathname']
 			});

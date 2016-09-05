@@ -519,7 +519,7 @@ class Router {
 		let urlObject = this.createURL(href);
 		let { fragment } = urlObject;
 
-		let { changed, changepart } = this._diffFragment(fragment, this._lastFragment);
+		let { changed, changepart } = this._diffFragments(fragment, this._lastFragment);
 
 		if(changed) {
 
@@ -574,10 +574,10 @@ class Router {
 	}
 
 	/**
-	 * _diffFragment
+	 * _diffFragments
 	 * @return {object} diff
 	 */
-	_diffFragment(currentFragment, lastFragment){
+	_diffFragments(currentFragment, lastFragment){
 
 		let diff = {
 			changed: false,
