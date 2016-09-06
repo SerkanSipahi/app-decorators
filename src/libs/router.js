@@ -211,19 +211,20 @@ class Router {
 
 		this.scope.on(name, event => {
 
-			// extract matched params
-			let params = event.detail || {};
-
-			// extract current searchParams and hashParams
 			let { search, hash } = this.createURL(this.helper.location.href);
 			let searchParams = this.queryString.parse(search);
 			let hashParams = this.queryString.parse(hash);
 
+			let args = Object.assign({}, event.detail, {
+				search: searchParams, hash: hashParams,
+			});
+
 			if(handler){
-				handler(params, searchParams, hashParams);
+				handler(args);
 			}
 			// resolve promise
-			this._promiseHandler(name, params, searchParams, hashParams);
+			this._promiseHandler(name, args);
+
 		});
 
 		return promise;
@@ -522,14 +523,16 @@ class Router {
 		let { changed, changepart } = this._diffFragments(fragment, this._lastFragment);
 
 		if(changed) {
-
-			Object.assign(urlObject, { changepart });
+			Object.assign(urlObject, {
+				changepart,
+				target: event.target
+			});
 
 			if(this._isDefinedEventAction(event.type)){
 				this.pushState(null, null, this.encodeURI(fragment));
 			}
 
-			this.scope.trigger(this.event.urlchange, urlObject);
+			this.trigger(this.event.urlchange, urlObject);
 		}
 		this._setURLFragment(fragment);
 
@@ -654,7 +657,7 @@ class Router {
 			return;
 		}
 
-		let { fragment, changepart } = event.detail;
+		let { fragment, changepart, target } = event.detail;
 
 		let matchedUrlObjects = this._matchURL(fragment, changepart, false);
 		if(matchedUrlObjects.length){
@@ -662,7 +665,8 @@ class Router {
 			for(let matchedURL of matchedUrlObjects) {
 				let { name } = matchedURL;
 				matchedURL.URL = event.detail;
-				this.trigger(name, matchedURL);
+
+				this.trigger(name, Object.assign({}, matchedURL, { target }));
 			}
 
 		}
@@ -805,20 +809,20 @@ class Router {
 
 	/**
 	 * _promiseHandler
-	 * @param  {string} type
-	 * @param  {Evemt} event
+	 * @param  {string} name
+	 * @param  {args} ...args
 	 * @return {undefined}
 	 */
-	_promiseHandler(type, params, searchParams, hashParams){
+	_promiseHandler(name, ...args){
 
-		if(!this.promise[type]){
+		if(!this.promise[name]){
 			return;
 		}
 
 		let resolve;
 		// promise can resolved only once therefore shift()
-		while((resolve = this.promise[type].shift()) !== undefined){
-			resolve(params, searchParams, hashParams);
+		while((resolve = this.promise[name].shift()) !== undefined){
+			resolve(...args);
 		}
 
 	}

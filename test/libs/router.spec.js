@@ -1333,7 +1333,7 @@ describe('Class Router', () => {
 			// test if promise resolved
 			router.on('urlchange').should.be.finally.propertyByPath('thats').eql('nice');
 			router.on('urlchange').should.be.finally.propertyByPath('thats').eql('nice');
-			router.on('urlchange').then(({thats}) => {
+			router.on('urlchange').then(({ thats }) => {
 				return `#${thats}#`;
 			}).should.be.finally.eql('#nice#');
 
