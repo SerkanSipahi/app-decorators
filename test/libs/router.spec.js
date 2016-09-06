@@ -1591,65 +1591,168 @@ describe('Class Router', () => {
 		it('should match registered static and dynamic url route', (done) => {
 
 			// register events
-			router.on('Index /index.html', spy_index_handler);
-			router.on('SomePathURL /some/path/url.html', spy_somePathURL_handler);
-			router.on('SomeDynamicURL1 /{{name}}/{{surname}}/123', spy_dynamicPath_handler1);
-			router.on('Route1 /im/{{name}}', spy_route1_handler);
-			router.on('Route2 ?have=some', spy_route2_handler);
-			router.on('Route3 #hash-{{id}}', spy_route3_handler);
+			router.on('Index /index.html', spy_handler);
+			router.on('SomePathURL /some/path/url.html', spy_handler);
+			router.on('SomeDynamicURL /{{name}}/{{surname}}/123', spy_handler);
+			router.on('Route1 /im/{{name}}', spy_handler);
+			router.on('Route2 ?have=some', spy_handler);
+			router.on('Route3 #hash-{{id}}', spy_handler);
 
 			// trigger events by clicking
-			setTimeout(() => element.querySelector('.index').click(), 0);
-			setTimeout(() => element.querySelector('.some-path-url').click(), 30);
-			setTimeout(() => element.querySelector('.not-registered-url').click(), 60);
-			setTimeout(() => element.querySelector('.some-path-url').click(), 90);
-			setTimeout(() => element.querySelector('.some-dynamic-path').click(), 120);
-			setTimeout(() => element.querySelector('.some-mixed-path').click(), 150);
-			setTimeout(() => element.querySelector('.some-partial-mixed-path').click(), 180);
+			setTimeout(() => element.querySelector('.index').click(), 0);                     // +1 (Index)
+			setTimeout(() => element.querySelector('.some-path-url').click(), 30);            // +1 (SomePathURL)
+			setTimeout(() => element.querySelector('.not-registered-url').click(), 60);       // +0
+			setTimeout(() => element.querySelector('.some-path-url').click(), 90);            // +1 (SomePathURL)
+			setTimeout(() => element.querySelector('.some-dynamic-path').click(), 120);       // +1 (SomeDynamicURL)
+			setTimeout(() => element.querySelector('.some-mixed-path').click(), 150);         // +3 (Route1, Route2, Route3)
+			setTimeout(() => element.querySelector('.some-partial-mixed-path').click(), 180); // +1 (Route1)
 
 			setTimeout(() => {
 
-				// test results of static paths
-				spy_index_handler.callCount.should.equal(1);
-				spy_index_handler.args[0][0].name.should.be.equal('Index');
-				spy_index_handler.args[0][0].fragment.should.be.equal('/index.html');
+				// callcount
+				spy_handler.callCount.should.be.equal(8);
 
-				spy_somePathURL_handler.callCount.should.equal(2);
-				spy_somePathURL_handler.args[0][0].name.should.be.equal('SomePathURL');
-				spy_somePathURL_handler.args[0][0].fragment.should.be.equal('/some/path/url.html');
+				// extract records
+				let Index           = spy_handler.args[0][0];
+				let SomePathURL_a   = spy_handler.args[1][0];
+				let SomePathURL_b   = spy_handler.args[2][0];
+				let SomeDynamicURL  = spy_handler.args[3][0];
+				let Route1_a        = spy_handler.args[4][0];
+				let Route2          = spy_handler.args[5][0];
+				let Route3          = spy_handler.args[6][0];
+				let Route1_b        = spy_handler.args[7][0];
 
-				// test results of dynamic path
-				spy_dynamicPath_handler1.args[0][0].name.should.be.equal('SomeDynamicURL1');
-				spy_dynamicPath_handler1.args[0][0].fragment.should.be.equal('/serkan/sipahi/123');
-				spy_dynamicPath_handler1.args[0][0].params.should.be.containEql({
-					name: 'serkan', surname: 'sipahi',
+				// Test: "Index" route
+				Index.target.should.be.equal(element.querySelector('.index'));
+				Index.should.be.containEql({
+					type: 'static',
+					name: 'Index',
+					route: '/index.html',
+					params: {},
+					search: {},
+					hash: {},
+					cache: false,
 				});
 
-				// test results of mix route path
-				spy_route1_handler.args[0][0].name.should.be.equal('Route1');
-				spy_route1_handler.args[0][0].fragment.should.be.equal('/im/foo');
-				spy_route1_handler.args[0][0].params.should.be.containEql({
-					name: 'foo',
+
+				// Test: "SomePathURL" route (first call)
+				SomePathURL_a.target.should.be.equal(element.querySelector('.some-path-url'));
+				SomePathURL_a.should.be.containEql({
+					type: 'static',
+					name: 'SomePathURL',
+					route: '/some/path/url.html',
+					params: {},
+					search: {},
+					hash: {},
+					cache: false,
 				});
 
-				spy_route2_handler.args[0][0].name.should.be.equal('Route2');
-				spy_route2_handler.args[0][0].fragment.should.be.equal('?have=some&things=here');
-				spy_route2_handler.args[0][0].params.should.be.containEql({});
 
-				spy_route3_handler.args[0][0].name.should.be.equal('Route3');
-				spy_route3_handler.args[0][0].fragment.should.be.equal('#hash-tag');
-				spy_route3_handler.args[0][0].params.should.be.containEql({
-					id: 'tag',
+				// Test: "SomePathURL" route (second call, from cache)
+				SomePathURL_b.target.should.be.equal(element.querySelector('.some-path-url'));
+				SomePathURL_b.should.be.containEql({
+					type: 'static',
+					name: 'SomePathURL',
+					route: '/some/path/url.html',
+					params: {},
+					search: {},
+					hash: {},
+					cache: true,
 				});
 
-				// test results of partial route path ( onyl pathname changed )
-				spy_route1_handler.args[1][0].name.should.be.equal('Route1');
-				spy_route1_handler.args[1][0].fragment.should.be.equal('/im/bar');
-				spy_route1_handler.args[1][0].params.should.be.containEql({
-					name: 'bar',
+
+				// Test: "SomeDynamicURL1" route
+				SomeDynamicURL.target.should.be.equal(element.querySelector('.some-dynamic-path'));
+				SomeDynamicURL.should.be.containEql({
+					type: 'dynamic',
+					name: 'SomeDynamicURL',
+					route: '/{{name}}/{{surname}}/123',
+					params: {
+						name: 'serkan',
+						surname: 'sipahi'
+					},
+					search: {},
+					hash: {},
+					cache: false,
 				});
-				spy_route2_handler.args.should.be.length(1); // nothing changed, same args
-				spy_route3_handler.args.should.be.length(1); // nothing changed, same args
+
+
+				// Test: "Route1" route
+				Route1_a.target.should.be.equal(element.querySelector('.some-mixed-path'));
+				Route1_a.should.be.containEql({
+					type: 'dynamic',
+					name: 'Route1',
+					route: '/im/{{name}}',
+					params: {
+						name: 'foo',
+					},
+					cache: false,
+				});
+				should(Route1_a.search).be.containEql({
+					have: 'some',
+					things: 'here',
+				});
+				should(Route1_a.hash).be.containEql({
+					'hash-tag': null,
+				});
+
+
+				// Test: "Route2" route
+				Route2.target.should.be.equal(element.querySelector('.some-mixed-path'));
+				Route2.should.be.containEql({
+					type: 'static',
+					name: 'Route2',
+					route: '?have=some',
+					params: {},
+					cache: false,
+				});
+				should(Route2.search).be.containEql({
+					have: 'some',
+					things: 'here',
+				});
+				should(Route2.hash).be.containEql({
+					'hash-tag': null,
+				});
+
+
+				// Test: "Route2" route
+				Route3.target.should.be.equal(element.querySelector('.some-mixed-path'));
+				Route3.should.be.containEql({
+					type: 'dynamic',
+					name: 'Route3',
+					route: '#hash-{{id}}',
+					params: {
+						id: 'tag'
+					},
+					cache: false,
+				});
+				should(Route3.search).be.containEql({
+					have: 'some',
+					things: 'here',
+				});
+				should(Route3.hash).be.containEql({
+					'hash-tag': null,
+				});
+
+
+				// Test: "Route1" route
+				Route1_b.target.should.be.equal(element.querySelector('.some-partial-mixed-path'));
+				Route1_b.should.be.containEql({
+					type: 'dynamic',
+					name: 'Route1',
+					route: '/im/{{name}}',
+					params: {
+						name: 'bar',
+					},
+					cache: false,
+				});
+				should(Route1_b.search).be.containEql({
+					have: 'some',
+					things: 'here',
+				});
+				should(Route1_b.hash).be.containEql({
+					'hash-tag': null,
+				});
 
 				done();
 			}, 250);
@@ -1671,10 +1774,7 @@ describe('Class Router', () => {
 
 		// Setup
 		let element;
-		let spy_index_handler;
-		let spy_somePathURL_handler;
-		let spy_dynamicPath_handler1;
-		let spy_route1_handler, spy_route2_handler, spy_route3_handler;
+		let spy_handler;
 		let router;
 
 		beforeEach(() => {
@@ -1685,12 +1785,7 @@ describe('Class Router', () => {
 				scope: element,
 			});
 
-			spy_index_handler = sinon.spy(() => {});
-			spy_somePathURL_handler = sinon.spy(() => {});
-			spy_dynamicPath_handler1 = sinon.spy(() => {});
-			spy_route1_handler = sinon.spy(() => {});
-			spy_route2_handler = sinon.spy(() => {});
-			spy_route3_handler = sinon.spy(() => {});
+			spy_handler = sinon.spy(() => {});
 
 			element.classList.add('anchor-container');
 			element.innerHTML = `

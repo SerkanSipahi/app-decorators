@@ -659,7 +659,7 @@ class Router {
 
 		let { fragment, changepart, target } = event.detail;
 
-		let matchedUrlObjects = this._matchURL(fragment, changepart, false);
+		let matchedUrlObjects = this._matchURL(fragment, changepart, true);
 		if(matchedUrlObjects.length){
 
 			for(let matchedURL of matchedUrlObjects) {
