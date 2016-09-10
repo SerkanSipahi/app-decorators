@@ -3,7 +3,6 @@ import gulp from 'gulp';
 import sourcemaps from 'gulp-sourcemaps';
 import babel from 'gulp-babel';
 import changed from 'gulp-changed';
-import replace from 'gulp-replace';
 
 gulp.task('compile:src', () => {
 	return gulp.src('src/**/*.js')
@@ -30,4 +29,5 @@ gulp.task('watch', function() {
 	);
 });
 
-gulp.task('test', ['watch', 'compile:src', 'compile:test']);
+gulp.task('compile', ['compile:src', 'compile:test']);
+gulp.task('compile-watch', ['compile:src', 'compile:test', 'watch']);
