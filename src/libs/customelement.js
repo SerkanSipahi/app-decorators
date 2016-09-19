@@ -272,9 +272,11 @@ class CustomElement {
 				let instanceProperties = CustomElement.getProperties(this._$ComponentClass);
 				Object.assign(this, instanceProperties);
 
-				if(this.$ && this.$.webcomponent){
-					let createdCallbacks = this.$.webcomponent.lifecycle.created;
-					CustomElement.applyOnCreatedCallback(this, createdCallbacks, ...args);
+				if(this.$ && this.$.config) {
+					Object.keys(this.$.config).forEach(type => {
+						let createdCallbacks = this.$.config[type].component.created;
+						CustomElement.applyOnCreatedCallback(this, createdCallbacks, ...args);
+					});
 				}
 				this.created ? this.created(...args) : null;
 
