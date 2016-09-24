@@ -15,20 +15,16 @@ describe('@on decorator', () => {
 		it('should create namespace object´s', () => {
 
 			on.helper.registerNamespaces({}).should.be.containEql({
-				$: {
-					config: {
-						on: {
-							events: {
-								local: {}
-							},
-							component: {
-								created: [],
-								attached: [],
-								detached: [],
-							},
+				$: { config: { on: {
+						events: {
+							local: {}
 						},
-					},
-				},
+						component: {
+							created: [],
+							attached: [],
+							detached: [],
+						},
+					}}},
 			});
 
 		});
