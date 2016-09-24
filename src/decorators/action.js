@@ -71,6 +71,7 @@ action.helper = {
         // register "on" namespace
         if(!target.$.config.action) {
             target.$.config.action = {
+                events: {},
                 component: {
                     created: [],
                     attached: [],
@@ -80,15 +81,33 @@ action.helper = {
         }
 
         return target;
-
     },
 
+    /**
+     * Helper for registering events
+     * @param  {string} event
+     * @param  {string} eventDomain
+     * @param  {Function} callback
+     * @return {object} target
+     */
     registerEvent: (target, eventDomain, callback = function(){}) => {
 
+        target.$.config.action.events[eventDomain] = callback;
+
+        return target;
     },
 
+    /**
+     * Helper for registering callbacks
+     * @param  {string} name
+     * @param  {object} target
+     * @return {function} callack
+     */
     registerCallback: (name, target, callback) => {
 
+        target.$.config.action.component[name].push(callback);
+
+        return target;
     },
 
 };
