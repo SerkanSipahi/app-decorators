@@ -503,10 +503,14 @@ class Router {
 	_onAction(event){
 
 		this._preventDefault(event);
+
 		if(!this._runRoute) {
 			return;
 		}
-		this._stopPropagation(event);
+
+		if(this.mode.shadowRoute){
+			this._stopPropagation(event);
+		}
 
 		this._applyActionEvent(event);
 
@@ -938,7 +942,7 @@ class Router {
 	 */
 	_stopPropagation(event){
 
-		if(this.mode.shadowRoute && event instanceof Event){
+		if(event instanceof Event){
 			event.stopPropagation();
 		}
 
