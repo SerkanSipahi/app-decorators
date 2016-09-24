@@ -1,4 +1,7 @@
 
+/**
+ * Router (Copyright 2016 Serkan Sipahi)
+ */
 class Router {
 
 	/**

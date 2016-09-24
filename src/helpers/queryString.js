@@ -34,8 +34,8 @@ let queryString = {
             if(propertyValue === undefined && propertyValue !== null){
                 queryObject[key] = value;
             }
+            // foo=bar&foo=baz
             else {
-                // foo=bar&foo=baz
                 if(Object.classof(propertyValue) !== 'Array'){
                     queryObject[key] = [ propertyValue ];
                 }

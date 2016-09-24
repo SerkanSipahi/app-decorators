@@ -104,7 +104,6 @@ view.bind = (target, property, descriptor) => {
  * ########## Decorator Helper ###########
  *****************************************/
 
-// define namespace
 view.helper = {
 
 	/**
