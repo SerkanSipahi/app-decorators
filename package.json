@@ -60,7 +60,7 @@
     "karma-safari-launcher": "1.0.0",
     "karma-should": "1.0.0",
     "karma-sinon": "1.0.5",
-    "mocha": "2.5.3",
+    "mocha": "3.0.2",
     "should": "11.1.0",
     "sinon": "1.17.3",
     "webcomponents.js": "0.7.22",
