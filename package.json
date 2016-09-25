@@ -70,7 +70,7 @@
     "name": "app-decorators",
     "dependencies": {
       "jquery": "npm:jquery@2.2.0",
-      "should": "npm:should@8.3.2",
+      "should": "npm:should@11.1.0",
       "sinon": "npm:sinon@1.17.3"
     }
   }
