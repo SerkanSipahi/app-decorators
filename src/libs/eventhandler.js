@@ -191,15 +191,17 @@ class Eventhandler {
 
 	/**
 	 * trigger
-	 * @param  {String} event
+	 * @param  {String} eventName
 	 * @param  {Any} value
 	 * @return {Undefined}
 	 */
-	trigger(event, value = null){
+	trigger(eventName, value = null){
 
-		this.config.element.dispatchEvent(
-			value ? new CustomEvent(event, { detail: value }) : new Event(event)
-		);
+		let event = new CustomEvent(eventName, {
+			detail: value,
+			bubbles: true,
+		});
+		this.config.element.dispatchEvent(event);
 
 	}
 
