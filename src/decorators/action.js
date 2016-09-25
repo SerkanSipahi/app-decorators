@@ -21,8 +21,10 @@ function action(route) {
 
         // register namespaces
         action.helper.registerNamespaces(target);
+
         // register events
-        action.helper.registerEvent(target, route, descriptor.value);
+        let actionQuery = `${method} ${route}`;
+        action.helper.registerEvent(target, actionQuery, descriptor.value);
 
         /**
          * ### Ensure "registerCallback('created', ..." (see below) registered only once ###
@@ -30,20 +32,32 @@ function action(route) {
          * but registerOnCreatedCallback can only call once because we want only Create
          * one eventhandler
          */
-        if(target.$.config.action.created.length > 0){
+        if(target.$.config.action.component.created.length > 0){
             return;
         }
 
-        action.helper.registerCallback('created', target, ( domNode ) => {
+        action.helper.registerCallback('created', target, (domNode) => {
+
+            let events = target.$.config.action.events;
+            let router = Router.create({
+                routes : events,
+                scope  : domNode,
+                bind   : domNode,
+            });
+            domNode.$router = router;
 
         });
 
         action.helper.registerCallback('attached', target, (domNode) => {
 
+            if(domNode.$router && domNode.$router.destroyed){
+                domNode.$router.init();
+            }
+
         });
 
-        action.helper.registerCallback('detached', target, (domNode) => {
-
+        action.helper.registerCallback('detached', target, domNode => {
+            domNode.$router.destroy();
         });
 
     }
