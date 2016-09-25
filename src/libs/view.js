@@ -1,5 +1,5 @@
 
-export class View {
+class View {
 
 	/**
 	 * Create an instance of View Class
