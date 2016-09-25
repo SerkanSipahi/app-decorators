@@ -109,6 +109,12 @@ class Router {
 	};
 
 	/**
+	 * destroyed
+	 * @type {boolean}
+     */
+	destroyed = false;
+
+	/**
 	 * tmpDomain
 	 * @type {string}
      */
@@ -181,6 +187,8 @@ class Router {
 
 		this._removeInternalCoreEvents();
 		this._removeRegisteredEvents();
+
+		this.destroyed = true;
 
 	}
 
@@ -434,6 +442,8 @@ class Router {
 
 		this._bindInternalCoreEvents();
 		this._initRoutes();
+
+		this.destroyed = false;
 
 	}
 
