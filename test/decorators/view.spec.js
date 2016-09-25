@@ -18,20 +18,15 @@ describe('@view decorator', () => {
 
 			view.helper.registerNamespaces({}).should.be.containEql({
 
-				$: {
-					config: {
-						view: {
-							bind: {},
-							template: {},
-							component: {
-								created: [],
-								attached: [],
-								detached: [],
-							},
+				$: { config: { view: {
+						bind: {},
+						template: {},
+						component: {
+							created: [],
+							attached: [],
+							detached: [],
 						},
-					},
-				},
-
+					}}},
 			});
 
 		});
