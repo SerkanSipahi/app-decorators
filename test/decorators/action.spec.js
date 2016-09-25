@@ -1,6 +1,6 @@
 
 // internal libs
-import { action } from 'src/app-decorators';
+import { action, component, Router } from 'src/app-decorators';
 
 describe('@action decorator', () => {
 
@@ -82,6 +82,61 @@ describe('@action decorator', () => {
             });
 
         });
+
+    });
+
+    it('should add router instance to domNode.$router', () => {
+
+        @component()
+        class Page1 {
+            @action('/some/path.html') actionName() {
+
+            }
+        }
+
+        let page = Page1.create();
+        page.$router.should.be.instanceof(Router);
+
+    });
+
+    it('should bind Component Page instance to action decorator methods', () => {
+
+        @component()
+        class Page2 {
+            @action('/some/path1.html') actionName() {
+                this.method();
+                return this;
+            }
+            method(){
+                return this;
+            }
+        }
+        let page = Page2.create();
+
+        let actionName = page.actionName();
+        should(actionName).be.instanceof(Page2);
+        should(actionName).be.instanceof(Element);
+
+        let method = page.method();
+        should(method).be.instanceof(Page2);
+        should(method).be.instanceof(Element);
+
+        let page_method_spy     = sinon.spy(page, 'method');
+        let page_actionName_spy = sinon.spy(page.$router.scope.getHandlers('actionName')[0], null);
+
+        // by trigger
+        page.$router.trigger('actionName');
+        page_method_spy.callCount.should.equal(1);
+        page_actionName_spy.callCount.should.equal(1);
+
+        // by direct call
+        page.actionName();
+
+        page_method_spy.callCount.should.equal(2);
+
+        // cleanup
+        page_method_spy.restore();
+        page_actionName_spy.restore();
 
     });
 
