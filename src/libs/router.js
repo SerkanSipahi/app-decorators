@@ -128,7 +128,7 @@ class Router {
 	constructor(config = {}){
 
 		Object.assign(this, config);
-		this._init();
+		this.init();
 
 	}
 
@@ -435,10 +435,10 @@ class Router {
 	}
 
 	/**
-	 * _init
+	 * init
 	 * @return {Undefined}
 	 */
-	_init(){
+	init(){
 
 		this._bindInternalCoreEvents();
 		this._initRoutes();
