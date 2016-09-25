@@ -27,7 +27,7 @@ function view(template, options = {}) {
 		let target = Class.prototype;
 
 		let templateName = options.templateName || 'base';
-		let renderedFlag = options.renderedFlag === false ? false : true;
+		let renderedFlag = !(options.renderedFlag === false);
 
 		// define namespaces
 		view.helper.registerNamespaces(target);
