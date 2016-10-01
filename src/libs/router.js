@@ -138,10 +138,14 @@ class Router {
 	 * @param  {function} handler
 	 * @return {Promise}
 	 */
-	on(type = '', handler = null){
+	on(type = '', handler = undefined){
 
 		if(!type){
 			throw 'Please pass at least type e.g urlchange, Foo, Bar, ...';
+		}
+
+		if(handler !== undefined && Object.classof(handler) !== 'Function'){
+			throw 'The handler must be a Function or Undefined';
 		}
 
 		let [ name, route ] = type.split(' ');
@@ -198,26 +202,26 @@ class Router {
 	 * @param {string} route
 	 * @param {Promise} promise
 	 */
-	addRouteListener(name, route, handler = null){
+	addRouteListener(name, route, handler){
+
+		// bind bindObject if exsits
+		if(handler && this.bind){
+			handler = this.bind::handler;
+		}
 
 		/**
 		 * _addRoute is required for:
 		 * 1. if route matched then we can take name for triggering event
 		 * 2. if router should destroy, see .destroy()
 		 */
-		if(route && name) {
-			this._addRoute(route, name);
+		if(route && name && handler) {
+			this._addRoute(route, name, handler);
 		}
 
 		// create promise if handler not exists
 		let promise = null;
 		if(name && !handler){
 			promise = this._addPromise(name);
-		}
-
-		// bind bindObject if exsits
-		if(this.bind){
-			handler = this.bind::handler;
 		}
 
 		this.scope.on(name, event => {
@@ -245,8 +249,9 @@ class Router {
 	 * _addRoute
 	 * @param {string} route
 	 * @param {string} name
+	 * @param {function} handler
 	 */
-	_addRoute(route, name){
+	_addRoute(route, name, handler){
 
 		if(!this._isValidRoute(route)){
 			throw `
@@ -268,7 +273,7 @@ class Router {
 		let type = this._isDynamicURL(route) ? 'dynamic' : 'static';
 		let strict = urlpart === 'pathname';
 		let regex = this._convertRouteToXRegexExp(route, strict);
-		let routeObjectArgs = { name, route, regex, type, urlpart };
+		let routeObjectArgs = { name, route, regex, type, urlpart, handler };
 
 		this._routes[urlpart][route] = this._createRouteObject(routeObjectArgs);
 
@@ -325,12 +330,13 @@ class Router {
 	 * @returns {object}
      * @private
      */
-	_createRouteObject({ name, route, regex, type, urlpart }){
+	_createRouteObject({ name, route, regex, type, urlpart, handler }){
 
 		return {
 			type,
 			name,
 			route,
+			handler,
 			urlpart,
 			regex,
 			params: null,

@@ -80,6 +80,7 @@ describe('Class Router', () => {
 						name: 'name3',
 						type: 'dynamic',
 						route: '/this/is/{{a}}/route/3',
+						handler: undefined,
 						urlpart: 'pathname',
 						regex: '^\\/this\\/is\\/(?<a>[\\d\\w?()|{}_.,-]+)\\/route\\/3$',
 						params: null,
@@ -90,6 +91,7 @@ describe('Class Router', () => {
 						name: 'name4',
 						type: 'dynamic',
 						route: '/this/is/{{b}}/{{c}}/route/4',
+						handler: undefined,
 						urlpart: 'pathname',
 						regex: '^\\/this\\/is\\/(?<b>[\\d\\w?()|{}_.,-]+)\\/(?<c>[\\d\\w?()|{}_.,-]+)\\/route\\/4$',
 						params: null,
@@ -100,6 +102,7 @@ describe('Class Router', () => {
 						name: 'name1',
 						type: 'static',
 						route: '/this/is/a/route/1',
+						handler: undefined,
 						urlpart: 'pathname',
 						regex: '^\\/this\\/is\\/a\\/route\\/1$',
 						params: null,
@@ -110,6 +113,7 @@ describe('Class Router', () => {
 						name: 'name2',
 						type: 'static',
 						route: '/this/is/a/route/2',
+						handler: undefined,
 						urlpart: 'pathname',
 						regex: '^\\/this\\/is\\/a\\/route\\/2$',
 						params: null,
@@ -122,6 +126,7 @@ describe('Class Router', () => {
 						name: 'name5',
 						type: 'dynamic',
 						route: '?id={{id}}&name={{name}}',
+						handler: undefined,
 						urlpart: 'search',
 						regex: '\\?id=(?<id>[\\d\\w?()|{}_.,-]+)&name=(?<name>[\\d\\w?()|{}_.,-]+)',
 						params: null,
@@ -132,6 +137,7 @@ describe('Class Router', () => {
 						name: 'name6',
 						type: 'static',
 						route: '?name=serkan',
+						handler: undefined,
 						urlpart: 'search',
 						regex: '\\?name=serkan',
 						params: null,
@@ -144,6 +150,7 @@ describe('Class Router', () => {
 						name: 'name7',
 						type: 'dynamic',
 						route: '#im-{{foo}}',
+						handler: undefined,
 						urlpart: 'hash',
 						regex: '#im-(?<foo>[\\d\\w?()|{}_.,-]+)',
 						params: null,
@@ -154,6 +161,7 @@ describe('Class Router', () => {
 						name: 'name8',
 						type: 'static',
 						route: '#scroll-to-foo',
+						handler: undefined,
 						urlpart: 'hash',
 						regex: '#scroll-to-foo',
 						params: null,
@@ -249,6 +257,7 @@ describe('Class Router', () => {
 				name: 'route1',
 				type: 'dynamic',
 				route: '/{{a}}/b/{{c}}/d',
+				handler: undefined,
 				urlpart: 'pathname',
 				regex: '^\\/(?<a>[\\d\\w?()|{}_.,-]+)\\/b\\/(?<c>[\\d\\w?()|{}_.,-]+)\\/d$',
 				params: {
@@ -264,6 +273,7 @@ describe('Class Router', () => {
 				name: 'route2',
 				type: 'dynamic',
 				route: '?id={{id}}&name={{name}}',
+				handler: undefined,
 				urlpart: 'search',
 				regex: '\\?id=(?<id>[\\d\\w?()|{}_.,-]+)&name=(?<name>[\\d\\w?()|{}_.,-]+)',
 				params: {
@@ -279,6 +289,7 @@ describe('Class Router', () => {
 				name: 'route3',
 				type: 'static',
 				route: '/this/is/a/route/1',
+				handler: undefined,
 				urlpart: 'pathname',
 				params: {},
 				regex: '^\\/this\\/is\\/a\\/route\\/1$',
@@ -291,6 +302,7 @@ describe('Class Router', () => {
 				name: 'route4',
 				type: 'static',
 				route: '?name=serkan',
+				handler: undefined,
 				urlpart: 'search',
 				params: {},
 				regex: '\\?name=serkan',
@@ -843,6 +855,32 @@ describe('Class Router', () => {
 
 	});
 
+	describe('On method', () => {
+
+		it('should throw error if passed handler is not Function or undefined', () => {
+
+			// setup
+			let router = Router.create({
+				scope: document.createElement('div'),
+			});
+
+			(() => { router.on('route /a/b/c.html', null) }).should.throw();
+			(() => { router.on('route /a/b/c.html', '') }).should.throw();
+			(() => { router.on('route /a/b/c.html', 123) }).should.throw();
+			(() => { router.on('route /a/b/c.html', true) }).should.throw();
+			(() => { router.on('route /a/b/c.html', []) }).should.throw();
+			(() => { router.on('route /a/b/c.html', {}) }).should.throw();
+
+			(() => { router.on('route /a/b/c.html', () => {}) }).should.not.throw();
+			(() => { router.on('route /a/b/c.html', undefined) }).should.not.throw();
+
+			// cleanup
+			router.destroy();
+
+		});
+
+	});
+
 	describe('stop method', () => {
 
 		it('it should stop if router running', () => {
@@ -897,20 +935,28 @@ describe('Class Router', () => {
 
 		it('it should return route information by passed fragment', () => {
 
+			function func1(){}
+			function func2(){}
+			function func3(){}
+			function func4(){}
+			function func5(){}
+			function func6(){}
+
 			// setup
 			let router = Router.create(), result;
-			router.on('myRoute1 /', () => {});
-			router.on('myRoute2 /some/path.html', () => {});
-			router.on('myRoute3 /some/{{integer}}/{{float}}/path.html', () => {});
-			router.on('myRoute4 /{{a}}/b', () => {});
-			router.on('myRoute5 ?c=d&e=f', () => {});
-			router.on('myRoute6 #hash-{{hash}}', () => {});
+			router.on('myRoute1 /', func1);
+			router.on('myRoute2 /some/path.html', func2);
+			router.on('myRoute3 /some/{{integer}}/{{float}}/path.html', func3);
+			router.on('myRoute4 /{{a}}/b', func4);
+			router.on('myRoute5 ?c=d&e=f', func5);
+			router.on('myRoute6 #hash-{{hash}}', func6);
 
 			// test 1 - positiv
 			result = router.whoami('/');
 			result.should.be.length(1);
 			result[0].should.be.containEql({
 				name: 'myRoute1',
+				handler: func1,
 				params: {},
 				cache: false,
 				fragment: '/'
@@ -921,6 +967,7 @@ describe('Class Router', () => {
 			result.should.be.length(1);
 			result[0].should.be.containEql({
 				name: 'myRoute2',
+				handler: func2,
 				params: {},
 				cache: false,
 				fragment: '/some/path.html'
@@ -931,6 +978,7 @@ describe('Class Router', () => {
 			result.should.be.length(1);
 			result[0].should.be.containEql({
 				name: 'myRoute3',
+				handler: func3,
 				params: {
 					integer: 123,
 					float:  4.34,
@@ -944,18 +992,21 @@ describe('Class Router', () => {
 			result.should.be.length(3);
 			result[0].should.be.containEql({
 				name: 'myRoute4',
+				handler: func4,
 				params: { a: 'im' },
 				cache: false,
 				fragment: '/im/b'
 			});
 			result[1].should.be.containEql({
 				name: 'myRoute5',
+				handler: func5,
 				params: {},
 				cache: false,
 				fragment: '?c=d&e=f'
 			});
 			result[2].should.be.containEql({
 				name: 'myRoute6',
+				handler: func6,
 				params: { hash: 'tag' },
 				cache: false,
 				fragment: '#hash-tag'
@@ -976,15 +1027,19 @@ describe('Class Router', () => {
 
 		it('it should return route information by passed name', () => {
 
+			function func1(){}
+			function func2(){}
+
 			// setup
 			let router = Router.create();
-			router.on('myRoute1 /some/{{integer}}/{{float}}/path.html', () => {});
-			router.on('myRoute2 /a/b/c.html', () => {});
+			router.on('myRoute1 /some/{{integer}}/{{float}}/path.html', func1);
+			router.on('myRoute2 /a/b/c.html', func2);
 
 			// test 1 - positiv
 			router.which('myRoute1').should.be.containEql({
 				name: 'myRoute1',
 				type: 'dynamic',
+				handler: func1,
 				fragment: null,
 				route: '/some/{{integer}}/{{float}}/path.html',
 				urlpart: 'pathname',
@@ -1369,17 +1424,17 @@ describe('Class Router', () => {
 			let router = Router.create({
 				scope: document.createElement('div'),
 			});
-			router.on('Startpage /index.html');
-			router.on('Resultpage /results.html');
-			router.on('Detailpage /details.html');
-			router.on('Configurator /configurator.html');
+			router.on('Startpage /index.html', () => {});
+			router.on('Resultpage /results.html', () => {});
+			router.on('Detailpage /details.html', () => {});
+			router.on('Configurator /configurator.html', () => {});
 
 			// test routes count
 			// INFO: _getRoutes umbenennen in getRoutes
 			Object.keys(router._routes.pathname).should.be.length(4);
 
 			// should throw error because route is already exists
-			(() => { router.on('Detailpage /details.html'); }).should.throw();
+			(() => { router.on('Detailpage /details.html', () => {}); }).should.throw();
 
 			// cleanup
 			router.destroy();
