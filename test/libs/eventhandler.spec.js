@@ -68,7 +68,7 @@ describe('Eventhandler Class', () => {
 				"mouseup .koo": koo,
 				"click .baz"  : baz,
 				"mousedown"   : naz,
-			}
+			};
 
 		   /**
 			* #### Excepted grouped object ####
