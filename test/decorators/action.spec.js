@@ -143,79 +143,91 @@ describe('@action decorator', () => {
 
         });
 
-        it('should call action handler pass right args after clicking registered link', (done) => {
+        describe('dom test', () => {
 
-            @view(`
-                <a class="path-1" href="/some/path1.html">Path 1</a>
-                <a class="path-2" href="/some/path2/2334.html?a=b&c=d#jumpTo=223">Path 2</a>
-                <a class="path-3" href="/not/registerd.html">Path 3</a>
-            `)
-            @component()
-            class Page3 {
-                @action('/some/path1.html') actionName1(){
+            beforeEach(() => {
 
+            });
+
+            afterEach(() => {
+
+            });
+
+            it('should call action handler pass right args after clicking registered link', (done) => {
+
+                @view(`
+                    <a class="path-1" href="/some/path1.html">Path 1</a>
+                    <a class="path-2" href="/some/path2/2334.html?a=b&c=d#jumpTo=223">Path 2</a>
+                    <a class="path-3" href="/not/registerd.html">Path 3</a>
+                 `)
+                @component()
+                class Page3 {
+                    @action('/some/path1.html') actionName1(){
+
+                    }
+                    @action('/some/path2/{{id}}.html') actionName2({ params, search, hash }){
+                        let { id } = params;
+                    }
                 }
-                @action('/some/path2/{{id}}.html') actionName2({ params, search, hash }){
-                    let { id } = params;
-                }
-            }
 
-            let page = Page3.create();
-            let element = document.createElement('div');
+                let page = Page3.create();
+                let element = document.createElement('div');
 
-            element.id = 'test-page-container';
-            element.appendChild(page);
-            document.body.appendChild(element);
+                element.id = 'test-page-container';
+                element.appendChild(page);
+                document.body.appendChild(element);
 
-            let page_actionName1_spy = sinon.spy(page.$router.scope.getHandlers('actionName1')[0], null);
-            let page_actionName2_spy = sinon.spy(page.$router.scope.getHandlers('actionName2')[0], null);
+                let page_actionName1_spy = sinon.spy(page.$router.scope.getHandlers('actionName1')[0], null);
+                let page_actionName2_spy = sinon.spy(page.$router.scope.getHandlers('actionName2')[0], null);
 
-            let $path1 = $(page).find('.path-1');
-            let $path2 = $(page).find('.path-2');
-            let $path3 = $(page).find('.path-3');
+                let $path1 = $(page).find('.path-1');
+                let $path2 = $(page).find('.path-2');
+                let $path3 = $(page).find('.path-3');
 
-            setTimeout(() => $path1.get(0).click(),  0);
-            setTimeout(() => $path2.get(0).click(), 20);
-            setTimeout(() => $path1.get(0).click(), 40);
-            setTimeout(() => $path2.get(0).click(), 60);
-            setTimeout(() => $path3.get(0).click(), 80);
+                setTimeout(() => $path1.get(0).click(),  0);
+                setTimeout(() => $path2.get(0).click(), 20);
+                setTimeout(() => $path1.get(0).click(), 40);
+                setTimeout(() => $path2.get(0).click(), 60);
+                setTimeout(() => $path3.get(0).click(), 80);
 
-            setTimeout(() => {
+                setTimeout(() => {
 
-                // call counts
-                page_actionName1_spy.callCount.should.equal(2);
-                page_actionName2_spy.callCount.should.equal(2);
+                    // call counts
+                    page_actionName1_spy.callCount.should.equal(2);
+                    page_actionName2_spy.callCount.should.equal(2);
 
-                // records (passed args to handler)
-                let record1 = page_actionName1_spy.args[0][0];
-                should(record1).be.instanceof(CustomEvent);
-                record1.type.should.be.equal('actionName1');
-                record1.detail.name.should.be.equal('actionName1');
-                record1.detail.urlpart.should.be.equal('pathname');
+                    // records (passed args to handler)
+                    let record1 = page_actionName1_spy.args[0][0];
+                    should(record1).be.instanceof(CustomEvent);
+                    record1.type.should.be.equal('actionName1');
+                    record1.detail.name.should.be.equal('actionName1');
+                    record1.detail.urlpart.should.be.equal('pathname');
 
-                let record2 = page_actionName2_spy.args[1][0];
-                should(record2).be.instanceof(CustomEvent);
-                record2.type.should.be.equal('actionName2');
-                record2.detail.name.should.be.equal('actionName2');
-                record2.detail.urlpart.should.be.equal('pathname');
-                record2.detail.params.id.should.be.equal(2334);
+                    let record2 = page_actionName2_spy.args[1][0];
+                    should(record2).be.instanceof(CustomEvent);
+                    record2.type.should.be.equal('actionName2');
+                    record2.detail.name.should.be.equal('actionName2');
+                    record2.detail.urlpart.should.be.equal('pathname');
+                    record2.detail.params.id.should.be.equal(2334);
 
-                // cleanup
-                page_actionName1_spy.restore();
-                page_actionName2_spy.restore();
+                    // cleanup
+                    page_actionName1_spy.restore();
+                    page_actionName2_spy.restore();
 
-                done();
-            }, 100);
+                    done();
+                }, 100);
 
-        });
+            });
 
-        it('should destroy action router if component element detached', () => {
+            it('should destroy action router if component element detached', () => {
 
 
-        });
+            });
 
-        it('should re-init action router on attached if its detached before', () => {
+            it('should re-init action router on attached if its detached before', () => {
 
+
+            });
 
         });
 
