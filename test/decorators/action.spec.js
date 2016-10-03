@@ -145,22 +145,26 @@ describe('@action decorator', () => {
 
         describe('dom test', () => {
 
+            let fixtureElement = null;
+
             beforeEach(() => {
 
+                fixtureElement = document.createElement('div');
+                fixtureElement.id = 'test-page-container';
+                document.body.appendChild(fixtureElement);
+
             });
 
-            afterEach(() => {
-
-            });
+            afterEach(() => $('#test-page-container').remove());
 
             it('should call action handler pass right args after clicking registered link', (done) => {
 
+                @component()
                 @view(`
                     <a class="path-1" href="/some/path1.html">Path 1</a>
                     <a class="path-2" href="/some/path2/2334.html?a=b&c=d#jumpTo=223">Path 2</a>
                     <a class="path-3" href="/not/registerd.html">Path 3</a>
                  `)
-                @component()
                 class Page3 {
                     @action('/some/path1.html') actionName1(){
 
@@ -171,11 +175,7 @@ describe('@action decorator', () => {
                 }
 
                 let page = Page3.create();
-                let element = document.createElement('div');
-
-                element.id = 'test-page-container';
-                element.appendChild(page);
-                document.body.appendChild(element);
+                fixtureElement.appendChild(page);
 
                 let page_actionName1_spy = sinon.spy(page.$router.scope.getHandlers('actionName1')[0], null);
                 let page_actionName2_spy = sinon.spy(page.$router.scope.getHandlers('actionName2')[0], null);
