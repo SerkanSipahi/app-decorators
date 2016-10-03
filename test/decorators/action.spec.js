@@ -86,126 +86,139 @@ describe('@action decorator', () => {
 
     });
 
-    it('should add router instance to domNode.$router', () => {
+    describe('@action decorator', () => {
 
-        @component()
-        class Page1 {
-            @action('/some/path.html') actionName() {
+        it('should add router instance to domNode.$router', () => {
 
+            @component()
+            class Page1 {
+                @action('/some/path.html') actionName() {
+
+                }
             }
-        }
 
-        let page = Page1.create();
-        page.$router.should.be.instanceof(Router);
+            let page = Page1.create();
+            page.$router.should.be.instanceof(Router);
 
-    });
+        });
 
-    it('should bind Component Page instance to action decorator methods', () => {
+        it('should bind Component Page instance to action decorator methods', () => {
 
-        @component()
-        class Page2 {
-            @action('/some/path1.html') actionName() {
-                this.method();
-                return this;
+            @component()
+            class Page2 {
+                @action('/some/path1.html') actionName() {
+                    this.method();
+                    return this;
+                }
+                method(){
+                    return this;
+                }
             }
-            method(){
-                return this;
-            }
-        }
-        let page = Page2.create();
+            let page = Page2.create();
 
-        let actionName = page.actionName();
-        should(actionName).be.instanceof(Page2);
-        should(actionName).be.instanceof(Element);
+            let actionName = page.actionName();
+            should(actionName).be.instanceof(Page2);
+            should(actionName).be.instanceof(Element);
 
-        let method = page.method();
-        should(method).be.instanceof(Page2);
-        should(method).be.instanceof(Element);
+            let method = page.method();
+            should(method).be.instanceof(Page2);
+            should(method).be.instanceof(Element);
 
-        let page_method_spy     = sinon.spy(page, 'method');
-        let page_actionName_spy = sinon.spy(page.$router.scope.getHandlers('actionName')[0], null);
+            let page_method_spy     = sinon.spy(page, 'method');
+            let page_actionName_spy = sinon.spy(page.$router.scope.getHandlers('actionName')[0], null);
 
-        // by trigger
-        page.$router.trigger('actionName');
-        page_method_spy.callCount.should.equal(1);
-        page_actionName_spy.callCount.should.equal(1);
+            // by trigger
+            page.$router.trigger('actionName');
+            page_method_spy.callCount.should.equal(1);
+            page_actionName_spy.callCount.should.equal(1);
 
-        // by direct call
-        page.actionName();
+            // by direct call
+            page.actionName();
 
-        page_method_spy.callCount.should.equal(2);
-
-        // cleanup
-        page_method_spy.restore();
-        page_actionName_spy.restore();
-
-    });
-
-    it('should call action handler pass right args after clicking registered link', (done) => {
-
-        @view(`
-            <a class="path-1" href="/some/path1.html">Path 1</a>
-            <a class="path-2" href="/some/path2/2334.html?a=b&c=d#jumpTo=223">Path 2</a>
-            <a class="path-3" href="/not/registerd.html">Path 3</a>
-        `)
-        @component()
-        class Page3 {
-            @action('/some/path1.html') actionName1(){
-
-            }
-            @action('/some/path2/{{id}}.html') actionName2({ params, search, hash }){
-                let { id } = params;
-            }
-        }
-
-        let page = Page3.create();
-        let element = document.createElement('div');
-
-        element.id = 'test-page-container';
-        element.appendChild(page);
-        document.body.appendChild(element);
-
-        let page_actionName1_spy = sinon.spy(page.$router.scope.getHandlers('actionName1')[0], null);
-        let page_actionName2_spy = sinon.spy(page.$router.scope.getHandlers('actionName2')[0], null);
-
-        let $path1 = $(page).find('.path-1');
-        let $path2 = $(page).find('.path-2');
-        let $path3 = $(page).find('.path-3');
-
-        setTimeout(() => $path1.get(0).click(),  0);
-        setTimeout(() => $path2.get(0).click(), 20);
-        setTimeout(() => $path1.get(0).click(), 40);
-        setTimeout(() => $path2.get(0).click(), 60);
-        setTimeout(() => $path3.get(0).click(), 80);
-
-        setTimeout(() => {
-
-            // call counts
-            page_actionName1_spy.callCount.should.equal(2);
-            page_actionName2_spy.callCount.should.equal(2);
-
-            // records (passed args to handler)
-            let record1 = page_actionName1_spy.args[0][0];
-            should(record1).be.instanceof(CustomEvent);
-            record1.type.should.be.equal('actionName1');
-            record1.detail.name.should.be.equal('actionName1');
-            record1.detail.urlpart.should.be.equal('pathname');
-
-            let record2 = page_actionName2_spy.args[1][0];
-            should(record2).be.instanceof(CustomEvent);
-            record2.type.should.be.equal('actionName2');
-            record2.detail.name.should.be.equal('actionName2');
-            record2.detail.urlpart.should.be.equal('pathname');
-            record2.detail.params.id.should.be.equal(2334);
+            page_method_spy.callCount.should.equal(2);
 
             // cleanup
-            page_actionName1_spy.restore();
-            page_actionName2_spy.restore();
+            page_method_spy.restore();
+            page_actionName_spy.restore();
 
-            done();
-        }, 100);
+        });
+
+        it('should call action handler pass right args after clicking registered link', (done) => {
+
+            @view(`
+                <a class="path-1" href="/some/path1.html">Path 1</a>
+                <a class="path-2" href="/some/path2/2334.html?a=b&c=d#jumpTo=223">Path 2</a>
+                <a class="path-3" href="/not/registerd.html">Path 3</a>
+            `)
+            @component()
+            class Page3 {
+                @action('/some/path1.html') actionName1(){
+
+                }
+                @action('/some/path2/{{id}}.html') actionName2({ params, search, hash }){
+                    let { id } = params;
+                }
+            }
+
+            let page = Page3.create();
+            let element = document.createElement('div');
+
+            element.id = 'test-page-container';
+            element.appendChild(page);
+            document.body.appendChild(element);
+
+            let page_actionName1_spy = sinon.spy(page.$router.scope.getHandlers('actionName1')[0], null);
+            let page_actionName2_spy = sinon.spy(page.$router.scope.getHandlers('actionName2')[0], null);
+
+            let $path1 = $(page).find('.path-1');
+            let $path2 = $(page).find('.path-2');
+            let $path3 = $(page).find('.path-3');
+
+            setTimeout(() => $path1.get(0).click(),  0);
+            setTimeout(() => $path2.get(0).click(), 20);
+            setTimeout(() => $path1.get(0).click(), 40);
+            setTimeout(() => $path2.get(0).click(), 60);
+            setTimeout(() => $path3.get(0).click(), 80);
+
+            setTimeout(() => {
+
+                // call counts
+                page_actionName1_spy.callCount.should.equal(2);
+                page_actionName2_spy.callCount.should.equal(2);
+
+                // records (passed args to handler)
+                let record1 = page_actionName1_spy.args[0][0];
+                should(record1).be.instanceof(CustomEvent);
+                record1.type.should.be.equal('actionName1');
+                record1.detail.name.should.be.equal('actionName1');
+                record1.detail.urlpart.should.be.equal('pathname');
+
+                let record2 = page_actionName2_spy.args[1][0];
+                should(record2).be.instanceof(CustomEvent);
+                record2.type.should.be.equal('actionName2');
+                record2.detail.name.should.be.equal('actionName2');
+                record2.detail.urlpart.should.be.equal('pathname');
+                record2.detail.params.id.should.be.equal(2334);
+
+                // cleanup
+                page_actionName1_spy.restore();
+                page_actionName2_spy.restore();
+
+                done();
+            }, 100);
+
+        });
+
+        it('should destroy action router if component element detached', () => {
+
+
+        });
+
+        it('should re-init action router on attached if its detached before', () => {
+
+
+        });
 
     });
-
 
 });
