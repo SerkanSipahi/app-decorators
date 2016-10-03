@@ -145,7 +145,7 @@ describe('@action decorator', () => {
 
         @view(`
             <a class="path-1" href="/some/path1.html">Path 1</a>
-            <a class="path-2" href="/some/path2/2334.html">Path 2</a>
+            <a class="path-2" href="/some/path2/2334.html?a=b&c=d#jumpTo=223">Path 2</a>
             <a class="path-3" href="/not/registerd.html">Path 3</a>
         `)
         @component()
@@ -153,7 +153,7 @@ describe('@action decorator', () => {
             @action('/some/path1.html') actionName1(){
 
             }
-            @action('/some/path2/{{id}}.html') actionName2({ params }){
+            @action('/some/path2/{{id}}.html') actionName2({ params, search, hash }){
                 let { id } = params;
             }
         }
@@ -172,7 +172,7 @@ describe('@action decorator', () => {
         let $path2 = $(page).find('.path-2');
         let $path3 = $(page).find('.path-3');
 
-        setTimeout(() => $path1.get(0).click(), 0);
+        setTimeout(() => $path1.get(0).click(),  0);
         setTimeout(() => $path2.get(0).click(), 20);
         setTimeout(() => $path1.get(0).click(), 40);
         setTimeout(() => $path2.get(0).click(), 60);
