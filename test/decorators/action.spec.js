@@ -154,25 +154,26 @@ describe('@action decorator', () => {
                 document.body.appendChild(fixtureElement);
 
             });
-
             afterEach(() => $('#test-page-container').remove());
 
-            it('should call action handler pass right args after clicking registered link', (done) => {
 
-                @component()
-                @view(`
-                    <a class="path-1" href="/some/path1.html">Path 1</a>
-                    <a class="path-2" href="/some/path2/2334.html?a=b&c=d#jumpTo=223">Path 2</a>
-                    <a class="path-3" href="/not/registerd.html">Path 3</a>
-                 `)
-                class Page3 {
-                    @action('/some/path1.html') actionName1(){
+            @component()
+            @view(`
+                <a class="path-1" href="/some/path1.html">Path 1</a>
+                <a class="path-2" href="/some/path2/2334.html?a=b&c=d#jumpTo=223">Path 2</a>
+                <a class="path-3" href="/not/registerd.html">Path 3</a>
+            `)
+            class Page3 {
+                @action('/some/path1.html') actionName1(){
 
-                    }
-                    @action('/some/path2/{{id}}.html') actionName2({ params, search, hash }){
-                        let { id } = params;
-                    }
                 }
+                @action('/some/path2/{{id}}.html') actionName2({ params, search, hash }){
+                    let { id } = params;
+                }
+
+            }
+
+            it('should call action handler pass right args after clicking registered link', (done) => {
 
                 let page = Page3.create();
                 fixtureElement.appendChild(page);
@@ -219,8 +220,31 @@ describe('@action decorator', () => {
 
             });
 
-            it('should destroy action router if component element detached', () => {
+            it('should call destroy method of router if component element detached', (done) => {
 
+                let page = Page3.create();
+                fixtureElement.appendChild(page);
+
+                let $router_destroy_spy = sinon.spy(page.$router, 'destroy');
+                let page_actionName1_spy = sinon.spy(page.$router.scope.getHandlers('actionName1')[0], null);
+
+                $(fixtureElement).find('com-page3').remove();
+                $(fixtureElement).append(page);
+                $(fixtureElement).find('com-page3').remove();
+
+                page.$router.trigger('actionName');
+
+                setTimeout(() => {
+
+                    $router_destroy_spy.callCount.should.equal(2);
+                    page_actionName1_spy.callCount.should.equal(0);
+
+                    $router_destroy_spy.restore();
+                    page_actionName1_spy.restore();
+
+                    done();
+
+                }, 30);
 
             });
 
