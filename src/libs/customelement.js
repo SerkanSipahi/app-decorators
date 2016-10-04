@@ -272,19 +272,36 @@ class CustomElement {
 				let instanceProperties = CustomElement.getProperties(this._$ComponentClass);
 				Object.assign(this, instanceProperties);
 
+				// @TODO: refactor (see github: src/libs/customelement.js #20)
 				if(this.$ && this.$.config) {
 					Object.keys(this.$.config).forEach(type => {
-						let createdCallbacks = this.$.config[type].component.created;
-						CustomElement.applyOnCreatedCallback(this, createdCallbacks, ...args);
+						let callbacks = this.$.config[type].component.created;
+						CustomElement.applyOnCreatedCallback(this, callbacks, ...args);
 					});
 				}
 				this.created ? this.created(...args) : null;
 
 			},
 			attachedCallback: function(...args) {
+
+				// @TODO: refactor (see github: src/libs/customelement.js #20)
+				if(this.$ && this.$.config) {
+					Object.keys(this.$.config).forEach(type => {
+						let callbacks = this.$.config[type].component.attached;
+						CustomElement.applyOnCreatedCallback(this, callbacks, ...args);
+					});
+				}
 				this.attached ? this.attached() : null;
 			},
 			detachedCallback: function(...args) {
+
+				// @TODO: refactor (see github: src/libs/customelement.js #20)
+				if(this.$ && this.$.config) {
+					Object.keys(this.$.config).forEach(type => {
+						let callbacks = this.$.config[type].component.detached;
+						CustomElement.applyOnCreatedCallback(this, callbacks, ...args);
+					});
+				}
 				this.detached ? this.detached() : null;
 			},
 			attributeChangedCallback: function(...args) {
