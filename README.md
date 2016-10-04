@@ -20,6 +20,7 @@ System.config({
 ```js
 import { component, view, on } from 'app-decorators';
 
+@component() // make sure @component is the first component
 @view(`
 	<h3>{{head}}</h3>
 	<div>{{count}}</div>
@@ -28,8 +29,6 @@ import { component, view, on } from 'app-decorators';
 		<span class="down"> - </span>
 	</div>
 `)
-
-@component()
 class Item {
 
 	@view.bind count = 0;
