@@ -1991,13 +1991,19 @@ describe('Class Router', () => {
 
 			router.on('myRoute1 /some/path1.html', spy_myRoute1);
 			router.on('myRoute2 /some/path2.html', spy_myRoute2);
+
 			router.trigger('myRoute1');
 			router.trigger('myRoute2');
 
+			spy_myRoute1.callCount.should.be.equal(1);
+			spy_myRoute2.callCount.should.be.equal(1);
+
 			// test
 			router.destroy();
+
 			router.trigger('myRoute1');
 			router.trigger('myRoute2');
+
 			spy_myRoute1.callCount.should.be.equal(1);
 			spy_myRoute2.callCount.should.be.equal(1);
 
