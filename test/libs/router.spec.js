@@ -1521,30 +1521,36 @@ describe('Class Router', () => {
 
 	describe('_onUrlchange method', () => {
 
-		it('should call registered callback on element.click()', () => {
+		it('should call registered callback on element.click()', (done) => {
 
-			element.querySelector('.foo').click();
-			element.querySelector('.bar').click();
-			element.querySelector('.baz').click();
-			element.querySelector('.baz').click();
+			setTimeout(() => element.querySelector('.foo').click(),  0);
+			setTimeout(() => element.querySelector('.bar').click(), 30);
+			setTimeout(() => element.querySelector('.baz').click(), 60);
+			setTimeout(() => element.querySelector('.baz').click(), 90);
 
-			spy_urlchange.callCount.should.equal(3);
+			setTimeout(() => {
 
-			spy_urlchange.args[0][0].fragment.should.equal('/index');
-			spy_urlchange.args[1][0].fragment.should.equal('/index/details');
-			spy_urlchange.args[2][0].fragment.should.equal('/index/details?a=1&b=2');
+				spy_urlchange.callCount.should.equal(3);
+
+				spy_urlchange.args[0][0].fragment.should.equal('/index');
+				spy_urlchange.args[1][0].fragment.should.equal('/index/details');
+				spy_urlchange.args[2][0].fragment.should.equal('/index/details?a=1&b=2');
+
+
+				done();
+			}, 120);
 
 		});
 
 		it('should call registered callback on router.back()', (done) => {
 
-			element.querySelector('.foo').click();
-			element.querySelector('.bar').click();
-			element.querySelector('.baz').click();
+			setTimeout(() => element.querySelector('.foo').click(),  0);
+			setTimeout(() => element.querySelector('.bar').click(), 50);
+			setTimeout(() => element.querySelector('.baz').click(), 100);
 
-			router.back();
-			router.back();
-			router.back();
+			setTimeout(() => router.back(), 150);
+			setTimeout(() => router.back(), 200);
+			setTimeout(() => router.back(), 250);
 
 			setTimeout(() => {
 
@@ -1556,7 +1562,7 @@ describe('Class Router', () => {
 
 				done();
 
-			}, 100);
+			}, 300);
 
 		});
 
