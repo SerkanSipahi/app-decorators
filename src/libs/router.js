@@ -524,6 +524,12 @@ class Router {
 			return;
 		}
 
+		// @FIXME: this is a workaround for https://github.com/SerkanSipahi/app-decorators/issues/39
+		// @FIXME: please remove this line of code if issue 39(see above) implemented
+		if(this.destroyed){
+			return;
+		}
+
 		if(this.mode.shadowRoute){
 			this._stopPropagation(event);
 		}
