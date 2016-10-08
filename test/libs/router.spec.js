@@ -2020,6 +2020,46 @@ describe('Class Router', () => {
 
 	});
 
+	describe('init method', () => {
+
+		it('should init all registered events again if initialized with constructor', () => {
+
+			// setup
+			let spy_myRoute1 = sinon.spy(() => {});
+			let spy_myRoute2 = sinon.spy(() => {});
+
+			let router = Router.create({
+				scope: document.createElement('div'),
+				routes: {
+					'myRoute1 /some/path1.html': spy_myRoute1,
+					'myRoute2 /some/path2.html': spy_myRoute2,
+				},
+			});
+
+			// test 1
+			router.destroy();
+			router.trigger('myRoute1');
+			router.trigger('myRoute2');
+
+			spy_myRoute1.callCount.should.be.equal(0);
+			spy_myRoute2.callCount.should.be.equal(0);
+
+			// test 2
+			router.init();
+
+			router.trigger('myRoute1');
+			router.trigger('myRoute2');
+
+			spy_myRoute1.callCount.should.be.equal(1);
+			spy_myRoute2.callCount.should.be.equal(1);
+
+			// cleanup
+			router.destroy();
+
+		});
+
+	});
+
 	describe('create() function', () => {
 
 		it('should bind scope to handlers', () => {
