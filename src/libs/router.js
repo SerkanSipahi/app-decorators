@@ -231,7 +231,7 @@ class Router {
 			let hashParams = this.queryString.parse(hash);
 
 			let args = Object.assign({}, event.detail, {
-				search: searchParams, hash: hashParams,
+				search: searchParams, hash: hashParams, event: event,
 			});
 
 			if(handler){
