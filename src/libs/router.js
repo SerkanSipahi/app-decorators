@@ -110,6 +110,12 @@ class Router {
 	};
 
 	/**
+	 * _uid
+	 * @type {string}
+     */
+	_uid = null;
+
+	/**
 	 * destroyed
 	 * @type {boolean}
      */
@@ -129,8 +135,18 @@ class Router {
 	constructor(config = {}){
 
 		Object.assign(this, config);
+
+		this._setup();
 		this.init();
 
+	}
+
+	/**
+	 * _setup
+     */
+	_setup(){
+
+		this._uid = this.guid();
 	}
 
 	/**
