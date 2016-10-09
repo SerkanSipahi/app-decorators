@@ -77,6 +77,7 @@ class Router {
 		Promise: null,
 		XRegExp: null,
 		queryString: null,
+		guid: null,
 	};
 
 	/**
@@ -434,9 +435,21 @@ class Router {
 
 	}
 
+	/**
+	 * queryString
+     */
 	get queryString(){
 
 		return this.helper.queryString;
+
+	}
+
+	/**
+	 * guid
+	 */
+	get guid(){
+
+		return this.helper.guid;
 
 	}
 

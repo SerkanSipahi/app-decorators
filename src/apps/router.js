@@ -4,6 +4,7 @@ import { Router } from '../libs/router';
 import { Promise } from '../libs/dependencies';
 import { XRegExp } from '../libs/dependencies';
 import { queryString } from '../helpers/queryString';
+import { guid } from '../helpers/guid';
 
 /**
  * create
@@ -50,6 +51,7 @@ Router.create = function(config = {}){
 			Promise: config.Promise || Promise,
 			XRegExp: config.XRegExp || XRegExp,
 			queryString: config.queryString || queryString,
+			guid: config.guid || guid,
 		},
 	};
 

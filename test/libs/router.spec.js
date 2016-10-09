@@ -843,6 +843,29 @@ describe('Class Router', () => {
 
 	});
 
+	describe('guid method helper', () => {
+
+		it('should generate uid', () => {
+
+			// setup
+			let router = Router.create({
+				scope: document.createElement('div'),
+			});
+
+			// test
+			let uid1 = router.guid();
+			let uid2 = router.guid();
+
+			uid1.should.match(/^[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+$/);
+			uid1.should.not.be.equal(uid2);
+
+			// cleanup
+			router.destroy();
+
+		});
+
+	});
+
 	describe('addRouteListener method', () => {
 
 		it('should do the same like prototype.on', () => {
