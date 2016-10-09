@@ -156,7 +156,6 @@ describe('@action decorator', () => {
             });
             afterEach(() => $('#test-page-container').remove());
 
-
             @component()
             @view(`
                 <a class="path-1" href="/some/path1.html">Path 1</a>
@@ -170,7 +169,6 @@ describe('@action decorator', () => {
                 @action('/some/path2/{{id}}.html') actionName2({ params, search, hash }){
                     let { id } = params;
                 }
-
             }
 
             it('should call action handler pass right args after clicking registered link', (done) => {
@@ -181,15 +179,11 @@ describe('@action decorator', () => {
                 let page_actionName1_spy = sinon.spy(page.$router.scope.getHandlers('actionName1')[0], null);
                 let page_actionName2_spy = sinon.spy(page.$router.scope.getHandlers('actionName2')[0], null);
 
-                let $path1 = $(page).find('.path-1');
-                let $path2 = $(page).find('.path-2');
-                let $path3 = $(page).find('.path-3');
-
-                setTimeout(() => $path1.get(0).click(),  0);
-                setTimeout(() => $path2.get(0).click(), 20);
-                setTimeout(() => $path1.get(0).click(), 40);
-                setTimeout(() => $path2.get(0).click(), 60);
-                setTimeout(() => $path3.get(0).click(), 80);
+                setTimeout(() => $(page).find('.path-1').get(0).click(),  0);
+                setTimeout(() => $(page).find('.path-2').get(0).click(), 20);
+                setTimeout(() => $(page).find('.path-1').get(0).click(), 40);
+                setTimeout(() => $(page).find('.path-2').get(0).click(), 60);
+                setTimeout(() => $(page).find('.path-3').get(0).click(), 80);
 
                 setTimeout(() => {
 
@@ -232,8 +226,7 @@ describe('@action decorator', () => {
                 $(fixtureElement).append(page);
                 $(fixtureElement).find('com-page3').remove();
 
-                page.$router.trigger('actionName');
-
+                setTimeout(() => page.$router.trigger('actionName1'), 20);
                 setTimeout(() => {
 
                     $router_destroy_spy.callCount.should.equal(2);
@@ -248,8 +241,53 @@ describe('@action decorator', () => {
 
             });
 
-            it('should re-init action router on attached if its detached before', () => {
+            it('should re-init action router on attached if its detached before', (done) => {
 
+                // prepare test data
+
+                let page = Page3.create();
+                fixtureElement.appendChild(page);
+
+                let $router_destroy_spy = sinon.spy(page.$router, 'destroy');
+                let $router_init_spy = sinon.spy(page.$router, 'init');
+                let page_actionName1_spy = sinon.spy(page.$router.scope.getHandlers('actionName1')[0], null);
+
+                // start tests
+
+                setTimeout(() => page.$router.trigger('actionName1'),  0);
+                setTimeout(() => $(fixtureElement).find('com-page3').remove(),  10);
+                setTimeout(() => page.$router.trigger('actionName1'),  20);
+
+                setTimeout(() => {
+
+                    $router_destroy_spy.callCount.should.equal(1);
+                    $router_init_spy.callCount.should.equal(0);
+                    page_actionName1_spy.callCount.should.equal(1);
+
+                    page_actionName1_spy.restore();
+
+                }, 30);
+
+                setTimeout(() => $(fixtureElement).append(page),  40);
+
+                let page_actionName1_spy_b = null;
+
+                setTimeout(() => page_actionName1_spy_b = sinon.spy(page.$router.scope.getHandlers('actionName1')[0], null),  50);
+                setTimeout(() => $(page).find('.path-1').get(0).click(), 60);
+
+                setTimeout(() => {
+
+                    $router_destroy_spy.callCount.should.equal(1);
+                    $router_init_spy.callCount.should.equal(1);
+                    page_actionName1_spy_b.callCount.should.equal(1);
+
+                    $router_destroy_spy.restore();
+                    $router_init_spy.restore();
+                    page_actionName1_spy_b.restore();
+
+                    done();
+
+                }, 70);
 
             });
 
