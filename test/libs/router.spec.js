@@ -848,22 +848,27 @@ describe('Class Router', () => {
 		it('should generate uid', () => {
 
 			// setup
-			let router = Router.create({
+			let router1 = Router.create({
+				scope: document.createElement('div'),
+			});
+			let router2 = Router.create({
 				scope: document.createElement('div'),
 			});
 
 			// test 1
-			router._uid.match(/^[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+$/);
+			router1._uid.match(/^[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+$/);
+			router1._uid.should.not.be.equal(router2._uid);
 
 			// test 2
-			let uid1 = router.guid();
-			let uid2 = router.guid();
+			let uid1 = router1.guid();
+			let uid2 = router1.guid();
 
 			uid1.should.match(/^[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+$/);
 			uid1.should.not.be.equal(uid2);
 
 			// cleanup
-			router.destroy();
+			router1.destroy();
+			router2.destroy();
 
 		});
 
