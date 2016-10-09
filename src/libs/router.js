@@ -460,6 +460,8 @@ class Router {
 	_bindInternalCoreEvents(){
 
 		this.scope.on(this.event.action, ::this._onAction);
+		this.history.on(this.event.popstate, ::this._onAction);
+
 		this.scope.on(this.event.urlchange, ::this._onUrlchange);
 
 	}
@@ -471,6 +473,8 @@ class Router {
 	_removeInternalCoreEvents(){
 
 		this.scope.off(this.event.action);
+		this.history.off(this.event.popstate);
+
 		this.scope.off(this.event.urlchange);
 
 	}
@@ -521,12 +525,6 @@ class Router {
 		this._preventDefault(event);
 
 		if(!this._runRoute) {
-			return;
-		}
-
-		// @FIXME: this is a workaround for https://github.com/SerkanSipahi/app-decorators/issues/39
-		// @FIXME: please remove this line of code if issue 39(see above) implemented
-		if(this.destroyed){
 			return;
 		}
 

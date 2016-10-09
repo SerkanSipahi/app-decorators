@@ -28,12 +28,16 @@ Router.create = function(config = {}){
 
 		tmpDomain: 'http://x.x',
 
+		history: Eventhandler.create({
+			element: config.window || window || null,
+		}),
 		scope: Eventhandler.create({
-			element: config.scope || document && body || null
+			element: config.scope || document && body || null,
 		}),
 
 		event: {
 			action: config.event_action || 'click a',
+			popstate: config.event_pushstate || 'popstate',
 			urlchange: config.event_urlchange || 'urlchange',
 		},
 		mode: {
@@ -49,11 +53,7 @@ Router.create = function(config = {}){
 		},
 	};
 
-	// assign and return Instance of Router + config
 	let router = new Router(routerConfig);
-	let popstateHandler = Eventhandler.create({ element: window });
-	popstateHandler.on('popstate', router::router._onAction);
-
 	return router;
 
 };
