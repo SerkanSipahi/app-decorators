@@ -254,7 +254,6 @@ describe('@action decorator', () => {
 
                 // start tests
 
-                setTimeout(() => page.$router.trigger('actionName1'),  0);
                 setTimeout(() => $(fixtureElement).find('com-page3').remove(),  10);
                 setTimeout(() => page.$router.trigger('actionName1'),  20);
 
@@ -262,7 +261,7 @@ describe('@action decorator', () => {
 
                     $router_destroy_spy.callCount.should.equal(1);
                     $router_init_spy.callCount.should.equal(0);
-                    page_actionName1_spy.callCount.should.equal(1);
+                    page_actionName1_spy.callCount.should.equal(0);
 
                     page_actionName1_spy.restore();
 
