@@ -852,7 +852,10 @@ describe('Class Router', () => {
 				scope: document.createElement('div'),
 			});
 
-			// test
+			// test 1
+			router._uid.match(/^[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+$/);
+
+			// test 2
 			let uid1 = router.guid();
 			let uid2 = router.guid();
 
