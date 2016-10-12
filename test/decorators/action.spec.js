@@ -1,6 +1,7 @@
 
 // internal libs
 import { action, component, view, Router } from 'src/app-decorators';
+import { isOpera } from 'src/helpers/browser-detect';
 import $ from 'jquery';
 
 describe('@action decorator', () => {
@@ -287,6 +288,67 @@ describe('@action decorator', () => {
                     done();
 
                 }, 70);
+
+            });
+
+            it('should differ between different route instance on history back/forward', (done) => {
+
+                // in this case make opera problem in combination with mocha, should and sinon!?!?
+                if(isOpera){
+                    done();
+                    return;
+                }
+
+
+                let page1 = Page3.create();
+                let page_actionName1_spy = sinon.spy(page1.$router.scope.getHandlers('actionName1')[0], null);
+                fixtureElement.appendChild(page1);
+
+                let page2 = Page3.create();
+                let page_actionName2_spy = sinon.spy(page2.$router.scope.getHandlers('actionName1')[0], null);
+                fixtureElement.appendChild(page2);
+
+                // ###### Page1
+
+                setTimeout(() => $(page1).find('.path-1').get(0).click(), 0);
+                setTimeout(() => $(page1).find('.path-3').get(0).click(), 20);
+
+                setTimeout(() => $(page1).find('.path-1').get(0).click(), 40);
+                setTimeout(() => $(page1).find('.path-3').get(0).click(), 60);
+
+                setTimeout(() => history.back(), 80);
+                setTimeout(() => history.back(), 100);
+                setTimeout(() => history.back(), 120);
+
+                setTimeout(() => {
+
+                    page_actionName1_spy.callCount.should.be.equal(4);
+                    page_actionName2_spy.callCount.should.be.equal(0);
+
+                }, 140);
+
+                // ###### Page2
+
+                setTimeout(() => $(page2).find('.path-3').get(0).click(), 180);
+                setTimeout(() => $(page2).find('.path-1').get(0).click(), 160);
+
+                setTimeout(() => $(page2).find('.path-3').get(0).click(), 220);
+                setTimeout(() => $(page2).find('.path-1').get(0).click(), 200);
+
+                setTimeout(() => history.back(), 240);
+                setTimeout(() => history.back(), 260);
+                setTimeout(() => history.back(), 280);
+
+                setTimeout(() => {
+
+                    page_actionName1_spy.callCount.should.be.equal(4);
+                    page_actionName2_spy.callCount.should.be.equal(4);
+
+                    page_actionName1_spy.restore();
+                    page_actionName2_spy.restore();
+
+                    done();
+                }, 300);
 
             });
 

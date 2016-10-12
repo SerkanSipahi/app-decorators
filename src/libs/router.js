@@ -489,10 +489,30 @@ class Router {
 	_bindInternalCoreEvents(){
 
 		this.scope.on(this.event.action, ::this._onAction);
-		this.history.on(this.event.popstate, ::this._onAction);
+		this.history.on(this.event.popstate, event => {
+
+			if(!(this._inPopstateScope(event))){
+				return;
+			}
+
+			this._onAction(event);
+		});
 
 		this.scope.on(this.event.urlchange, ::this._onUrlchange);
 
+	}
+
+	/**
+	 * _inPopstateScope
+	 * @param event
+	 * @returns {boolean}
+     */
+	_inPopstateScope(event){
+
+		let route_uid = event.state && event.state.route_uid;
+		let inPopstateScope = this._uid === event.state.route_uid;
+
+		return (route_uid && inPopstateScope);
 	}
 
 	/**
@@ -585,7 +605,9 @@ class Router {
 			});
 
 			if(this._isDefinedEventAction(event.type)){
-				this.pushState(null, null, this.encodeURI(fragment));
+				let url = this.encodeURI(fragment);
+				let route_uid = this._uid;
+				this.pushState({ route_uid }, null, url);
 			}
 
 			this.trigger(this.event.urlchange, urlObject);
