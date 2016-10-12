@@ -74,6 +74,5 @@
       "should": "npm:should@11.1.1",
       "sinon": "npm:sinon@1.17.6"
     }
-    }
   }
 }
