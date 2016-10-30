@@ -18,20 +18,16 @@ class Sidebar {
      */
     @action('Sidebar ?sidebar={{state}}') sidebar({ event, params, search, hash }){
 
-        this._toggleState(event, params.state);
+        console.log(
+            event,        // Event
+            event.target, // <a href="...
+            params,       // { params: { state: 'show' } }
+            params.state, // show
+            search,       // { sidebar: 'show' }
+            hash          // {}
+        );
     }
-    
-    /**
-     * _toggleState
-	 * @param {string} state
-     */
-    _toggleState(state){
-       
-       event.target.href = ( state === 'show' ? show 'hide' );
-    }
-    
 }
-
 ```
 ```html
 <body>
