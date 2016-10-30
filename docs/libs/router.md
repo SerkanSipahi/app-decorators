@@ -76,10 +76,13 @@ router.start();
 #### index.html
 ```html
 <a class="home" href="/"> Home </a>
-<a class="results" href="/products/samsung/s4"> Samsung Galaxy S4 </a>
+<a class=".results" href="/products/samsung/s4"> Samsung Galaxy S4 </a>
 <a class="show-video" href="/products/samsung/s4?show=video"> Show Video </a>
 <a class="show-hightlight"href="/products/samsung/s4?show=video&a=b&c=d#markfrom=5&to=10&jumpTo=foo"> Show Highlight </a>
 ```
+##### no unnecessary handler calls (based on basic usage, see above):
+
+##### cache matched routes:
 
 #### advanced usage:
 ```js

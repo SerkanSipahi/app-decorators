@@ -92,7 +92,7 @@ es2015
 * [@component](./docs/decorators/component.md)
 * [@view](./docs/decorators/view.md)
 * [@on](./docs/decorators/on.md)
-* [@router] : in progress
+* [@action](./docs/decorators/action.md)
 * [@style] : in progress
 * [@model] : in progress
 
