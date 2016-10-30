@@ -9,19 +9,13 @@ class CustomElement {
 
 	/**
 	 * Register an element by give ES5/ES6 Class
-	 * @param  {Function} ComponentClass
-	 * @param  {Element} DOMElement
+	 * @param  {function} ComponentClass
+	 * @param  {object} config
 	 * @return {undefined}
 	 */
 	static register(ComponentClass, config = {}) {
 
-		ComponentClass.prototype._$ComponentClass = ComponentClass;
-
 		let componentName = config.name || null;
-		let componentExtends = config.extends || null;
-		let { Elements, Immutable } = config;
-
-		let DOMElement = CustomElement.getElementByName(componentExtends, Elements);
 
 		// create componentname if config.name is not passed
 		if(componentName === null) {
@@ -29,18 +23,10 @@ class CustomElement {
 			componentName = CustomElement.convertToValidComponentName(componentClassName, CustomElement.defaultPrefix);
 		}
 
-		// buildComponent
-		DOMElement = CustomElement.buildComponent(ComponentClass, DOMElement);
+		ComponentClass = CustomElement.addCustomElementsCallbacks(ComponentClass);
 
 		// register element
-		let customCallbacks = CustomElement.getCustomCallbacks();
-		let registerElementOptions = {
-			prototype: Object.create(DOMElement.prototype, customCallbacks),
-		};
-		if(componentExtends !== null) {
-			Object.assign(registerElementOptions, { extends: componentExtends});
-		}
-		let ComElement = document.registerElement(componentName, registerElementOptions);
+		let ComElement = document.registerElement(componentName, ComponentClass);
 
 		// create static factory method for creating dominstance
 		ComponentClass.create = function(create_vars){
@@ -56,192 +42,36 @@ class CustomElement {
 
 			// make sure passed object is immutable (no reference)
 			if(classof === 'Object'){
-				create_vars = Immutable.Map(create_vars).toJS();
+				create_vars = JSON.parse(JSON.stringify(create_vars));
 			}
 
 			// create an instance of customElement
 			let comElement = new ComElement();
+
+			// not work in Firefox
+			comElement.static = comElement.constructor;
+
 			comElement.createdCallback(create_vars);
 
 			return comElement;
 		};
 	}
 
-	static buildComponent(ComponentClass, DOMElement){
-
-		let CollectionOfClasses = CustomElement.explodeByExtends(ComponentClass);
-		let ConstructedClass = CustomElement.constructDOMClass(CollectionOfClasses, DOMElement);
-
-		return ConstructedClass;
-	}
-
-	/**
-	 * getElementByName
-	 * @param  {string} name
-	 * @return {Element}
-	 */
-	static getElementByName(name, Elements) {
-
-		// assign to DOMElement right Element by passed "extends" property
-		// e.g. if passed is img its return HTMLImageElement or on form HTMLFormElement
-		let DOMElement = HTMLElement;
-		if(name !== null) {
-			DOMElement = Elements[name];
-			if(!DOMElement){
-				throw new Error(`"${name}" is not valid selector name or not exists in src/datas/elements.js`);
-			}
-		}
-
-		/**
-		 * Safari´s Nativ Element Class it not a function.
-		 * We have to map them to a function otherwise it throw an error.
-		 */
-		if (typeof DOMElement !== 'function'){
-		    var _Element = function(){};
-		    _Element.prototype = DOMElement.prototype;
-		    DOMElement = _Element;
-		}
-
-		return DOMElement;
-
-	}
-
 	/**
 	 * Convert given String (name) in valid webcomponent name
-	 * @param  {String} name
-	 * @param  {String} prefix
-	 * @return {String}
+	 * @param  {string} name
+	 * @param  {string} prefix
+	 * @return {string}
 	 */
 	static convertToValidComponentName(name, prefix = 'com') {
 		return `${prefix}-${name.toLowerCase()}`;
 	}
 
 	/**
-	 * Explode given Class by extends
-	 * @param  {Function} ComponentClass
-	 * @return {Array}
-	 */
-	static explodeByExtends(ComponentClass) {
-
-		let constructor = true;
-		let resolvedClass = ComponentClass;
-		let explodedExtends = [];
-		while(constructor){
-			// resolve given class "ComponentClass" recursivly
-			// see tests for better understanding
-			resolvedClass = CustomElement.resolveClassInComponents(
-				!(1 in resolvedClass) ? resolvedClass : resolvedClass[1]
-			);
-			constructor = resolvedClass[0];
-			if(!constructor) {
-				continue;
-			}
-			explodedExtends.push(resolvedClass);
-		}
-		return explodedExtends;
-
-	}
-
-	/**
-	 * Resolve given Class in useable components
-	 * @param  {Function} ClassComponent
-	 * @return {Array}
-	 */
-	static resolveClassInComponents(ClassComponent = {}){
-
-		// methods collection designed for createClass
-		let instanceMethods = [];
-		let staticMethods = [];
-
-		// resolve Class in useful components
-		let prototype = CustomElement.getPrototype(ClassComponent);
-		let className = CustomElement.getClassName(ClassComponent);
-		let constructor = CustomElement.getConstructor(ClassComponent);
-
-		// if reached className is "Object" set "see inside block" to null
-		if(className === 'Object'){
-			prototype = className = constructor = null;
-		}
-
-		// preparing instance and static methods for createClass
-		if(constructor && prototype && className !== 'Object'){
-			instanceMethods = CustomElement.getInstanceMethods(ClassComponent);
-			staticMethods = CustomElement.getStaticMethods(ClassComponent);
-		}
-
-		return [ constructor, prototype, instanceMethods, staticMethods ];
-	}
-
-	/**
-	 * Construct given Class-Collection with an DOMElement
-	 *
-	 * @param  {Array} collection
-	 * @param  {Element} DOMElement
-	 * @return {Function}
-	 */
-	static constructDOMClass(collection = [], DOMElement) {
-
-		// default behavoir of function: if class without any parent class
-		let ConstructedClass = null;
-		let [ Constructor,, instanceMethods, staticMethods] = collection.pop();
-
-		if(Constructor && DOMElement){
-			CustomElement.inherits(Constructor, DOMElement);
-			CustomElement.createClass(Constructor, instanceMethods, staticMethods);
-		}
-
-		if(!collection.length) {
-			return Constructor;
-		}
-
-		// extended behavoir of function: if class has any parent classes
-		while(collection.length) {
-			let [ FirstConstructor,, instanceMethods,staticMethods] = collection.pop();
-			Constructor = CustomElement.inherits(FirstConstructor, Constructor);
-			CustomElement.createClass(Constructor, instanceMethods, staticMethods);
-		}
-
-		return Constructor;
-	}
-
-	/**
-	 * Extract and build methods in new object structure for createClass
-	 * @param  {Object} propObject
-	 * @param  {Object} options
-	 * @return {Array} methodContainer
-	 */
-	static extractProperties(propObject, options){
-
-		let methodContainer = [];
-		for(let method of Reflect.ownKeys(propObject)) {
-			let ignore = options.ignore;
-			if(ignore && method.match(ignore)) {
-				continue;
-			};
-			methodContainer.push({
-				key: method,
-				value: propObject[method],
-			});
-		}
-		return methodContainer;
-	}
-
-	static getProperties(ComponentClass){
-
-		let tmpInstanceProperties = new ComponentClass();
-		let instanceProperties = {};
-		for(let property of Object.getOwnPropertyNames(tmpInstanceProperties)){
-			instanceProperties[property] = tmpInstanceProperties[property];
-		}
-
-		return tmpInstanceProperties;
-	}
-
-	/**
 	 * Apply onCratedCallbacks
-	 * @param  {Object} self
-	 * @param  {Any} ...args
-	 * @return {undefined}
+	 * @param  {object} self
+	 * @param  {array} created
+	 * @return {arguments} ...args
 	 */
 	static applyOnCreatedCallback(self, created = [], ...args){
 
@@ -250,178 +80,117 @@ class CustomElement {
 
 	/**
 	 * Returns custom element callbacks
+	 * @param  {class} ComponentClass
 	 * @return {Object}
 	 */
-	static getCustomCallbacks(){
+	static addCustomElementsCallbacks(ComponentClass){
 
-		return Object.getOwnPropertyDescriptors({
-			createdCallback: function(...args) {
+		ComponentClass.prototype.createdCallback = function(...args) {
 
-				/**
-				 * 1.) If no args and no parentElement then was called .create(). We can only
-				 * skip the if-block if "createdCallback" was called through create manually.
-				 *
-				 * 2.) If no args and has parentElement it was created automatically from browser.
-				 * This accours when the customelement-tag is placed in dom
-				 */
-				if(!args.length && !this.parentElement){
-					return;
-				}
+			/**
+			 * INFO: die Auswirkungen kommen direct aus der .create()
+			 * Methode siehe zeile 76. Weil create new aufruft hat es kein Parent. Daher
+			 * wissen wir das es mit new aufgerufen wurde.
+			 *
+			 * Wenn es ein parent element hat, dann kommt es aus dem Dom.
+			 *
+			 * Created sollte die dom attribute auslesen z.b height und width vom image und
+			 * diese dem constructor (created) übergeben
+			 *
+			 * WICHTIG: die condition hier raus ! diese sollte in creaed passieren. Und auch
+			 * Object.keys(this.$.config).forEach(type => { .... applyOnCreatedCallback
+			 *
+			 * 1.) If no args and no parentElement then was called .create(). We can only
+			 * skip the if-block if "createdCallback" was called through create manually.
+			 *
+			 * 2.) If no args and has parentElement it was created automatically from browser.
+			 * This accours when the customelement-tag is placed in dom
+			 */
 
-				// create an instance of customElement for retrieving properties
-				let instanceProperties = CustomElement.getProperties(this._$ComponentClass);
-				Object.assign(this, instanceProperties);
-
-				// @TODO: refactor (see github: src/libs/customelement.js #20)
-				if(this.$ && this.$.config) {
-					Object.keys(this.$.config).forEach(type => {
-						let callbacks = this.$.config[type].component.created;
-						CustomElement.applyOnCreatedCallback(this, callbacks, ...args);
-					});
-				}
-				this.created ? this.created(...args) : null;
-
-			},
-			attachedCallback: function(...args) {
-
-				// @TODO: refactor (see github: src/libs/customelement.js #20)
-				if(this.$ && this.$.config) {
-					Object.keys(this.$.config).forEach(type => {
-						let callbacks = this.$.config[type].component.attached;
-						CustomElement.applyOnCreatedCallback(this, callbacks, ...args);
-					});
-				}
-				this.attached ? this.attached() : null;
-			},
-			detachedCallback: function(...args) {
-
-				// @TODO: refactor (see github: src/libs/customelement.js #20)
-				if(this.$ && this.$.config) {
-					Object.keys(this.$.config).forEach(type => {
-						let callbacks = this.$.config[type].component.detached;
-						CustomElement.applyOnCreatedCallback(this, callbacks, ...args);
-					});
-				}
-				this.detached ? this.detached() : null;
-			},
-			attributeChangedCallback: function(...args) {
-				this.attributeChanged ? this.attributeChanged(...args) : null;
-			},
-		});
-
-	}
-
-	/**
-	 * Create a class by given Constructor-Function, prototypeProrps and staticProps
-	 * @param  {Function} Constructor
-	 * @param  {Object} protoProps
-	 * @param  {Object} staticProps
-	 * @return {Function} Constructor
-	 */
-	static createClass(Constructor, protoProps, staticProps) {
-
-		if (protoProps) CustomElement.defineProperties(Constructor.prototype, protoProps);
-		if (staticProps) CustomElement.defineProperties(Constructor, staticProps);
-		return Constructor;
-
-	}
-
-	/**
-	 * Given Subclass inherits (extends) from superClass
-	 * @param  {Function} subClass
-	 * @param  {Function} superClass
-	 * @return {Function} subClass
-	 */
-	static inherits(subClass, superClass) {
-
-		if (typeof superClass !== "function" && superClass !== null) {
-			throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-		}
-
-		subClass.prototype = Object.create(superClass && superClass.prototype, {
-			constructor: {
-				value: subClass,
-				enumerable: false,
-				writable: true,
-				configurable: true
+			if(!args.length && !this.parentElement){
+				return;
 			}
-		});
 
-		if (superClass){
-			Object.setPrototypeOf
-				? Object.setPrototypeOf(subClass, superClass)
-				: subClass.__proto__ = superClass;
-		}
+			// @TODO: refactor (see github: src/libs/customelement.js #20)
+			if(this.$ && this.$.config) {
+				Object.keys(this.$.config).forEach(type => {
+					let callbacks = this.$.config[type].component.created;
+					CustomElement.applyOnCreatedCallback(this, callbacks, ...args);
+				});
+			}
+			this.created ? this.created(...args) : null;
 
-		return subClass;
+			CustomElement.trigger(this, 'created');
+
+		};
+		ComponentClass.prototype.attachedCallback = function(...args) {
+
+			// @TODO: refactor (see github: src/libs/customelement.js #20)
+			if(this.$ && this.$.config) {
+				Object.keys(this.$.config).forEach(type => {
+					let callbacks = this.$.config[type].component.attached;
+					CustomElement.applyOnCreatedCallback(this, callbacks, ...args);
+				});
+			}
+			this.attached ? this.attached() : null;
+			CustomElement.trigger(this, 'attached');
+
+		};
+		ComponentClass.prototype.detachedCallback = function(...args) {
+
+			// @TODO: refactor (see github: src/libs/customelement.js #20)
+			if(this.$ && this.$.config) {
+				Object.keys(this.$.config).forEach(type => {
+					let callbacks = this.$.config[type].component.detached;
+					CustomElement.applyOnCreatedCallback(this, callbacks, ...args);
+				});
+			}
+			this.detached ? this.detached() : null;
+			CustomElement.trigger(this, 'detached');
+		};
+		ComponentClass.prototype.attributeChangedCallback = function(...args) {
+
+			this.attributeChanged ? this.attributeChanged(...args) : null;
+			CustomElement.trigger(this, 'attributeChanged', ...args);
+		};
+
+		return ComponentClass;
 	}
 
 	/**
-	 * Sets properties to given target
-	 * @param  {Function|Object} target
-	 * @param  {Object} props
+	 * trigger
+	 * @param  {HTMLElement} element
+	 * @param  {string} eventType
 	 * @return {undefined}
 	 */
-	static defineProperties(target, props){
+	static trigger(element, eventType, ...args) {
 
-		for (var i = 0; i < props.length; i++) {
-			var descriptor = props[i];
-			descriptor.enumerable = descriptor.enumerable || false;
-			descriptor.configurable = true;
-			if ("value" in descriptor) descriptor.writable = true;
-			Object.defineProperty(target, descriptor.key, descriptor);
-		}
-	}
-
-	/**
-	 * returns instance methods of a Function-Class
-	 * @param  {Object} ClassComponent
-	 * @return {Array}
-	 */
-	static getInstanceMethods(ClassComponent) {
-		let prototype = CustomElement.getPrototype(ClassComponent);
-		return CustomElement.extractProperties(prototype, { ignore: /constructor/ });
-	}
-
-	/**
-	 * returns static methods of a Function-Class
-	 * @param  {Function} ClassComponent
-	 * @return {Array}
-	 */
-	static getStaticMethods(ClassComponent) {
-		let constructor = CustomElement.getConstructor(ClassComponent);
-		return CustomElement.extractProperties(constructor, { ignore: /length|name|prototype|arguments|caller/ });
+		let event = new Event(event);
+		args.length ? event[eventType] = args : null;
+		element.dispatchEvent(event);
 	}
 
 	/**
 	 * Return prototype by given Function-Class
-	 * @param  {Function} ClassComponent
-	 * @return {Object}
+	 * @param  {function} ClassComponent
+	 * @return {object}
 	 */
+
 	static getPrototype(ClassComponent){
+
 		return ClassComponent.prototype || ClassComponent.__proto__ || null;
 	}
 
 	/**
 	 * Return classname by given Function-Class
-	 * @param  {Function} ClassComponent
-	 * @return {String}
+	 * @param  {function} ClassComponent
+	 * @return {string}
 	 */
 	static getClassName(ClassComponent) {
+
 		let prototype = CustomElement.getPrototype(ClassComponent);
 		return ( prototype !== null ? prototype.constructor.name : null );
 	}
-
-	/**
-	 * Return constructor by given Function-Class
-	 * @param  {Function} ClassComponent
-	 * @return {Function}
-	 */
-	static getConstructor(ClassComponent) {
-		let prototype = CustomElement.getPrototype(ClassComponent);
-		return ( prototype !== null ? prototype.constructor : null );
-	}
-
 }
 
 export {

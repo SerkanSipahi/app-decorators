@@ -1,8 +1,8 @@
 
 import { component, view } from 'src/app-decorators';
 
-@view(`<div class="{{name}}">{{content}}</div>`, { renderedFlag: false })
 @component()
+@view(`<div class="{{name}}">{{content}}</div>`, { renderedFlag: false })
 export default class Test {
 
 	@view.bind name;

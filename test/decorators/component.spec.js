@@ -27,6 +27,7 @@ describe('@component decorator', () => {
 	it('should instance of HTMLImageElement', () => {
 		let bar = Bar.create();
 		bar.should.be.instanceOf(HTMLImageElement);
+
 		try {
 			bar.outerHTML.should.equal('<img src="path/to/picture.png" is="com-bar">');
 		} catch(e){

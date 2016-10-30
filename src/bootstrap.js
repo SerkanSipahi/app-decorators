@@ -1,13 +1,13 @@
+import { corejs } from './libs/dependencies';
+import { Webcomponents } from './libs/dependencies';
 
 /**
- * Load polyfills
+ * Assign polyfills or fix browser bugs
  */
 
-// load Webcomponents
-import Webcomponents from './libs/dependencies';
-
-// Load and assign needed polyfills for Object
-import { corejs } from './libs/dependencies';
+/**
+ * Assign not supported Object (ES6/ES7) methods
+ */
 !Object.assign  ? Object.assign  = corejs.Object.assign  : null;
 !Object.classof ? Object.classof = corejs.Object.classof : null;
 !Object.entries ? Object.entries = corejs.Object.entries : null;

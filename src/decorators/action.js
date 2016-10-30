@@ -19,10 +19,8 @@ function action(route) {
 
     return (target, method, descriptor) => {
 
-        // register namespaces
         action.helper.registerNamespaces(target);
 
-        // register events
         let actionQuery = `${method} ${route}`;
         action.helper.registerEvent(target, actionQuery, descriptor.value);
 

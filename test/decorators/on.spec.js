@@ -43,8 +43,7 @@ describe('@on decorator', () => {
 			mockFunction3 = function(){};
 
 			mockTarget = {
-				$: {
-					config: {
+				$: { config: {
 						on: {
 							events: {
 								local: {}

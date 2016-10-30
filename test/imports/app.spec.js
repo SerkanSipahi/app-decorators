@@ -11,9 +11,13 @@ describe('imported component', () => {
 	@component()
 	class Col {
 
-		item = { name: 'A', content: 1 };
-
 		created(){
+
+			this.item = {
+				name: 'A',
+				content: 1
+			};
+
 			let testCom = Test.create(this.item);
 			$(this).append(testCom);
 		}
