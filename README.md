@@ -74,12 +74,50 @@ document.body.appendChild(item);
 </html>
 ```
 
-##### If you use app-decorators with Babeljs, Typescript(not tested) or an other compiler you need following features:
+### app-decorators works with Babel 6.x. Typescript is not tested
+#### Usage
+
+#### Via `.babelrc` (Recommended)
+
+**.babelrc**
+
+```json
+{
+    "presets": ["es2015"],
+    "plugins": [
+        "app-decorators-component",
+        "transform-decorators-legacy",
+        "transform-class-properties",
+        "transform-function-bind"
+    ]
+}
 ```
-class-properties
-decorators
-function-bind
-es2015
+
+#### Note: Order of Plugins Matters!
+Make sure that `app-decorators-component` comes *before* `transform-decorators-legacy` before that.
+
+WRONG:
+```json
+
+{
+    "plugins": [
+        "plugin-1",
+        "plugin-2",
+        "plugin-3",
+        "app-decorators-component"
+    ]   
+}
+```
+RIGHT:
+```json
+{
+    "plugins": [
+        "app-decorators-component",
+        "plugin-1",
+        "plugin-2",
+        "plugin-3"
+    ]
+}
 ```
 
 ## Todomvc
