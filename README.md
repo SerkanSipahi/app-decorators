@@ -1,19 +1,15 @@
 ## app-decorates
-[![devDependency Status](https://david-dm.org/SerkanSipahi/app-decorators/dev-status.svg)](https://david-dm.org/SerkanSipahi/app-decorators?type=dev)
+
+<p>
+    <a href="https://david-dm.org/SerkanSipahi/app-decorators/?type=dev"><img src="https://david-dm.org/SerkanSipahi/david/dev-status.svg" alt="devDependency Status"></a>
+</p>
+
 
 ## Getting Started
 
 ```
 npm install app-decorators --save
-```
-
-##### Mapping with systemjs
-```
-System.config({
-	map : {
-		"app-decorators": "node_modules/app-decorators/src/app-decorators",
-	}
-});
+npm install babel-preset-es2015 babel-preset-app-decorators --save-dev
 ```
 
 ##### Item.js
@@ -74,7 +70,6 @@ document.body.appendChild(item);
 </html>
 ```
 
-### app-decorators works with Babel 6.x. Typescript is not tested
 #### Usage
 
 #### Via `.babelrc` (Recommended)
@@ -83,41 +78,17 @@ document.body.appendChild(item);
 
 ```json
 {
-    "presets": ["es2015"],
-    "plugins": [
-        "app-decorators-component",
-        "transform-decorators-legacy",
-        "transform-class-properties",
-        "transform-function-bind"
-    ]
+    "presets": ["es2015", "app-decorators"]
 }
 ```
 
-#### Note: Order of Plugins Matters!
-Make sure that `app-decorators-component` comes *before* `transform-decorators-legacy` before that.
-
-WRONG:
-```json
-
-{
-    "plugins": [
-        "plugin-1",
-        "plugin-2",
-        "plugin-3",
-        "app-decorators-component"
-    ]   
-}
+##### If you use systemjs please map app-decorators before: 
 ```
-RIGHT:
-```json
-{
-    "plugins": [
-        "app-decorators-component",
-        "plugin-1",
-        "plugin-2",
-        "plugin-3"
-    ]
-}
+System.config({
+	map : {
+		"app-decorators": "node_modules/app-decorators/src/app-decorators",
+	}
+});
 ```
 
 ## Todomvc
