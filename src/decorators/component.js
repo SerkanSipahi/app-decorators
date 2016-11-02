@@ -3,10 +3,6 @@
 import { Elements } from '../configs/elements';
 import { CustomElement } from '../libs/customelement';
 
-// external libs
-import { Immutable } from '../libs/dependencies';
-
-
 /**
  * Component (CustomElement)
  *

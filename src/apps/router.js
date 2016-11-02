@@ -1,7 +1,6 @@
 
 import { Eventhandler} from '../libs/eventhandler';
 import { Router } from '../libs/router';
-import { Promise } from '../libs/dependencies';
 import { XRegExp } from '../libs/dependencies';
 import { queryString } from '../helpers/queryString';
 import { guid } from '../helpers/guid';

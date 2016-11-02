@@ -66,10 +66,7 @@ module.exports = function (config) {
 				// external libs/files
 				'node_modules/core-js/**/*.js',
 				'node_modules/handlebars/dist/handlebars.js',
-				'node_modules/immutable/dist/immutable.js',
 				'node_modules/webcomponents.js/webcomponents-lite.js',
-				'node_modules/pouchdb/dist/pouchdb.js',
-				'node_modules/bluebird/js/browser/bluebird.js',
 				'node_modules/xregexp/src/index.js',
 				'node_modules/xregexp/src/**/*.js',
 			]
