@@ -59,7 +59,7 @@
     "mocha": "3.1.2",
     "should": "11.1.1",
     "sinon": "1.17.6",
-    "webcomponents.js": "0.7.22",
+    "webcomponents.js": "0.7.23",
     "xregexp": "3.1.1"
   },
   "jspm": {
