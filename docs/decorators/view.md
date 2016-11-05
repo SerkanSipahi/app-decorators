@@ -56,6 +56,7 @@ document.body.appendChild(counter);
 	</div>
 </com-counter>
 ```
+---
 
 ##### using slot:
 ```js
@@ -103,6 +104,8 @@ class Counter {
 	</div>
 </com-counter>
 ```
+
+---
 
 ##### it also possible nested components for complex structures:
 
