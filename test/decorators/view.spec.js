@@ -348,7 +348,7 @@ describe('@view decorator', () => {
 
 	});
 
-	it('render inner-component component', (done) => {
+	it('render slot component', (done) => {
 
 		@component({
 			name: 'my-innercomponent'
@@ -357,7 +357,7 @@ describe('@view decorator', () => {
 			<div class="a"></div>
 			<div class="b"></div>
 			<div class="c">
-				<span><inner-component></inner-component></span>
+				<span><slot></slot></span>
 			</div>
 		`)
 		class MyInnerComponent {}
@@ -372,7 +372,7 @@ describe('@view decorator', () => {
 					<div class="a"></div>
 					<div class="b"></div>
 					<div class="c">
-						<span><inner-component>Im inner of MyInnerComponent</inner-component></span>
+						<span><slot>Im inner of MyInnerComponent</slot></span>
 					</div>
 				</my-innercomponent>
 			`.removeGutter());
@@ -395,7 +395,7 @@ describe('@view decorator', () => {
 			<div class="x"></div>
 			<div class="y"></div>
 			<div class="z">
-				<span><inner-component></inner-component></span>
+				<span><slot></slot></span>
 			</div>
 		`)
 		class MyQuxust {
@@ -414,7 +414,7 @@ describe('@view decorator', () => {
 				<li> One </li>
 				<li> Two </li>
 				<li>
-					<inner-component></inner-component>
+					<slot></slot>
 				</li>
 			</ul>
 		`)
@@ -456,7 +456,7 @@ describe('@view decorator', () => {
 			<my-quxust>
 				<my-specical-com>
 					<my-awesome-com>
-						<span>i have not inner-component</span>
+						<span>i have not slot</span>
 					</my-awesome-com>
 				</my-specical-com>
 			</my-quxust>
@@ -472,22 +472,22 @@ describe('@view decorator', () => {
 					<div class="y"></div>
 					<div class="z">
 						<span>
-							<inner-component>
+							<slot>
 								<my-specical-com rendered="true">
 									<ul>
 										<li> One </li>
 										<li> Two </li>
 										<li>
-											<inner-component>
+											<slot>
 												<my-awesome-com rendered="true">
-													<span>i have not inner-component</span>
+													<span>i have not slot</span>
 													<p>im template, im appened</p>
 												</my-awesome-com>
-											</inner-component>
+											</slot>
 										</li>
 									</ul>
 								</my-specical-com>
-							</inner-component>
+							</slot>
 						</span>
 					</div>
 				</my-quxust>

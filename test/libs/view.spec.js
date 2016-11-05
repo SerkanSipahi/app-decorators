@@ -111,12 +111,12 @@ describe('View Class', () => {
 				vars: { foo: 'Thats', bar: 'nice' },
 				renderer: Handlebars,
 				createElement: document.createElement.bind(document),
-				template: '<div class="foo">{{foo}}</div><inner-component></inner-component><div class="bar">{{bar}}</div>',
+				template: '<div class="foo">{{foo}}</div><slot></slot><div class="bar">{{bar}}</div>',
 			});
 
 			view.render(null, { renderedFlag: false });
 
-			view.el.outerHTML.should.equal('<p><div class="foo">Thats</div><inner-component><ul><li> nok nok </li></ul></inner-component><div class="bar">nice</div></p>');
+			view.el.outerHTML.should.equal('<p><div class="foo">Thats</div><slot><ul><li> nok nok </li></ul></slot><div class="bar">nice</div></p>');
 
 		});
 

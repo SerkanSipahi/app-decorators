@@ -70,10 +70,10 @@ class View {
 	_compiled = {};
 
 	/**
-	 * _innerComSelector description
+	 * _slot description
 	 * @type {String}
 	 */
-	_innerComSelector = 'inner-component';
+	_slot = 'slot';
 
 	/**
 	 * rendered template
@@ -230,7 +230,7 @@ class View {
 		this._templateNode.innerHTML = this.renderedTemplate;
 
 		let innerRootNodes = this._createElement('inner-root-nodes');
-		let innerComponentNode = this._templateNode.querySelector(this._innerComSelector);
+		let innerComponentNode = this._templateNode.querySelector(this._slot);
 		if(innerComponentNode) {
 			this.appendChildNodesTo(this._rootNode, innerRootNodes);
 		}
@@ -240,8 +240,8 @@ class View {
 		// el is alias for _rootNode
 		this.el = this._rootNode;
 
-		// if inner-component exists
-		innerComponentNode = this._rootNode.querySelector(this._innerComSelector);
+		// if slot exists
+		innerComponentNode = this._rootNode.querySelector(this._slot);
 		if(innerComponentNode){
 			this.appendChildNodesTo(innerRootNodes, innerComponentNode);
 		}
