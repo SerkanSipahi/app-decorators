@@ -135,7 +135,7 @@ class MyParent {
         </li>
     </ul>
 `)
-class MySpecialCom {
+class MySister {
 }
 
 // mysister.js
