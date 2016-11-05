@@ -7,9 +7,10 @@ default:
 	@echo "   make compile"
 	@echo "   make test"
 	@echo "   make clean"
+	@echo "   make publish (npm)"
 	@echo ""
 
-install: clean node_modules jspm_packages
+install: clean clean-dist node_modules jspm_packages
 
 compile: prepare-compile gulp-compile-watch
 
