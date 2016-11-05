@@ -12,6 +12,27 @@ npm install app-decorators --save
 npm install babel-preset-es2015 babel-preset-app-decorators --save-dev
 ```
 
+#### Usage
+
+#### Via `.babelrc` (Recommended)
+
+**.babelrc**
+
+```json
+{
+    "presets": ["es2015", "app-decorators"]
+}
+```
+
+##### If you use systemjs please map app-decorators before: 
+```
+System.config({
+	map : {
+		"app-decorators": "node_modules/app-decorators/src/app-decorators",
+	}
+});
+```
+
 ##### Item.js
 ```js
 import { component, view, on } from 'app-decorators';
@@ -68,27 +89,6 @@ document.body.appendChild(item);
         <com-item></com-item>
     </body>
 </html>
-```
-
-#### Usage
-
-#### Via `.babelrc` (Recommended)
-
-**.babelrc**
-
-```json
-{
-    "presets": ["es2015", "app-decorators"]
-}
-```
-
-##### If you use systemjs please map app-decorators before: 
-```
-System.config({
-	map : {
-		"app-decorators": "node_modules/app-decorators/src/app-decorators",
-	}
-});
 ```
 
 ## Todomvc
