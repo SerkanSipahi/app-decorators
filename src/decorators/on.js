@@ -1,7 +1,6 @@
-
-// internal libs
 import { Eventhandler } from '../libs/eventhandler';
 import { namespace } from '../helpers/namespace';
+import { storage } from 'app-decorators-helper/random-storage';
 
 /**
  * on (EventHandler)
@@ -16,6 +15,18 @@ function on(eventDomain, listenerElement) {
 	}
 
 	return (target, method, descriptor) => {
+
+		let Class = target.constructor;
+		if(!storage.has(Class)){
+			storage.set(Class, new Map());
+		}
+
+		let model = storage.get(Class);
+		model.set('@on', {
+			events: {
+				local: {}
+			},
+		});
 
 		// register namespaces
 		on.helper.registerNamespaces(target);

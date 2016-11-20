@@ -1,7 +1,6 @@
-
-// internal libs
 import { View } from '../libs/view';
 import { extractDomProperties } from '../helpers/extract-dom-properties';
+import { storage } from 'app-decorators-helper/random-storage';
 
 // external libs
 import { Handlebars } from '../libs/dependencies';
@@ -22,10 +21,19 @@ function view(template, options = {}) {
 		throw new Exception('Please pass a template!');
 	}
 
-	return (Class, name) => {
+	return function decorator(Class){
+
+		if(!storage.has(Class)){
+			storage.set(Class, new Map());
+		}
+
+		let model = storage.get(Class);
+		model.set('@view', {
+			bind: {},
+			template: {},
+		});
 
 		let target = Class.prototype;
-
 		let templateName = options.templateName || 'base';
 		let renderedFlag = !(options.renderedFlag === false);
 
@@ -46,7 +54,7 @@ function view(template, options = {}) {
 			// get the restof regular attributes
 			let regularDomAttributes = extractDomProperties(domNode);
 
-			let viewBinds = JSON.parse(JSON.stringify(domNode.$.config.view.bind));
+			let viewBinds = JSON.parse(JSON.stringify(target.$.config.view.bind));
 
 			let viewVars = Object.assign({},
 				viewBinds,
@@ -67,14 +75,13 @@ function view(template, options = {}) {
 
 			view.helper.registerSetGet(
 				domNode,
-				Object.assign({}, domNode.$.config.view.bind, domViewAttributes)
+				Object.assign({}, viewBinds, domViewAttributes)
 			);
 
 			// render view
 			$view.render(null, { renderedFlag });
 
 			domNode.$view = $view;
-
 		});
 
 	}

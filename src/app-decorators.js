@@ -10,7 +10,7 @@ export { model } from './decorators/model';
 export { modelpool } from './decorators/modelpool';
 
 // Libraries
-export { CustomElement } from './libs/customelement';
+export { CustomElement, Register } from './libs/customelement';
 export { Eventhandler } from './libs/eventhandler';
 export { View } from './libs/view';
 export { Router } from './apps/router';

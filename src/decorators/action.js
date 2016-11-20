@@ -1,6 +1,5 @@
-
-// internal libs
 import { Router } from '../libs/router';
+import { storage } from 'app-decorators-helper/random-storage';
 
 /*****************************************
  * ######### Public Decorators ###########
@@ -18,6 +17,16 @@ function action(route) {
     }
 
     return (target, method, descriptor) => {
+
+        let Class = target.constructor;
+        if(!storage.has(Class)){
+            storage.set(Class, new Map());
+        }
+
+        let model = storage.get(Class);
+        model.set('@action', {
+            events: {},
+        });
 
         action.helper.registerNamespaces(target);
 

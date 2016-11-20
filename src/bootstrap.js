@@ -1,11 +1,10 @@
-import { Webcomponents } from './libs/dependencies';
-
+import './libs/dependencies';
 import {
     assign,
     classof,
-    entries,
     values,
-    getOwnPropertyDescriptors
+    Map,
+    WeakMap,
 } from './libs/dependencies';
 
 /**
@@ -13,6 +12,6 @@ import {
  */
 !Object.assign  ? Object.assign  = assign  : null;
 !Object.classof ? Object.classof = classof : null;
-!Object.entries ? Object.entries = entries : null;
 !Object.values  ? Object.values  = values  : null;
-!Object.getOwnPropertyDescriptors ? Object.getOwnPropertyDescriptors = getOwnPropertyDescriptors : null;
+!window.Map     ? window.Map     = Map     : null;
+!window.WeakMap ? window.WeakMap = WeakMap : null;

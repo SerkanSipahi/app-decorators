@@ -1,4 +1,89 @@
+let Register = {
 
+	/**
+	 * Prefix of component if used
+	 * e.g. com-foo
+	 */
+	prefix : 'com',
+
+	/**
+	 * customElement
+	 * @param Class {function}
+	 * @param config {{extends: string, name: string}}
+	 */
+	customElement(Class, config = {}){
+
+		let { name } = config;
+		let className = this._getClassName(Class);
+
+		if(!name){
+			name = this._createComponentName(className, this.prefix);
+		}
+
+		this._registerElement(name, Class);
+	},
+
+	/**
+	 *
+	 * @param Class {function}
+	 * @returns className {string}
+	 */
+	_getClassName(Class){
+
+		return Class.prototype.constructor.name;
+	},
+
+	/**
+	 *
+	 * @param className {string}
+	 * @param prefix {string}
+	 * @returns componentName {string}
+	 */
+	_createComponentName(className, prefix){
+
+		return `${prefix}-${className.toLowerCase()}`;
+	},
+
+	/**
+	 * registerElement
+	 * @param Class {function}
+	 * @param name {string}
+	 */
+	_registerElement(name, Class){
+
+		// register element
+		let registeredElement = document.registerElement(name, Class);
+
+		/**
+		 * create (add factory)
+		 * @param vars {object}
+		 */
+		Class.create = function(vars) {
+
+			if(arguments.length > 1){
+				throw new Error('Its not allowd to pass more than one argument');
+			}
+
+			let classof = Object.classof(vars);
+			if(!(classof === 'Object' || classof === 'Undefined')) {
+				throw new Error('Passed Object must be an object or undefined');
+			}
+
+			let element = new registeredElement();
+			element.createdCallback(
+				// do immutable
+				JSON.parse(JSON.stringify(vars))
+			);
+			return element;
+		};
+	}
+};
+
+
+/**
+ * !!!!! DEPRECATED !!!!!!!
+ * New implementation see above: Register object
+ */
 class CustomElement {
 
 	/**
@@ -13,7 +98,7 @@ class CustomElement {
 	 * @param  {object} config
 	 * @return {undefined}
 	 */
-	static register(ComponentClass, config = {}) {
+	static register(ComponentClass, config = {}, registerConfig) {
 
 		let componentName = config.name || null;
 
@@ -47,10 +132,6 @@ class CustomElement {
 
 			// create an instance of customElement
 			let comElement = new ComElement();
-
-			// not work in Firefox
-			comElement.static = comElement.constructor;
-
 			comElement.createdCallback(create_vars);
 
 			return comElement;
@@ -194,5 +275,6 @@ class CustomElement {
 }
 
 export {
-	CustomElement
+	CustomElement,
+	Register,
 };
