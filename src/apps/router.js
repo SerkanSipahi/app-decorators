@@ -1,4 +1,3 @@
-
 import { Eventhandler} from '../libs/eventhandler';
 import { Router } from '../libs/router';
 import { XRegExp } from '../libs/dependencies';
@@ -54,8 +53,7 @@ Router.create = function(config = {}){
 		},
 	};
 
-	let router = new Router(routerConfig);
-	return router;
+	return Reflect.construct(Router, [routerConfig]);
 
 };
 
