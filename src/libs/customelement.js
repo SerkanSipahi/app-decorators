@@ -4,7 +4,7 @@ let Register = {
 	 * Prefix of component if used
 	 * e.g. com-foo
 	 */
-	prefix : 'com',
+	prefix: 'com',
 
 	/**
 	 * customElement
@@ -13,14 +13,32 @@ let Register = {
 	 */
 	customElement(Class, config = {}){
 
-		let { name } = config;
-		let className = this._getClassName(Class);
-
+		let name = config.name;
 		if(!name){
+			let className = this._getClassName(Class);
 			name = this._createComponentName(className, this.prefix);
+		} else {
+			delete config.name;
 		}
 
-		this._registerElement(name, Class);
+		this._addExtends(Class, config);
+		this._registerElement(Class, name);
+	},
+
+	/**
+	 * _addExtends
+	 * @param Class {function}
+	 * @param config {{extends: string, name: string}}
+	 * @returns Class {function}
+	 */
+	_addExtends(Class, config = {}){
+
+		let inherit = config.extends;
+		if(inherit && !Class.extends){
+			Class.extends = inherit;
+		}
+
+		return Class;
 	},
 
 	/**
@@ -39,17 +57,39 @@ let Register = {
 	 * @param prefix {string}
 	 * @returns componentName {string}
 	 */
-	_createComponentName(className, prefix){
+	_createComponentName(className, prefix = this.prefix){
 
 		return `${prefix}-${className.toLowerCase()}`;
+	},
+
+	/**
+	 * _enableConstructorVars
+	 * @param Class {function}
+	 * @private
+	 */
+	_enableConstructorVars(Class){
+
+		let createdCallback = Class.prototype.createdCallback;
+		Class.prototype.createdCallback = function(vars){
+
+			if(!vars && !this.parentElement){
+				return;
+			}
+			this::createdCallback(vars);
+		};
+
+		return Class;
 	},
 
 	/**
 	 * registerElement
 	 * @param Class {function}
 	 * @param name {string}
+	 * @returns Class {function}
 	 */
-	_registerElement(name, Class){
+	_registerElement(Class, name){
+
+		this._enableConstructorVars(Class);
 
 		// register element
 		let registeredElement = document.registerElement(name, Class);
@@ -66,16 +106,19 @@ let Register = {
 
 			let classof = Object.classof(vars);
 			if(!(classof === 'Object' || classof === 'Undefined')) {
-				throw new Error('Passed Object must be an object or undefined');
+				throw new Error('Passed argument must be an object or undefined');
 			}
 
 			let element = new registeredElement();
+
 			element.createdCallback(
 				// do immutable
-				JSON.parse(JSON.stringify(vars))
+				JSON.parse(JSON.stringify(vars || ""))
 			);
 			return element;
 		};
+
+		return Class;
 	}
 };
 

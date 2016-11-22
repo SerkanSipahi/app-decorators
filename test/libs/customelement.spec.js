@@ -1,156 +1,219 @@
-
 import { elements } from 'src/configs/elements';
-import { CustomElement } from 'src/libs/customelement';
+import { CustomElement, Register } from 'src/libs/customelement';
 import sinon from 'sinon';
 
-describe('Class CustomElement', () => {
+describe('Register', () => {
 
-	describe('method getClassName', () => {
+	describe('_getClassName method', () => {
 
-		class Child {
-			a() {}
-			b() {}
-			c() {}
-			static d(){}
-			static e(){}
-			static f(){}
-		}
+		it('should return given class name', () => {
 
-		it('should return classname', () => {
-			CustomElement.getClassName(Child).should.be.equal('Child');
+			class Foo {}
+			Register._getClassName(Foo).should.be.equal('Foo');
+
 		});
 
 	});
 
-	describe('method convertToValidComponentName', () => {
+	describe('_createComponentName method', () => {
 
-		it('should add a component prefix by default', () => {
-			CustomElement.convertToValidComponentName('foo').should.be.equal('com-foo');
-		});
+		it('should create component name by given name and prefix', () => {
 
-		it('should add a component by passed prefix', () => {
-			CustomElement.convertToValidComponentName('foo', 'x').should.be.equal('x-foo');
-		});
+			Register._createComponentName('Foo', 'com').should.be.equal('com-foo');
+			Register._createComponentName('Bar').should.be.equal('com-bar');
 
-	});
-
-	describe('method register passing more than one argument', () => {
-
-		class Morethan extends HTMLElement {}
-		CustomElement.register(Morethan);
-
-		it('should throw an error', () => {
-			(function(){ Morethan.create({}, 1) })
-				.should.throw('Its not allowd to pass more than one argument');
 		});
 
 	});
 
-	describe('method register passing none object', () => {
+	describe('_addExtends method', () => {
 
-		class Noneobject extends HTMLElement {}
-		CustomElement.register(Noneobject);
+		it('should add extends prop by config', () => {
 
-		it('should throw an error', () => {
-			(function(){ Noneobject.create([]) })
-				.should.throw('Passed Object must be an object or undefined');
+			class Foo {}
+			Foo = Register._addExtends(Foo, { extends: 'img' });
+
+			Foo.should.have.propertyByPath('extends').equal('img');
+
+		});
+
+		it('should not add extends if not exists', () => {
+
+			class Foo {}
+			Foo = Register._addExtends(Foo);
+
+			Foo.should.not.have.propertyByPath('extends');
+
 		});
 
 	});
 
-	describe('method register passed class Red', () => {
+	describe('_registerElement method', () => {
 
-		class Red extends HTMLElement {
-			foo() {}
-			bar() {}
-			baz() {}
-		}
+		it('should add create factory by given Class', () => {
 
-		CustomElement.register(Red);
+			class MyLang extends HTMLDivElement {}
+			MyLang = Register._registerElement(MyLang, 'rust-lang');
 
-		it('should return by default instanceof HTMLElement if no second argument passed', () => {
-			let red = Red.create();
-			red.should.be.instanceOf(HTMLElement);
+			MyLang.should.have.propertyByPath('create');
+
+		});
+
+		it('should create instanceof HTMLElement', () => {
+
+			class MyLang extends HTMLDivElement {
+				createdCallback({ text }){
+					this.innerHTML = text;
+				}
+			}
+			MyLang = Register._registerElement(MyLang, 'go-lang');
+
+			MyLang.create({ text: 'Hello World' }).should.be.instanceOf(HTMLElement);
+			MyLang.create({ text: 'Hello World' }).outerHTML.should.be.equal('<go-lang>Hello World</go-lang>');
+
+		});
+
+		it('should create instanceof HTMLImageElement', () => {
+
+			class MyLang extends HTMLImageElement {
+				createdCallback({ src }){
+					this.src = src;
+				}
+				static get extends(){
+					return 'img';
+				}
+			}
+			MyLang = Register._registerElement(MyLang, 'go-image');
+
+			MyLang.create({}).should.be.instanceOf(HTMLImageElement);
+			MyLang.create({ src: 'golang.png' }).src.should.match(/golang\.png/);
+
+		});
+
+		it('should not throw error not arguments passed', () => {
+
+			class MyLang extends HTMLDivElement {}
+			MyLang = Register._registerElement(MyLang, 'c-lang');
+
+			(() => { MyLang.create(); }).should.not.throw();
+
+		});
+
+		it('should throw error when more than one argument added', () => {
+
+			class MyLang extends HTMLDivElement {}
+			MyLang = Register._registerElement(MyLang, 'java-lang');
+
+			(() => { MyLang.create({ text: 'Hello World' }, 'just-arg'); }).should.throw();
+
+		});
+
+		it('should throw error when not object or undefined passed as argument', () => {
+
+			class MyLang extends HTMLDivElement {}
+			MyLang = Register._registerElement(MyLang, 'ruby-lang');
+
+			(() => { MyLang.create('hello world'); }).should.throw();
+			(() => { MyLang.create(true); }).should.throw();
+			(() => { MyLang.create(1234); }).should.throw();
+
 		});
 
 	});
 
-	describe('method register passed class Green and as second parameter HTMLFormElement', () => {
+	describe('customElement method (integration test)', () => {
 
-		class Green extends HTMLFormElement {
+		it('should create instance of image element', () => {
 
-			created(){
-				this.$value = 1234;
+			class MyImage extends HTMLImageElement {
+				createdCallback({ src }){
+					this.src = src;
+				}
 			}
-			foo() {
-				return this.bar();
-			}
-			bar() {
-				return this.baz();
-			}
-			baz() {
-				return this.$value;
-			}
-			// move to "babel-plugin-app-decorators-component"
-			static get extends() {
-				return 'form';
-			}
-		}
 
-		CustomElement.register(Green);
+			Register.customElement(MyImage, {
+				extends: 'img',
+				name: 'coding-image',
+			});
 
-		it('should return instanceof HTMLFormElement', () => {
+			let myImageElement = MyImage.create({ src: 'golang.png' });
 
-			let green = Green.create();
-			green.should.be.instanceOf(HTMLFormElement);
-			green.outerHTML.should.equal('<form is="com-green"></form>');
+			myImageElement.should.be.instanceOf(HTMLImageElement);
+			myImageElement.src.should.match(/golang\.png/);
+
 		});
 
-		it('should called foo bar baz', () => {
+		it('should call foo bar baz if created', () => {
 
-			let green = Green.create();
+			class MyLang extends HTMLDivElement {
+				createdCallback({ value }){
+					this.$value = value;
+				}
+				foo() {
+					return this.bar();
+				}
+				bar() {
+					return this.$value;
+				}
+			}
+
+			Register.customElement(MyLang, {
+				name: 'python-lang',
+			});
+			let myLang = MyLang.create({ value: 1234 });
 
 			// setup tests (spying)
-			sinon.spy(green, "foo");
-			sinon.spy(green, "bar");
-			sinon.spy(green, "baz");
+			sinon.spy(myLang, "foo");
+			sinon.spy(myLang, "bar");
 
 			// start tests
-			green.foo().should.be.equal(1234);
-			green.foo.calledOnce.should.be.true();
-			green.bar.calledOnce.should.be.true();
-			green.baz.calledOnce.should.be.true();
+			myLang.foo().should.be.equal(1234);
+			myLang.foo.calledOnce.should.be.true();
+			myLang.bar.calledOnce.should.be.true();
 
 			// cleanup (tearDown)
-			green.foo.restore();
-			green.bar.restore();
-			green.baz.restore();
+			myLang.foo.restore();
+			myLang.bar.restore();
 
 		});
 
-		it('should call foo, bar and baz if customelement created by dom', (done) => {
+		it('should call foo bar baz if created by dom it self', () => {
 
-			let spy_green_foo = sinon.spy(Green.prototype, "foo");
-			let spy_green_bar = sinon.spy(Green.prototype, "bar");
-			let spy_green_baz = sinon.spy(Green.prototype, "baz");
+			class MyLang extends HTMLFormElement {
+				createdCallback(){
+					this.$value = 1234;
+				}
+				foo() {
+					return this.bar();
+				}
+				bar() {
+					return this.$value;
+				}
+			}
+
+			Register.customElement(MyLang, {
+				name: 'coffee-lang',
+				extends: 'form'
+			});
+
+			let spy_myLang_foo = sinon.spy(MyLang.prototype, "foo");
+			let spy_myLang_bar = sinon.spy(MyLang.prototype, "bar");
 
 			let div = document.createElement('div');
-			div.id = 'customelement-green';
+			div.id = 'customelement-coffee';
 			document.body.appendChild(div);
-			div.innerHTML = '<form is="com-green"></form>';
+			div.innerHTML = '<form is="coffee-lang"></form>';
 
 			setTimeout(() => {
 
 				// start tests
-				document.querySelector('form[is="com-green"]').foo().should.be.equal(1234);
-				spy_green_foo.calledOnce.should.be.true();
-				spy_green_bar.calledOnce.should.be.true();
-				spy_green_baz.calledOnce.should.be.true();
+				document.querySelector('coffee-lang').foo().should.be.equal(1234);
+				spy_myLang_foo.calledOnce.should.be.true();
+				spy_myLang_bar.calledOnce.should.be.true();
 
 				// cleanup (tearDown)
-				spy_green_foo.restore();
-				spy_green_bar.restore();
-				spy_green_baz.restore();
+				spy_myLang_foo.restore();
+				spy_myLang_bar.restore();
 
 				done();
 
@@ -158,4 +221,5 @@ describe('Class CustomElement', () => {
 
 		});
 	});
+
 });
