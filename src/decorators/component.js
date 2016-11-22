@@ -1,4 +1,5 @@
 import { CustomElement } from '../libs/customelement';
+import { trigger } from '../helpers/trigger';
 import { storage } from 'app-decorators-helper/random-storage';
 
 /**
