@@ -23,8 +23,8 @@ function action(route) {
             storage.set(Class, new Map());
         }
 
-        let model = storage.get(Class);
-        model.set('@action', {
+        let map = storage.get(Class);
+        map.set('@action', {
             events: {},
         });
 

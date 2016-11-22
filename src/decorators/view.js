@@ -27,8 +27,8 @@ function view(template, options = {}) {
 			storage.set(Class, new Map());
 		}
 
-		let model = storage.get(Class);
-		model.set('@view', {
+		let map = storage.get(Class);
+		map.set('@view', {
 			bind: {},
 			template: {},
 		});

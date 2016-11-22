@@ -27,27 +27,17 @@ function getComponentName() {
 
 /**
  * init
- * @param callbacks {array}
  * @param callbackName {string}
- * @param args
+ * @param map {Map}
+ * @param vars {object}
  */
-function init(callbackName, callbacks, ...args){
+function init(callbackName, map, vars){
 
-	callbacks.forEach(cb => cb(this, ...args));
-	this[callbackName]? this[callbackName](...args): null;
-}
+	let callbacks = map.get('callbacks')[callbackName];
+	callbacks.forEach(cb => cb(this, map, vars));
 
-/**
- * trigger
- * @param  {HTMLElement} this
- * @param  {string} eventType
- * @return {undefined}
- */
-function trigger(eventType, ...args) {
-
-	let event = new Event(event);
-	args.length ? event[eventType] = args : null;
-	this.dispatchEvent(event);
+	this[callbackName]? this[callbackName](vars): null;
+	this::trigger(callbackName, vars);
 }
 
 /**
@@ -66,26 +56,15 @@ function component(settings = {}, dev = false) {
 			storage.set(Class, new Map());
 		}
 
-		let model = storage.get(Class);
-		model.set('@component', settings);
+		let map = storage.get(Class);
+		map.set('@component', settings);
 
-		// init created, attached, detached and attributeChanged callbacks
 		for(let callbackName of callbacks){
-			Class.prototype[`${callbackName}Callback`] = function(...args){
 
-				if(callbackName === 'created' && !args.length && !this.parentElement){
-					return;
-				}
-
-				let callbacks = model.get('callbacks')[callbackName];
-				this::init(callbackName, callbacks, ...args);
-
-				this::trigger(callbackName, ...args)
+			Class.prototype[`${callbackName}Callback`] = function(vars){
+				this::init(callbackName, map, vars);
 			};
 		}
-
-		// init getName method
-		Class.prototype.getName = getComponentName;
 
 		// @deprecated
 		if(!dev){

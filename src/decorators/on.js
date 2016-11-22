@@ -21,8 +21,8 @@ function on(eventDomain, listenerElement) {
 			storage.set(Class, new Map());
 		}
 
-		let model = storage.get(Class);
-		model.set('@on', {
+		let map = storage.get(Class);
+		map.set('@on', {
 			events: {
 				local: {}
 			},
