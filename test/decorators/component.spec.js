@@ -1,6 +1,25 @@
 
-import { component } from 'src/app-decorators';
+import { component, getComponentName } from '../../src/decorators/component';
 import $ from 'jquery';
+
+describe('@comonent', () => {
+
+	describe('getComponentName', () => {
+
+		it('should return name', () => {
+
+			let element1 = document.createElement('com-foo');
+			element1::getComponentName().should.be.equal('com-foo');
+
+			let element2 = document.createElement('img');
+			element2.setAttribute('is', 'my-image');
+			element2::getComponentName().should.be.equal('img[is="my-image"]');
+
+		});
+
+	});
+
+});
 
 describe('@component decorator', () => {
 

@@ -24,27 +24,30 @@ function view(template, options = {}) {
 	return function decorator(Class){
 
 		if(!storage.has(Class)){
-			storage.set(Class, new Map());
+			storage.set(Class, new Map([
+				['@callbacks', new Map([
+					['created',  []],
+					['attached', []],
+					['detached', []],
+				])]
+			]));
 		}
 
-		let map = storage.get(Class);
-		map.set('@view', {
-			bind: {},
-			template: {},
-		});
+		if(storage.has(Class)){
+			if(!storage.get(Class).has('@view')){
+				let map = storage.get(Class);
+				map.set('@view', new Map([
+					["bind", new Map()]
+				]));
+			}
+		}
 
-		let target = Class.prototype;
-		let templateName = options.templateName || 'base';
 		let renderedFlag = !(options.renderedFlag === false);
 
-		// define namespaces
-		view.helper.registerNamespaces(target);
-
-		// register Template
-		view.helper.registerTemplate(target, template, templateName);
+		let map = storage.get(Class);
 
 		// register view engine that initialized on called createdCallback
-		view.helper.registerCallback('created', target, ( domNode, createVars = {} ) => {
+		map.get('@callbacks').get('created').push((domNode, createVars = {}) => {
 
 			// get and merge dom view var attributes
 			let domViewAttributes = extractDomProperties(
@@ -54,7 +57,9 @@ function view(template, options = {}) {
 			// get the restof regular attributes
 			let regularDomAttributes = extractDomProperties(domNode);
 
-			let viewBinds = JSON.parse(JSON.stringify(target.$.config.view.bind));
+			let viewBinds = {};
+			let entries = map.get('@view').get('bind').entries() || [];
+			Array.from(entries).forEach(item => viewBinds[item[0]] = item[1]);
 
 			let viewVars = Object.assign({},
 				viewBinds,
@@ -70,7 +75,7 @@ function view(template, options = {}) {
 				vars: viewVars,
 				renderer: Handlebars,
 				createElement: document.createElement.bind(document),
-				template: domNode.$.config.view.template[templateName],
+				template: template,
 			});
 
 			view.helper.registerSetGet(
@@ -79,7 +84,9 @@ function view(template, options = {}) {
 			);
 
 			// render view
-			$view.render(null, { renderedFlag });
+			$view.render(null, {
+				renderedFlag: renderedFlag,
+			});
 
 			domNode.$view = $view;
 		});
@@ -96,14 +103,30 @@ function view(template, options = {}) {
  */
 view.bind = (target, property, descriptor) => {
 
+	let Class = target.constructor;
+
+	if(!storage.has(Class)){
+		storage.set(Class, new Map([
+			['@callbacks', new Map([
+				['created',  []],
+				['attached', []],
+				['detached', []],
+			])]
+		]));
+
+		let map = storage.get(Class);
+		map.set('@view', new Map([
+			["bind", new Map()]
+		]));
+
+	}
+
 	// get default value
 	let value = descriptor.initializer ? descriptor.initializer() : '';
 
-	// define namespaces
-	view.helper.registerNamespaces(target);
-
 	// register view binds
-	view.helper.registerBind(target, property, value);
+	let map = storage.get(Class);
+	map.get('@view').get('bind').set(property, value);
 
 };
 
@@ -112,92 +135,6 @@ view.bind = (target, property, descriptor) => {
  *****************************************/
 
 view.helper = {
-
-	/**
-	 * Register namespace of view decorator
-	 * @param  {Function|Objet} target
-	 * @return {Function} target
-	 */
-	registerNamespaces: (target) => {
-
-		// register "root" namespace
-		if(!target.$) target.$ = {};
-
-		// register "config" namespace
-		if(!target.$.config) target.$.config = {};
-
-		// register "on" namespace
-		if(!target.$.config.view) {
-			target.$.config.view = {
-				bind: {},
-				template: {},
-				component: {
-					created: [],
-					attached: [],
-					detached: [],
-				},
-			};
-		}
-
-		return target;
-
-	},
-
-	create: (target, ...args) => {
-
-		target.$.config.view.component.created.forEach(callback => {
-			callback(target, ...args);
-		});
-
-		return target;
-
-	},
-
-	/**
-	 * Register @bind of view decorator
-	 * @param  {Function|Objet} target
-	 * @param  {String} property
-	 * @param  {String} value
-	 * @return {Object} target
-	 */
-	registerBind: (target, property, value) => {
-
-		// define @view.bind property/value
-		target.$.config.view.bind[property] = value;
-
-		return target;
-
-	},
-
-	/**
-	 * Register @bind of view decorator
-	 * @param  {Function|Objet} target
-	 * @param  {String} template
-	 * @param  {String} templateName
-	 * @return {Function} target
-	 */
-	registerTemplate: (target, template, templateName = 'base') => {
-
-		// add template
-		target.$.config.view.template[templateName] = template;
-
-		return target;
-
-	},
-
-	/**
-	 * Helper for registering callbacks
-	 * @param  {String} name
-	 * @param  {Function} target
-	 * @return {Function} callack
-	 */
-	registerCallback: (name, target, callback) => {
-
-		target.$.config.view.component[name].push(callback);
-
-		return target;
-
-	},
 
 	/**
 	 * registerSetGet

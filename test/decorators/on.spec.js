@@ -10,115 +10,9 @@ import sinon from 'sinon';
 describe('@on decorator', () => {
 
 
-	describe('view.helper.registerNamespaces', () => {
-
-		it('should create namespace object´s', () => {
-
-			on.helper.registerNamespaces({}).should.be.containEql({
-				$: { config: { on: {
-						events: {
-							local: {}
-						},
-						component: {
-							created: [],
-							attached: [],
-							detached: [],
-						},
-					}}},
-			});
-
-		});
-
-	});
-
-	describe('view.helper', () => {
-
-		let mockFunction1, mockFunction2, mockFunction3;
-		let mockTarget;
-
-		beforeEach(function() {
-
-			mockFunction1 = function(){};
-			mockFunction2 = function(){};
-			mockFunction3 = function(){};
-
-			mockTarget = {
-				$: { config: {
-						on: {
-							events: {
-								local: {}
-							},
-							component: {
-								created: [],
-								attached: [],
-								detached: [],
-							},
-						},
-					},
-				},
-			};
-
-			// immutable mockTarget for each it
-			mockTarget = JSON.parse(JSON.stringify(mockTarget))
-
-		});
-
-		describe('registerEvent', () => {
-
-			it('should build config for local event', () => {
-
-				on.helper.registerEvent(mockTarget, 'some-event-1', mockFunction1).should.have.propertyByPath(
-					'$', 'config', 'on', 'events', 'local', 'some-event-1'
-				).equal(mockFunction1);
-
-			});
-
-			it.skip('should build config for overwritten listenerElement', () => {
-
-				on.helper.registerEvent(mockTarget, 'some-event-2', mockFunction2, window).should.have.propertyByPath(
-					'$', 'config', 'on', 'events', '[object Window]', 'some-event-2'
-				).containEql([ mockFunction2, window ]);
-
-			});
-
-		});
-
-		describe('registerCallback method', () => {
-
-			it('should add register callback based', () => {
-
-				on.helper.registerCallback('created', mockTarget, mockFunction1).should.have.propertyByPath(
-					'$', 'config', 'on', 'component', 'created', '0'
-				).equal(mockFunction1);
-
-			});
-
-			it('should add register callback based', () => {
-
-				on.helper.registerCallback('attached', mockTarget, mockFunction2).should.have.propertyByPath(
-					'$', 'config', 'on', 'component', 'attached', '0'
-				).equal(mockFunction2);
-
-			});
-
-			it('should add register callback based', () => {
-
-				on.helper.registerCallback('detached', mockTarget, mockFunction3).should.have.propertyByPath(
-					'$', 'config', 'on', 'component', 'detached', '0'
-				).equal(mockFunction3);
-
-			});
-
-		});
-
-		describe('applyOnCreatedCallback', () => {
-
-		})
-
-	});
-
 	describe('Snack.prototype.$.config.on.events', () => {
 
+		/*
 		it('should contain registered events over @on', () => {
 
 			class Snack {
@@ -147,6 +41,7 @@ describe('@on decorator', () => {
 			Object.keys(windowEvents).should.have.length(2);
 
 		});
+		*/
 
 		it('should trigger correct method if clicked', () => {
 

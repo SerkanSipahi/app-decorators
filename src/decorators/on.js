@@ -8,7 +8,7 @@ import { storage } from 'app-decorators-helper/random-storage';
  * @params {string} listenerElement
  * @return {Function}
  */
-function on(eventDomain, listenerElement) {
+function on(eventDomain, listenerElement = 'local') {
 
 	if(!eventDomain){
 		throw new Error('Please pass an event type e.g "click"');
@@ -18,20 +18,34 @@ function on(eventDomain, listenerElement) {
 
 		let Class = target.constructor;
 		if(!storage.has(Class)){
-			storage.set(Class, new Map());
+			storage.set(Class, new Map([
+				['@callbacks', new Map([
+					['created',  []],
+					['attached', []],
+					['detached', []],
+				])]
+			]));
 		}
 
 		let map = storage.get(Class);
-		map.set('@on', {
-			events: {
-				local: {}
-			},
-		});
+		if(!map.has('@on')){
+			map.set('@on', new Map([
+				["events", new Map([
+					["local", new Map()],
+					["context", new Map()]
+				])],
+				["callbacksDefined", false],
+			]));
+		}
 
-		// register namespaces
-		on.helper.registerNamespaces(target);
-		// register events
-		on.helper.registerEvent(target, eventDomain, descriptor.value, listenerElement);
+		let handler = descriptor.value;
+		let eventsMap = map.get('@on').get('events');
+		if(listenerElement === 'local'){
+			eventsMap.get('local').set(eventDomain, handler);
+		} else {
+			eventsMap.get('context').set(eventDomain, [ handler, listenerElement ]);
+		}
+
 
 		/**
 		 * ### Ensure "registerCallback('created', ..." (see below) registered only once ###
@@ -39,37 +53,44 @@ function on(eventDomain, listenerElement) {
 		 * but registerOnCreatedCallback can only call once because we want only Create
 		 * one eventhandler
 		 */
-		if(target.$.config.on.component.created.length > 0){
+		if(map.get('@on').get('callbacksDefined')){
 			return;
 		}
 
-		on.helper.registerCallback('created', target, ( domNode ) => {
+		map.get('@callbacks').get('created').push(domNode => {
+
+			let eventsLocal = {};
+			let entriesLocal = map.get('@on').get('events').get('local').entries();
+			Array.from(entriesLocal).forEach(item => eventsLocal[item[0]] = item[1]);
 
 			// register local (domNode) events
-			let local = target.$.config.on.events.local;
-			let eventHandler = on.helper.createLocalEventHandler(local, domNode);
+			let eventHandler = on.helper.createLocalEventHandler(eventsLocal, domNode);
 			namespace.create(domNode, '$eventHandler.local', eventHandler);
 
 			// register custom events
-			let events = target.$.config.on.events;
-			on.helper.createCustomEventHandler(events, domNode, (eventHandler, scope, event) => {
-				namespace.create(domNode, `$eventHandler.${scope}_${event}`, eventHandler);
+			let entriesContext = map.get('@on').get('events').get('context').entries();
+			on.helper.createCustomEventHandler(entriesContext, domNode, (eventHandler, context, event) => {
+				namespace.create(domNode, `$eventHandler.${context}_${event}`, eventHandler);
 			});
 
 		});
 
-		on.helper.registerCallback('attached', target, (domNode) => {
+		map.get('@callbacks').get('attached').push(domNode => {
 
 		});
 
-		on.helper.registerCallback('detached', target, (domNode) => {
+		map.get('@callbacks').get('detached').push(domNode => {
 
 			// cleanup: remove all eventhandler
 			Object.values(domNode.$eventHandler).forEach(eventHandler => {
 				eventHandler.reset();
 			});
 
+			// reset reference
+			//target.$eventHandler = null;
 		});
+
+		map.get('@on').set('callbacksDefined', true);
 
 	}
 }
@@ -79,73 +100,6 @@ function on(eventDomain, listenerElement) {
  *****************************************/
 
 on.helper = {
-
-	/**
-	 * Register namespace of on decorator
-	 * @param  {object} target
-	 * @return {object} target
-	 */
-	registerNamespaces: (target) => {
-
-		// register "root" namespace
-		if(!target.$) target.$ = {};
-
-		// register "config" namespace
-		if(!target.$.config) target.$.config = {};
-
-		// register "on" namespace
-		if(!target.$.config.on) {
-			target.$.config.on = {
-				events: {
-					local: {}
-				},
-				component: {
-					created: [],
-					attached: [],
-					detached: [],
-				},
-			};
-		}
-
-		return target;
-	},
-
-	/**
-	 * Helper for registering events
-	 * @param  {string} event
-	 * @param  {string} eventDomain
-	 * @param  {Function} callback
-	 * @param  {string} listenerElement
-	 * @return {object} target
-	 */
-	registerEvent: (target, eventDomain, callback = function(){}, listenerElement = 'local') => {
-
-		if(!target.$.config.on.events[listenerElement]) {
-			target.$.config.on.events[listenerElement] = {};
-		}
-
-		// define events
-		if(listenerElement === 'local'){
-			target.$.config.on.events[listenerElement][eventDomain] = callback;
-		} else {
-			target.$.config.on.events[listenerElement][eventDomain] = [ callback, listenerElement ];
-		}
-
-		return target;
-	},
-
-	/**
-	 * Helper for registering callbacks
-	 * @param  {string} name
-	 * @param  {object} target
-	 * @return {function} callack
-	 */
-	registerCallback: (name, target, callback) => {
-
-		target.$.config.on.component[name].push(callback);
-
-		return target;
-	},
 
 	/**
 	 * createLocalEventHandler
@@ -166,22 +120,16 @@ on.helper = {
 
 	/**
 	 * createCustomEventHandler
-	 * @param  {object} events
-	 * @param  {HTMLElement} element
+	 * @param  {object} eventsEntries
+	 * @param  {HTMLElement} domNode
 	 * @param  {function} callback
 	 * @return {HTMLElement} domNode
 	 */
-	createCustomEventHandler: (events, domNode, callback = () => {}) => {
+	createCustomEventHandler: (eventsEntries, domNode, callback = () => {}) => {
 
-		for(let scope of Object.keys(events)){
+		for(let eventEntry of eventsEntries){
 
-			if(scope === 'local') {
-				continue;
-			}
-
-			for(let event of Object.keys(events[scope])) {
-
-				let [ handler, node ] = events[scope][event];
+				let [ event, [ handler, node ] ] = eventEntry;
 				let eventHandlerConfig = {
 					[ event ]: handler
 				};
@@ -192,9 +140,8 @@ on.helper = {
 					bind: domNode,
 				});
 
-				callback(eventHandler, scope, event);
-
-			}
+				let context = Object.prototype.toString.call(node);
+				callback(eventHandler, context, event);
 		}
 
 		return domNode;

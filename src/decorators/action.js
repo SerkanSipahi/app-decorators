@@ -20,18 +20,24 @@ function action(route) {
 
         let Class = target.constructor;
         if(!storage.has(Class)){
-            storage.set(Class, new Map());
+            storage.set(Class, new Map([
+                ['@callbacks', new Map([
+                    ['created',  []],
+                    ['attached', []],
+                    ['detached', []],
+                ])]
+            ]));
         }
 
         let map = storage.get(Class);
-        map.set('@action', {
-            events: {},
-        });
+        if(!map.has('@action')){
+            map.set('@action', new Map([
+                ["events", new Map()],
+                ["callbacksDefined", false],
+            ]));
+        }
 
-        action.helper.registerNamespaces(target);
-
-        let actionQuery = `${method} ${route}`;
-        action.helper.registerEvent(target, actionQuery, descriptor.value);
+        map.get('@action').get('events').set(`${method} ${route}`, descriptor.value);
 
         /**
          * ### Ensure "registerCallback('created', ..." (see below) registered only once ###
@@ -39,23 +45,26 @@ function action(route) {
          * but registerOnCreatedCallback can only call once because we want only Create
          * one eventhandler
          */
-        if(target.$.config.action.component.created.length > 0){
+        if(map.get('@action').get('callbacksDefined')){
             return;
         }
 
-        action.helper.registerCallback('created', target, (domNode) => {
+        map.get('@callbacks').get('created').push(domNode => {
 
-            let events = target.$.config.action.events;
+            let events = {};
+            let entries = map.get('@action').get('events').entries();
+            Array.from(entries).forEach(item => events[item[0]] = item[1]);
+
             let router = Router.create({
                 routes : events,
                 scope  : domNode,
                 bind   : domNode,
             });
-            domNode.$router = router;
 
+            domNode.$router = router;
         });
 
-        action.helper.registerCallback('attached', target, (domNode) => {
+        map.get('@callbacks').get('attached').push(domNode => {
 
             if(domNode.$router && domNode.$router.destroyed){
                 domNode.$router.init();
@@ -63,76 +72,13 @@ function action(route) {
 
         });
 
-        action.helper.registerCallback('detached', target, domNode => {
+        map.get('@callbacks').get('detached').push(domNode => {
             domNode.$router.destroy();
         });
 
+        map.get('@action').set('callbacksDefined', true);
     }
 }
-
-/*****************************************
- * ########## Decorator Helper ###########
- *****************************************/
-
-action.helper = {
-
-    /**
-     * Register namespace of on decorator
-     * @param  {object} target
-     * @return {object} target
-     */
-    registerNamespaces: (target) => {
-
-        // register "root" namespace
-        if(!target.$) target.$ = {};
-
-        // register "config" namespace
-        if(!target.$.config) target.$.config = {};
-
-        // register "on" namespace
-        if(!target.$.config.action) {
-            target.$.config.action = {
-                events: {},
-                component: {
-                    created: [],
-                    attached: [],
-                    detached: [],
-                },
-            };
-        }
-
-        return target;
-    },
-
-    /**
-     * Helper for registering events
-     * @param  {string} event
-     * @param  {string} eventDomain
-     * @param  {Function} callback
-     * @return {object} target
-     */
-    registerEvent: (target, eventDomain, callback = function(){}) => {
-
-        target.$.config.action.events[eventDomain] = callback;
-
-        return target;
-    },
-
-    /**
-     * Helper for registering callbacks
-     * @param  {string} name
-     * @param  {object} target
-     * @return {function} callack
-     */
-    registerCallback: (name, target, callback) => {
-
-        target.$.config.action.component[name].push(callback);
-
-        return target;
-    },
-
-};
-
 
 export {
     action

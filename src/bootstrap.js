@@ -8,7 +8,7 @@ import {
 } from './libs/dependencies';
 
 /**
- * Assign not supported Object (ES6/ES7) methods
+ * Assign not supported ES6/ES7 API´s (ES6/ES7)
  */
 !Object.assign  ? Object.assign  = assign  : null;
 !Object.classof ? Object.classof = classof : null;

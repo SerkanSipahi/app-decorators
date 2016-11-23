@@ -28,13 +28,12 @@ function getComponentName() {
 /**
  * init
  * @param callbackName {string}
- * @param map {Map}
+ * @param callbacks {function[]}
  * @param vars {object}
  */
-function init(callbackName, map, vars){
+function init(callbackName, callbacks = [() => {}], vars){
 
-	let callbacks = map.get('callbacks')[callbackName];
-	callbacks.forEach(cb => cb(this, map, vars));
+	callbacks.forEach(cb => cb(this, vars));
 
 	this[callbackName]? this[callbackName](vars): null;
 	this::trigger(callbackName, vars);
@@ -53,22 +52,23 @@ function component(settings = {}, dev = false) {
 	return function decorator(Class) {
 
 		if(!storage.has(Class)){
-			storage.set(Class, new Map());
+			storage.set(Class, new Map([
+				['@callbacks', new Map([
+					['created',  []],
+					['attached', []],
+					['detached', []],
+				])]
+			]));
 		}
 
 		let map = storage.get(Class);
 		map.set('@component', settings);
 
 		for(let callbackName of callbacks){
-
 			Class.prototype[`${callbackName}Callback`] = function(vars){
-				this::init(callbackName, map, vars);
+				let callbacks = map.get('@callbacks').get(callbackName);
+				this::init(callbackName, callbacks, vars);
 			};
-		}
-
-		// @deprecated
-		if(!dev){
-			CustomElement.register(Class, settings);
 		}
 	}
 }
