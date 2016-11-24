@@ -63,6 +63,7 @@ module.exports = function (config) {
 				'src/helpers/*.js',
 				'src/configs/*.js',
 				'src/apps/*.js',
+				'src/datas/*.js',
 				// external libs/files
 				'node_modules/core-js/**/*.js',
 				'node_modules/handlebars/dist/handlebars.js',

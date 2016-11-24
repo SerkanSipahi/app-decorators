@@ -1,12 +1,11 @@
-import { CustomElement } from '../libs/customelement';
 import { trigger } from '../helpers/trigger';
+import { initCoreMap } from '../datas/init-maps';
 import { storage } from 'app-decorators-helper/random-storage';
-
 /**
- * callbacks
+ * customElementHooks
  * @type {string[]}
  */
-let callbacks = [
+let customElementHooks = [
 	'created',
 	'attached',
 	'detached',
@@ -43,7 +42,7 @@ function init(callbackName, callbacks = [() => {}], vars){
  * component {function}
  * @param {object} settings
  */
-function component(settings = {}, dev = false) {
+function component(settings = {}) {
 
 	/**
 	 * decorator
@@ -51,20 +50,12 @@ function component(settings = {}, dev = false) {
 	 */
 	return function decorator(Class) {
 
-		if(!storage.has(Class)){
-			storage.set(Class, new Map([
-				['@callbacks', new Map([
-					['created',  []],
-					['attached', []],
-					['detached', []],
-				])]
-			]));
-		}
+		initCoreMap(storage, Class);
 
 		let map = storage.get(Class);
 		map.set('@component', settings);
 
-		for(let callbackName of callbacks){
+		for(let callbackName of customElementHooks){
 			Class.prototype[`${callbackName}Callback`] = function(vars){
 				let callbacks = map.get('@callbacks').get(callbackName);
 				this::init(callbackName, callbacks, vars);

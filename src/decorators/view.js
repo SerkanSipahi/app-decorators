@@ -1,5 +1,6 @@
 import { View } from '../libs/view';
 import { extractDomProperties } from '../helpers/extract-dom-properties';
+import { initCoreMap, initViewMap } from '../datas/init-maps';
 import { storage } from 'app-decorators-helper/random-storage';
 
 // external libs
@@ -23,30 +24,12 @@ function view(template, options = {}) {
 
 	return function decorator(Class){
 
-		if(!storage.has(Class)){
-			storage.set(Class, new Map([
-				['@callbacks', new Map([
-					['created',  []],
-					['attached', []],
-					['detached', []],
-				])]
-			]));
-		}
-
-		if(storage.has(Class)){
-			if(!storage.get(Class).has('@view')){
-				let map = storage.get(Class);
-				map.set('@view', new Map([
-					["bind", new Map()]
-				]));
-			}
-		}
+		initCoreMap(storage, Class);
+		initViewMap(storage, Class);
 
 		let renderedFlag = !(options.renderedFlag === false);
 
 		let map = storage.get(Class);
-
-		// register view engine that initialized on called createdCallback
 		map.get('@callbacks').get('created').push((domNode, createVars = {}) => {
 
 			// get and merge dom view var attributes

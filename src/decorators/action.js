@@ -1,4 +1,5 @@
 import { Router } from '../libs/router';
+import { initCoreMap, initActionMap } from '../datas/init-maps';
 import { storage } from 'app-decorators-helper/random-storage';
 
 /*****************************************
@@ -19,24 +20,10 @@ function action(route) {
     return (target, method, descriptor) => {
 
         let Class = target.constructor;
-        if(!storage.has(Class)){
-            storage.set(Class, new Map([
-                ['@callbacks', new Map([
-                    ['created',  []],
-                    ['attached', []],
-                    ['detached', []],
-                ])]
-            ]));
-        }
+        initCoreMap(storage, Class);
+        initActionMap(storage, Class);
 
         let map = storage.get(Class);
-        if(!map.has('@action')){
-            map.set('@action', new Map([
-                ["events", new Map()],
-                ["callbacksDefined", false],
-            ]));
-        }
-
         map.get('@action').get('events').set(`${method} ${route}`, descriptor.value);
 
         /**

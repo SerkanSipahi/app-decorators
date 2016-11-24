@@ -1,5 +1,6 @@
 import { Eventhandler } from '../libs/eventhandler';
 import { namespace } from '../helpers/namespace';
+import { initCoreMap, initOnMap } from '../datas/init-maps';
 import { storage } from 'app-decorators-helper/random-storage';
 
 /**
@@ -17,26 +18,10 @@ function on(eventDomain, listenerElement = 'local') {
 	return (target, method, descriptor) => {
 
 		let Class = target.constructor;
-		if(!storage.has(Class)){
-			storage.set(Class, new Map([
-				['@callbacks', new Map([
-					['created',  []],
-					['attached', []],
-					['detached', []],
-				])]
-			]));
-		}
+		initCoreMap(storage, Class);
+		initOnMap(storage, Class);
 
 		let map = storage.get(Class);
-		if(!map.has('@on')){
-			map.set('@on', new Map([
-				["events", new Map([
-					["local", new Map()],
-					["context", new Map()]
-				])],
-				["callbacksDefined", false],
-			]));
-		}
 
 		let handler = descriptor.value;
 		let eventsMap = map.get('@on').get('events');
