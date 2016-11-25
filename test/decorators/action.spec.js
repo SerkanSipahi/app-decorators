@@ -76,12 +76,12 @@ describe('@action decorator', () => {
             });
             afterEach(() => $('#test-page-container').remove());
 
-            @component()
             @view(`
                 <a class="path-1" href="/some/path1.html">Path 1</a>
                 <a class="path-2" href="/some/path2/2334.html?a=b&c=d#jumpTo=223">Path 2</a>
                 <a class="path-3" href="/not/registerd.html">Path 3</a>
             `)
+            @component()
             class Page3 {
                 @action('/some/path1.html') actionName1(){
 

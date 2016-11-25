@@ -23,8 +23,8 @@ describe('@view decorator', () => {
 		);
 
 		// decorate
-		@component()
 		@view(`<span>{{n}}</span><p>{{p}}</p>`)
+		@component()
 		class serkan {
 			@view.bind n = 'Hello';
 			@view.bind p = 'World';
@@ -70,8 +70,8 @@ describe('@view decorator', () => {
 		it('should also create a element if element with view vars although created from out of dom', (done) => {
 
 			// decorate
-			@component()
 			@view(`<span>{{id}}.)<b>{{class}}</b>{{b}}</span><p>{{c}}</p>`)
+			@component()
 			class Fire {}
 
 			let $vc = $('#view-decorator');
@@ -124,8 +124,8 @@ describe('@view decorator', () => {
 
 		});
 
-		@component()
 		@view(`<div>{{name}}</div><div>{{city}}</div><div>{{country}}</div>`)
+		@component()
 		class Orange {
 
 			@view.bind name = 'A-Df';
@@ -216,12 +216,12 @@ describe('@view decorator', () => {
 
 	it('should not render because rendered flag is set', (done) => {
 
-		@component({
-			name: 'my-shouldnotrender'
-		})
 		@view(`
 			<div>Should render if flag is not set</div>
 		`)
+		@component({
+			name: 'my-shouldnotrender'
+		})
 		class MyShouldnotrender {}
 
 		$('body').append(`
@@ -254,9 +254,6 @@ describe('@view decorator', () => {
 
 	it('render slot component', (done) => {
 
-		@component({
-			name: 'my-innercomponent'
-		})
 		@view(`
 			<div class="a"></div>
 			<div class="b"></div>
@@ -264,6 +261,9 @@ describe('@view decorator', () => {
 				<span><slot></slot></span>
 			</div>
 		`)
+		@component({
+			name: 'my-innercomponent'
+		})
 		class MyInnerComponent {}
 
 		$('body').append('<my-innercomponent>Im inner of MyInnerComponent</my-innercomponent>');
@@ -292,9 +292,6 @@ describe('@view decorator', () => {
 
 	it('render compontents only once on nested component', (done) => {
 
-		@component({
-			name: 'my-quxust',
-		})
 		@view(`
 			<div class="x"></div>
 			<div class="y"></div>
@@ -302,6 +299,9 @@ describe('@view decorator', () => {
 				<span><slot></slot></span>
 			</div>
 		`)
+		@component({
+			name: 'my-quxust',
+		})
 		class MyQuxust {
 
 			created(){}
@@ -310,9 +310,6 @@ describe('@view decorator', () => {
 
 		}
 
-		@component({
-			name: 'my-specical-com',
-		})
 		@view(`
 			<ul>
 				<li> One </li>
@@ -322,6 +319,9 @@ describe('@view decorator', () => {
 				</li>
 			</ul>
 		`)
+		@component({
+			name: 'my-specical-com',
+		})
 		class MySpecialCom {
 
 			created(){}
@@ -330,10 +330,10 @@ describe('@view decorator', () => {
 
 		}
 
+		@view('<p>im template, im appened</p>')
 		@component({
 			name: 'my-awesome-com',
 		})
-		@view('<p>im template, im appened</p>')
 		class MyAwesomeCom {
 
 			created(){}
