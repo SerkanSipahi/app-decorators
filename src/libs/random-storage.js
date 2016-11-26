@@ -1,4 +1,4 @@
-let storage = new WeakMap();
+let storage = new Map();
 
 export {
     storage,

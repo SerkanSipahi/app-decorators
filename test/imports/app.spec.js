@@ -1,9 +1,6 @@
-
-// internal libs
 import { component } from 'src/app-decorators';
 import Test from './testcomponent';
 
-// external libs
 import $ from 'jquery';
 
 describe('imported component', () => {
@@ -11,24 +8,29 @@ describe('imported component', () => {
 	@component()
 	class Col {
 
-		created(){
+		created({ testEl }){
 
 			this.item = {
 				name: 'A',
 				content: 1
 			};
 
-			let testCom = Test.create(this.item);
-			$(this).append(testCom);
+			testEl.render(this.item);
+			$(this).append(testEl);
 		}
 
 	}
 
-	it('should create an domnode', () => {
+	it('should create an domnode', done => {
 
-		let col = Col.create();
-		col.outerHTML.should.equal('<com-col><com-test><div class="A">1</div></com-test></com-col>');
+		let col = Col.create({
+			testEl: Test.create()
+		});
 
+		setTimeout(() => {
+			col.outerHTML.should.equal(`<com-col><com-test rendered="true"><div class="A">1</div></com-test></com-col>`);
+			done();
+		}, 20);
 	});
 
 });

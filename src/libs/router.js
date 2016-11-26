@@ -491,6 +491,10 @@ class Router {
 		this.scope.on(this.event.action, ::this._onAction);
 		this.history.on(this.event.popstate, event => {
 
+			/**
+			 * if back/forward button in use, we have to check in which
+			 * route scope we are
+			 */
 			if(!(this._inPopstateScope(event))){
 				return;
 			}
@@ -552,16 +556,15 @@ class Router {
 			return;
 		}
 
-		for(let route of Object.keys(this.routes)){
+		for(let routeExpression of this.routes){
 
-			let handler = this.routes[route];
+			let [ route, handler ] = routeExpression;
 			if(this.bind){
 				handler = this.bind::handler;
 			}
+
 			this.on(route, handler);
-
 		}
-
 	}
 
 	/**

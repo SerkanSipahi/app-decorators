@@ -1,6 +1,6 @@
 
 // internal libs
-import { component, view, on } from 'src/app-decorators';
+import { component, view, on, storage } from 'src/app-decorators';
 
 // external libs
 import $ from 'jquery';
@@ -342,12 +342,12 @@ describe('@view decorator', () => {
 
 		}
 
-		/*
 		// setup spies
 		let spy_createdMyQuxust = sinon.spy(MyQuxust.prototype, "created");
 		let spy_createdMySpecialCom = sinon.spy(MySpecialCom.prototype, "created");
 		let spy_createdMyAwesomeCom = sinon.spy(MyAwesomeCom.prototype, "created");
 
+		/*
 		let spy_viewRenderedMyQuxust = sinon.spy(MyQuxust.prototype.$.config.on.events.local, "view-rendered");
 		let spy_viewRenderedMySpecialCom = sinon.spy(MySpecialCom.prototype.$.config.on.events.local, "view-rendered");
 		let spy_viewRenderedMyAwesomeCom = sinon.spy(MyAwesomeCom.prototype.$.config.on.events.local, "view-rendered");
@@ -401,14 +401,11 @@ describe('@view decorator', () => {
 
 			$('my-quxust').get(0).outerHTML.removeGutter().should.equal(markup);
 
-			done();
-
-			/*
 			// created should call only once
 			spy_createdMyQuxust.callCount.should.equal(1);
 			spy_createdMySpecialCom.callCount.should.equal(1);
 			spy_createdMyAwesomeCom.callCount.should.equal(1);
-
+			/*
 			// view-rendered should trigger only once
 			spy_viewRenderedMyQuxust.callCount.should.equal(1);
 			spy_viewRenderedMySpecialCom.callCount.should.equal(1);
@@ -456,6 +453,8 @@ describe('@view decorator', () => {
 
 			}, 20);
 			*/
+
+			done();
 
 		}, 20);
 

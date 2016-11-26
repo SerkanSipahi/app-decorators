@@ -18,6 +18,7 @@ function on(eventDomain, listenerElement = 'local') {
 	return (target, method, descriptor) => {
 
 		let Class = target.constructor;
+
 		initCoreMap(storage, Class);
 		initOnMap(storage, Class);
 
@@ -25,12 +26,16 @@ function on(eventDomain, listenerElement = 'local') {
 
 		let handler = descriptor.value;
 		let eventsMap = map.get('@on').get('events');
-		if(listenerElement === 'local'){
-			eventsMap.get('local').set(eventDomain, handler);
-		} else {
-			eventsMap.get('context').set(eventDomain, [ handler, listenerElement ]);
-		}
 
+		if(listenerElement === 'local'){
+			eventsMap.get('local').push([
+				eventDomain, handler
+			]);
+		} else {
+			eventsMap.get('context').push([
+				eventDomain, [ handler, listenerElement ]
+			]);
+		}
 
 		/**
 		 * ### Ensure "registerCallback('created', ..." (see below) registered only once ###
@@ -44,24 +49,32 @@ function on(eventDomain, listenerElement = 'local') {
 
 		map.get('@callbacks').get('created').push(domNode => {
 
-			let eventsLocal = {};
-			let entriesLocal = map.get('@on').get('events').get('local').entries();
-			Array.from(entriesLocal).forEach(item => eventsLocal[item[0]] = item[1]);
-
 			// register local (domNode) events
+			let eventsLocal = map.get('@on').get('events').get('local');
 			let eventHandler = on.helper.createLocalEventHandler(eventsLocal, domNode);
-			namespace.create(domNode, '$eventHandler.local', eventHandler);
+
+			if(eventsLocal.length){
+				namespace.create(domNode, '$eventHandler.local', eventHandler);
+			}
 
 			// register custom events
-			let entriesContext = map.get('@on').get('events').get('context').entries();
-			on.helper.createCustomEventHandler(entriesContext, domNode, (eventHandler, context, event) => {
-				namespace.create(domNode, `$eventHandler.${context}_${event}`, eventHandler);
-			});
+			let eventsContext = map.get('@on').get('events').get('context');
+			if(eventsContext.length){
+				on.helper.createCustomEventHandler(eventsContext, domNode, (eventHandler, context, event) => {
+					namespace.create(domNode, `$eventHandler.${context}_${event}`, eventHandler);
+				});
+			}
 
 		});
 
 		map.get('@callbacks').get('attached').push(domNode => {
 
+			/*
+			 // info: $eventHandler.${context}_${event} <<-- nicht vergessen !
+			 (domNode.$eventHandler && domNode.$eventHandler.destroyed)
+			 ? domNode.$eventHandler.init()
+			 : null;
+			 */
 		});
 
 		map.get('@callbacks').get('detached').push(domNode => {
@@ -94,13 +107,11 @@ on.helper = {
 	 */
 	createLocalEventHandler: (localScopeEvents, domNode) => {
 
-		let eventHandler = Eventhandler.create({
+		return Eventhandler.create({
 			events: localScopeEvents,
 			element: domNode,
 			bind: domNode,
 		});
-
-		return eventHandler;
 	},
 
 	/**
@@ -114,19 +125,12 @@ on.helper = {
 
 		for(let eventEntry of eventsEntries){
 
-				let [ event, [ handler, node ] ] = eventEntry;
-				let eventHandlerConfig = {
-					[ event ]: handler
-				};
+			let [ event, [ handler, node ] ] = eventEntry;
+			let eventHandler = Eventhandler.create({ element: node, bind: domNode });
+			let context = Object.prototype.toString.call(node);
 
-				let eventHandler = Eventhandler.create({
-					events: eventHandlerConfig,
-					element: node,
-					bind: domNode,
-				});
-
-				let context = Object.prototype.toString.call(node);
-				callback(eventHandler, context, event);
+			eventHandler.on(event, handler);
+			callback(eventHandler, context, event);
 		}
 
 		return domNode;

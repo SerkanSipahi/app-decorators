@@ -111,10 +111,7 @@ let Register = {
 
 			let element = new registeredElement();
 
-			element.createdCallback(
-				// do immutable
-				JSON.parse(JSON.stringify(vars || ""))
-			);
+			element.createdCallback(vars || "");
 			return element;
 		};
 

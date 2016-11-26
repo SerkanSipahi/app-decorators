@@ -32,14 +32,14 @@ describe('Eventhandler Class', () => {
 		it('should return callback/s by given event', () => {
 
 			let eventHandler = Eventhandler.create({
-				events : {
-					"a .foo": foo,
-					"a .bar": bar,
-					"b .baz": baz,
-					"b .boo": boo,
-					"c .koo": koo,
-					"d"     : naz,
-				},
+				events : [
+					[ "a .foo", foo ],
+					[ "a .bar", bar ],
+					[ "b .baz", baz ],
+					[ "b .boo", boo ],
+					[ "c .koo", koo ],
+					[ "d"     , naz ],
+				],
 				element: document.createElement("div"),
 				bind: {},
 			});
@@ -61,14 +61,14 @@ describe('Eventhandler Class', () => {
 
 		it('should groupby event type', () => {
 
-			let passedObject = {
-				"click .foo"  : foo,
-				"mouseup .boo": boo,
-				"click .bar"  : bar,
-				"mouseup .koo": koo,
-				"click .baz"  : baz,
-				"mousedown"   : naz,
-			};
+			let passedObject = [
+				[ "click .foo"  , foo ],
+				[ "mouseup .boo", boo ],
+				[ "click .bar"  , bar ],
+				[ "mouseup .koo", koo ],
+				[ "click .baz"  , baz ],
+				[ "mousedown"   , naz ],
+			];
 
 		   /**
 			* #### Excepted grouped object ####
@@ -109,21 +109,22 @@ describe('Eventhandler Class', () => {
 
 		it('should bind new context without overwriting orginal events object', () => {
 
-			let events = {
-				a: function(){ return this }
-			};
+			let testHandler = function(){ return this };
+			let events = [
+				[ "a", testHandler]
+			];
 
 			// Test 1 ( with new created clone context )
 			let div = document.createElement('div');
 			div.innerHTML = 'Just Dom';
 			let newEvents = Eventhandler.bindObjectToEventList(events, div);
 
-			newEvents.a().should.be.equal(div);
-			newEvents.a().innerHTML.should.be.equal('Just Dom');
+			newEvents[0][1]().should.be.equal(div);
+			newEvents[0][1]().innerHTML.should.be.equal('Just Dom');
 
 			// Test 2 ( original events object does not lose there context )
-			events.a().should.be.equal(events);
-			events.a().should.not.have.propertyByPath('innerHTML');
+			//events[0][1]().should.be.equal(events);
+			events[0][1]().should.not.have.propertyByPath('innerHTML');
 
 		});
 
@@ -168,14 +169,14 @@ describe('Eventhandler Class', () => {
 		it('should trigger and remove events', () => {
 
 			let eventHandler = Eventhandler.create({
-				events : {
-					"click .foo"  : clickFoo,
-					"click .bar"  : clickBar,
-					"click .baz"  : clickBaz,
-					"mouseup .boo": mouseupBoo,
-					"mouseup .koo": mouseupKoo,
-					"mousedown"   : mouseDown,
-				},
+				events : [
+					[ "click .foo"  , clickFoo ],
+					[ "click .bar"  , clickBar ],
+					[ "click .baz"  , clickBaz ],
+					[ "mouseup .boo", mouseupBoo ],
+					[ "mouseup .koo", mouseupKoo ],
+					[ "mousedown"   , mouseDown ],
+				],
 				element: element,
 				bind: bindObject,
 			});

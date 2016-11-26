@@ -2061,10 +2061,10 @@ describe('Class Router', () => {
 
 			let router = Router.create({
 				scope: document.createElement('div'),
-				routes: {
-					'myRoute1 /some/path1.html': spy_myRoute1,
-					'myRoute2 /some/path2.html': spy_myRoute2,
-				},
+				routes: [
+					['myRoute1 /some/path1.html', spy_myRoute1],
+					['myRoute2 /some/path2.html', spy_myRoute2],
+				],
 			});
 
 			// test 1
@@ -2134,10 +2134,10 @@ describe('Class Router', () => {
 			let spy_myRoute2 = sinon.spy(() => {});
 
 			let router = Router.create({
-				routes: {
-					'myRoute1 /some/path/': spy_myRoute1,
-					'myRoute2 /{{a}}/{{b}}/': spy_myRoute2,
-				},
+				routes: [
+					['myRoute1 /some/path/', spy_myRoute1],
+					['myRoute2 /{{a}}/{{b}}/', spy_myRoute2],
+				],
 				scope: document.createElement('div'),
 			});
 
@@ -2167,9 +2167,9 @@ describe('Class Router', () => {
 			let bindObject = new BindObject();
 
 			let router = Router.create({
-				routes: {
-					'myRoute1 /{{a}}/{{b}}/': spy_myRoute1,
-				},
+				routes: [
+					['myRoute1 /{{a}}/{{b}}/', spy_myRoute1],
+				],
 				scope: document.createElement('div'),
 				bind: bindObject,
 			});

@@ -24,12 +24,13 @@ function view(template, options = {}) {
 
 	return function decorator(Class){
 
+		let renderedFlag = !(options.renderedFlag === false);
+
 		initCoreMap(storage, Class);
 		initViewMap(storage, Class);
 
-		let renderedFlag = !(options.renderedFlag === false);
-
 		let map = storage.get(Class);
+
 		map.get('@callbacks').get('created').push((domNode, createVars = {}) => {
 
 			// get and merge dom view var attributes

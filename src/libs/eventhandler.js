@@ -39,6 +39,9 @@ class Eventhandler {
 		// bind bindObject
 		if(config.bind){
 			this.config.bind = config.bind;
+			if(!config.events){
+				return;
+			}
 			config.events = Eventhandler.bindObjectToEventList(config.events, config.bind);
 		}
 		// group events
@@ -82,17 +85,14 @@ class Eventhandler {
 
 	/**
 	 * Group events
-	 * @param  {Object} config
+	 * @param  {array} events
 	 * @return {Object}
 	 */
-	static groupEvents(events = {}){
+	static groupEvents(events = []){
 
 		let tmpConfig = {};
 
-		for(let eventDomain in events){
-			if(!events.hasOwnProperty(eventDomain)){
-				continue;
-			}
+		for(let [ eventDomain, handler ] of events){
 
 			let [ type, delegateSelector ] = Eventhandler.prepareEventdomain(eventDomain);
 			if(!tmpConfig[type]){
@@ -100,7 +100,7 @@ class Eventhandler {
 			}
 
 			tmpConfig[type].push({
-				[ delegateSelector ]: events[eventDomain],
+				[ delegateSelector ]: handler,
 			});
 		}
 
@@ -110,27 +110,21 @@ class Eventhandler {
 
 	/**
 	 * Bind object to event value
-	 * @param  {Object} events
+	 * @param  {array} events
 	 * @param  {Object} bindObject
-	 * @return {undefined}
+	 * @return {array}
 	 */
-	static bindObjectToEventList(events = {}, bindObject = {}){
+	static bindObjectToEventList(events = [], bindObject = {}){
 
-		let contextBindObject = {};
+		let contextBindContainer = [];
 
-		for(let eventDomain in events){
-			if(!events.hasOwnProperty(eventDomain)){
-				continue;
-			}
-			if(Object.classof(events[eventDomain]) !== 'Function'){
-				continue;
-			}
-			// bind and assign bindObject
-			contextBindObject[eventDomain] = bindObject::events[eventDomain];
+		for(let [eventDomain, handler] of events){
+			contextBindContainer.push([
+				eventDomain, bindObject::handler
+			]);
 		}
 
-		return contextBindObject;
-
+		return contextBindContainer;
 	}
 
 	/**

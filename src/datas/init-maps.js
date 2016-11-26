@@ -26,7 +26,7 @@ let initActionMap = (storage, Class) => {
     let map = storage.get(Class);
     if(!map.has('@action')){
         map.set('@action', new Map([
-            ["events", new Map()],
+            ["events", []],
             ["callbacksDefined", false],
         ]))
     }
@@ -43,8 +43,8 @@ let initOnMap = (storage, Class) => {
     if(!map.has('@on')){
         map.set('@on', new Map([
             ["events", new Map([
-                ["local", new Map()],
-                ["context", new Map()]
+                ["local", []],
+                ["context", []]
             ])],
             ["callbacksDefined", false],
         ]))
@@ -61,7 +61,7 @@ let initViewMap = (storage, Class) => {
     let map = storage.get(Class);
     if(!map.has('@view')){
         map.set('@view', new Map([
-            ["bind", new Map()]
+            ["bind", []]
         ]));
     }
 };
