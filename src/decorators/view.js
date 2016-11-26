@@ -42,8 +42,8 @@ function view(template, options = {}) {
 			let regularDomAttributes = extractDomProperties(domNode);
 
 			let viewBinds = {};
-			let entries = map.get('@view').get('bind').entries() || [];
-			Array.from(entries).forEach(item => viewBinds[item[0]] = item[1]);
+			let entries = map.get('@view').get('bind');
+			entries.forEach(item => viewBinds[item[0]] = item[1]);
 
 			let viewVars = Object.assign({},
 				viewBinds,
@@ -89,28 +89,15 @@ view.bind = (target, property, descriptor) => {
 
 	let Class = target.constructor;
 
-	if(!storage.has(Class)){
-		storage.set(Class, new Map([
-			['@callbacks', new Map([
-				['created',  []],
-				['attached', []],
-				['detached', []],
-			])]
-		]));
-
-		let map = storage.get(Class);
-		map.set('@view', new Map([
-			["bind", new Map()]
-		]));
-
-	}
+	initCoreMap(storage, Class);
+	initViewMap(storage, Class);
 
 	// get default value
 	let value = descriptor.initializer ? descriptor.initializer() : '';
 
 	// register view binds
 	let map = storage.get(Class);
-	map.get('@view').get('bind').set(property, value);
+	map.get('@view').get('bind').push([property, value]);
 
 };
 
