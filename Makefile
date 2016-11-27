@@ -1,4 +1,3 @@
-
 default:
 	@echo ""
 	@echo "Available Targets:"
@@ -17,7 +16,7 @@ compile: prepare-compile gulp-compile-watch
 publish: prepare-compile gulp-compile npm-publish
 
 node_modules:
-	npm install
+	npm install; npm run postinstall;
 
 jspm_packages:
 	$(jspm) install
