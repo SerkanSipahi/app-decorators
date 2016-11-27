@@ -8,7 +8,7 @@
 ## Getting Started
 
 ```
-npm install app-decorators babel-preset-app-decorators --save
+npm install app-decorators babel-preset-app-decorators@1.0.0-beta.1 --save
 npm install babel-preset-es2015 --save-dev
 ```
 
