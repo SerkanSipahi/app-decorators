@@ -8,8 +8,8 @@
 ## Getting Started
 
 ```
-npm install app-decorators --save
-npm install babel-preset-es2015 babel-preset-app-decorators --save-dev
+npm install app-decorators babel-preset-app-decorators --save
+npm install babel-preset-es2015 --save-dev
 ```
 
 #### Usage
