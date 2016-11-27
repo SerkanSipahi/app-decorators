@@ -1,6 +1,6 @@
 
 // internal libs
-import { component, view, on } from 'src/app-decorators';
+import { component, view, on, storage } from 'src/app-decorators';
 import { isFirefox, isSafari } from 'src/helpers/browser-detect';
 import { removeGutter } from 'src/helpers/string';
 
@@ -12,7 +12,6 @@ describe('@on decorator', () => {
 
 	describe('Snack.prototype.$.config.on.events', () => {
 
-		/*
 		it('should contain registered events over @on', () => {
 
 			class Snack {
@@ -24,24 +23,23 @@ describe('@on decorator', () => {
 				@on('wheel', window) onWheel(){}
 			}
 
-			let localEvents = Snack.prototype.$.config.on.events.local;
-			let windowEvents = Snack.prototype.$.config.on.events[window];
 			let prototype = Snack.prototype;
+			let localEvents = storage.get(Snack).get('@on').get('events').get('local');
+			let contextEvents = storage.get(Snack).get('@on').get('events').get('context');
 
-			localEvents.should.have.propertyByPath("click .a").equal(prototype.onClick_a);
-			localEvents.should.have.propertyByPath("click .b").equal(prototype.onClick_b);
+			localEvents.should.have.propertyByPath(0, 1).equal(prototype.onClick_a);
+			localEvents.should.have.propertyByPath(1, 1).equal(prototype.onClick_b);
 
-			windowEvents.should.have.propertyByPath("resize", 0).equal(prototype.onResize);
-			windowEvents.should.have.propertyByPath("resize", 1).equal(window);
+			contextEvents.should.have.propertyByPath(0, 1, 0).equal(prototype.onResize);
+			contextEvents.should.have.propertyByPath(0, 1, 1).equal(window);
 
-			windowEvents.should.have.propertyByPath("wheel", 0).eql(prototype.onWheel);
-			windowEvents.should.have.propertyByPath("wheel", 1).eql(window);
+			contextEvents.should.have.propertyByPath(1, 1, 0).eql(prototype.onWheel);
+			contextEvents.should.have.propertyByPath(1, 1, 1).eql(window);
 
-			Object.keys(localEvents).should.have.length(2);
-			Object.keys(windowEvents).should.have.length(2);
+			localEvents.should.have.length(2);
+			contextEvents.should.have.length(2);
 
 		});
-		*/
 
 		it('should trigger correct method if clicked', () => {
 
