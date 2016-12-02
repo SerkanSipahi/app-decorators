@@ -2,3 +2,7 @@ ideas
 node_modules
 jspm_packages
 dist
+examples
+.DS_Store
+.idea
+docs/.DS_Store
