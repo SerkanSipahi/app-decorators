@@ -2,8 +2,6 @@ import { View } from '../libs/view';
 import { extractDomProperties } from '../helpers/extract-dom-properties';
 import { initCoreMap, initViewMap } from '../datas/init-maps';
 import { storage } from 'app-decorators-helper/random-storage';
-
-// external libs
 import { Handlebars } from '../libs/dependencies';
 
 /*****************************************

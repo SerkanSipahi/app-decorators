@@ -1,4 +1,3 @@
-
 /**
  * queryString
  * @author Serkan Sipahi
@@ -10,7 +9,7 @@ let queryString = {
      * @param {string} query
      * @returns {object} queryObject
      */
-    parse(query='') {
+    parse(query = '') {
 
         // cleanup
         query = query.trim().replace(/^(\?|#|&)/g, '');

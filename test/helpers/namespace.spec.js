@@ -1,4 +1,3 @@
-
 import { namespace } from '../../src/helpers/namespace';
 
 describe('namespace', () => {

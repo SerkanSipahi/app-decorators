@@ -1,6 +1,4 @@
-
 import { guid } from 'src/helpers/guid';
-
 
 describe('guid', () => {
 

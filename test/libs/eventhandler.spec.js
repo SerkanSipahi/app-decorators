@@ -1,8 +1,5 @@
-
-// internal libs
 import { Eventhandler } from 'src/libs/eventhandler';
 
-// external libs
 import sinon from 'sinon';
 
 describe('Eventhandler Class', () => {

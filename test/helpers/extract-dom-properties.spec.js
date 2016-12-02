@@ -1,4 +1,3 @@
-
 import { extractDomProperties } from '../../src/helpers/extract-dom-properties';
 
 describe('extractDecoratorProperties', () => {
