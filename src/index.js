@@ -1,5 +1,3 @@
-import './bootstrap';
-
 // Decorators
 export { component } from './decorators/component';
 export { view } from './decorators/view';

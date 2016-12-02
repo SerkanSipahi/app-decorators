@@ -9,7 +9,7 @@ npm install app-decorators --save
 ```
 System.config({
 	map : {
-		"app-decorators": "node_modules/app-decorators/src/app-decorators",
+		"app-decorators": "node_modules/app-decorators/src/index",
 	}
 });
 ```

@@ -57,7 +57,7 @@ module.exports = function (config) {
 			serveFiles: [
 				// internal libs/files
 				'src/bootstrap.js',
-				'src/app-decorators.js',
+				'src/index.js',
 				'src/decorators/*.js',
 				'src/libs/*.js',
 				'src/helpers/*.js',

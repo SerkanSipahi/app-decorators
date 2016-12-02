@@ -2,7 +2,7 @@
   "name": "app-decorators",
   "version": "0.6.972",
   "description": "Collection of useful ES7 Decorators, writtin in ES6, that can be used for building webapps",
-  "main": "lib/app-decorators.js",
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SerkanSipahi/app-decorators.git"
