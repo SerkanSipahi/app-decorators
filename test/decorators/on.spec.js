@@ -1,16 +1,15 @@
-
-// internal libs
-import { component, view, on, storage } from 'src/app-decorators';
+import { bootstrapPolyfills } from 'src/bootstrap';
 import { isFirefox, isSafari } from 'src/helpers/browser-detect';
 import { removeGutter } from 'src/helpers/string';
 
-// external libs
 import sinon from 'sinon';
 
-describe('@on decorator', () => {
+describe('@on decorator', async () => {
 
+	await bootstrapPolyfills;
+	let { component, view, on, storage } = await System.import('app-decorators');
 
-	describe('Snack.prototype.$.config.on.events', () => {
+	describe('Snack.prototype.$.config.on.events', function() {
 
 		it('should contain registered events over @on', () => {
 

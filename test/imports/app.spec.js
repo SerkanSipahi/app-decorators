@@ -1,9 +1,11 @@
-import { component } from 'src/app-decorators';
-import Test from './testcomponent';
-
 import $ from 'jquery';
+import { bootstrapPolyfills } from 'src/bootstrap';
 
-describe('imported component', () => {
+describe('imported component', async() => {
+
+	await bootstrapPolyfills;
+	let { component } = await System.import('app-decorators');
+	let { Test } = await System.import('test/imports/testcomponent');
 
 	@component()
 	class Col {

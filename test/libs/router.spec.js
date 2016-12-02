@@ -1,11 +1,15 @@
-
-// internal libs
-import { Router } from 'src/apps/router';
+import { bootstrapPolyfills } from 'src/bootstrap';
 import { XRegExp } from 'src/libs/dependencies';
 import { Event } from 'test/mocks/event';
 import { Location } from 'test/mocks/location';
+import { pause } from 'src/helpers/pause';
 
-describe('Class Router', () => {
+import sinon from 'sinon';
+
+describe('Class Router', async () => {
+
+	await bootstrapPolyfills;
+	let { Router } = await System.import('src/apps/router');
 
 	describe('_isDynamicURL method', () => {
 

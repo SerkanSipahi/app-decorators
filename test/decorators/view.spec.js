@@ -1,16 +1,17 @@
-
-// internal libs
-import { component, view, on, storage } from 'src/app-decorators';
-
-// external libs
 import $ from 'jquery';
+import { bootstrapPolyfills } from 'src/bootstrap';
+
+import sinon from 'sinon';
 
 // init special innerHTML for test
 String.prototype.removeGutter = function(){
 	return this.replace(/[\t\n\r]/gm, '');
 };
 
-describe('@view decorator', () => {
+describe('@view decorator', async () => {
+
+	await bootstrapPolyfills;
+	let { component, view, on } = await System.import('app-decorators');
 
 	describe('in usage with @  (integration-test)', () => {
 

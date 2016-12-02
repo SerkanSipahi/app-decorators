@@ -1,11 +1,14 @@
-
-import { component, view } from 'src/app-decorators';
+import { component, view } from 'app-decorators';
 
 @view(`<div class="{{name}}">{{content}}</div>`, { renderedFlag: false })
 @component()
-export default class Test {
+class Test {
 
 	@view.bind name;
 	@view.bind content;
 
+}
+
+export {
+	Test
 }

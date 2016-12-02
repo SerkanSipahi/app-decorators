@@ -1,10 +1,13 @@
-
-// internal libs
-import { action, component, view, Router } from 'src/app-decorators';
-import { isOpera } from 'src/helpers/browser-detect';
 import $ from 'jquery';
+import { bootstrapPolyfills } from 'src/bootstrap';
+import { isOpera } from 'src/helpers/browser-detect';
 
-describe('@action decorator', () => {
+import sinon from 'sinon';
+
+describe('@action decorator', async() => {
+
+    await bootstrapPolyfills;
+    let { action, component, view, Router } = await System.import('app-decorators');
 
     describe('@action decorator', () => {
 

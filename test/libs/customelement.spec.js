@@ -1,8 +1,12 @@
 import { elements } from 'src/configs/elements';
-import { CustomElement, Register } from 'src/libs/customelement';
+import { bootstrapPolyfills } from 'src/bootstrap';
+
 import sinon from 'sinon';
 
-describe('Register', () => {
+describe('Register', async () => {
+
+	await bootstrapPolyfills;
+	let { Register } = await System.import('src/libs/customelement');
 
 	describe('_getClassName method', () => {
 
@@ -217,7 +221,7 @@ describe('Register', () => {
 
 				done();
 
-			}, 20);
+			}, 40);
 
 		});
 	});
