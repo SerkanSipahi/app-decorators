@@ -26,6 +26,16 @@ let Register = {
 	},
 
 	/**
+	 * _classof
+	 * @param value {*}
+	 * @returns {string}
+	 * @private
+	 */
+	_classof(value){
+		return Object.prototype.toString.call(value).slice(8, -1);
+	},
+
+	/**
 	 * _addExtends
 	 * @param Class {function}
 	 * @param config {{extends: string, name: string}}
@@ -104,7 +114,7 @@ let Register = {
 				throw new Error('Its not allowd to pass more than one argument');
 			}
 
-			let classof = Object.classof(vars);
+			let classof = Register._classof(vars);
 			if(!(classof === 'Object' || classof === 'Undefined')) {
 				throw new Error('Passed argument must be an object or undefined');
 			}

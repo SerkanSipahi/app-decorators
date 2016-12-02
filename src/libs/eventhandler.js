@@ -68,7 +68,7 @@ class Eventhandler {
 	 */
 	static prepareEventdomain(eventDomain) {
 
-		if(Object.classof(eventDomain) !== 'String'){
+		if(Object.prototype.toString.call(eventDomain).slice(8, -1) !== 'String'){
 			throw new Error('Passed argument must be a string');
 		}
 

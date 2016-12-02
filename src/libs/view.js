@@ -1,3 +1,6 @@
+let classof = value => {
+	return Object.prototype.toString.call(value).slice(8, -1);
+};
 
 class View {
 
@@ -8,7 +11,7 @@ class View {
 	 */
 	static create(config){
 
-		if(Object.classof(config) !== 'Object') {
+		if(classof(config) !== 'Object') {
 			throw new Error('Passed Object must be an object {}');
 		}
 
@@ -89,7 +92,7 @@ class View {
 	 */
 	set(property, value) {
 
-		let classOf = Object.classof(property);
+		let classOf = classof(property);
 
 		if(!/Object|String/.test(classOf)){
 			throw new Error('Allowed is string or object as arguments');
@@ -113,7 +116,7 @@ class View {
 	 */
 	get(property){
 
-		let classOf = Object.classof(property);
+		let classOf = classof(property);
 
 		if(!/String/.test(classOf)){
 			throw new Error('Allowed is string as argument');
@@ -159,7 +162,7 @@ class View {
 	 */
 	setTemplate(template = null, name = 'base'){
 
-		let classOf = Object.classof(template);
+		let classOf = classof(template);
 
 		if(!/String/.test(classOf)){
 			throw new Error('Allowed is string as argument');

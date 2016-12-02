@@ -1,3 +1,6 @@
+let classof = value => {
+	return Object.prototype.toString.call(value).slice(8, -1);
+};
 
 /**
  * Excract domnode attributes
@@ -9,7 +12,7 @@
 function extractDomProperties(domNode, regex, removeDomAttributes = false) {
 
 
-	if(regex && Object.classof(regex) !== 'RegExp'){
+	if(regex && classof(regex) !== 'RegExp'){
 		throw Error('Second argument is passed but it must be a Regular-Expression');
 	}
 

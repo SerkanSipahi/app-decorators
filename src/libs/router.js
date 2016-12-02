@@ -161,7 +161,8 @@ class Router {
 			throw 'Please pass at least type e.g urlchange, Foo, Bar, ...';
 		}
 
-		if(handler !== undefined && Object.classof(handler) !== 'Function'){
+		let classof = Object.prototype.toString.call(handler).slice(8, -1);
+		if(handler !== undefined && classof !== 'Function'){
 			throw 'The handler must be a Function or Undefined';
 		}
 

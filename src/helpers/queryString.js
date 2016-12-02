@@ -35,7 +35,7 @@ let queryString = {
             }
             // foo=bar&foo=baz
             else {
-                if(Object.classof(propertyValue) !== 'Array'){
+                if(this.classof(propertyValue) !== 'Array'){
                     queryObject[key] = [ propertyValue ];
                 }
                 queryObject[key].push(value);
@@ -54,7 +54,7 @@ let queryString = {
     stringify(queryObject = {}, encode = true) {
 
         // '', 0, 1, [], etc
-        if(Object.classof(queryObject) !== 'Object'){
+        if(this.classof(queryObject) !== 'Object'){
             return '';
         }
 
@@ -67,7 +67,7 @@ let queryString = {
         let raw_query = [];
         queryObjectKeys.forEach(key => {
 
-            if(Object.classof(queryObject[key]) === 'Array'){
+            if(this.classof(queryObject[key]) === 'Array'){
 
                 queryObject[key].forEach(propValue => {
                     // { bar: [undefined, 'baz'] }
@@ -108,6 +108,10 @@ let queryString = {
         return queryString;
 
     },
+
+    classof(value){
+        return Object.prototype.toString.call(value).slice(8, -1);
+    }
 
 };
 
