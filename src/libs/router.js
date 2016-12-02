@@ -736,21 +736,21 @@ class Router {
 	_onUrlchange(event){
 
 		if(!(event.detail instanceof this.helper.createURL)){
-			return;
+			return null;
 		}
 
 		let { fragment, changepart, target } = event.detail;
 
 		let matchedUrlObjects = this._matchURL(fragment, changepart, true);
-		if(matchedUrlObjects.length){
+		if(!matchedUrlObjects.length){
+			return null;
+		}
 
-			for(let matchedURL of matchedUrlObjects) {
-				let { name } = matchedURL;
-				matchedURL.URL = event.detail;
+		for(let matchedURL of matchedUrlObjects) {
+			let { name } = matchedURL;
+			matchedURL.URL = event.detail;
 
-				this.trigger(name, Object.assign({}, matchedURL, { target }));
-			}
-
+			this.trigger(name, Object.assign({}, matchedURL, { target }));
 		}
 
 	}
@@ -917,6 +917,7 @@ class Router {
 	 */
 	_convertRouteToXRegexExp(url = '', strict = false){
 
+		// remove whitespaces
 		let variableURLRegex = this.XRegExp('{{(?<variableURL>[a-z]+)}}', 'g');
 		url = url.replace(/[\/|+*?.()]/g, '\\$&');
 		url = this.XRegExp.replace(url, variableURLRegex, '(?<${variableURL}>[\\d\\w?()|{}_.,-]+)');
@@ -1110,11 +1111,13 @@ class Router {
 	match(fragment, cache = true){
 
 		let matchedObjects = this.whoami(fragment, cache);
-		if(matchedObjects.length){
-			for(let matchedObject of matchedObjects){
-				let { name, params } = matchedObject;
-				this.trigger(name, params);
-			}
+		if(!matchedObjects.length){
+			return undefined;
+		}
+
+		for(let matchedObject of matchedObjects){
+			let { name, params } = matchedObject;
+			this.trigger(name, params);
 		}
 
 	}
@@ -1207,12 +1210,13 @@ class Router {
 		let { fragment } = this.createURL(href);
 		let matchedUrlObjects = this.whoami(fragment);
 
-		if(matchedUrlObjects.length) {
+		if(!matchedUrlObjects.length) {
+			return undefined;
+		}
 
-			for(let matchedURL of matchedUrlObjects) {
-				let { name } = matchedURL;
-				this.trigger(name, matchedURL);
-			}
+		for(let matchedURL of matchedUrlObjects) {
+			let { name } = matchedURL;
+			this.trigger(name, matchedURL);
 		}
 	}
 
