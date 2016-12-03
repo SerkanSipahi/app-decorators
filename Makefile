@@ -44,10 +44,10 @@ prepare-compile:
 	cp jspm.browser.js jspm.config.js dist; \
 
 npm-publish:
-	rm -rf compiled; mkdir compiled; \
-	cp -r dist/src/ compiled; \
+	rm -rf lib; mkdir lib; \
+	cp -r dist/src/ lib; \
 	npm publish . &&  \
-	rm -rf compiled;
+	rm -rf lib;
 
 jspm  = ./node_modules/.bin/jspm
 karma = ./node_modules/.bin/karma
