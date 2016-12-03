@@ -2,10 +2,6 @@ import { Router } from '../libs/router';
 import { initCoreMap, initActionMap } from '../datas/init-maps';
 import { storage } from 'app-decorators-helper/random-storage';
 
-/*****************************************
- * ######### Public Decorators ###########
- *****************************************/
-
 /**
  * action
  * @param  {string} route
@@ -30,6 +26,12 @@ function action(route) {
             `${method} ${route}`, descriptor.value
         ]);
 
+        /**
+         * ### Ensure "registerCallback('created', ..." (see below) registered only once ###
+         * This function will called every time if an event registered e.g. @on('click .foo')
+         * but registerOnCreatedCallback can only call once because we want only Create
+         * one Eventhandler
+         */
         if(map.get('@action').get('callbacksDefined')){
             return;
         }
