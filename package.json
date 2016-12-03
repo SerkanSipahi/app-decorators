@@ -64,7 +64,7 @@
   "jspm": {
     "name": "app-decorators",
     "dependencies": {
-      "babel-polyfill": "npm:babel-polyfill@^6.16.0",
+      "babel-polyfill": "npm:babel-polyfill@6.16.0",
       "jquery": "npm:jquery@2.2.0",
       "should": "npm:should@11.1.1",
       "sinon": "npm:sinon@1.17.6"
