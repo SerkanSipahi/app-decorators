@@ -46,6 +46,33 @@ describe('Class Router', async () => {
 			// test - strict
 			router._convertRouteToXRegexExp('abc', true).should.be.equal('^abc$');
 
+			//cleanup
+			router.destroy();
+
+		});
+
+	});
+
+	describe('_convertURLToRegex and match', () => {
+
+		it('should match converted URLRegex', () => {
+
+			// setup
+			let router = Router.create();
+
+			// test
+			let regex = router._convertRouteToXRegexExp('/a/{{b}}/c?id={{d}}&e#f&{{g}}');
+			let compiledRegex = router.RegExp(`^${regex}$`);
+			let result1 = compiledRegex.exec('/a/be/c?id=de&e#f&ge').groups();
+
+			result1.should.containEql({
+				b: "be",
+				d: "de",
+				g: "ge"
+			});
+
+			let result2 = compiledRegex.exec('/a/be/c');
+			should(result2).be.null();
 
 			//cleanup
 			router.destroy();
@@ -333,17 +360,15 @@ describe('Class Router', async () => {
 			// setup
 			let router = Router.create();
 
-			let mockXRegexMatchedObject = [
-				'/a/b/c/d', 'a', 'c'
-			];
-			mockXRegexMatchedObject.index = 2;
-			mockXRegexMatchedObject.input = 0;
-			mockXRegexMatchedObject.name = 'b';
-			mockXRegexMatchedObject.surename = 'd';
+			let mockXRegexMatchedObject = {
+				a: '123', b: 'be', c: 456, d: '1.34'
+			};
 
 			router._normalizeMatchedXRegex(mockXRegexMatchedObject).should.containEql({
-				name: 'b',
-				surename: 'd',
+				a: 123,
+				b: 'be',
+				c: 456,
+				d: 1.34
 			});
 
 			// cleanup

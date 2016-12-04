@@ -1,6 +1,6 @@
 import { Eventhandler} from '../libs/eventhandler';
 import { Router } from '../libs/router';
-import { XRegExp } from '../libs/dependencies';
+import { RegExp } from '../libs/dependencies';
 import { queryString } from '../helpers/queryString';
 import { guid } from '../helpers/guid';
 
@@ -47,7 +47,7 @@ Router.create = function(config = {}){
 			encodeURI: config.encodeURI || window.encodeURI,
 			location: config.location || window.location,
 			Promise: config.Promise || Promise,
-			XRegExp: config.XRegExp || XRegExp,
+			RegExp: config.RegExp || RegExp,
 			queryString: config.queryString || queryString,
 			guid: config.guid || guid,
 		},

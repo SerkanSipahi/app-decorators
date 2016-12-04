@@ -75,7 +75,7 @@ class Router {
 		encodeURI: null,
 		location: null,
 		Promise: null,
-		XRegExp: null,
+		RegExp: null,
 		queryString: null,
 		guid: null,
 	};
@@ -444,11 +444,11 @@ class Router {
 	}
 
 	/**
-	 * XRegExp
+	 * RegExp
 	 */
-	get XRegExp() {
+	get RegExp() {
 
-		return this.helper.XRegExp;
+		return this.helper.RegExp;
 
 	}
 
@@ -804,15 +804,16 @@ class Router {
 			// parepare datas for matching
 			let routeObject = this._routes[part][route];
 			// match regex
-			let compiledRegex = this.XRegExp(routeObject.regex);
-			let matchedRegex = this.XRegExp.exec(fragment, compiledRegex);
+			let compiledRegex = this.RegExp(routeObject.regex);
+			let matchedRegex = compiledRegex.exec(fragment);
 
 			// continue if not matched
 			if(matchedRegex === null){
 				continue;
 			}
 
-			let params = this._normalizeMatchedXRegex(matchedRegex);
+			let _params = matchedRegex.groups();
+			let params = this._normalizeMatchedXRegex(_params);
 
 			// build matchedURLObject
 			let matchedURLObject = Object.assign({}, routeObject, { params, fragment });
@@ -833,14 +834,6 @@ class Router {
 
 		let params = {};
 		for(let attribute in matchedRegex){
-
-			// Skip index, input and numeric attributes.
-			// We just want the group named regex
-			if(/index|input/.test(attribute)){
-				continue;
-			} else if(this._isNumeric(attribute)){
-				continue;
-			}
 
 			let value = matchedRegex[attribute];
 			// convert to real number if attribute is numeric
@@ -913,14 +906,14 @@ class Router {
 	 * _convertRouteToXRegexExp
 	 * @param  {string} url
 	 * @param  {string} strict
-	 * @return {XRegExp-String} url
+	 * @return {RegExp-String} url
 	 */
 	_convertRouteToXRegexExp(url = '', strict = false){
 
 		// remove whitespaces
-		let variableURLRegex = this.XRegExp('{{(?<variableURL>[a-z]+)}}', 'g');
+		let variableURLRegex = this.RegExp('{{(?<variableURL>[a-z]+)}}', 'g');
 		url = url.replace(/[\/|+*?.()]/g, '\\$&');
-		url = this.XRegExp.replace(url, variableURLRegex, '(?<${variableURL}>[\\d\\w?()|{}_.,-]+)');
+		url = variableURLRegex.replace(url, '(?<${variableURL}>[\\d\\w?()|{}_.,-]+)');
 
 		if(strict){
 			url = `^${url}$`;
