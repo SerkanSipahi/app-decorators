@@ -16,7 +16,7 @@ class Sidebar {
 	 * @param {Event} event
 	 * @param {object} params
      */
-    @action('Sidebar ?sidebar={{state}}') sidebar({ event, params, search, hash }){
+    @action('?sidebar={{state}}') sidebar({ event, params, search, hash }){
 
         console.log(
             event,        // Event
