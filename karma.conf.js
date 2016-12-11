@@ -79,7 +79,7 @@ module.exports = function (config) {
 				'jspm_packages/npm/core-js@2.4.1/**/*.js',
 
 				'node_modules/core-js/**/*.js',
-				'node_modules/handlebars/dist/handlebars.js',
+				'node_modules/handlebars/dist/**/*.js',
 				'node_modules/webcomponents.js/webcomponents-lite.js',
 				'node_modules/named-js-regexp/lib/named-js-regexp.js',
 			]

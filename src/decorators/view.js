@@ -2,7 +2,7 @@ import { View } from '../libs/view';
 import { extractDomProperties } from '../helpers/extract-dom-properties';
 import { initCoreMap, initViewMap } from '../datas/init-maps';
 import { storage } from 'app-decorators-helper/random-storage';
-import { Handlebars } from '../libs/dependencies';
+import { HandlebarsRuntime } from '../libs/dependencies';
 
 /*****************************************
  * ######### Public Decorators ###########
@@ -52,10 +52,10 @@ function view(template, options = {}) {
 
 			// initialize view
 			let $view = View.create({
+				prerenderer: HandlebarsRuntime.template,
 				rootNode: domNode,
 				templateNode: document.createElement('div'),
 				vars: viewVars,
-				renderer: Handlebars,
 				createElement: document.createElement.bind(document),
 				template: template,
 			});

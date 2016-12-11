@@ -33,6 +33,7 @@ describe.skip('@pipe decorator', () => {
 		/**
 		 * Highlighting für diese syntax für die Lesbarkeit von Code
 		 */
+		/*
 		@view(`
 			<button is="x-button" @('click')="onClickButton()">Click Me!</button>
 			<box is="x-box">
@@ -44,7 +45,7 @@ describe.skip('@pipe decorator', () => {
 				<a is="x-a" @request.post="/{{ <value.firstname }}/{{ <value.lastname }}"> {{ <key }} </a>
 			</x-links>
 		`)
-
+		*/
 		@component({
 			name: 'x-stream'
 		})

@@ -1,5 +1,5 @@
 import { View } from 'src/libs/view';
-import { Handlebars } from '../../src/libs/dependencies';
+import Handlebars from '../../node_modules/handlebars/dist/handlebars';
 
 describe('View Class', () => {
 
@@ -56,7 +56,8 @@ describe('View Class', () => {
 			// setup
 			view.setRootNode(document.createElement('p'));
 			view.setTemplateNode(document.createElement('div'));
-			view.setRenderer(Handlebars);
+			view.setPrecompiler(Handlebars.precompile);
+			view.setPrerenderer(Handlebars.template);
 			view.setElementCreater(document.createElement.bind(document));
 			view.setTemplate('<div>{{foo}}</div><span>{{bar}}</span>');
 			view.set({
@@ -79,10 +80,14 @@ describe('View Class', () => {
 		it('should render accepted template', () => {
 
 			let view = View.create({
+				precompiler: Handlebars.precompile,
+				prerenderer: Handlebars.template,
 				rootNode: document.createElement('p'),
 				templateNode: document.createElement('div'),
-				vars: { foo: 'Hello', bar: 'World!' },
-				renderer: Handlebars,
+				vars: {
+					foo: 'Hello',
+					bar: 'World!'
+				},
 				createElement: document.createElement.bind(document),
 				template: '<div class="foo">{{foo}}</div><div class="bar">{{bar}}</div>',
 			});
@@ -96,19 +101,23 @@ describe('View Class', () => {
 
 	});
 
-	describe('replaceNode method', () => {
+	describe('innerHTML + slot', () => {
 
-		it('should replace given node with given selector', () => {
+		it('should append innerHTML nodes to "slot" node', () => {
 
 
 			let rootNode = document.createElement('p');
-			rootNode.innerHTML = '<ul><li> nok nok </li></ul>'
+			rootNode.innerHTML = '<ul><li> nok nok </li></ul>';
 
 			let view = View.create({
+				precompiler: Handlebars.precompile,
+				prerenderer: Handlebars.template,
 				rootNode: rootNode,
 				templateNode: document.createElement('div'),
-				vars: { foo: 'Thats', bar: 'nice' },
-				renderer: Handlebars,
+				vars: {
+					foo: 'Thats',
+					bar: 'nice'
+				},
 				createElement: document.createElement.bind(document),
 				template: '<div class="foo">{{foo}}</div><slot></slot><div class="bar">{{bar}}</div>',
 			});
@@ -121,7 +130,7 @@ describe('View Class', () => {
 
 	});
 
-	describe('replaceSelf method', () => {
+	describe('innerHTML + hole', () => {
 
 		it.skip('should replace himself with given selector', () => {
 
@@ -129,12 +138,16 @@ describe('View Class', () => {
 			rootNode.innerHTML = '<span>Hello World</div>';
 
 			let view = View.create({
+				precompiler: Handlebars.precompile,
+				prerenderer: Handlebars.template,
 				rootNode: rootNode,
 				templateNode: document.createElement('div'),
-				vars: { foo: 'Thats', bar: 'nice' },
-				renderer: Handlebars,
+				vars: {
+					foo: 'Thats',
+					bar: 'nice'
+				},
 				createElement: document.createElement.bind(document),
-				template: '<div class="foo">{{foo}}</div><black-hole></black-hole><div class="bar">{{bar}}</div>',
+				template: '<div class="foo">{{foo}}</div><hole></hole><div class="bar">{{bar}}</div>',
 			});
 
 			view.render(null, { renderedFlag: false });
@@ -154,10 +167,13 @@ describe('View Class', () => {
 			rootNode.innerHTML = 'Should not rendered';
 
 			let view = View.create({
+				precompiler: Handlebars.precompile,
+				prerenderer: Handlebars.template,
 				rootNode: rootNode,
 				templateNode: document.createElement('div'),
-				vars: { foo: 'Gokcen' },
-				renderer: Handlebars,
+				vars: {
+					foo: 'Gokcen'
+				},
 				createElement: document.createElement.bind(document),
 				template: '<div class="foo">{{foo}}</div>',
 			});
@@ -178,10 +194,13 @@ describe('View Class', () => {
 			let spy_getAttribute = sinon.spy(View.prototype, "getAttribute");
 
 			let view = View.create({
+				precompiler: Handlebars.precompile,
+				prerenderer: Handlebars.template,
 				rootNode: document.createElement('my-element'),
 				templateNode: document.createElement('div'),
-				vars: { foo: 'Liya' },
-				renderer: Handlebars,
+				vars: {
+					foo: 'Liya'
+				},
 				createElement: document.createElement.bind(document),
 				template: '<div class="foo">{{foo}}</div>',
 			});
@@ -201,7 +220,7 @@ describe('View Class', () => {
 			spy_getAttribute.callCount.should.equal(2);
 			spy_setAttribute.callCount.should.equal(1);
 
-			// third render call should render
+			// third render call should render due "force:true"
 			view.render(null, {force: true});
 			spy_getAttribute.callCount.should.equal(3);
 			spy_setAttribute.callCount.should.equal(2);

@@ -17,16 +17,17 @@ class View {
 
 		// init view
 		let view = new View();
-		// setup view
+		// setup view (should be call in this order)
 		view.setRootNode(config.rootNode);
 		view.setTemplateNode(config.templateNode);
-		view.setRenderer(config.renderer);
+		view.setPrecompiler(config.precompiler);
+		view.setPrerenderer(config.prerenderer);
 		view.setElementCreater(config.createElement);
+		view.setRegex(config.regex);
 		view.setTemplate(config.template);
 		view.set(config.vars);
 
 		return view;
-
 	}
 
 	/**
@@ -34,13 +35,6 @@ class View {
 	 * @type {Element}
 	 */
 	el = null;
-
-
-	/**
-	 * _origs
-	 * @type {Object}
-	 */
-	_origs = {};
 
 	/**
 	 * _rootNode
@@ -52,7 +46,14 @@ class View {
 	 * _templateNode
 	 * @type {Element}
 	 */
-	_templateNode = [];
+	_templateNode = null;
+
+	/**
+	 * _regex
+	 * @type {RegExp}
+	 * @private
+	 */
+	_regex = /\{\{.*?\}\}/;
 
 	/**
 	 * View Vars
@@ -61,10 +62,19 @@ class View {
 	_vars = {};
 
 	/**
-	 * View Template
-	 * @type {Object}
+	 * _precompile
+	 * @type {null}
+	 * @private
 	 */
-	_template = {};
+	_precompile = null;
+
+
+	/**
+	 * _prerender
+	 * @type {null}
+	 * @private
+	 */
+	_prerender = null;
 
 	/**
 	 * Precompiled View-Template
@@ -106,7 +116,6 @@ class View {
 		}
 
 		return this;
-
 	}
 
 	/**
@@ -144,31 +153,32 @@ class View {
 		}
 
 		this._rootNode = rootNode;
-
-	}
-
-	/**
-	 * Returns _templateNode
-	 * @return {Element}
-	 */
-	getTemplateNode(){
-		return this._templateNode;
 	}
 
 	/**
 	 * Define template
-	 * @param {String} template
-	 * @param {String} name
+	 * @param {string|object} template
+	 * @param {string} name
 	 */
 	setTemplate(template = null, name = 'base'){
 
 		let classOf = classof(template);
 
-		if(!/String/.test(classOf)){
-			throw new Error('Allowed is string as argument');
+		// when string template with not vars e.g {{foo}}
+		if(/String/.test(classOf) && !this._regex.test(template)){
+			this._compiled[name] = () => template;
 		}
-
-		this._template[name] = template;
+		// when string template with vars e.g {{foo}}
+		else if(/String/.test(classOf) && this._regex.test(template)){
+			this._compiled[name] = this._compile(template);
+		}
+		// when precompiled
+		else if(/Object/.test(classOf)) {
+			this._compiled[name] = this._prerender(template);
+		}
+		else {
+			throw new Error('setTemplate: an error occurred')
+		}
 	}
 
 	/**
@@ -185,11 +195,27 @@ class View {
 	}
 
 	/**
-	 * Set renderer
+	 * setRegex
+	 * @param regex {RegExp}
+	 */
+	setRegex(regex){
+		this._regex = regex || this._regex;
+	}
+
+	/**
+	 * Set prrenderer
 	 * @param {Any} renderer
 	 */
-	setRenderer(renderer) {
-		this._renderer = renderer;
+	setPrerenderer(renderer) {
+		this._prerender = renderer;
+	}
+
+	/**
+	 * Set precompiler
+	 * @param {Any} precompiler
+	 */
+	setPrecompiler(precompile) {
+		this._precompile = precompile;
 	}
 
 	/**
@@ -202,15 +228,16 @@ class View {
 
 	/**
 	 * Render view
-	 * @param  {Object} passedVars
-	 * @param  {Object<templaeName, force}
+	 * @param  {object} passedVars
+	 * @param  {string} templateName
+	 * @param  {boolean} force
+	 * @param  {boolean} renderedFlag
 	 * @return {this}
 	 */
 	render(passedVars = {}, { templateName = 'base', force = false, renderedFlag = true } = {}){
 
-		let tmpLocalViewVars = {};
 		// merge passed passedViewVars into localViewVars
-		Object.assign(tmpLocalViewVars, this._vars, passedVars);
+		let tmpLocalViewVars = Object.assign({}, this._vars, passedVars);
 
 		// do nothing if already rendered
 		if(this.getAttribute(this._rootNode, 'rendered') && !force){
@@ -222,9 +249,9 @@ class View {
 			this._rootNode.innerHTML = '';
 		}
 
-		// compile template if not yet done
+		// _compile template if not yet done
 		if(!this.isCompiled(templateName)) {
-			this._compiled[templateName] = this.compile(templateName);
+			this._compiled[templateName] = this._compile(templateName);
 		}
 
 		// keep rendered template
@@ -256,18 +283,20 @@ class View {
 		}
 
 		return this;
-
 	}
 
 	/**
-	 * compile
-	 * @param  {String} templateName
+	 * _compile
+	 * @param  {String} template
 	 * @return {Function}
 	 */
-	compile(templateName){
+	_compile(template){
 
-		return this._renderer.compile(this._template[templateName]);
+		let precompiledString = this._precompile(template);
+		let precompiledObject = (new Function('return ' + precompiledString)());
+		let prerenderedFunction = this._prerender(precompiledObject);
 
+		return prerenderedFunction;
 	}
 
 	/**
@@ -276,9 +305,7 @@ class View {
 	 * @return {Boolean}
 	 */
 	isCompiled(templateName){
-
 		return this._compiled[templateName];
-
 	}
 
 	/**
@@ -294,7 +321,6 @@ class View {
 		}
 
 		return domNode.getAttribute(value);
-
 	}
 
 	/**
@@ -310,7 +336,6 @@ class View {
 		}
 
 		domNode.setAttribute(name, value);
-
 	}
 
 	/**
@@ -318,26 +343,7 @@ class View {
 	 * @return {Element}
 	 */
 	getRootNode(){
-
 		return this._rootNode;
-
-	}
-
-	/**
-	 * replaceNode
-	 * @param  {oldNodeSelector} selector
-	 * @param  {Element} newNode
-	 * @return {undefined}
-	 */
-	replaceNode(oldNodeSelector, newChild) {
-
-		let oldChild = this._rootNode.querySelector(oldNodeSelector);
-		if(!oldChild) {
-			throw new Error('Replace node doesnt exists');
-		}
-
-		oldChild.parentNode.replaceChild(newChild, oldChild);
-
 	}
 
 	/**
@@ -350,7 +356,6 @@ class View {
 		while (domNode.childNodes.length > 0) {
 		    targetNode.appendChild(domNode.childNodes[0]);
 		}
-
 	}
 
 	/**
@@ -359,6 +364,7 @@ class View {
 	 * @return {Undefined}
 	 */
 	trigger(type){
+
 		let event = new Event(type);
 		this._rootNode.dispatchEvent(event);
 	}
