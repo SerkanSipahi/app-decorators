@@ -24,14 +24,8 @@ npm install babel-preset-es2015 --save-dev
 }
 ```
 
-##### If you use systemjs please map app-decorators before: 
-```
-System.config({
-	map : {
-		"app-decorators": "node_modules/app-decorators/src/app-decorators",
-	}
-});
-```
+##### How to start (quickstart): 
+Please use for the first the [TodoMvc Example](https://github.com/SerkanSipahi/app-decorators-todomvc) as boilerplate
 
 ##### Item.js
 ```js
