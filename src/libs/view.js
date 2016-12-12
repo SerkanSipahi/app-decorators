@@ -51,7 +51,6 @@ class View {
 	/**
 	 * _regex
 	 * @type {RegExp}
-	 * @private
 	 */
 	_regex = /\{\{.*?\}\}/;
 
@@ -64,14 +63,12 @@ class View {
 	/**
 	 * _precompile
 	 * @type {null}
-	 * @private
 	 */
 	_precompile = null;
 
 	/**
 	 * _prerender
 	 * @type {null}
-	 * @private
 	 */
 	_prerender = null;
 
@@ -181,7 +178,6 @@ class View {
      * _template_withNoVars
      * @param template {string}
      * @returns {boolean}
-     * @private
      */
     _template_withNoVars(template){
         return /String/.test(classof(template)) && !this._regex.test(template);
@@ -191,7 +187,6 @@ class View {
      * _template_withVars
      * @param template {string}
      * @returns {boolean}
-     * @private
      */
     _template_withVars(template){
         return /String/.test(classof(template)) && this._regex.test(template);
@@ -201,7 +196,6 @@ class View {
      * _template_precompiled
      * @param template {string}
      * @returns {boolean}
-     * @private
      */
     _template_precompiled(template){
         return /Object/.test(classof(template));
@@ -305,18 +299,18 @@ class View {
 		}
 
 		if(force){
-			this._rootNode.innerHTML = '';
+			this._emptyNode(this._rootNode);
 		}
 
 		// keep rendered template
-		this.renderedTemplate = this._compiled[templateName](tmpLocalViewVars);
+		this.renderedTemplate = this._render(templateName, tmpLocalViewVars);
 		// write template into dom
 		this._templateNode.innerHTML = this.renderedTemplate;
 
 		// if exists slot in "templateNode" then move rootNodes to there
-		let slotNode = this._templateNode.querySelector(this._slot);
+		let slotNode = this._getSlotNode(this._templateNode);
 		if(slotNode) {
-			this.appendChildNodesTo(this._rootNode, slotNode);
+			this._moveSlotNodeToRootNode(slotNode, this._rootNode);
 		}
 
 		// append templateNode to _rootNode
@@ -332,6 +326,41 @@ class View {
 		}
 
 		return this;
+	}
+
+	/**
+	 * _render
+	 * @param templateName {string}
+	 * @param tmpLocalViewVars {object}
+	 */
+	_render(templateName, tmpLocalViewVars){
+		return this._compiled[templateName](tmpLocalViewVars);
+	}
+
+	/**
+	 * _getSlotNode
+	 * @param node {Element}
+	 * @returns {Element}
+	 */
+	_getSlotNode(node){
+		return node.querySelector(this._slot);
+	}
+
+	/**
+	 * _moveSlotNodeToRootNode
+	 * @param slotNode {Element}
+	 * @param rootNode {Element}
+	 */
+	_moveSlotNodeToRootNode(slotNode, rootNode){
+		this.appendChildNodesTo(rootNode, slotNode);
+	}
+
+	/**
+	 *_emptyNode
+	 * @param node {Element}
+	 */
+	_emptyNode(node){
+		node.innerHTML = '';
 	}
 
 	/**
@@ -374,9 +403,9 @@ class View {
 
 	/**
 	 * setAttribute
-	 * @param {element} domNode
+	 * @param {HTMLElement} domNode
 	 * @param {string} name
-	 * @param {string|number} value
+	 * @param {boolean} value
 	 */
 	setAttribute(domNode, name, value){
 
