@@ -68,7 +68,6 @@ class View {
 	 */
 	_precompile = null;
 
-
 	/**
 	 * _prerender
 	 * @type {null}
@@ -153,6 +152,7 @@ class View {
 		}
 
 		this._rootNode = rootNode;
+		return this;
 	}
 
 	/**
@@ -162,24 +162,74 @@ class View {
 	 */
 	setTemplate(template = null, name = 'base'){
 
-		let classOf = classof(template);
+		if(this._template_withNoVars(template)){
+			this.compile(template, 'basic', name);
+		} else if(this._template_withVars(template)){
+            this.compile(template, 'full', name);
+        } else if(this._template_precompiled(template)) {
+            this.compile(template, 'prerender', name);
+		} else {
+			throw new Error(`
+			    setTemplate: an error occurred: ${JSON.stringify({ template, base })}
+            `);
+		}
 
-		// when string template with not vars e.g {{foo}}
-		if(/String/.test(classOf) && !this._regex.test(template)){
-			this._compiled[name] = () => template;
-		}
-		// when string template with vars e.g {{foo}}
-		else if(/String/.test(classOf) && this._regex.test(template)){
-			this._compiled[name] = this._compile(template);
-		}
-		// when precompiled
-		else if(/Object/.test(classOf)) {
-			this._compiled[name] = this._prerender(template);
-		}
-		else {
-			throw new Error('setTemplate: an error occurred')
-		}
+		return this;
 	}
+
+    /**
+     * _template_withNoVars
+     * @param template {string}
+     * @returns {boolean}
+     * @private
+     */
+    _template_withNoVars(template){
+        return /String/.test(classof(template)) && !this._regex.test(template);
+    }
+
+    /**
+     * _template_withVars
+     * @param template {string}
+     * @returns {boolean}
+     * @private
+     */
+    _template_withVars(template){
+        return /String/.test(classof(template)) && this._regex.test(template);
+    }
+
+    /**
+     * _template_precompiled
+     * @param template {string}
+     * @returns {boolean}
+     * @private
+     */
+    _template_precompiled(template){
+        return /Object/.test(classof(template));
+    }
+
+    /**
+     * compile
+     * @param template {string|object}
+     * @param type {string}
+     * @param name {string}
+     */
+    compile(template, type, name){
+
+        switch(type) {
+            case 'basic': {
+                this._compiled[name] = () => template;
+                break;
+            }
+            case 'prerender': {
+                this._compiled[name] = this._prerender(template);
+                break;
+            }
+            case 'full': {
+                this._compiled[name] = this._compile(template);
+                break;
+            }
+        }
+    }
 
 	/**
 	 * Set domeNode
@@ -192,6 +242,7 @@ class View {
 		}
 
 		this._templateNode = templateNode;
+		return this;
 	}
 
 	/**
@@ -199,7 +250,9 @@ class View {
 	 * @param regex {RegExp}
 	 */
 	setRegex(regex){
+
 		this._regex = regex || this._regex;
+		return this;
 	}
 
 	/**
@@ -207,7 +260,9 @@ class View {
 	 * @param {Any} renderer
 	 */
 	setPrerenderer(renderer) {
+
 		this._prerender = renderer;
+		return this;
 	}
 
 	/**
@@ -215,7 +270,9 @@ class View {
 	 * @param {Any} precompiler
 	 */
 	setPrecompiler(precompile) {
+
 		this._precompile = precompile;
+		return this;
 	}
 
 	/**
@@ -223,7 +280,9 @@ class View {
 	 * @param {function} func
 	 */
 	setElementCreater(func) {
+
 		this._createElement = func;
+		return this;
 	}
 
 	/**
@@ -249,32 +308,22 @@ class View {
 			this._rootNode.innerHTML = '';
 		}
 
-		// _compile template if not yet done
-		if(!this.isCompiled(templateName)) {
-			this._compiled[templateName] = this._compile(templateName);
-		}
-
 		// keep rendered template
 		this.renderedTemplate = this._compiled[templateName](tmpLocalViewVars);
 		// write template into dom
 		this._templateNode.innerHTML = this.renderedTemplate;
 
-		let innerRootNodes = this._createElement('inner-root-nodes');
-		let innerComponentNode = this._templateNode.querySelector(this._slot);
-		if(innerComponentNode) {
-			this.appendChildNodesTo(this._rootNode, innerRootNodes);
+		// if exists slot in "templateNode" then move rootNodes to there
+		let slotNode = this._templateNode.querySelector(this._slot);
+		if(slotNode) {
+			this.appendChildNodesTo(this._rootNode, slotNode);
 		}
 
 		// append templateNode to _rootNode
 		this.appendChildNodesTo(this._templateNode, this._rootNode);
+
 		// el is alias for _rootNode
 		this.el = this._rootNode;
-
-		// if slot exists
-		innerComponentNode = this._rootNode.querySelector(this._slot);
-		if(innerComponentNode){
-			this.appendChildNodesTo(innerRootNodes, innerComponentNode);
-		}
 
 		// set rendered flag
 		if(renderedFlag){
