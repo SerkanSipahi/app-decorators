@@ -160,15 +160,15 @@ class View {
 	setTemplate(template = null, name = 'base'){
 
 		if(this._template_withNoVars(template)){
-			this.compile(template, 'basic', name);
+			this.compile(template, name, 'basic');
 		} else if(this._template_withVars(template)){
-            this.compile(template, 'full', name);
-        } else if(this._template_precompiled(template)) {
-            this.compile(template, 'prerender', name);
+			this.compile(template,  name, 'full');
+		} else if(this._template_precompiled(template)) {
+			this.compile(template,  name, 'prerender');
 		} else {
 			throw new Error(`
-			    setTemplate: an error occurred: ${JSON.stringify({ template, base })}
-            `);
+				setTemplate: an error occurred: ${JSON.stringify({ template, base })}
+			`);
 		}
 
 		return this;
@@ -204,10 +204,10 @@ class View {
     /**
      * compile
      * @param template {string|object}
+	 * @param name {string}
      * @param type {string}
-     * @param name {string}
      */
-    compile(template, type, name){
+    compile(template, name = 'base', type = 'full'){
 
         switch(type) {
             case 'basic': {
@@ -261,7 +261,7 @@ class View {
 
 	/**
 	 * Set precompiler
-	 * @param {Any} precompiler
+	 * @param {function} precompile
 	 */
 	setPrecompiler(precompile) {
 
@@ -310,7 +310,7 @@ class View {
 		// if exists slot in "templateNode" then move rootNodes to there
 		let slotNode = this._getSlotNode(this._templateNode);
 		if(slotNode) {
-			this._moveSlotNodeToRootNode(slotNode, this._rootNode);
+			this._moveRootNodesToSlotNode(this._rootNode, slotNode);
 		}
 
 		// append templateNode to _rootNode
@@ -347,11 +347,11 @@ class View {
 	}
 
 	/**
-	 * _moveSlotNodeToRootNode
-	 * @param slotNode {Element}
+	 * _moveRootNodesToSlotNode
 	 * @param rootNode {Element}
+	 * @param slotNode {Element}
 	 */
-	_moveSlotNodeToRootNode(slotNode, rootNode){
+	_moveRootNodesToSlotNode(rootNode, slotNode){
 		this.appendChildNodesTo(rootNode, slotNode);
 	}
 
