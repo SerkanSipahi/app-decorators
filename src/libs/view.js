@@ -1,6 +1,6 @@
-const VARS = 'VARS';
-const NO_VARS = 'NO_VARS';
-const PRE_COMPILED = 'PRE_COMPILED';
+export const VARS = 'VARS';
+export const NO_VARS = 'NO_VARS';
+export const PRE_COMPILED = 'PRE_COMPILED';
 
 let classof = value => {
 	return Object.prototype.toString.call(value).slice(8, -1);
@@ -200,11 +200,11 @@ class View {
 	 */
 	setTemplate(template = null, name = 'base'){
 
-		if(this._getTemplateType(NO_VARS, template)){
+		if(this._getTemplateType(template) === NO_VARS){
 			this.compile(NO_VARS, template, name);
-		} else if(this._getTemplateType(VARS, template)){
+		} else if(this._getTemplateType(template) === VARS){
 			this.compile(VARS, template,  name);
-		} else if(this._getTemplateType(PRE_COMPILED, template)) {
+		} else if(this._getTemplateType(template) === PRE_COMPILED) {
 			this.compile(PRE_COMPILED, template,  name);
 		} else {
 			throw new Error(`
@@ -217,25 +217,19 @@ class View {
 
 	/**
 	 * _getTemplateType
-	 * @param type {string}
 	 * @param template {string|object}
-	 * @returns {boolean}
+	 * @returns {string|null}
 	 */
-	_getTemplateType(type, template){
+	_getTemplateType(template){
 
-		switch(type) {
-			case NO_VARS:{
-				return /String/.test(classof(template)) && !this._regex.test(template);
-			}
-			break;
-			case VARS:{
-				return /String/.test(classof(template)) && this._regex.test(template);
-			}
-			break;
-			case PRE_COMPILED:{
-				return /Object/.test(classof(template));
-			}
-			break;
+		if(/String/.test(classof(template)) && !this._regex.test(template)){
+			return NO_VARS;
+		} else if(/String/.test(classof(template)) && this._regex.test(template)){
+			return VARS;
+		} else if(/Object/.test(classof(template))){
+			return PRE_COMPILED;
+		} else {
+			return null;
 		}
 	}
 

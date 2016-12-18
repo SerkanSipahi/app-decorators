@@ -1,9 +1,9 @@
-import { View } from 'src/libs/view';
+import { View, VARS, NO_VARS, PRE_COMPILED } from 'src/libs/view';
 import Handlebars from '../../node_modules/handlebars/dist/handlebars';
 
-describe('View Class', () => {
+describe('class View', () => {
 
-	describe('methods', () => {
+	describe('method set/get', () => {
 
 		let view = null;
 
@@ -75,9 +75,27 @@ describe('View Class', () => {
 
 	});
 
-	describe('with all passed arguments over .create', () => {
+	describe('method _getTemplateType', () => {
 
-		it('should render accepted template', () => {
+		let view = null;
+
+		beforeEach(() => {
+			view = new View();
+		});
+
+		it('should determine template type', () => {
+
+			view._getTemplateType("Hello World").should.be.equal(NO_VARS);
+			view._getTemplateType("Hello {{foo}}").should.be.equal(VARS);
+			view._getTemplateType({}).should.be.equal(PRE_COMPILED);
+
+		});
+
+	});
+
+	describe('method "create"', () => {
+
+		it('should render expected template', () => {
 
 			let view = View.create({
 				precompiler: Handlebars.precompile,
