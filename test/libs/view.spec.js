@@ -11,6 +11,10 @@ describe('class View', () => {
 			view = new View();
 		});
 
+		afterEach(() => {
+			view = null;
+		});
+
 		it('should accept args as string and objects', () => {
 
 			view.set('foo', 1);
@@ -91,16 +95,21 @@ describe('class View', () => {
 
 	describe('method compile', () => {
 
-		let view = new View();
+		let view = null;
 
 		beforeEach(() => {
 
+			view = new View();
 			view.setRootNode(document.createElement('p'));
 			view.setTemplateNode(document.createElement('div'));
 			view.setPrecompiler(Handlebars.precompile);
 			view.setPrerenderer(Handlebars.template);
 			view.setElementCreater(document.createElement.bind(document));
 
+		});
+
+		afterEach(() => {
+			view = null;
 		});
 
 		it('should compile given NO_VARS template', () => {
