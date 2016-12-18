@@ -238,6 +238,7 @@ class View {
 	 * @param name {string}
      * @param template {string|object}
      * @param type {string}
+	 * @returns {function}
      */
     compile(type = 'VARS', template, name = 'base'){
 
@@ -255,6 +256,8 @@ class View {
                 break;
             }
         }
+
+		return this._compiled[name];
     }
 
 	/**
@@ -400,15 +403,18 @@ class View {
 	 */
 	_compile(template){
 
-		let precompiledString   = this._precompile(template);
-		let precompiledObject   = (new Function('return ' + precompiledString)());
-		let prerenderedFunction = this._prerender(precompiledObject);
+		let precompiled = this._precompile(template);
+		let prerendered = this._prerender(precompiled);
 
-		return prerenderedFunction;
+		return prerendered;
 	}
 
 	_precompile(template){
-		return this._refs.get(this).get('_precompile')(template);
+
+		let precompiledString = this._refs.get(this).get('_precompile')(template);
+		let precompiledObject = (new Function('return ' + precompiledString)());
+
+		return precompiledObject;
 	}
 
 	_prerender(precompiled){

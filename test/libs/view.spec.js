@@ -89,6 +89,44 @@ describe('class View', () => {
 
 	});
 
+	describe('method compile', () => {
+
+		let view = new View();
+
+		beforeEach(() => {
+
+			view.setRootNode(document.createElement('p'));
+			view.setTemplateNode(document.createElement('div'));
+			view.setPrecompiler(Handlebars.precompile);
+			view.setPrerenderer(Handlebars.template);
+			view.setElementCreater(document.createElement.bind(document));
+
+		});
+
+		it('should compile given NO_VARS template', () => {
+
+			let template = view.compile(NO_VARS, 'Hello World {{ignore}}');
+			template({ ignore: 'foo' }).should.be.equal('Hello World {{ignore}}');
+
+		});
+
+		it('should compile given VARS template', () => {
+
+			let template = view.compile(VARS, '{{foo}} {{bar}}');
+			template({ foo: 'hello', bar: 'world' }).should.be.equal('hello world');
+
+		});
+
+		it('should compile given PRE_COMPILED template', () => {
+
+			let precompiled = view._precompile('{{foo}} {{bar}}');
+			let template = view.compile(PRE_COMPILED, precompiled);
+			template({ foo: 'hello', bar: 'world' }).should.be.equal('hello world');
+
+		});
+
+	});
+
 	describe('method "create"', () => {
 
 		it('should render expected template', () => {
