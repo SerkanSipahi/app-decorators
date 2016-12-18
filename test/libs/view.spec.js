@@ -77,13 +77,9 @@ describe('class View', () => {
 
 	describe('method _getTemplateType', () => {
 
-		let view = null;
-
-		beforeEach(() => {
-			view = new View();
-		});
-
 		it('should determine template type', () => {
+
+			let view = new View();
 
 			view._getTemplateType("Hello World").should.be.equal(NO_VARS);
 			view._getTemplateType("Hello {{foo}}").should.be.equal(VARS);
