@@ -73,6 +73,23 @@ function view(template, options = {}) {
 			domNode.$view = $view;
 		});
 
+		map.get('@callbacks').get('attached').push(domNode => {
+
+			if(domNode.$view.initialized()){
+				return;
+			}
+
+			domNode.$view.init({
+				rootNode: domNode,
+				prerenderer: HandlebarsRuntime.template,
+			});
+		});
+
+		map.get('@callbacks').get('detached').push(domNode => {
+
+			domNode.$view.delete();
+
+		});
 	}
 }
 

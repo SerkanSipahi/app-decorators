@@ -1,8 +1,19 @@
+const VARS = 'VARS';
+const NO_VARS = 'NO_VARS';
+const PRE_COMPILED = 'PRE_COMPILED';
+
 let classof = value => {
 	return Object.prototype.toString.call(value).slice(8, -1);
 };
 
 class View {
+
+	/**
+	 * constructor
+	 */
+	constructor(){
+		this.init({});
+	}
 
 	/**
 	 * Create an instance of View Class
@@ -31,16 +42,48 @@ class View {
 	}
 
 	/**
-	 * el (alias for _rootNode)
-	 * @type {Element}
+	 * initialized
+	 * @returns {boolean}
 	 */
-	el = null;
+	initialized(){
+
+		return this._refs.has(this);
+
+	}
+
+	/**
+	 * init
+	 * it will init core references
+	 * @param rootNode {HTMLElement}
+	 * @param precompiler {function}
+	 * @param prerenderer {function}
+	 */
+	init({ rootNode, precompiler, prerenderer }){
+
+		this._refs = new WeakMap([
+			[this, new Map([
+				['_rootNode',   rootNode],
+				['_precompile', precompiler],
+				['_prerender',  prerenderer],
+			])],
+		]);
+	}
+
+	/**
+	 * delete
+	 * it will delete references
+	 */
+	delete(){
+
+		this._refs.delete(this);
+
+	}
 
 	/**
 	 * _rootNode
-	 * @type {Element}
+	 * @type {WeakMap}
 	 */
-	_rootNode = null;
+	_refs = null;
 
 	/**
 	 * _templateNode
@@ -61,18 +104,6 @@ class View {
 	_vars = {};
 
 	/**
-	 * _precompile
-	 * @type {null}
-	 */
-	_precompile = null;
-
-	/**
-	 * _prerender
-	 * @type {null}
-	 */
-	_prerender = null;
-
-	/**
 	 * Precompiled View-Template
 	 * @type {Function}
 	 */
@@ -89,6 +120,15 @@ class View {
 	 * @type {String}
 	 */
 	renderedTemplate = '';
+
+
+	/**
+	 * el (shortform for _rootNode.get(this))
+	 * @type {Element}
+	 */
+	get el() {
+		return this._refs.get(this).get('_rootNode');
+	};
 
 	/**
 	 * Set view var
@@ -148,7 +188,8 @@ class View {
 			throw new Error('Allowed is domNode as argument');
 		}
 
-		this._rootNode = rootNode;
+		this._refs.get(this).set('_rootNode', rootNode);
+
 		return this;
 	}
 
@@ -159,12 +200,12 @@ class View {
 	 */
 	setTemplate(template = null, name = 'base'){
 
-		if(this._template_withNoVars(template)){
-			this.compile(template, name, 'basic');
-		} else if(this._template_withVars(template)){
-			this.compile(template,  name, 'full');
-		} else if(this._template_precompiled(template)) {
-			this.compile(template,  name, 'prerender');
+		if(this._getTemplateType(NO_VARS, template)){
+			this.compile(NO_VARS, template, name);
+		} else if(this._getTemplateType(VARS, template)){
+			this.compile(VARS, template,  name);
+		} else if(this._getTemplateType(PRE_COMPILED, template)) {
+			this.compile(PRE_COMPILED, template,  name);
 		} else {
 			throw new Error(`
 				setTemplate: an error occurred: ${JSON.stringify({ template, base })}
@@ -174,52 +215,49 @@ class View {
 		return this;
 	}
 
-    /**
-     * _template_withNoVars
-     * @param template {string}
-     * @returns {boolean}
-     */
-    _template_withNoVars(template){
-        return /String/.test(classof(template)) && !this._regex.test(template);
-    }
+	/**
+	 * _getTemplateType
+	 * @param type {string}
+	 * @param template {string|object}
+	 * @returns {boolean}
+	 */
+	_getTemplateType(type, template){
 
-    /**
-     * _template_withVars
-     * @param template {string}
-     * @returns {boolean}
-     */
-    _template_withVars(template){
-        return /String/.test(classof(template)) && this._regex.test(template);
-    }
-
-    /**
-     * _template_precompiled
-     * @param template {string}
-     * @returns {boolean}
-     */
-    _template_precompiled(template){
-        return /Object/.test(classof(template));
-    }
+		switch(type) {
+			case NO_VARS:{
+				return /String/.test(classof(template)) && !this._regex.test(template);
+			}
+			break;
+			case VARS:{
+				return /String/.test(classof(template)) && this._regex.test(template);
+			}
+			break;
+			case PRE_COMPILED:{
+				return /Object/.test(classof(template));
+			}
+			break;
+		}
+	}
 
     /**
      * compile
-     * @param template {string|object}
 	 * @param name {string}
+     * @param template {string|object}
      * @param type {string}
      */
-    compile(template, name = 'base', type = 'full'){
+    compile(type = 'VARS', template, name = 'base'){
 
         switch(type) {
-            case 'basic': {
+            case NO_VARS: {
                 this._compiled[name] = () => template;
                 break;
             }
-            case 'prerender': {
+			case VARS: {
+				this._compiled[name] = this._compile(template);
+				break;
+			}
+            case PRE_COMPILED: {
                 this._compiled[name] = this._prerender(template);
-                break;
-            }
-            case 'full': {
-                this._compiled[name] = this._compile(template);
                 break;
             }
         }
@@ -255,7 +293,7 @@ class View {
 	 */
 	setPrerenderer(renderer) {
 
-		this._prerender = renderer;
+		this._refs.get(this).set('_prerender', renderer);
 		return this;
 	}
 
@@ -265,7 +303,7 @@ class View {
 	 */
 	setPrecompiler(precompile) {
 
-		this._precompile = precompile;
+		this._refs.get(this).set('_precompile', precompile);
 		return this;
 	}
 
@@ -290,38 +328,36 @@ class View {
 	render(passedVars = {}, { templateName = 'base', force = false, renderedFlag = true } = {}){
 
 		// merge passed passedViewVars into localViewVars
-		let tmpLocalViewVars = Object.assign({}, this._vars, passedVars);
+		let _tmpLocalViewVars = Object.assign({}, this._vars, passedVars);
+		let _rootNode = this._refs.get(this).get('_rootNode');
 
 		// do nothing if already rendered
-		if(this.getAttribute(this._rootNode, 'rendered') && !force){
+		if(this.getAttribute(_rootNode, 'rendered') && !force){
 			this.trigger('view-already-rendered');
 			return this;
 		}
 
 		if(force){
-			this._emptyNode(this._rootNode);
+			this._emptyNode(_rootNode);
 		}
 
 		// keep rendered template
-		this.renderedTemplate = this._render(templateName, tmpLocalViewVars);
+		this.renderedTemplate = this._render(templateName, _tmpLocalViewVars);
 		// write template into dom
 		this._templateNode.innerHTML = this.renderedTemplate;
 
 		// if exists slot in "templateNode" then move rootNodes to there
 		let slotNode = this._getSlotNode(this._templateNode);
 		if(slotNode) {
-			this._moveRootNodesToSlotNode(this._rootNode, slotNode);
+			this._moveRootNodesToSlotNode(_rootNode, slotNode);
 		}
 
 		// append templateNode to _rootNode
-		this.appendChildNodesTo(this._templateNode, this._rootNode);
-
-		// el is alias for _rootNode
-		this.el = this._rootNode;
+		this.appendChildNodesTo(this._templateNode, _rootNode);
 
 		// set rendered flag
 		if(renderedFlag){
-			this.setAttribute(this._rootNode, 'rendered', renderedFlag);
+			this.setAttribute(_rootNode, 'rendered', renderedFlag);
 			this.trigger('view-rendered');
 		}
 
@@ -370,20 +406,19 @@ class View {
 	 */
 	_compile(template){
 
-		let precompiledString = this._precompile(template);
-		let precompiledObject = (new Function('return ' + precompiledString)());
+		let precompiledString   = this._precompile(template);
+		let precompiledObject   = (new Function('return ' + precompiledString)());
 		let prerenderedFunction = this._prerender(precompiledObject);
 
 		return prerenderedFunction;
 	}
 
-	/**
-	 * isCompiled
-	 * @param  {String} templateName
-	 * @return {Boolean}
-	 */
-	isCompiled(templateName){
-		return this._compiled[templateName];
+	_precompile(template){
+		return this._refs.get(this).get('_precompile')(template);
+	}
+
+	_prerender(precompiled){
+		return this._refs.get(this).get('_prerender')(precompiled);
 	}
 
 	/**
@@ -421,7 +456,7 @@ class View {
 	 * @return {Element}
 	 */
 	getRootNode(){
-		return this._rootNode;
+		return this._refs.get(this).get('_rootNode');
 	}
 
 	/**
@@ -438,13 +473,16 @@ class View {
 
 	/**
 	 * trigger
+	 * @todo: should be injected
 	 * @param  {String} event
 	 * @return {Undefined}
 	 */
 	trigger(type){
 
 		let event = new Event(type);
-		this._rootNode.dispatchEvent(event);
+		let _rootNode = this._refs.get(this).get('_rootNode');
+
+		_rootNode.dispatchEvent(event);
 	}
 
 }
