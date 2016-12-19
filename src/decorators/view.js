@@ -51,12 +51,11 @@ function view(template, options = {}) {
 			);
 
 			// initialize view
-			let $view = View.create({
+			let $view = new View({
 				prerenderer: HandlebarsRuntime.template,
 				rootNode: domNode,
 				templateNode: document.createElement('div'),
 				vars: viewVars,
-				createElement: document.createElement.bind(document),
 				template: template,
 			});
 

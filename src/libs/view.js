@@ -10,81 +10,17 @@ class View {
 
 	/**
 	 * constructor
+	 * @param options {object}
 	 */
-	constructor(){
-		this.init({});
+	constructor(options = {}){
+
+		this._templateNode = options.templateNode;
+		this._regex = options.regex || this._regex;
+		this._vars = options.vars || {};
+
+		this.init(options);
 	}
 
-	/**
-	 * Create an instance of View Class
-	 * @param  {Object} config
-	 * @return {Object}
-	 */
-	static create(config){
-
-		if(classof(config) !== 'Object') {
-			throw new Error('Passed Object must be an object {}');
-		}
-
-		// init view
-		let view = new View();
-		// setup view (should be call in this order)
-		view.setRootNode(config.rootNode);
-		view.setTemplateNode(config.templateNode);
-		view.setPrecompiler(config.precompiler);
-		view.setPrerenderer(config.prerenderer);
-		view.setRegex(config.regex);
-		view.setTemplate(config.template);
-		view.set(config.vars);
-
-		return view;
-	}
-
-	/**
-	 * initialized
-	 * @returns {boolean}
-	 */
-	initialized(){
-
-		return this._refs.has(this);
-
-	}
-
-	/**
-	 * reinit (alias for init)
-	 * @param args
-	 */
-	reinit(...args){
-		this.init(...args);
-	}
-
-	/**
-	 * init
-	 * it will init core references
-	 * @param rootNode {HTMLElement}
-	 * @param precompiler {function}
-	 * @param prerenderer {function}
-	 */
-	init({ rootNode, precompiler, prerenderer }){
-
-		this._refs = new WeakMap([
-			[this, new Map([
-				['_rootNode',   rootNode],
-				['_precompile', precompiler],
-				['_prerender',  prerenderer],
-			])],
-		]);
-	}
-
-	/**
-	 * delete
-	 * it will delete references
-	 */
-	delete(){
-
-		this._refs.delete(this);
-
-	}
 
 	/**
 	 * _rootNode
@@ -128,6 +64,62 @@ class View {
 	 */
 	renderedTemplate = '';
 
+	/**
+	 * initialized
+	 * @returns {boolean}
+	 */
+	initialized(){
+
+		return this._refs.has(this);
+
+	}
+
+	/**
+	 * reinit (alias for init)
+	 * @param args
+	 */
+	reinit(...args){
+		this.init(...args);
+	}
+
+	/**
+	 * init
+	 * it will init core references
+	 * @param rootNode {HTMLElement}
+	 * @param prerenderer {function}
+	 * @param precompiler {function}
+	 * @param template {string|object}
+	 */
+	init({ rootNode, prerenderer, precompiler, template }){
+
+		// init refs
+		if(!rootNode){
+			throw new Error(`
+				rootNode is required! prerenderer are precompiler optional!
+			`);
+		}
+
+		this._refs = new WeakMap([
+			[this, new Map([
+				['_rootNode',   rootNode],
+				['_precompile', precompiler],
+				['_prerender',  prerenderer],
+			])],
+		]);
+
+		// init template
+		template ? this.setTemplate(template) : null;
+	}
+
+	/**
+	 * delete
+	 * it will delete references
+	 */
+	delete(){
+
+		this._refs.delete(this);
+
+	}
 
 	/**
 	 * el (shortform for _rootNode.get(this))

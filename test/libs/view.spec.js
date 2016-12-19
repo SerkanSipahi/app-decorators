@@ -5,17 +5,11 @@ describe('class View', () => {
 
 	describe('method set/get', () => {
 
-		let view = null;
-
-		beforeEach(() => {
-			view = new View();
-		});
-
-		afterEach(() => {
-			view = null;
-		});
-
 		it('should accept args as string and objects', () => {
+
+			let view = new View({
+				rootNode: document.createElement('div'),
+			});
 
 			view.set('foo', 1);
 			view.set('bar', 2);
@@ -57,12 +51,14 @@ describe('class View', () => {
 
 		it('should render passed args with right setup', () => {
 
-			// setup
-			view.setRootNode(document.createElement('p'));
-			view.setTemplateNode(document.createElement('div'));
-			view.setPrecompiler(Handlebars.precompile);
-			view.setPrerenderer(Handlebars.template);
-			view.setTemplate('<div>{{foo}}</div><span>{{bar}}</span>');
+			let view = new View({
+				rootNode: document.createElement('p'),
+				template: '<div>{{foo}}</div><span>{{bar}}</span>',
+				templateNode: document.createElement('div'),
+				precompiler: Handlebars.precompile,
+				prerenderer: Handlebars.template,
+			});
+
 			view.set({
 				foo: 'Hello',
 				bar: 'Mars',
@@ -82,7 +78,9 @@ describe('class View', () => {
 
 		it('should determine template type', () => {
 
-			let view = new View();
+			let view = new View({
+				rootNode: document.createElement('div'),
+			});
 
 			view._getTemplateType("Hello World").should.be.equal(NO_VARS);
 			view._getTemplateType("Hello {{foo}}").should.be.equal(VARS);
@@ -98,11 +96,11 @@ describe('class View', () => {
 
 		beforeEach(() => {
 
-			view = new View();
-			view.setRootNode(document.createElement('p'));
-			view.setTemplateNode(document.createElement('div'));
-			view.setPrecompiler(Handlebars.precompile);
-			view.setPrerenderer(Handlebars.template);
+			view = new View({
+				rootNode: document.createElement('p'),
+				precompiler: Handlebars.precompile,
+				prerenderer: Handlebars.template,
+			});
 
 		});
 
@@ -143,11 +141,11 @@ describe('class View', () => {
 
 			spy_compile = sinon.spy(View.prototype, "compile");
 
-			view = new View();
-			view.setRootNode(document.createElement('p'));
-			view.setTemplateNode(document.createElement('div'));
-			view.setPrecompiler(Handlebars.precompile);
-			view.setPrerenderer(Handlebars.template);
+			view = new View({
+				rootNode: document.createElement('p'),
+				precompiler: Handlebars.precompile,
+				prerenderer: Handlebars.template,
+			});
 		});
 
 		afterEach(() => {
@@ -195,11 +193,32 @@ describe('class View', () => {
 
 	});
 
+	describe('method "initialized" + "delete"', () => {
+
+		it('should delete reference object that good for garbage collector', () => {
+
+			let view = new View({
+				rootNode: document.createElement('p'),
+				precompiler: Handlebars.precompile,
+				prerenderer: Handlebars.template,
+			});
+
+			view.initialized().should.be.true();
+
+		});
+
+	});
+
+	describe('method "render"', () => {
+
+
+	});
+
 	describe('method "create"', () => {
 
 		it('should render expected template', () => {
 
-			let view = View.create({
+			let view = new View({
 				precompiler: Handlebars.precompile,
 				prerenderer: Handlebars.template,
 				rootNode: document.createElement('p'),
@@ -228,7 +247,7 @@ describe('class View', () => {
 			let rootNode = document.createElement('p');
 			rootNode.innerHTML = '<ul><li> nok nok </li></ul>';
 
-			let view = View.create({
+			let view = new View({
 				precompiler: Handlebars.precompile,
 				prerenderer: Handlebars.template,
 				rootNode: rootNode,
@@ -255,7 +274,7 @@ describe('class View', () => {
 			let rootNode = document.createElement('p');
 			rootNode.innerHTML = '<span>Hello World</div>';
 
-			let view = View.create({
+			let view = new View({
 				precompiler: Handlebars.precompile,
 				prerenderer: Handlebars.template,
 				rootNode: rootNode,
@@ -283,7 +302,7 @@ describe('class View', () => {
 			rootNode.setAttribute('rendered', true);
 			rootNode.innerHTML = 'Should not rendered';
 
-			let view = View.create({
+			let view = new View({
 				precompiler: Handlebars.precompile,
 				prerenderer: Handlebars.template,
 				rootNode: rootNode,
@@ -309,7 +328,7 @@ describe('class View', () => {
 			let spy_setAttribute = sinon.spy(View.prototype, "setAttribute");
 			let spy_getAttribute = sinon.spy(View.prototype, "getAttribute");
 
-			let view = View.create({
+			let view = new View({
 				precompiler: Handlebars.precompile,
 				prerenderer: Handlebars.template,
 				rootNode: document.createElement('my-element'),
