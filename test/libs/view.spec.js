@@ -208,7 +208,6 @@ describe('class View', () => {
 					foo: 'Hello',
 					bar: 'World!'
 				},
-				createElement: document.createElement.bind(document),
 				template: '<div class="foo">{{foo}}</div><div class="bar">{{bar}}</div>',
 			});
 
@@ -238,7 +237,6 @@ describe('class View', () => {
 					foo: 'Thats',
 					bar: 'nice'
 				},
-				createElement: document.createElement.bind(document),
 				template: '<div class="foo">{{foo}}</div><slot></slot><div class="bar">{{bar}}</div>',
 			});
 
@@ -266,7 +264,6 @@ describe('class View', () => {
 					foo: 'Thats',
 					bar: 'nice'
 				},
-				createElement: document.createElement.bind(document),
 				template: '<div class="foo">{{foo}}</div><hole></hole><div class="bar">{{bar}}</div>',
 			});
 
@@ -294,7 +291,6 @@ describe('class View', () => {
 				vars: {
 					foo: 'Gokcen'
 				},
-				createElement: document.createElement.bind(document),
 				template: '<div class="foo">{{foo}}</div>',
 			});
 
@@ -321,7 +317,6 @@ describe('class View', () => {
 				vars: {
 					foo: 'Liya'
 				},
-				createElement: document.createElement.bind(document),
 				template: '<div class="foo">{{foo}}</div>',
 			});
 
