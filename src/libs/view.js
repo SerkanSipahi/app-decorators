@@ -178,21 +178,6 @@ class View {
 	}
 
 	/**
-	 * setRootNode
-	 * @param {Element} rootNode
-	 */
-	setRootNode(rootNode){
-
-		if(!rootNode instanceof Element){
-			throw new Error('Allowed is domNode as argument');
-		}
-
-		this._refs.get(this).set('_rootNode', rootNode);
-
-		return this;
-	}
-
-	/**
 	 * Define template
 	 * @param {string|object} template
 	 * @param {string} name
@@ -258,50 +243,6 @@ class View {
 
 		return this._compiled[name];
     }
-
-	/**
-	 * Set domeNode
-	 * @param {Element} domNode
-	 */
-	setTemplateNode(templateNode) {
-
-		if(!templateNode instanceof Element){
-			throw new Error('Allowed is domNode as argument');
-		}
-
-		this._templateNode = templateNode;
-		return this;
-	}
-
-	/**
-	 * setRegex
-	 * @param regex {RegExp}
-	 */
-	setRegex(regex){
-
-		this._regex = regex || this._regex;
-		return this;
-	}
-
-	/**
-	 * Set prrenderer
-	 * @param {Any} renderer
-	 */
-	setPrerenderer(renderer) {
-
-		this._refs.get(this).set('_prerender', renderer);
-		return this;
-	}
-
-	/**
-	 * Set precompiler
-	 * @param {function} precompile
-	 */
-	setPrecompiler(precompile) {
-
-		this._refs.get(this).set('_precompile', precompile);
-		return this;
-	}
 
 	/**
 	 * Render view
