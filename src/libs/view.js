@@ -33,7 +33,6 @@ class View {
 		view.setTemplateNode(config.templateNode);
 		view.setPrecompiler(config.precompiler);
 		view.setPrerenderer(config.prerenderer);
-		view.setElementCreater(config.createElement);
 		view.setRegex(config.regex);
 		view.setTemplate(config.template);
 		view.set(config.vars);
@@ -309,16 +308,6 @@ class View {
 	setPrecompiler(precompile) {
 
 		this._refs.get(this).set('_precompile', precompile);
-		return this;
-	}
-
-	/**
-	 * setElementCreater
-	 * @param {function} func
-	 */
-	setElementCreater(func) {
-
-		this._createElement = func;
 		return this;
 	}
 
