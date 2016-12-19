@@ -62,7 +62,6 @@ describe('class View', () => {
 			view.setTemplateNode(document.createElement('div'));
 			view.setPrecompiler(Handlebars.precompile);
 			view.setPrerenderer(Handlebars.template);
-			view.setElementCreater(document.createElement.bind(document));
 			view.setTemplate('<div>{{foo}}</div><span>{{bar}}</span>');
 			view.set({
 				foo: 'Hello',
@@ -104,7 +103,6 @@ describe('class View', () => {
 			view.setTemplateNode(document.createElement('div'));
 			view.setPrecompiler(Handlebars.precompile);
 			view.setPrerenderer(Handlebars.template);
-			view.setElementCreater(document.createElement.bind(document));
 
 		});
 
@@ -131,6 +129,67 @@ describe('class View', () => {
 			let precompiled = view._precompile('{{foo}} {{bar}}');
 			let template = view.compile(PRE_COMPILED, precompiled);
 			template({ foo: 'hello', bar: 'world' }).should.be.equal('hello world');
+
+		});
+
+	});
+
+	describe('method setTemplate', () => {
+
+		let view = null;
+		let spy_compile = null;
+
+		beforeEach(() => {
+
+			spy_compile = sinon.spy(View.prototype, "compile");
+
+			view = new View();
+			view.setRootNode(document.createElement('p'));
+			view.setTemplateNode(document.createElement('div'));
+			view.setPrecompiler(Handlebars.precompile);
+			view.setPrerenderer(Handlebars.template);
+		});
+
+		afterEach(() => {
+			view = null;
+			spy_compile.restore();
+		});
+
+		it('should call compile with with "NO_VARS" arg', () => {
+
+			view.setTemplate('<div>Hello</div><span>World</span>');
+			spy_compile.args[0][0].should.be.equal('NO_VARS');
+			spy_compile.args[0][2].should.be.equal('base');
+
+		});
+
+		it('should call compile with with "VARS" arg', () => {
+
+			view.setTemplate('<div>{{foo}}</div><span>{{bar}}</span>');
+			spy_compile.args[0][0].should.be.equal('VARS');
+			spy_compile.args[0][2].should.be.equal('base');
+
+		});
+
+		it('should call compile with with "PRE_COMPILED" arg', () => {
+
+			let precompiled = view._precompile('{{foo}} {{bar}}');
+
+			view.setTemplate(precompiled);
+			spy_compile.args[0][0].should.be.equal('PRE_COMPILED');
+			spy_compile.args[0][2].should.be.equal('base');
+
+		});
+
+		it('should throw error when not set template', () => {
+
+			(() => { view.setTemplate(); }).should.throw();
+			(() => { view.setTemplate(function(){}); }).should.throw();
+			(() => { view.setTemplate(() => {}); }).should.throw();
+			(() => { view.setTemplate(null); }).should.throw();
+			(() => { view.setTemplate(undefined); }).should.throw();
+			(() => { view.setTemplate(true); }).should.throw();
+			(() => { view.setTemplate([]); }).should.throw();
 
 		});
 
