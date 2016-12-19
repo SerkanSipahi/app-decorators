@@ -3,6 +3,34 @@ import Handlebars from '../../node_modules/handlebars/dist/handlebars';
 
 describe('class View', () => {
 
+	describe('new View()', () => {
+
+		it('should throw error if initialized without options', () => {
+
+			(() => { new View(); }).should.throw();
+
+		});
+
+		it('should not throw error if minimum options passed', () => {
+
+			(() => { new View({
+				rootNode: document.createElement('p'),
+			}); }).should.not.throw();
+
+			(() => { new View({
+				rootNode: document.createElement('p'),
+				precompiler: Handlebars.precompile,
+			}); }).should.not.throw();
+
+			(() => { new View({
+				rootNode: document.createElement('p'),
+				prerenderer: Handlebars.template,
+			}); }).should.not.throw();
+
+		})
+
+	});
+
 	describe('method set/get', () => {
 
 		it('should accept args as string and objects', () => {
