@@ -52,6 +52,14 @@ class View {
 	}
 
 	/**
+	 * reinit (alias for init)
+	 * @param args
+	 */
+	reinit(...args){
+		this.init(...args);
+	}
+
+	/**
 	 * init
 	 * it will init core references
 	 * @param rootNode {HTMLElement}

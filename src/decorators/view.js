@@ -79,7 +79,7 @@ function view(template, options = {}) {
 				return;
 			}
 
-			domNode.$view.init({
+			domNode.$view.reinit({
 				rootNode: domNode,
 				prerenderer: HandlebarsRuntime.template,
 			});
