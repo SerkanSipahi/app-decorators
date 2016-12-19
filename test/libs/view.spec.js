@@ -193,9 +193,9 @@ describe('class View', () => {
 
 	});
 
-	describe('method "initialized" + "delete"', () => {
+	describe('initialized method', () => {
 
-		it('should delete reference object that good for garbage collector', () => {
+		it('should initialize view', () => {
 
 			let view = new View({
 				rootNode: document.createElement('p'),
@@ -204,6 +204,61 @@ describe('class View', () => {
 			});
 
 			view.initialized().should.be.true();
+
+		});
+
+	});
+
+	describe('delete method', () => {
+
+		it('should delete initialized view', () => {
+
+			let view = new View({
+				rootNode: document.createElement('p'),
+				precompiler: Handlebars.precompile,
+				prerenderer: Handlebars.template,
+			});
+
+			view.delete();
+			view.initialized().should.be.false();
+
+		});
+
+	});
+
+	describe('reinit method', () => {
+
+		it('should reinit view after deleting', () => {
+
+			let options = {
+				rootNode: document.createElement('p'),
+				precompiler: Handlebars.precompile,
+				prerenderer: Handlebars.template,
+			};
+
+			let view = new View(options);
+
+			view.delete();
+			view.reinit(options);
+			view.initialized().should.be.true();
+
+		});
+
+	});
+
+	describe('reinit method"', () => {
+
+		it('should throw error if reinit called without options parameter', () => {
+
+			let view = new View({
+				rootNode: document.createElement('p'),
+				precompiler: Handlebars.precompile,
+				prerenderer: Handlebars.template,
+			});
+
+			view.delete();
+
+			(() => { view.reinit(); }).should.throw();
 
 		});
 
@@ -242,7 +297,6 @@ describe('class View', () => {
 	describe('innerHTML + slot', () => {
 
 		it('should append innerHTML nodes to "slot" node', () => {
-
 
 			let rootNode = document.createElement('p');
 			rootNode.innerHTML = '<ul><li> nok nok </li></ul>';
