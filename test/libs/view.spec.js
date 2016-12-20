@@ -7,7 +7,11 @@ describe('class View', () => {
 
 		it('should throw error if initialized without options', () => {
 
-			(() => { new View(); }).should.throw();
+			(() => { new View(); }).should.throw(`
+				Required: rootNode.
+				Optional: use prerenderer when template/s are precompiled.
+				Optional: use precompiler when render raw template string.
+			`);
 
 		});
 
@@ -209,13 +213,15 @@ describe('class View', () => {
 
 		it('should throw error when not set template', () => {
 
-			(() => { view.setTemplate(); }).should.throw();
-			(() => { view.setTemplate(function(){}); }).should.throw();
-			(() => { view.setTemplate(() => {}); }).should.throw();
-			(() => { view.setTemplate(null); }).should.throw();
-			(() => { view.setTemplate(undefined); }).should.throw();
-			(() => { view.setTemplate(true); }).should.throw();
-			(() => { view.setTemplate([]); }).should.throw();
+			let expectedErrorMessage = /setTemplate: an error occurred: unknown template type/;
+
+			(() => { view.setTemplate(); }).should.throw(expectedErrorMessage);
+			(() => { view.setTemplate(function(){}); }).should.throw(expectedErrorMessage);
+			(() => { view.setTemplate(() => {}); }).should.throw(expectedErrorMessage);
+			(() => { view.setTemplate(null); }).should.throw(expectedErrorMessage);
+			(() => { view.setTemplate(undefined); }).should.throw(expectedErrorMessage);
+			(() => { view.setTemplate(true); }).should.throw(expectedErrorMessage);
+			(() => { view.setTemplate([]); }).should.throw(expectedErrorMessage);
 
 		});
 
@@ -286,7 +292,11 @@ describe('class View', () => {
 
 			view.delete();
 
-			(() => { view.reinit(); }).should.throw();
+			(() => { view.reinit(); }).should.throw(`
+				Required: rootNode.
+				Optional: use prerenderer when template/s are precompiled.
+				Optional: use precompiler when render raw template string.
+			`);
 
 		});
 

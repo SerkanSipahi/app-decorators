@@ -76,10 +76,10 @@ class View {
 
 	/**
 	 * reinit (alias for init)
-	 * @param args
+	 * @param options {object}
 	 */
-	reinit(...args){
-		this.init(...args);
+	reinit(options){
+		this.init(options);
 	}
 
 	/**
@@ -90,12 +90,14 @@ class View {
 	 * @param precompiler {function}
 	 * @param template {string|object}
 	 */
-	init({ rootNode, prerenderer, precompiler, template }){
+	init({ rootNode, prerenderer, precompiler, template } = {}){
 
 		// init refs
 		if(!rootNode){
 			throw new Error(`
-				rootNode is required! prerenderer are precompiler optional!
+				Required: rootNode.
+				Optional: use prerenderer when template/s are precompiled.
+				Optional: use precompiler when render raw template string.
 			`);
 		}
 
@@ -192,7 +194,7 @@ class View {
 			this.compile(PRE_COMPILED, template,  name);
 		} else {
 			throw new Error(`
-				setTemplate: an error occurred: ${JSON.stringify({ template, base })}
+				setTemplate: an error occurred: unknown template type.
 			`);
 		}
 
