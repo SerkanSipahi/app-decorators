@@ -73,9 +73,7 @@ class View {
 	 * @returns {boolean}
 	 */
 	initialized(){
-
 		return this._refs.has(this);
-
 	}
 
 	/**
@@ -122,9 +120,7 @@ class View {
 	 * it will delete references
 	 */
 	delete(){
-
 		this._refs.delete(this);
-
 	}
 
 	/**
@@ -262,7 +258,7 @@ class View {
 
 		// merge passed passedViewVars into localViewVars
 		let _tmpLocalViewVars = Object.assign({}, this._vars, passedVars);
-		let _rootNode = this._refs.get(this).get('_rootNode');
+		let _rootNode = this._getRootNode();
 
 		// do nothing if already rendered
 		if(this.getAttribute(_rootNode, 'rendered') && !force){
@@ -348,6 +344,12 @@ class View {
 		return prerendered;
 	}
 
+	/**
+	 * _precompile
+	 * @param template {string}
+	 * @returns precompiledObject {object}
+	 * @private
+	 */
 	_precompile(template){
 
 		let precompiledString = this._refs.get(this).get('_precompile')(template);
@@ -356,8 +358,23 @@ class View {
 		return precompiledObject;
 	}
 
+	/**
+	 * _prerender
+	 * @param precompiled {object}
+	 * @returns {function}
+	 * @private
+	 */
 	_prerender(precompiled){
 		return this._refs.get(this).get('_prerender')(precompiled);
+	}
+
+	/**
+	 * _getRootNode
+	 * @returns {HTMLElement}
+	 * @private
+	 */
+	_getRootNode(){
+		return this._refs.get(this).get('_rootNode');
 	}
 
 	/**
