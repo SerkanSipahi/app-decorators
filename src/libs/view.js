@@ -1,6 +1,10 @@
-export const VARS = 'VARS';
-export const NO_VARS = 'NO_VARS';
-export const PRE_COMPILED = 'PRE_COMPILED';
+export const VARS              = 'VARS';
+export const NO_VARS           = 'NO_VARS';
+export const PRE_COMPILED      = 'PRE_COMPILED';
+
+export const EVENT_VIEW_RENDER = 'view:render';
+export const EVENT_VIEW_SLOT   = 'view:slot';
+export const EVENT_VIEW_DONE   = 'view:done';
 
 let classof = value => {
 	return Object.prototype.toString.call(value).slice(8, -1);
@@ -262,7 +266,6 @@ class View {
 
 		// do nothing if already rendered
 		if(this.getAttribute(_rootNode, 'rendered') && !force){
-			this.trigger('view-already-rendered');
 			return this;
 		}
 
@@ -272,6 +275,8 @@ class View {
 
 		// keep rendered template
 		this.renderedTemplate = this._render(templateName, _tmpLocalViewVars);
+		this.trigger(EVENT_VIEW_RENDER);
+
 		// write template into dom
 		this._templateNode.innerHTML = this.renderedTemplate;
 
@@ -279,6 +284,7 @@ class View {
 		let slotNode = this._getSlotNode(this._templateNode);
 		if(slotNode) {
 			this._moveRootNodesToSlotNode(_rootNode, slotNode);
+			this.trigger(EVENT_VIEW_SLOT);
 		}
 
 		// append templateNode to _rootNode
@@ -287,8 +293,9 @@ class View {
 		// set rendered flag
 		if(renderedFlag){
 			this.setAttribute(_rootNode, 'rendered', renderedFlag);
-			this.trigger('view-rendered');
 		}
+
+		this.trigger(EVENT_VIEW_DONE);
 
 		return this;
 	}

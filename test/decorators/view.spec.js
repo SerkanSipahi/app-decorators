@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import { bootstrapPolyfills } from 'src/bootstrap';
+import { EVENT_VIEW_RENDER } from 'src/libs/view';
 
 import sinon from 'sinon';
 
@@ -308,8 +309,7 @@ describe('@view decorator', async () => {
 		class MyQuxust {
 
 			created(){}
-			@on('view-rendered') viewRendered(){}
-			@on('view-already-rendered') viewAlreadyRendered(){}
+			@on(EVENT_VIEW_RENDER) viewRendered(){}
 
 		}
 
@@ -328,8 +328,7 @@ describe('@view decorator', async () => {
 		class MySpecialCom {
 
 			created(){}
-			@on('view-rendered') viewRendered(){}
-			@on('view-already-rendered') viewAlreadyRendered(){}
+			@on(EVENT_VIEW_RENDER) viewRendered(){}
 
 		}
 
@@ -340,8 +339,7 @@ describe('@view decorator', async () => {
 		class MyAwesomeCom {
 
 			created(){}
-			@on('view-rendered') viewRendered(){}
-			@on('view-already-rendered') viewAlreadyRendered(){}
+			@on(EVENT_VIEW_RENDER) viewRendered(){}
 
 		}
 
