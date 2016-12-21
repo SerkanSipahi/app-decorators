@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import { bootstrapPolyfills } from 'src/bootstrap';
 import { EVENT_VIEW_RENDER } from 'src/libs/view';
+import { delay } from 'src/helpers/delay';
 
 import sinon from 'sinon';
 
@@ -34,8 +35,9 @@ describe('@view decorator', async () => {
 			@view.bind p = 'World';
 		}
 
-		it('should also create a element if element created from out of dom', (done) => {
+		it('should also create a element if element created from out of dom', done => {
 
+			(async () => {
 
 			// First test
 			let $vc = $('#view-decorator');
@@ -47,31 +49,32 @@ describe('@view decorator', async () => {
 			let $serkan1 = $vc.find('com-serkan#serkan-1');
 			let $serkan2 = $vc.find('com-serkan#serkan-2');
 
-			// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
-			setTimeout(() => {
+			await delay(10);
 
-				// Test-1: check if rendered
-				$serkan1.attr('rendered').should.be.equal('true');
-				$serkan1.html().removeGutter().should.be.equal('<span>Hello</span><p>World</p>');
+			// Test-1: check if rendered
+			$serkan1.attr('rendered').should.be.equal('true');
+			$serkan1.html().removeGutter().should.be.equal('<span>Hello</span><p>World</p>');
 
-				// Test-2: check if rendered
-				$serkan2.attr('rendered').should.be.equal('true');
-				$serkan2.html().removeGutter().should.be.equal('<span>Hello</span><p>World</p>');
+			// Test-2: check if rendered
+			$serkan2.attr('rendered').should.be.equal('true');
+			$serkan2.html().removeGutter().should.be.equal('<span>Hello</span><p>World</p>');
 
-				// Test-3: check if rendered on write view.bind attri
-				$serkan1.get(0).p = 'Mars';
-				$serkan2.get(0).p = 'Pluto';
+			// Test-3: check if rendered on write view.bind attri
+			$serkan1.get(0).p = 'Mars';
+			$serkan2.get(0).p = 'Pluto';
 
-				$serkan1.html().removeGutter().should.be.equal('<span>Hello</span><p>Mars</p>');
-				$serkan2.html().removeGutter().should.be.equal('<span>Hello</span><p>Pluto</p>');
+			$serkan1.html().removeGutter().should.be.equal('<span>Hello</span><p>Mars</p>');
+			$serkan2.html().removeGutter().should.be.equal('<span>Hello</span><p>Pluto</p>');
 
-				done();
+			done();
 
-			}, 50);
+			})();
 
 		});
 
-		it('should also create a element if element with view vars although created from out of dom', (done) => {
+		it('should also create a element if element with view vars although created from out of dom', done => {
+
+			(async () => {
 
 			// decorate
 			@view(`<span>{{id}}.)<b>{{class}}</b>{{b}}</span><p>{{c}}</p>`)
@@ -87,44 +90,44 @@ describe('@view decorator', async () => {
 			let $fire1 = $vc.find('com-fire#id-1');
 			let $fire2 = $vc.find('com-fire#id-2');
 
-			// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
-			setTimeout(() => {
+			await delay(10);
 
-				$fire1.attr('rendered').should.equal('true');
-				$fire1.html().should.equal('<span>id-1.)<b>First</b>Thats</span><p>awesome!</p>');
+			$fire1.attr('rendered').should.equal('true');
+			$fire1.html().should.equal('<span>id-1.)<b>First</b>Thats</span><p>awesome!</p>');
 
-				$fire2.attr('rendered').should.equal('true');
-				$fire2.html().should.equal('<span>id-2.)<b>Second</b>Whats</span><p>up!</p>');
+			$fire2.attr('rendered').should.equal('true');
+			$fire2.html().should.equal('<span>id-2.)<b>Second</b>Whats</span><p>up!</p>');
 
-				$fire1.get(0).c = 'on!';
-				$fire2.get(0).c = 'waw!';
+			$fire1.get(0).c = 'on!';
+			$fire2.get(0).c = 'waw!';
 
-				$fire1.html().should.equal('<span>id-1.)<b>First</b>Thats</span><p>on!</p>');
-				$fire2.html().should.equal('<span>id-2.)<b>Second</b>Whats</span><p>waw!</p>');
+			$fire1.html().should.equal('<span>id-1.)<b>First</b>Thats</span><p>on!</p>');
+			$fire2.html().should.equal('<span>id-2.)<b>Second</b>Whats</span><p>waw!</p>');
 
-				done();
+			done();
 
-			}, 0);
+			})();
 
 		});
 
-		it('should render template if call domNode.render directly or over domNode.$.view.render', (done) => {
+		it('should render template if call domNode.render directly or over domNode.$.view.render', done => {
+
+			(async () => {
 
 			let $vc = $('#view-decorator');
 			$vc.append(`<com-serkan></com-serkan>`);
 
-			// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
-			setTimeout(() => {
+			await delay(10);
 
-				$vc.find('com-serkan').get(0).render({n: 'Cool', p: 'man!'}, { force: true });
-				$vc.find('com-serkan').get(0).outerHTML.removeGutter().should.equal('<com-serkan rendered="true"><span>Cool</span><p>man!</p></com-serkan>');
+			$vc.find('com-serkan').get(0).render({n: 'Cool', p: 'man!'}, { force: true });
+			$vc.find('com-serkan').get(0).outerHTML.removeGutter().should.equal('<com-serkan rendered="true"><span>Cool</span><p>man!</p></com-serkan>');
 
-				$vc.find('com-serkan').get(0).$view.render({n: 'Hey', p: 'there!'}, { force: true });
-				$vc.find('com-serkan').get(0).outerHTML.removeGutter().should.equal('<com-serkan rendered="true"><span>Hey</span><p>there!</p></com-serkan>');
+			$vc.find('com-serkan').get(0).$view.render({n: 'Hey', p: 'there!'}, { force: true });
+			$vc.find('com-serkan').get(0).outerHTML.removeGutter().should.equal('<com-serkan rendered="true"><span>Hey</span><p>there!</p></com-serkan>');
 
-				done();
+			done();
 
-			}, 100);
+			})();
 
 		});
 
@@ -218,7 +221,9 @@ describe('@view decorator', async () => {
 
 	});
 
-	it('should not render because rendered flag is set', (done) => {
+	it('should not render because rendered flag is set', done => {
+
+		(async () => {
 
 		@view(`
 			<div>Should render if flag is not set</div>
@@ -236,27 +241,28 @@ describe('@view decorator', async () => {
 			</my-shouldnotrender>
 		`.removeGutter());
 
-		// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
-		setTimeout(() => {
+		await delay(10);
 
-			$('my-shouldnotrender').get(0).outerHTML.removeGutter().should.equal(`
-				<my-shouldnotrender rendered="true">
-					<div>
-						<span>Im already rendered</span>
-					</div>
-				</my-shouldnotrender>
-			`.removeGutter());
+		$('my-shouldnotrender').get(0).outerHTML.removeGutter().should.equal(`
+			<my-shouldnotrender rendered="true">
+				<div>
+					<span>Im already rendered</span>
+				</div>
+			</my-shouldnotrender>
+		`.removeGutter());
 
-			// cleanup
-			$('my-shouldnotrender').remove();
+		// cleanup
+		$('my-shouldnotrender').remove();
 
-			done();
+		done();
 
-		}, 10);
+		})();
 
 	});
 
 	it('render slot component', (done) => {
+
+		(async () => {
 
 		@view(`
 			<div class="a"></div>
@@ -272,29 +278,30 @@ describe('@view decorator', async () => {
 
 		$('body').append('<my-innercomponent>Im inner of MyInnerComponent</my-innercomponent>');
 
-		// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
-		setTimeout(() => {
+		await delay(10);
 
-			$('my-innercomponent').get(0).outerHTML.removeGutter().should.equal(`
-				<my-innercomponent rendered="true">
-					<div class="a"></div>
-					<div class="b"></div>
-					<div class="c">
-						<span><slot>Im inner of MyInnerComponent</slot></span>
-					</div>
-				</my-innercomponent>
-			`.removeGutter());
+		$('my-innercomponent').get(0).outerHTML.removeGutter().should.equal(`
+			<my-innercomponent rendered="true">
+				<div class="a"></div>
+				<div class="b"></div>
+				<div class="c">
+					<span><slot>Im inner of MyInnerComponent</slot></span>
+				</div>
+			</my-innercomponent>
+		`.removeGutter());
 
-			// cleanup
-			$('my-innercomponent').remove();
+		// cleanup
+		$('my-innercomponent').remove();
 
-			done();
+		done();
 
-		}, 10);
+		})();
 
 	});
 
-	it('render compontents only once on nested component', (done) => {
+	it('render compontents only once on nested component', done => {
+
+		(async () => {
 
 		@view(`
 			<div class="x"></div>
@@ -369,95 +376,88 @@ describe('@view decorator', async () => {
 			</my-quxust>
 		`);
 
-		// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
-		setTimeout(() => {
+		await delay(10);
 
-			// test
-			let markup = `
-				<my-quxust rendered="true">
-					<div class="x"></div>
-					<div class="y"></div>
-					<div class="z">
-						<span>
-							<slot>
-								<my-specical-com rendered="true">
-									<ul>
-										<li> One </li>
-										<li> Two </li>
-										<li>
-											<slot>
-												<my-awesome-com rendered="true">
-													<span>i have not slot</span>
-													<p>im template, im appened</p>
-												</my-awesome-com>
-											</slot>
-										</li>
-									</ul>
-								</my-specical-com>
-							</slot>
-						</span>
-					</div>
-				</my-quxust>
-			`.removeGutter();
+		// test
+		let markup = `
+			<my-quxust rendered="true">
+				<div class="x"></div>
+				<div class="y"></div>
+				<div class="z">
+					<span>
+						<slot>
+							<my-specical-com rendered="true">
+								<ul>
+									<li> One </li>
+									<li> Two </li>
+									<li>
+										<slot>
+											<my-awesome-com rendered="true">
+												<span>i have not slot</span>
+												<p>im template, im appened</p>
+											</my-awesome-com>
+										</slot>
+									</li>
+								</ul>
+							</my-specical-com>
+						</slot>
+					</span>
+				</div>
+			</my-quxust>
+		`.removeGutter();
 
-			$('my-quxust').get(0).outerHTML.removeGutter().should.equal(markup);
+		$('my-quxust').get(0).outerHTML.removeGutter().should.equal(markup);
 
-			// created should call only once
-			spy_createdMyQuxust.callCount.should.equal(1);
-			spy_createdMySpecialCom.callCount.should.equal(1);
-			spy_createdMyAwesomeCom.callCount.should.equal(1);
-			/*
-			// view-rendered should trigger only once
-			spy_viewRenderedMyQuxust.callCount.should.equal(1);
-			spy_viewRenderedMySpecialCom.callCount.should.equal(1);
-			spy_viewRenderedMyAwesomeCom.callCount.should.equal(1);
+		// created should call only once
+		spy_createdMyQuxust.callCount.should.equal(1);
+		spy_createdMySpecialCom.callCount.should.equal(1);
+		spy_createdMyAwesomeCom.callCount.should.equal(1);
+		/*
+		// view-rendered should trigger only once
+		spy_viewRenderedMyQuxust.callCount.should.equal(1);
+		spy_viewRenderedMySpecialCom.callCount.should.equal(1);
+		spy_viewRenderedMyAwesomeCom.callCount.should.equal(1);
 
-			spy_viewAlreadyRenderedMyQuxust.callCount.should.equal(0);
-			spy_viewAlreadyRenderedMySpecialCom.callCount.should.equal(0);
-			spy_viewAlreadyRenderedMyAwesomeCom.callCount.should.equal(0);
+		spy_viewAlreadyRenderedMyQuxust.callCount.should.equal(0);
+		spy_viewAlreadyRenderedMySpecialCom.callCount.should.equal(0);
+		spy_viewAlreadyRenderedMyAwesomeCom.callCount.should.equal(0);
 
-			$('my-quxust').remove();
-			$('body').append(markup);
+		$('my-quxust').remove();
+		$('body').append(markup);
 
-			// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
-			setTimeout(() => {
+		await delay(10);
 
-				// created should call only once
-				spy_createdMyQuxust.callCount.should.equal(2);
-				spy_createdMySpecialCom.callCount.should.equal(2);
-				spy_createdMyAwesomeCom.callCount.should.equal(2);
+		// created should call only once
+		spy_createdMyQuxust.callCount.should.equal(2);
+		spy_createdMySpecialCom.callCount.should.equal(2);
+		spy_createdMyAwesomeCom.callCount.should.equal(2);
 
-				// view-rendered should trigger only once
-				spy_viewRenderedMyQuxust.callCount.should.equal(1);
-				spy_viewRenderedMySpecialCom.callCount.should.equal(1);
-				spy_viewRenderedMyAwesomeCom.callCount.should.equal(1);
+		// view-rendered should trigger only once
+		spy_viewRenderedMyQuxust.callCount.should.equal(1);
+		spy_viewRenderedMySpecialCom.callCount.should.equal(1);
+		spy_viewRenderedMyAwesomeCom.callCount.should.equal(1);
 
-				spy_viewAlreadyRenderedMyQuxust.callCount.should.equal(1);
-				spy_viewAlreadyRenderedMySpecialCom.callCount.should.equal(1);
-				spy_viewAlreadyRenderedMyAwesomeCom.callCount.should.equal(1);
+		spy_viewAlreadyRenderedMyQuxust.callCount.should.equal(1);
+		spy_viewAlreadyRenderedMySpecialCom.callCount.should.equal(1);
+		spy_viewAlreadyRenderedMyAwesomeCom.callCount.should.equal(1);
 
+		//cleanup
+		spy_createdMyQuxust.restore();
+		spy_createdMySpecialCom.restore();
+		spy_createdMyAwesomeCom.restore();
 
-				//cleanup
-				spy_createdMyQuxust.restore();
-				spy_createdMySpecialCom.restore();
-				spy_createdMyAwesomeCom.restore();
+		spy_viewRenderedMyQuxust.restore();
+		spy_viewRenderedMySpecialCom.restore();
+		spy_viewRenderedMyAwesomeCom.restore();
 
-				spy_viewRenderedMyQuxust.restore();
-				spy_viewRenderedMySpecialCom.restore();
-				spy_viewRenderedMyAwesomeCom.restore();
+		spy_viewAlreadyRenderedMyQuxust.restore();
+		spy_viewAlreadyRenderedMySpecialCom.restore();
+		spy_viewAlreadyRenderedMyAwesomeCom.restore();
+		*/
 
-				spy_viewAlreadyRenderedMyQuxust.restore();
-				spy_viewAlreadyRenderedMySpecialCom.restore();
-				spy_viewAlreadyRenderedMyAwesomeCom.restore();
+		done();
 
-				done();
-
-			}, 20);
-			*/
-
-			done();
-
-		}, 20);
+		})();
 
 	});
 

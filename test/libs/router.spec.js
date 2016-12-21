@@ -2,7 +2,7 @@ import { bootstrapPolyfills } from 'src/bootstrap';
 import { XRegExp } from 'src/libs/dependencies';
 import { Event } from 'test/mocks/event';
 import { Location } from 'test/mocks/location';
-import { pause } from 'src/helpers/pause';
+import { delay } from 'src/helpers/delay';
 
 import sinon from 'sinon';
 
