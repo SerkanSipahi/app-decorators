@@ -2,6 +2,8 @@ import $ from 'jquery';
 import { bootstrapPolyfills } from 'src/bootstrap';
 import { EVENT_VIEW_RENDER } from 'src/libs/view';
 import { delay } from 'src/helpers/delay';
+import { storage } from "src/libs/random-storage";
+
 
 import sinon from 'sinon';
 
@@ -350,22 +352,24 @@ describe('@view decorator', async () => {
 
 		}
 
-		// setup spies
-		let spy_createdMyQuxust = sinon.spy(MyQuxust.prototype, "created");
-		let spy_createdMySpecialCom = sinon.spy(MySpecialCom.prototype, "created");
-		let spy_createdMyAwesomeCom = sinon.spy(MyAwesomeCom.prototype, "created");
+		/**************************
+		 ********* Setup **********
+		 **************************/
 
-		/*
-		let spy_viewRenderedMyQuxust = sinon.spy(MyQuxust.prototype.$.config.on.events.local, "view-rendered");
-		let spy_viewRenderedMySpecialCom = sinon.spy(MySpecialCom.prototype.$.config.on.events.local, "view-rendered");
-		let spy_viewRenderedMyAwesomeCom = sinon.spy(MyAwesomeCom.prototype.$.config.on.events.local, "view-rendered");
+		// spy events
+		let [ MyQuxust_events ] = storage.get(MyQuxust).get('@on').get('events').get('local');
+		let [ MySpecialCom_events ] = storage.get(MySpecialCom).get('@on').get('events').get('local');
+		let [ MyAwesomeCom_events ] = storage.get(MyAwesomeCom).get('@on').get('events').get('local');
 
-		let spy_viewAlreadyRenderedMyQuxust = sinon.spy(MyQuxust.prototype.$.config.on.events.local, "view-already-rendered");
-		let spy_viewAlreadyRenderedMySpecialCom = sinon.spy(MySpecialCom.prototype.$.config.on.events.local, "view-already-rendered");
-		let spy_viewAlreadyRenderedMyAwesomeCom = sinon.spy(MyAwesomeCom.prototype.$.config.on.events.local, "view-already-rendered");
-		*/
+		let spy_myQuxust = sinon.spy(MyQuxust_events, 1);
+		let spy_mySpecialCom = sinon.spy(MySpecialCom_events, 1);
+		let spy_myAwesomeCom = sinon.spy(MyAwesomeCom_events, 1);
 
-		// setup nested components
+		// spy created
+		let spy_myQuxust_created = sinon.spy(MyQuxust.prototype, "created");
+		let spy_mySpecialCom_created = sinon.spy(MySpecialCom.prototype, "created");
+		let spy_myAwesomeCom_created = sinon.spy(MyAwesomeCom.prototype, "created");
+
 		$('body').append(`
 			<my-quxust>
 				<my-specical-com>
@@ -378,7 +382,6 @@ describe('@view decorator', async () => {
 
 		await delay(10);
 
-		// test
 		let markup = `
 			<my-quxust rendered="true">
 				<div class="x"></div>
@@ -406,54 +409,43 @@ describe('@view decorator', async () => {
 			</my-quxust>
 		`.removeGutter();
 
-		$('my-quxust').get(0).outerHTML.removeGutter().should.equal(markup);
+		// should render expected template
+		let myQuxstNode = $('my-quxust').get(0);
+		myQuxstNode.outerHTML.removeGutter().should.equal(markup);
 
-		// created should call only once
-		spy_createdMyQuxust.callCount.should.equal(1);
-		spy_createdMySpecialCom.callCount.should.equal(1);
-		spy_createdMyAwesomeCom.callCount.should.equal(1);
-		/*
-		// view-rendered should trigger only once
-		spy_viewRenderedMyQuxust.callCount.should.equal(1);
-		spy_viewRenderedMySpecialCom.callCount.should.equal(1);
-		spy_viewRenderedMyAwesomeCom.callCount.should.equal(1);
+		// should call rendered callback only once
+		spy_myQuxust.callCount.should.be.equal(1);
+		spy_mySpecialCom.callCount.should.be.equal(1);
+		spy_myAwesomeCom.callCount.should.be.equal(1);
 
-		spy_viewAlreadyRenderedMyQuxust.callCount.should.equal(0);
-		spy_viewAlreadyRenderedMySpecialCom.callCount.should.equal(0);
-		spy_viewAlreadyRenderedMyAwesomeCom.callCount.should.equal(0);
+		// should call created callback only once
+		spy_myQuxust_created.callCount.should.be.equal(1);
+		spy_mySpecialCom_created.callCount.should.be.equal(1);
+		spy_myAwesomeCom_created.callCount.should.be.equal(1);
 
 		$('my-quxust').remove();
-		$('body').append(markup);
+		$('body').append(myQuxstNode);
 
 		await delay(10);
 
-		// created should call only once
-		spy_createdMyQuxust.callCount.should.equal(2);
-		spy_createdMySpecialCom.callCount.should.equal(2);
-		spy_createdMyAwesomeCom.callCount.should.equal(2);
+		// should call rendered callback only once
+		spy_myQuxust.callCount.should.be.equal(1);
+		spy_mySpecialCom.callCount.should.be.equal(1);
+		spy_myAwesomeCom.callCount.should.be.equal(1);
 
-		// view-rendered should trigger only once
-		spy_viewRenderedMyQuxust.callCount.should.equal(1);
-		spy_viewRenderedMySpecialCom.callCount.should.equal(1);
-		spy_viewRenderedMyAwesomeCom.callCount.should.equal(1);
+		// should call created callback only once
+		spy_myQuxust_created.callCount.should.be.equal(1);
+		spy_mySpecialCom_created.callCount.should.be.equal(1);
+		spy_myAwesomeCom_created.callCount.should.be.equal(1);
 
-		spy_viewAlreadyRenderedMyQuxust.callCount.should.equal(1);
-		spy_viewAlreadyRenderedMySpecialCom.callCount.should.equal(1);
-		spy_viewAlreadyRenderedMyAwesomeCom.callCount.should.equal(1);
+		// Cleanup
+		MyQuxust_events[1].restore();
+		MySpecialCom_events[1].restore();
+		MyAwesomeCom_events[1].restore();
 
-		//cleanup
-		spy_createdMyQuxust.restore();
-		spy_createdMySpecialCom.restore();
-		spy_createdMyAwesomeCom.restore();
-
-		spy_viewRenderedMyQuxust.restore();
-		spy_viewRenderedMySpecialCom.restore();
-		spy_viewRenderedMyAwesomeCom.restore();
-
-		spy_viewAlreadyRenderedMyQuxust.restore();
-		spy_viewAlreadyRenderedMySpecialCom.restore();
-		spy_viewAlreadyRenderedMyAwesomeCom.restore();
-		*/
+		MyQuxust.prototype.created.restore();
+		MySpecialCom.prototype.created.restore();
+		MyAwesomeCom.prototype.created.restore();
 
 		done();
 
