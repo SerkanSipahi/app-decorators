@@ -181,7 +181,7 @@ describe('Register', async () => {
 
 		});
 
-		it('should call foo bar baz if created by dom it self', () => {
+		it('should call foo bar baz if created by dom it self', (done) => {
 
 			class MyLang extends HTMLFormElement {
 				createdCallback(){
@@ -211,7 +211,7 @@ describe('Register', async () => {
 			setTimeout(() => {
 
 				// start tests
-				document.querySelector('coffee-lang').foo().should.be.equal(1234);
+				document.querySelector('[is="coffee-lang"]').foo().should.be.equal(1234);
 				spy_myLang_foo.calledOnce.should.be.true();
 				spy_myLang_bar.calledOnce.should.be.true();
 
@@ -221,7 +221,7 @@ describe('Register', async () => {
 
 				done();
 
-			}, 40);
+			}, 10);
 
 		});
 	});
