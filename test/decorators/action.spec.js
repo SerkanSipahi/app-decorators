@@ -174,8 +174,21 @@ describe('@action decorator', async() => {
 
                 // cleanup
                 $('#test-page-container com-page3').remove();
+                $('a', page).on('click', e => e.preventDefault());
+
+                await delay(10);
+
+                await $('.path-1', page).clickAndWait(10);
+                await $('.path-2', page).clickAndWait(20);
+                await $('.path-3', page).clickAndWait(30);
+
+                // call counts
+                page_actionName1_spy.callCount.should.equal(2);
+                page_actionName2_spy.callCount.should.equal(2);
+
                 page_actionName1_spy.restore();
                 page_actionName2_spy.restore();
+                $('a', page).off('click', e => e.preventDefault());
 
                 $('#test-page-container').append(page);
                 await delay(10);
