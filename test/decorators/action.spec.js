@@ -1,10 +1,10 @@
 import { bootstrapPolyfills } from 'src/bootstrap';
-import { isOpera } from 'src/helpers/browser-detect';
 import { storage } from "src/libs/random-storage";
 import { delay } from 'src/helpers/delay';
 
 import $ from 'jquery';
 import 'src/helpers/jquery.click-and-wait';
+import 'src/helpers/history.back-forward-and-wait';
 
 import sinon from 'sinon';
 
@@ -163,10 +163,10 @@ describe('@action decorator', async() => {
                 let page_actionName2_spy = sinon.spy(page.$router.scope.getHandlers('actionName2')[0], null);
 
                 await $('.path-1', page).clickAndWait(10);
-                await $('.path-2', page).clickAndWait(20);
-                await $('.path-1', page).clickAndWait(30);
-                await $('.path-2', page).clickAndWait(40);
-                await $('.path-3', page).clickAndWait(50);
+                await $('.path-2', page).clickAndWait(10);
+                await $('.path-1', page).clickAndWait(10);
+                await $('.path-2', page).clickAndWait(10);
+                await $('.path-3', page).clickAndWait(10);
 
                 // call counts
                 page_actionName1_spy.callCount.should.equal(2);
@@ -179,8 +179,8 @@ describe('@action decorator', async() => {
                 await delay(10);
 
                 await $('.path-1', page).clickAndWait(10);
-                await $('.path-2', page).clickAndWait(20);
-                await $('.path-3', page).clickAndWait(30);
+                await $('.path-2', page).clickAndWait(10);
+                await $('.path-3', page).clickAndWait(10);
 
                 // call counts
                 page_actionName1_spy.callCount.should.equal(2);
@@ -197,8 +197,8 @@ describe('@action decorator', async() => {
                 let page_actionName2_1_spy = sinon.spy(page.$router.scope.getHandlers('actionName2')[0], null);
 
                 await $('.path-1', page).clickAndWait(10);
-                await $('.path-2', page).clickAndWait(20);
-                await $('.path-3', page).clickAndWait(30);
+                await $('.path-2', page).clickAndWait(10);
+                await $('.path-3', page).clickAndWait(10);
 
                 // call counts
                 page_actionName1_1_spy.callCount.should.equal(1);
@@ -226,8 +226,8 @@ describe('@action decorator', async() => {
                 let page_actionName2_spy = sinon.spy(page.$router.scope.getHandlers('actionName2')[0], null);
 
                 await $('.path-1', page).clickAndWait(10);
-                await $('.path-2', page).clickAndWait(20);
-                await $('.path-3', page).clickAndWait(30);
+                await $('.path-2', page).clickAndWait(10);
+                await $('.path-3', page).clickAndWait(10);
 
                 // call counts
                 page_actionName1_spy.callCount.should.equal(1);
@@ -285,7 +285,7 @@ describe('@action decorator', async() => {
 
             });
 
-            it('should re-init action router on attached if its detached before', (done) => {
+            it('should call correct methods if router detached and attached', done => {
 
                 // prepare test data
 
@@ -334,14 +334,9 @@ describe('@action decorator', async() => {
 
             });
 
-            it('should differ between different route instance on history back/forward', (done) => {
+            it('should differ between different route instance on history back/forward', done => {
 
-                // in this case make opera problem in combination with mocha, should and sinon!?!?
-                if(isOpera){
-                    done();
-                    return;
-                }
-
+                (async () => {
 
                 let page1 = Page3.create();
                 let page_actionName1_spy = sinon.spy(page1.$router.scope.getHandlers('actionName1')[0], null);
@@ -351,47 +346,42 @@ describe('@action decorator', async() => {
                 let page_actionName2_spy = sinon.spy(page2.$router.scope.getHandlers('actionName1')[0], null);
                 fixtureElement.appendChild(page2);
 
-                // ###### Page1
+                // Page1
+                await $('.path-1', page1).clickAndWait(50);
+                await $('.path-3', page1).clickAndWait(50);
+                await $('.path-1', page1).clickAndWait(50);
+                await $('.path-3', page1).clickAndWait(50);
 
-                setTimeout(() => $(page1).find('.path-1').get(0).click(), 0);
-                setTimeout(() => $(page1).find('.path-3').get(0).click(), 20);
+                await history.backAndWait(50);
+                await history.backAndWait(50);
+                await history.backAndWait(50);
 
-                setTimeout(() => $(page1).find('.path-1').get(0).click(), 40);
-                setTimeout(() => $(page1).find('.path-3').get(0).click(), 60);
+                page_actionName1_spy.callCount.should.be.aboveOrEqual(3);
+                page_actionName2_spy.callCount.should.equal(0);
 
-                setTimeout(() => history.back(), 80);
-                setTimeout(() => history.back(), 100);
-                setTimeout(() => history.back(), 120);
+                // Page2
+                await $('.path-1', page2).clickAndWait(50);
+                await $('.path-3', page2).clickAndWait(50);
+                await $('.path-1', page2).clickAndWait(50);
+                await $('.path-3', page2).clickAndWait(50);
 
-                setTimeout(() => {
+                await history.backAndWait(50);
+                await history.backAndWait(50);
+                await history.backAndWait(50);
 
-                    page_actionName1_spy.callCount.should.be.equal(4);
-                    page_actionName2_spy.callCount.should.be.equal(0);
+                page_actionName1_spy.callCount.should.be.aboveOrEqual(3);
+                page_actionName2_spy.callCount.should.be.aboveOrEqual(3);
 
-                }, 140);
+                //console.log('route different instance: ', page_actionName1_spy.callCount);
+                //console.log('route different instance: ', page_actionName2_spy.callCount);
 
-                // ###### Page2
+                // cleanup
+                page_actionName1_spy.restore();
+                page_actionName2_spy.restore();
 
-                setTimeout(() => $(page2).find('.path-3').get(0).click(), 180);
-                setTimeout(() => $(page2).find('.path-1').get(0).click(), 160);
+                done();
 
-                setTimeout(() => $(page2).find('.path-3').get(0).click(), 220);
-                setTimeout(() => $(page2).find('.path-1').get(0).click(), 200);
-
-                setTimeout(() => history.back(), 240);
-                setTimeout(() => history.back(), 260);
-                setTimeout(() => history.back(), 280);
-
-                setTimeout(() => {
-
-                    page_actionName1_spy.callCount.should.be.equal(4);
-                    page_actionName2_spy.callCount.should.be.equal(4);
-
-                    page_actionName1_spy.restore();
-                    page_actionName2_spy.restore();
-
-                    done();
-                }, 300);
+                })();
 
             });
 
