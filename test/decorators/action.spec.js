@@ -1,6 +1,8 @@
 import $ from 'jquery';
 import { bootstrapPolyfills } from 'src/bootstrap';
 import { isOpera } from 'src/helpers/browser-detect';
+import { storage } from "src/libs/random-storage";
+import { delay } from 'src/helpers/delay';
 
 import sinon from 'sinon';
 
@@ -10,6 +12,60 @@ describe('@action decorator', async() => {
     let { action, component, view, Router } = await System.import('app-decorators');
 
     describe('@action decorator', () => {
+
+        it('should call customElements hooks in right order', done => {
+
+            (async () => {
+
+            @component({
+                name: 'right-order-action',
+                scoped: true,
+            })
+            class RightOrderAction {
+                @action('/some/path.html') onPath(){
+                }
+            }
+
+            /**
+             *  Setup
+             */
+
+            $('body').append('<div class="test-right-order"></div>');
+
+            let createdCallback  = storage.get(RightOrderAction).get('@callbacks').get('created');
+            let attachedCallback = storage.get(RightOrderAction).get('@callbacks').get('attached');
+            let detachedCallback = storage.get(RightOrderAction).get('@callbacks').get('detached');
+
+            let spy_rightOrder_created  = sinon.spy(createdCallback,  0);
+            let spy_rightOrder_attached = sinon.spy(attachedCallback, 0);
+            let spy_rightOrder_detached = sinon.spy(detachedCallback, 0);
+
+            let rightOrderCom = RightOrderAction.create();
+            $('.test-right-order').append(rightOrderCom);
+            $('.test-right-order right-order-action').remove();
+            $('.test-right-order').append(rightOrderCom);
+
+            await delay(1);
+
+            /**
+             *  Test
+             */
+
+            spy_rightOrder_created.callCount.should.be.equal(1);
+            spy_rightOrder_attached.callCount.should.be.equal(2);
+            spy_rightOrder_detached.callCount.should.be.equal(1);
+
+            // cleanup
+            createdCallback[0].restore();
+            attachedCallback[0].restore();
+            detachedCallback[0].restore();
+            $('.test-right-order').remove();
+
+            done();
+
+            })();
+
+        });
 
         it('should add router instance to domNode.$router', () => {
 
