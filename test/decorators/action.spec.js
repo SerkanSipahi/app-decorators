@@ -1,8 +1,10 @@
-import $ from 'jquery';
 import { bootstrapPolyfills } from 'src/bootstrap';
 import { isOpera } from 'src/helpers/browser-detect';
 import { storage } from "src/libs/random-storage";
 import { delay } from 'src/helpers/delay';
+
+import $ from 'jquery';
+import 'src/helpers/jquery.click-and-wait';
 
 import sinon from 'sinon';
 
@@ -150,7 +152,9 @@ describe('@action decorator', async() => {
                 }
             }
 
-            it('should call action handler pass right args after clicking registered link', (done) => {
+            it('should reinit router after removing and appending', done => {
+
+                (async () => {
 
                 let page = Page3.create();
                 fixtureElement.appendChild(page);
@@ -158,38 +162,86 @@ describe('@action decorator', async() => {
                 let page_actionName1_spy = sinon.spy(page.$router.scope.getHandlers('actionName1')[0], null);
                 let page_actionName2_spy = sinon.spy(page.$router.scope.getHandlers('actionName2')[0], null);
 
-                setTimeout(() => $(page).find('.path-1').get(0).click(),  0);
-                setTimeout(() => $(page).find('.path-2').get(0).click(), 20);
-                setTimeout(() => $(page).find('.path-1').get(0).click(), 40);
-                setTimeout(() => $(page).find('.path-2').get(0).click(), 60);
-                setTimeout(() => $(page).find('.path-3').get(0).click(), 80);
+                await $('.path-1', page).clickAndWait(10);
+                await $('.path-2', page).clickAndWait(20);
+                await $('.path-1', page).clickAndWait(30);
+                await $('.path-2', page).clickAndWait(40);
+                await $('.path-3', page).clickAndWait(50);
 
-                setTimeout(() => {
+                // call counts
+                page_actionName1_spy.callCount.should.equal(2);
+                page_actionName2_spy.callCount.should.equal(2);
 
-                    // call counts
-                    page_actionName1_spy.callCount.should.equal(2);
-                    page_actionName2_spy.callCount.should.equal(2);
+                // cleanup
+                $('#test-page-container com-page3').remove();
+                page_actionName1_spy.restore();
+                page_actionName2_spy.restore();
 
-                    // records (passed args to handler)
-                    let record1 = page_actionName1_spy.args[0][0];
-                    should(record1).be.instanceof(CustomEvent);
-                    record1.type.should.be.equal('actionName1');
-                    record1.detail.name.should.be.equal('actionName1');
-                    record1.detail.urlpart.should.be.equal('pathname');
+                $('#test-page-container').append(page);
+                await delay(10);
 
-                    let record2 = page_actionName2_spy.args[1][0];
-                    should(record2).be.instanceof(CustomEvent);
-                    record2.type.should.be.equal('actionName2');
-                    record2.detail.name.should.be.equal('actionName2');
-                    record2.detail.urlpart.should.be.equal('pathname');
-                    record2.detail.params.id.should.be.equal(2334);
+                let page_actionName1_1_spy = sinon.spy(page.$router.scope.getHandlers('actionName1')[0], null);
+                let page_actionName2_1_spy = sinon.spy(page.$router.scope.getHandlers('actionName2')[0], null);
 
-                    // cleanup
-                    page_actionName1_spy.restore();
-                    page_actionName2_spy.restore();
+                await $('.path-1', page).clickAndWait(10);
+                await $('.path-2', page).clickAndWait(20);
+                await $('.path-3', page).clickAndWait(30);
 
-                    done();
-                }, 100);
+                // call counts
+                page_actionName1_1_spy.callCount.should.equal(1);
+                page_actionName2_1_spy.callCount.should.equal(1);
+
+                // cleanup
+                page_actionName1_1_spy.restore();
+                page_actionName2_1_spy.restore();
+
+                done();
+
+                })();
+
+            });
+
+
+            it('should pass correct args after clicking route', done => {
+
+                (async () => {
+
+                let page = Page3.create();
+                fixtureElement.appendChild(page);
+
+                let page_actionName1_spy = sinon.spy(page.$router.scope.getHandlers('actionName1')[0], null);
+                let page_actionName2_spy = sinon.spy(page.$router.scope.getHandlers('actionName2')[0], null);
+
+                await $('.path-1', page).clickAndWait(10);
+                await $('.path-2', page).clickAndWait(20);
+                await $('.path-3', page).clickAndWait(30);
+
+                // call counts
+                page_actionName1_spy.callCount.should.equal(1);
+                page_actionName2_spy.callCount.should.equal(1);
+
+                // records (passed args to handler)
+                let record1 = page_actionName1_spy.args[0][0];
+
+                should(record1).be.instanceof(CustomEvent);
+                record1.type.should.be.equal('actionName1');
+                record1.detail.name.should.be.equal('actionName1');
+                record1.detail.urlpart.should.be.equal('pathname');
+
+                let record2 = page_actionName2_spy.args[0][0];
+                should(record2).be.instanceof(CustomEvent);
+                record2.type.should.be.equal('actionName2');
+                record2.detail.name.should.be.equal('actionName2');
+                record2.detail.urlpart.should.be.equal('pathname');
+                record2.detail.params.id.should.be.equal(2334);
+
+                // cleanup
+                page_actionName1_spy.restore();
+                page_actionName2_spy.restore();
+
+                done();
+
+                })();
 
             });
 
