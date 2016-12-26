@@ -31,7 +31,6 @@ Please use for the first the [TodoMvc Example](https://github.com/SerkanSipahi/a
 ```js
 import { component, view, on } from 'app-decorators';
 
-@component() // make sure @component is the first component
 @view(`
 	<h3>{{head}}</h3>
 	<div>{{count}}</div>
