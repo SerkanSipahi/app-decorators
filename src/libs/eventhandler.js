@@ -57,8 +57,6 @@ class Eventhandler {
 	 * @param  {Object} ...args
 	 * @return {Object}
 	 */
-	static create(...args){
-		return new Eventhandler(...args);
 	}
 
 	/**

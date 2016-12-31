@@ -27,10 +27,10 @@ Router.create = function(config = {}){
 
 		tmpDomain: 'http://x.x',
 
-		history: Eventhandler.create({
+		history: new Eventhandler({
 			element: config.window || window || null,
 		}),
-		scope: Eventhandler.create({
+		scope: new Eventhandler({
 			element: config.scope || document && body || null,
 		}),
 

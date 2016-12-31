@@ -28,7 +28,7 @@ describe('Eventhandler Class', () => {
 
 		it('should return callback/s by given event', () => {
 
-			let eventHandler = Eventhandler.create({
+			let eventHandler = new Eventhandler({
 				events : [
 					[ "a .foo", foo ],
 					[ "a .bar", bar ],
@@ -127,7 +127,7 @@ describe('Eventhandler Class', () => {
 
 	});
 
-	describe('Eventhandler.create() and Eventhandler.prototype.off', () => {
+	describe('new Eventhandler and Eventhandler.prototype.off', () => {
 
 		let clickFoo = function() {};
 		let mouseupBoo = function() {};
@@ -165,7 +165,7 @@ describe('Eventhandler Class', () => {
 
 		it('should trigger and remove events', () => {
 
-			let eventHandler = Eventhandler.create({
+			let eventHandler = new Eventhandler({
 				events : [
 					[ "click .foo"  , clickFoo ],
 					[ "click .bar"  , clickBar ],
@@ -233,14 +233,14 @@ describe('Eventhandler Class', () => {
 			mouseupTestObject.should.have.propertyByPath('mouseup').eql(null);
 
 			eventHandler.off('mousedown');
-			Object.keys(eventHandler.config.events).should.have.length(0);
+			Object.keys(eventHandler._config.events).should.have.length(0);
 
 
 		});
 
 		it('should trigger and remove events if registered over on method', () => {
 
-			let eventHandler = Eventhandler.create({ element, bind: bindObject });
+			let eventHandler = new Eventhandler({ element, bind: bindObject });
 
 			eventHandler.on("click .foo", clickFoo);
 			eventHandler.on("click .bar", clickBar);
@@ -316,7 +316,7 @@ describe('Eventhandler Class', () => {
 
 			let triggerPassedValue = null;
 			let customCallback = function(e) { triggerPassedValue = e.detail; };
-			let eventHandler = Eventhandler.create({ element: document.body });
+			let eventHandler = new Eventhandler({ element: document.body });
 
 			eventHandler.on('customevent', customCallback);
 			let customeventCallbacks = eventHandler.getHandlers('customevent');

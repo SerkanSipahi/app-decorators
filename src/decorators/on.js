@@ -107,7 +107,7 @@ on.helper = {
 	 */
 	createLocalEventHandler: (localScopeEvents, domNode) => {
 
-		return Eventhandler.create({
+		return new Eventhandler({
 			events: localScopeEvents,
 			element: domNode,
 			bind: domNode,
@@ -126,7 +126,7 @@ on.helper = {
 		for(let eventEntry of eventsEntries){
 
 			let [ event, [ handler, node ] ] = eventEntry;
-			let eventHandler = Eventhandler.create({ element: node, bind: domNode });
+			let eventHandler = new Eventhandler({ element: node, bind: domNode });
 			let context = Object.prototype.toString.call(node);
 
 			eventHandler.on(event, handler);
