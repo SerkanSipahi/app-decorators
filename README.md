@@ -113,5 +113,5 @@ make compile
 make test
 ```
 
-(c) 2015 - 2016 Serkan Sipahi
+(c) 2015 - 2017 Serkan Sipahi
 App-Decorators may be freely distributed under the [MIT license](https://github.com/SerkanSipahi/app-decorators/blob/master/LICENSE).
