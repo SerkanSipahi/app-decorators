@@ -1,6 +1,7 @@
 import { bootstrapPolyfills } from 'src/bootstrap';
 import { isFirefox, isSafari } from 'src/helpers/browser-detect';
 import { removeGutter } from 'src/helpers/string';
+import { delay } from 'src/helpers/delay';
 
 import sinon from 'sinon';
 
@@ -9,7 +10,65 @@ describe('@on decorator', async () => {
 	await bootstrapPolyfills;
 	let { component, view, on, storage } = await System.import('app-decorators');
 
-	describe('Snack.prototype.$.config.on.events', function() {
+	describe('@on decorator', () => {
+
+		it('should call customElements hooks in right order', done => {
+
+			(async () => {
+
+			@component({
+				name: 'right-order-on',
+			})
+			class RightOrderOn {
+				@on('click .foo') onClickFoo(){
+
+				}
+			}
+
+			/**
+			 *  Setup
+			 */
+
+			$('body').append('<div class="test-right-on"></div>');
+
+			let createdCallback  = storage.get(RightOrderOn).get('@callbacks').get('created');
+			let attachedCallback = storage.get(RightOrderOn).get('@callbacks').get('attached');
+			let detachedCallback = storage.get(RightOrderOn).get('@callbacks').get('detached');
+
+			let spy_rightOrder_created  = sinon.spy(createdCallback,  0);
+			let spy_rightOrder_attached = sinon.spy(attachedCallback, 0);
+			let spy_rightOrder_detached = sinon.spy(detachedCallback, 0);
+
+			let rightOrderOn = RightOrderOn.create();
+			$('.test-right-on').append(rightOrderOn);
+			$('.test-right-on right-order-on').remove();
+			$('.test-right-on').append(rightOrderOn);
+
+			await delay(1);
+
+			/**
+			 *  Test
+			 */
+
+			spy_rightOrder_created.callCount.should.be.equal(1);
+			spy_rightOrder_attached.callCount.should.be.equal(2);
+			spy_rightOrder_detached.callCount.should.be.equal(1);
+
+			// cleanup
+			createdCallback[0].restore();
+			attachedCallback[0].restore();
+			detachedCallback[0].restore();
+			$('.test-right-on').remove();
+
+			done();
+
+			})();
+
+		});
+
+	});
+
+	describe('Snack events', function() {
 
 		it('should contain registered events over @on', () => {
 

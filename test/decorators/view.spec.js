@@ -4,7 +4,6 @@ import { EVENT_VIEW_RENDER } from 'src/libs/view';
 import { delay } from 'src/helpers/delay';
 import { storage } from "src/libs/random-storage";
 
-
 import sinon from 'sinon';
 
 // init special innerHTML for test
@@ -17,7 +16,7 @@ describe('@view decorator', async () => {
 	await bootstrapPolyfills;
 	let { component, view, on } = await System.import('app-decorators');
 
-	describe('in usage with @  (integration-test)', () => {
+	describe('in usage with @ (integration-test)', () => {
 
 		beforeEach(() =>
 	      	$('body').append('<div id="view-decorator"></div>')
@@ -36,6 +35,49 @@ describe('@view decorator', async () => {
 			@view.bind n = 'Hello';
 			@view.bind p = 'World';
 		}
+
+
+		it('should call customElements hooks in right order', done => {
+
+			(async () => {
+
+			/**
+			 *  Setup
+			 */
+
+			let createdCallback  = storage.get(serkan).get('@callbacks').get('created');
+			let attachedCallback = storage.get(serkan).get('@callbacks').get('attached');
+			let detachedCallback = storage.get(serkan).get('@callbacks').get('detached');
+
+			let spy_serkan_created  = sinon.spy(createdCallback,  0);
+			let spy_serkan_attached = sinon.spy(attachedCallback, 0);
+			let spy_serkan_detached = sinon.spy(detachedCallback, 0);
+
+			let serkanOrderCom = serkan.create();
+			$('#view-decorator').append(serkanOrderCom);
+			$('#view-decorator com-serkan').remove();
+			$('#view-decorator').append(serkanOrderCom);
+
+			await delay(1);
+
+			/**
+			 *  Test
+			 */
+
+			spy_serkan_created.callCount.should.be.equal(1);
+			spy_serkan_attached.callCount.should.be.equal(2);
+			spy_serkan_detached.callCount.should.be.equal(1);
+
+			// cleanup
+			createdCallback[0].restore();
+			attachedCallback[0].restore();
+			detachedCallback[0].restore();
+
+			done();
+
+			})();
+
+		});
 
 		it('should also create a element if element created from out of dom', done => {
 

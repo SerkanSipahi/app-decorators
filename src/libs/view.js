@@ -25,7 +25,6 @@ class View {
 		this.init(options);
 	}
 
-
 	/**
 	 * _rootNode
 	 * @type {WeakMap}

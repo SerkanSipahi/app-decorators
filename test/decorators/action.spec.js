@@ -21,7 +21,6 @@ describe('@action decorator', async() => {
 
             @component({
                 name: 'right-order-action',
-                scoped: true,
             })
             class RightOrderAction {
                 @action('/some/path.html') onPath(){
