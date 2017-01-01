@@ -1,53 +1,28 @@
-
-/**
- * Router (Copyright 2016 Serkan Sipahi)
- */
 class Router {
 
 	/**
-	 * foward()
-	 * @type {History}
+	 * _refs
+	 * @type {WeakMap}
 	 */
-	forward = null;
-
-	/**
-	 * back()
-	 * @type {History}
-	 */
-	back = null;
-
-	/**
-	 * _pushState()
-	 * @type {History}
-	 */
-	pushState = null;
-
-	/**
-	 * _replaceState()
-	 * @type {History}
-	 */
-	replaceState = null;
+	_refs = null;
 
 	/**
 	 * routes
-	 * @type {object}
+	 * @type {array}
 	 */
-	routes = {};
+	routes = [];
 
 	/**
-	 * forceUrlchange
-	 * @type {Boolean}
+	 * globalScope
+	 * @type {Object}
 	 */
-	forceUrlchange = false;
+	globalScope = {};
 
 	/**
 	 * scope
 	 * @type {Object}
 	 */
-	scope = {
-		action: null,
-		urlchange: null,
-	};
+	scope = {};
 
 	/**
 	 * event
@@ -125,7 +100,7 @@ class Router {
 	 * tmpDomain
 	 * @type {string}
      */
-	tmpDomain = '';
+	tmpDomain = 'http://x.x';
 
 	/**
 	 * constructor
@@ -137,15 +112,138 @@ class Router {
 		Object.assign(this, config);
 
 		this._setup();
-		this.init();
+		this.init(config);
+	}
 
+	/**
+	 * init
+	 * @return {Undefined}
+	 */
+	init(config = {}){
+
+		this._initRefs(config);
+		this._bindInternalCoreEvents();
+		this._initRoutes();
+
+		this.destroyed = false;
+
+	}
+
+	/**
+	 * reinit (alias for init)
+	 * @param options {object}
+	 */
+	reinit(options){
+		this.init(options);
+	}
+
+	/**
+	 * initialized
+	 * @returns {boolean}
+	 */
+	initialized(){
+		return this._refs.has(this);
+	}
+
+	/**
+	 * delete
+	 * it will delete references
+	 */
+	delete(){
+		this._refs.delete(this);
+	}
+
+	/**
+	 * _initRefs
+	 */
+	_initRefs({ routes, bind, history, globalScope, scope, helper }){
+
+		this._refs = new WeakMap([
+			[this, new Map([
+				['routes', routes],
+				['scope', scope],
+				['globalScope', globalScope],
+				['bind', bind],
+				['history', history],
+				['helper', helper],
+			])],
+		]);
+	}
+
+	/**
+	 * location
+	 */
+	get location() {
+		return this.helper.location;
+	}
+
+	/**
+	 * location
+	 * @param value
+	 */
+	set location(value) {
+		this.helper.location = value;
+	}
+
+	/**
+	 * queryString
+	 */
+	get queryString(){
+		return this.helper.queryString;
+	}
+
+	/**
+	 * RegExp
+	 */
+	RegExp(...args) {
+		return this.helper.RegExp(...args);
+	}
+
+	/**
+	 * guid
+	 */
+	guid(...args){
+		return this.helper.guid(...args);
+	}
+
+	/**
+	 * pushState
+	 * @param args
+	 * @returns {*}
+	 */
+	pushState(...args){
+		return this.history.pushState(...args);
+	}
+
+	/**
+	 * replaceState
+	 * @param args
+	 * @returns {*}
+	 */
+	replaceState(...args){
+		return this.history.replaceState(...args);
+	}
+
+	/**
+	 * forward
+	 * @returns {*}
+	 */
+	forward(){
+		return this.history.forward();
+	}
+
+	/**
+	 * back
+	 * @returns {*}
+	 */
+	back(){
+		return this.history.back();
 	}
 
 	/**
 	 * _setup
      */
 	_setup(){
-
 		this._uid = this.guid();
 	}
 
@@ -244,7 +342,7 @@ class Router {
 
 		this.scope.on(name, event => {
 
-			let { search, hash } = this.createURL(this.helper.location.href);
+			let { search, hash } = this.createURL(this.location.href);
 			let searchParams = this.queryString.parse(search);
 			let hashParams = this.queryString.parse(hash);
 
@@ -434,53 +532,7 @@ class Router {
 	 * @return {Promise}
 	 */
 	Promise(handler=null) {
-
-		if(!handler){
-			throw `Please pass a handler function handler(){}!`;
-		}
-
 		return new this.helper.Promise(handler);
-
-	}
-
-	/**
-	 * RegExp
-	 */
-	get RegExp() {
-
-		return this.helper.RegExp;
-
-	}
-
-	/**
-	 * queryString
-     */
-	get queryString(){
-
-		return this.helper.queryString;
-
-	}
-
-	/**
-	 * guid
-	 */
-	get guid(){
-
-		return this.helper.guid;
-
-	}
-
-	/**
-	 * init
-	 * @return {Undefined}
-	 */
-	init(){
-
-		this._bindInternalCoreEvents();
-		this._initRoutes();
-
-		this.destroyed = false;
-
 	}
 
 	/**
@@ -490,7 +542,7 @@ class Router {
 	_bindInternalCoreEvents(){
 
 		this.scope.on(this.event.action, ::this._onAction);
-		this.history.on(this.event.popstate, event => {
+		this.globalScope.on(this.event.popstate, event => {
 
 			/**
 			 * if back/forward button in use, we have to check in which
@@ -515,7 +567,7 @@ class Router {
 	_inPopstateScope(event){
 
 		let route_uid = event.state && event.state.route_uid;
-		let inPopstateScope = this._uid === event.state.route_uid;
+		let inPopstateScope = this._uid === route_uid;
 
 		return (route_uid && inPopstateScope);
 	}
@@ -527,7 +579,7 @@ class Router {
 	_removeInternalCoreEvents(){
 
 		this.scope.off(this.event.action);
-		this.history.off(this.event.popstate);
+		this.globalScope.off(this.event.popstate);
 
 		this.scope.off(this.event.urlchange);
 
@@ -553,7 +605,7 @@ class Router {
 	 */
 	_initRoutes(){
 
-		if(!this.routes){
+		if(!this.routes.length){
 			return;
 		}
 
@@ -642,7 +694,7 @@ class Router {
 		// extract defined_event_action e.g. "click" from "click a"
 		let defined_event_action = this._getDefinedEventAction();
 		// check if event is triggered by "click" or triggered by back/forward button and return href
-		let href = event.type === defined_event_action ? event.target.href : this.helper.location.href;
+		let href = event.type === defined_event_action ? event.target.href : this.location.href;
 		return href;
 
 	}
@@ -1199,7 +1251,7 @@ class Router {
 
 		this._runRoute = true;
 
-		let href = this.helper.location.href;
+		let href = this.location.href;
 		let { fragment } = this.createURL(href);
 		let matchedUrlObjects = this.whoami(fragment);
 
