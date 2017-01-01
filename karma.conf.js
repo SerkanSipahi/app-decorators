@@ -82,6 +82,7 @@ module.exports = function (config) {
 				'node_modules/handlebars/dist/**/*.js',
 				'node_modules/webcomponents.js/webcomponents-lite.js',
 				'node_modules/named-js-regexp/lib/named-js-regexp.js',
+				'node_modules/extend/index.js',
 			]
 		},
 		autoWatch: true,
