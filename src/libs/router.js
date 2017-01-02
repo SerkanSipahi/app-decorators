@@ -1,12 +1,6 @@
 class Router {
 
 	/**
-	 * _refs
-	 * @type {WeakMap}
-	 */
-	_refs = null;
-
-	/**
 	 * routes
 	 * @type {array}
 	 */
@@ -25,6 +19,20 @@ class Router {
 	scope = {};
 
 	/**
+	 * helper
+	 * @type {Object}
+	 */
+	helper = {
+		createURL: null,
+		encodeURI: null,
+		location: null,
+		Promise: null,
+		RegExp: null,
+		queryString: null,
+		guid: null,
+	};
+
+	/**
 	 * event
 	 * @type {Object}
 	 */
@@ -39,20 +47,6 @@ class Router {
 	 */
 	mode = {
 		shadowRoute: null,
-	};
-
-	/**
-	 * helper
-	 * @type {Object}
-	 */
-	helper = {
-		createURL: null,
-		encodeURI: null,
-		location: null,
-		Promise: null,
-		RegExp: null,
-		queryString: null,
-		guid: null,
 	};
 
 	/**
@@ -109,7 +103,14 @@ class Router {
 	 */
 	constructor(config = {}){
 
-		Object.assign(this, config);
+		this.routes = config.routes;
+		this.bind = config.bind;
+		this.history = config.history;
+		this.globalScope = config.globalScope;
+		this.scope = config.scope;
+		this.helper = config.helper;
+		this.event = config.event;
+		this.mode = config.mode;
 
 		this._setup();
 		this.init(config);
@@ -307,6 +308,7 @@ class Router {
 
 		this._removeInternalCoreEvents();
 		this._removeRegisteredEvents();
+		this._removeRefs();
 
 		this.destroyed = true;
 
@@ -597,6 +599,14 @@ class Router {
 			let { name } = allRoutes[route];
 			this.off(name);
 		}
+	}
+
+	/**
+	 * _removeRefs
+	 * @return {undefined}
+	 */
+	_removeRefs(){
+		this.delete();
 	}
 
 	/**

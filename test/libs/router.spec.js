@@ -614,10 +614,12 @@ describe('Class Router', async () => {
 			});
 			// setup
 			let router = Router.create({
-				 event: {
-				 	action: 'myEvent a'
-				 },
-				 location: locationMock,
+				event: {
+					action: 'myEvent a',
+				},
+				helper: {
+					location: locationMock,
+				}
 			});
 
 			//*** Test click event ***

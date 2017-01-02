@@ -48,9 +48,23 @@ function action(route) {
 
         map.get('@callbacks').get('attached').push(domNode => {
 
-            (domNode.$router && domNode.$router.destroyed)
-                ? domNode.$router.init()
-                : null;
+            if(domNode.$router.initialized()){
+                return;
+            }
+
+            let events = map.get('@action').get('events');
+            let config = Router.makeConfig({
+                routes : events,
+                scope  : domNode,
+                bind   : domNode,
+            });
+
+            /**
+             * Using the same instance is 30% faster in
+             * (Chrome, Opera) and no difference in Firefox
+             * @see: https://jsperf.com/new-class-vs-singleton
+             */
+            domNode.$router.reinit(config);
 
         });
 

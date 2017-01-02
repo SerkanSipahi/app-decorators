@@ -78,6 +78,11 @@ function view(template, options = {}) {
 				return;
 			}
 
+			/**
+			 * Using the same instance is 30% faster in
+			 * (Chrome, Opera) and no difference in Firefox
+			 * @see: https://jsperf.com/new-class-vs-singleton
+			 */
 			domNode.$view.reinit({
 				rootNode: domNode,
 				prerenderer: HandlebarsRuntime.template,
