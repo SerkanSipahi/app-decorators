@@ -17,15 +17,21 @@ class Router {
 
 	/**
 	 * globalScope
-	 * @type {Object}
+	 * @type {HTMLElement}
 	 */
-	globalScope = {};
+	get globalScope(){
+		let _ref = this._refs.get(this);
+		return _ref && _ref.get('globalScope');
+	}
 
 	/**
 	 * scope
-	 * @type {Object}
+	 * @type {HTMLElement}
 	 */
-	scope = {};
+	get scope(){
+		let _ref = this._refs.get(this);
+		return _ref && _ref.get('scope');
+	}
 
 	/**
 	 * helper
@@ -114,8 +120,6 @@ class Router {
 
 		this.bind = config.bind;
 		this.history = config.history;
-		this.globalScope = config.globalScope;
-		this.scope = config.scope;
 		this.helper = config.helper;
 		this.event = config.event;
 		this.mode = config.mode;
@@ -165,7 +169,7 @@ class Router {
 	/**
 	 * _initRefs
 	 */
-	_initRefs({ routes = [], bind, history, globalScope, scope, helper }){
+	_initRefs({ routes = [], scope, globalScope, bind, history, helper }){
 
 		this._refs = new WeakMap([
 			[this, new Map([
@@ -304,6 +308,10 @@ class Router {
 	 */
 	trigger(event = '', params = {}){
 
+		if(!this._refs.has(this)){
+			return null;
+		}
+
 		this.scope.trigger(event, params);
 
 	}
@@ -313,6 +321,10 @@ class Router {
 	 * @return {Undefined}
 	 */
 	destroy() {
+
+		if(!this._refs.has(this)){
+			return null;
+		}
 
 		this._removeInternalCoreEvents();
 		this._removeRegisteredEvents();
