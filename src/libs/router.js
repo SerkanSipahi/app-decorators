@@ -38,10 +38,6 @@ class Router {
 	 * @type {Object}
 	 */
 	helper = {
-		createURL: null,
-		encodeURI: null,
-		location: null,
-		Promise: null,
 		RegExp: null,
 		queryString: null,
 		guid: null,
@@ -181,21 +177,6 @@ class Router {
 				['helper', helper],
 			])],
 		]);
-	}
-
-	/**
-	 * location
-	 */
-	get location() {
-		return this.helper.location;
-	}
-
-	/**
-	 * location
-	 * @param value
-	 */
-	set location(value) {
-		this.helper.location = value;
 	}
 
 	/**
@@ -364,7 +345,7 @@ class Router {
 
 		this.scope.on(name, event => {
 
-			let { search, hash } = this.createURL(this.location.href);
+			let { search, hash } = this.createURL(location.href);
 			let searchParams = this.queryString.parse(search);
 			let hashParams = this.queryString.parse(hash);
 
@@ -495,7 +476,7 @@ class Router {
 			this.promise[name] = [];
 		}
 
-		let promise = this.Promise(resolve => {
+		let promise = new Promise(resolve => {
 			this.promise[name].push(resolve);
 		});
 
@@ -525,36 +506,16 @@ class Router {
 	}
 
 	/**
-	 * encodeURI
-	 * @param  {String} uri
-	 * @return {String}
-	 */
-	encodeURI(uri){
-
-		return this.helper.encodeURI(uri);
-
-	}
-
-	/**
 	 * createURL
 	 * @param  {String} href
 	 * @return {URL} url
 	 */
 	createURL(href){
 
-		let url = new this.helper.createURL(href);
+		let url = new URL(href);
 		url.fragment = url.href.replace(url.origin, '');
 		return url;
 
-	}
-
-	/**
-	 * Promise
-	 * @param  {Function} handler
-	 * @return {Promise}
-	 */
-	Promise(handler=null) {
-		return new this.helper.Promise(handler);
 	}
 
 	/**
@@ -691,7 +652,7 @@ class Router {
 			});
 
 			if(this._isDefinedEventAction(event.type)){
-				let url = this.encodeURI(fragment);
+				let url = encodeURI(fragment);
 				let route_uid = this._uid;
 				this.pushState({ route_uid }, null, url);
 			}
@@ -724,7 +685,7 @@ class Router {
 		// extract defined_event_action e.g. "click" from "click a"
 		let defined_event_action = this._getDefinedEventAction();
 		// check if event is triggered by "click" or triggered by back/forward button and return href
-		let href = event.type === defined_event_action ? event.target.href : this.location.href;
+		let href = event.type === defined_event_action ? event.target.href : location.href;
 		return href;
 
 	}
@@ -817,7 +778,7 @@ class Router {
 	 */
 	_onUrlchange(event){
 
-		if(!(event.detail instanceof this.helper.createURL)){
+		if(!(event.detail instanceof URL)){
 			return null;
 		}
 
@@ -1251,7 +1212,7 @@ class Router {
 	go(route, params = {}){
 
 		let url = this._constructURL(route, params);
-		this.pushState(null, null, this.encodeURI(url));
+		this.pushState(null, null, encodeURI(url));
 
 	}
 
@@ -1263,12 +1224,12 @@ class Router {
 	 */
 	redirect(url, soft = true){
 
-		let encodedURI = this.encodeURI(url);
+		let encodedURI = encodeURI(url);
 
 		if(soft){
-			this.pushState(null, null, this.encodeURI(encodedURI));
+			this.pushState(null, null, encodeURI(encodedURI));
 		} else {
-			this.location.href = encodedURI;
+			location.href = encodedURI;
 		}
 
 	}
@@ -1281,7 +1242,7 @@ class Router {
 
 		this._runRoute = true;
 
-		let href = this.location.href;
+		let href = location.href;
 		let { fragment } = this.createURL(href);
 		let matchedUrlObjects = this.whoami(fragment);
 

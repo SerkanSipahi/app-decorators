@@ -26,10 +26,6 @@ let routerConfig = {
         shadowRoute: false,
     },
     helper: {
-        createURL  : window.URL,
-        encodeURI  : window.encodeURI,
-        location   : window.location,
-        Promise    : Promise,
         RegExp     : RegExp,
         queryString: queryString,
         guid       : guid,

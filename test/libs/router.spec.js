@@ -608,18 +608,15 @@ describe('Class Router', async () => {
 
 		it('should get current href by passed event', () => {
 
-			// mock location ( see above import)
-			let locationMock = new Location({
-				href : 'http://mockdomain.com/event/pushState/href.html'
-			});
+			// set mock location.href
+			history.replaceState({} , 'mock1', '/event/pushState/href.html');
+			let currentDomain = `${location.protocol}//${location.host}`;
+
 			// setup
 			let router = Router.create({
 				event: {
 					action: 'myEvent a',
 				},
-				helper: {
-					location: locationMock,
-				}
 			});
 
 			//*** Test click event ***
@@ -634,7 +631,7 @@ describe('Class Router', async () => {
 			//*** Test pushstate event ***
 			// mock pushstate event  ( see above import)
 			let eventPushstateMock = new Event('pushstate');
-			router._getCurrentHref(eventPushstateMock).should.be.equal('http://mockdomain.com/event/pushState/href.html');
+			router._getCurrentHref(eventPushstateMock).should.be.equal(`${currentDomain}/event/pushState/href.html`);
 
 			// cleanup
 			router.destroy();
@@ -856,25 +853,6 @@ describe('Class Router', async () => {
 			url.search.should.equal('?a=1&b=2');
 			url.hash.should.equal('#foo');
 			url.fragment.should.equal('/path/to/somewhere.html?a=1&b=2#foo');
-
-			// cleanup
-			router.destroy();
-
-		});
-
-	});
-
-	describe('Promise method', () => {
-
-		it('should return promise object', () => {
-
-			// setup
-			let router = Router.create({
-				scope: document.createElement('div'),
-			});
-
-			// test
-			router.Promise(function(){}).should.be.Promise();
 
 			// cleanup
 			router.destroy();
