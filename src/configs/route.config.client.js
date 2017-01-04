@@ -10,13 +10,6 @@ let routerConfig = {
     globalScope: window,
     bind  : null,
 
-    history: {
-        forward     : ::history.forward,
-        back        : ::history.back,
-        pushState   : ::history.pushState,
-        replaceState: ::history.replaceState,
-    },
-
     event: {
         action   : 'click a',
         popstate : 'popstate',
