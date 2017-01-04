@@ -1,10 +1,19 @@
 class Router {
 
 	/**
+	 *
+	 * @type {WeakMap}
+	 * @private
+	 */
+	_refs = null;
+
+	/**
 	 * routes
 	 * @type {array}
 	 */
-	routes = [];
+	get routes(){
+		return this._refs.get(this).get('routes');
+	}
 
 	/**
 	 * globalScope
@@ -103,7 +112,6 @@ class Router {
 	 */
 	constructor(config = {}){
 
-		this.routes = config.routes;
 		this.bind = config.bind;
 		this.history = config.history;
 		this.globalScope = config.globalScope;
@@ -157,7 +165,7 @@ class Router {
 	/**
 	 * _initRefs
 	 */
-	_initRefs({ routes, bind, history, globalScope, scope, helper }){
+	_initRefs({ routes = [], bind, history, globalScope, scope, helper }){
 
 		this._refs = new WeakMap([
 			[this, new Map([

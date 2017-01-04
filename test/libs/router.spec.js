@@ -2106,14 +2106,13 @@ describe('Class Router', async () => {
 			// setup
 			let spy_myRoute1 = sinon.spy(() => {});
 			let spy_myRoute2 = sinon.spy(() => {});
+			let scope = document.createElement('div');
+			let routes = [
+				['myRoute1 /some/path1.html', spy_myRoute1],
+				['myRoute2 /some/path2.html', spy_myRoute2],
+			];
 
-			let router = Router.create({
-				scope: document.createElement('div'),
-				routes: [
-					['myRoute1 /some/path1.html', spy_myRoute1],
-					['myRoute2 /some/path2.html', spy_myRoute2],
-				],
-			});
+			let router = Router.create({ routes, scope });
 
 			// test 1
 			router.destroy();
@@ -2123,8 +2122,9 @@ describe('Class Router', async () => {
 			spy_myRoute1.callCount.should.be.equal(0);
 			spy_myRoute2.callCount.should.be.equal(0);
 
-			// test 2
-			router.init();
+			// test 2 (reinit again)
+			let config = Router.makeConfig({ routes, scope });
+			router.reinit(config);
 
 			router.trigger('myRoute1');
 			router.trigger('myRoute2');
