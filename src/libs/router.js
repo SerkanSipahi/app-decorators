@@ -34,28 +34,12 @@ class Router {
 	}
 
 	/**
-	 * history.forward
-	 * @type {history}
+	 * bind
+	 * @type {HTMLElement}
 	 */
-	forward = ::history.forward;
-
-	/**
-	 * history.back
-	 * @type {history}
-	 */
-	back = ::history.back;
-
-	/**
-	 * history.pushState
-	 * @type {history}
-	 */
-	pushState = ::history.pushState;
-
-	/**
-	 * history.replaceState
-	 * @type {history}
-	 */
-	replaceState = ::history.replaceState;
+	get bind(){
+		return this._refs.get(this).get('bind');
+	}
 
 	/**
 	 * helper
@@ -138,7 +122,6 @@ class Router {
 	 */
 	constructor(config = {}){
 
-		this.bind = config.bind;
 		this.helper = config.helper;
 		this.event = config.event;
 		this.mode = config.mode;
@@ -221,6 +204,40 @@ class Router {
 	 */
 	guid(...args){
 		return this.helper.guid(...args);
+	}
+
+	/**
+	 * pushState
+	 * @param args
+	 * @returns {*}
+	 */
+	pushState(...args){
+		return history.pushState(...args);
+	}
+
+	/**
+	 * replaceState
+	 * @param args
+	 * @returns {*}
+	 */
+	replaceState(...args){
+		return history.replaceState(...args);
+	}
+
+	/**
+	 * forward
+	 * @returns {*}
+	 */
+	forward(){
+		return history.forward();
+	}
+
+	/**
+	 * back
+	 * @returns {*}
+	 */
+	back(){
+		return history.back();
 	}
 
 	/**
