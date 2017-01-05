@@ -13,15 +13,9 @@ let classof = value => {
 class View {
 
 	/**
-	 * constructor
 	 * @param options {object}
 	 */
 	constructor(options = {}){
-
-		this._templateNode = options.templateNode;
-		this._regex = options.regex || this._regex;
-		this._vars = options.vars || {};
-
 		this.init(options);
 	}
 
@@ -35,7 +29,7 @@ class View {
 	 * _templateNode
 	 * @type {Element}
 	 */
-	_templateNode = null;
+	_templateNode = document.createElement('div');
 
 	/**
 	 * _regex
@@ -86,14 +80,14 @@ class View {
 	/**
 	 * init
 	 * it will init core references
+	 * @param vars {Object}
 	 * @param rootNode {HTMLElement}
 	 * @param prerenderer {function}
 	 * @param precompiler {function}
 	 * @param template {string|object}
 	 */
-	init({ rootNode, prerenderer, precompiler, template } = {}){
+	init({ vars = {}, rootNode, prerenderer, precompiler, template } = {}){
 
-		// init refs
 		if(!rootNode){
 			throw new Error(`
 				Required: rootNode.
@@ -102,6 +96,7 @@ class View {
 			`);
 		}
 
+		// init refs
 		this._refs = new WeakMap([
 			[this, new Map([
 				['_rootNode',   rootNode],
@@ -109,6 +104,9 @@ class View {
 				['_prerender',  prerenderer],
 			])],
 		]);
+
+		// init vars
+		Object.assign(this._vars, this._immutable(vars));
 
 		// init template
 		template ? this.setTemplate(template) : null;
@@ -374,6 +372,15 @@ class View {
 	 */
 	_getRootNode(){
 		return this._refs.get(this).get('_rootNode');
+	}
+
+	/**
+	 * _immutable
+	 * @param value {*}
+	 * @private
+	 */
+	_immutable(value){
+		return JSON.parse(JSON.stringify(value));
 	}
 
 	/**

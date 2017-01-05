@@ -86,7 +86,6 @@ describe('class View', () => {
 			let view = new View({
 				rootNode: document.createElement('p'),
 				template: '<div>{{foo}}</div><span>{{bar}}</span>',
-				templateNode: document.createElement('div'),
 				precompiler: Handlebars.precompile,
 				prerenderer: Handlebars.template,
 			});
@@ -315,7 +314,6 @@ describe('class View', () => {
 				precompiler: Handlebars.precompile,
 				prerenderer: Handlebars.template,
 				rootNode: document.createElement('p'),
-				templateNode: document.createElement('div'),
 				vars: {
 					foo: 'Hello',
 					bar: 'World!'
@@ -343,7 +341,6 @@ describe('class View', () => {
 				precompiler: Handlebars.precompile,
 				prerenderer: Handlebars.template,
 				rootNode: rootNode,
-				templateNode: document.createElement('div'),
 				vars: {
 					foo: 'Thats',
 					bar: 'nice'
@@ -370,7 +367,6 @@ describe('class View', () => {
 				precompiler: Handlebars.precompile,
 				prerenderer: Handlebars.template,
 				rootNode: rootNode,
-				templateNode: document.createElement('div'),
 				vars: {
 					foo: 'Thats',
 					bar: 'nice'
@@ -398,7 +394,6 @@ describe('class View', () => {
 				precompiler: Handlebars.precompile,
 				prerenderer: Handlebars.template,
 				rootNode: rootNode,
-				templateNode: document.createElement('div'),
 				vars: {
 					foo: 'Gokcen'
 				},
@@ -424,7 +419,6 @@ describe('class View', () => {
 				precompiler: Handlebars.precompile,
 				prerenderer: Handlebars.template,
 				rootNode: document.createElement('my-element'),
-				templateNode: document.createElement('div'),
 				vars: {
 					foo: 'Liya'
 				},
