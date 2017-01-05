@@ -54,7 +54,6 @@ function view(template, options = {}) {
 			let $view = new View({
 				prerenderer: HandlebarsRuntime.template,
 				rootNode: domNode,
-				templateNode: document.createElement('div'),
 				vars: viewVars,
 				template: template,
 			});
@@ -91,7 +90,7 @@ function view(template, options = {}) {
 
 		map.get('@callbacks').get('detached').push(domNode => {
 
-			domNode.$view.delete();
+			domNode.$view.destroy();
 
 		});
 	}

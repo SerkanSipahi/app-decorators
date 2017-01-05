@@ -252,7 +252,7 @@ describe('class View', () => {
 				prerenderer: Handlebars.template,
 			});
 
-			view.delete();
+			view.destroy();
 			view.initialized().should.be.false();
 
 		});
@@ -271,7 +271,7 @@ describe('class View', () => {
 
 			let view = new View(options);
 
-			view.delete();
+			view.destroy();
 			view.reinit(options);
 			view.initialized().should.be.true();
 
@@ -289,7 +289,7 @@ describe('class View', () => {
 				prerenderer: Handlebars.template,
 			});
 
-			view.delete();
+			view.destroy();
 
 			(() => { view.reinit(); }).should.throw(`
 				Required: rootNode.

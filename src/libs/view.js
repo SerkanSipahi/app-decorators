@@ -113,10 +113,10 @@ class View {
 	}
 
 	/**
-	 * delete
+	 * destroy
 	 * it will delete references
 	 */
-	delete(){
+	destroy(){
 		this._refs.delete(this);
 	}
 
