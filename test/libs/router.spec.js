@@ -936,7 +936,9 @@ describe('Class Router', async () => {
 
 			// setup
 			sinon.spy(Router.prototype, '_applyActionEvent');
-			let router = Router.create();
+			let router = Router.create({
+				scope: document.createElement('div')
+			});
 			router.on('action', ::router._onAction);
 
 			// test
@@ -958,7 +960,9 @@ describe('Class Router', async () => {
 
 			// setup
 			sinon.spy(Router.prototype, '_applyActionEvent');
-			let router = Router.create();
+			let router = Router.create({
+				scope: document.createElement('div')
+			});
 			router.on('action', ::router._onAction);
 
 			// test 1

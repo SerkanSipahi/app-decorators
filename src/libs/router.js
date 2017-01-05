@@ -5,50 +5,12 @@ class Router {
 	 * @type {WeakMap}
 	 * @private
 	 */
-	_refs = null;
-
-	/**
-	 * routes
-	 * @type {array}
-	 */
-	get routes(){
-		return this._refs.get(this).get('routes');
-	}
-
-	/**
-	 * globalScope
-	 * @type {HTMLElement}
-	 */
-	get globalScope(){
-		let _ref = this._refs.get(this);
-		return _ref && _ref.get('globalScope');
-	}
-
-	/**
-	 * scope
-	 * @type {HTMLElement}
-	 */
-	get scope(){
-		let _ref = this._refs.get(this);
-		return _ref && _ref.get('scope');
-	}
-
-	/**
-	 * bind
-	 * @type {HTMLElement}
-	 */
-	get bind(){
-		return this._refs.get(this).get('bind');
-	}
-
-	/**
-	 * helper
-	 * @type {Object}
-	 */
-	helper = {
-		RegExp: null,
-		queryString: null,
-		guid: null,
+	_refs = {
+		routes: null,
+		scope: null,
+		globalScope: null,
+		bind: null,
+		helper: null,
 	};
 
 	/**
@@ -104,12 +66,6 @@ class Router {
 	_uid = null;
 
 	/**
-	 * destroyed
-	 * @type {boolean}
-     */
-	destroyed = false;
-
-	/**
 	 * tmpDomain
 	 * @type {string}
      */
@@ -122,11 +78,9 @@ class Router {
 	 */
 	constructor(config = {}){
 
-		this.helper = config.helper;
 		this.event = config.event;
 		this.mode = config.mode;
 
-		this._setup();
 		this.init(config);
 	}
 
@@ -139,9 +93,7 @@ class Router {
 		this._initRefs(config);
 		this._bindInternalCoreEvents();
 		this._initRoutes();
-
-		this.destroyed = false;
-
+		this._createUid();
 	}
 
 	/**
@@ -171,7 +123,7 @@ class Router {
 	/**
 	 * _initRefs
 	 */
-	_initRefs({ routes = [], scope, globalScope, bind, history, helper }){
+	_initRefs({ routes = [], scope, globalScope, bind, helper }){
 
 		this._refs = new WeakMap([
 			[this, new Map([
@@ -179,31 +131,64 @@ class Router {
 				['scope', scope],
 				['globalScope', globalScope],
 				['bind', bind],
-				['history', history],
 				['helper', helper],
 			])],
 		]);
 	}
 
 	/**
+	 * routes
+	 * @type {array}
+	 */
+	get routes(){
+		return this._refs.get(this).get('routes');
+	}
+
+	/**
+	 * globalScope
+	 * @type {HTMLElement}
+	 */
+	get globalScope(){
+		let _ref = this._refs.get(this);
+		return _ref && _ref.get('globalScope');
+	}
+
+	/**
+	 * scope
+	 * @type {HTMLElement}
+	 */
+	get scope(){
+		let _ref = this._refs.get(this);
+		return _ref && _ref.get('scope');
+	}
+
+	/**
+	 * bind
+	 * @type {HTMLElement}
+	 */
+	get bind(){
+		return this._refs.get(this).get('bind');
+	}
+
+	/**
 	 * queryString
 	 */
 	get queryString(){
-		return this.helper.queryString;
+		return this._refs.get(this).get('helper').queryString;
 	}
 
 	/**
 	 * RegExp
 	 */
 	RegExp(...args) {
-		return this.helper.RegExp(...args);
+		return this._refs.get(this).get('helper').RegExp(...args);
 	}
 
 	/**
 	 * guid
 	 */
 	guid(...args){
-		return this.helper.guid(...args);
+		return this._refs.get(this).get('helper').guid(...args);
 	}
 
 	/**
@@ -241,9 +226,9 @@ class Router {
 	}
 
 	/**
-	 * _setup
+	 * _createUid
      */
-	_setup(){
+	_createUid(){
 		this._uid = this.guid();
 	}
 
@@ -316,9 +301,6 @@ class Router {
 		this._removeInternalCoreEvents();
 		this._removeRegisteredEvents();
 		this._removeRefs();
-
-		this.destroyed = true;
-
 	}
 
 	/**

@@ -44,7 +44,7 @@ let initOnMap = (storage, Class) => {
         map.set('@on', new Map([
             ["events", new Map([
                 ["local", []],
-                ["context", []]
+                ["context", []],
             ])],
             ["callbacksDefined", false],
         ]))

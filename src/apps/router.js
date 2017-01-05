@@ -21,7 +21,11 @@ Router.create = function(config = {}){
  */
 Router.makeConfig = function(config = {}){
 
-	let _routerConfig = extend(true, {}, routerConfig, config);
+	let _routerConfig = extend(
+		true, {},
+		routerConfig,
+		config
+	);
 
 	_routerConfig.scope = new Eventhandler({
 		element: _routerConfig.scope,
