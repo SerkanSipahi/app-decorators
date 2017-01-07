@@ -123,7 +123,15 @@ class Router {
 	/**
 	 * _initRefs
 	 */
-	_initRefs({ routes = [], scope, globalScope, bind, helper }){
+	_initRefs({ routes = [], scope, globalScope, helper, bind }){
+
+		if(!scope || !globalScope || !helper){
+			throw new Error(`
+				Required: scope, globalScope and helper.
+				Optional: use routes when passing routes through constructor.
+				Optional: use bind when overriding scope of handlers.
+			`);
+		}
 
 		this._refs = new WeakMap([
 			[this, new Map([
