@@ -304,7 +304,7 @@ describe('Eventhandler Class', () => {
 			mouseupTestObject.should.have.propertyByPath('mouseup').eql(null);
 
 			eventHandler.off('mousedown');
-			Object.keys(eventHandler.config.events).should.have.length(0);
+			Object.keys(eventHandler._config.events).should.have.length(0);
 
 		});
 
