@@ -8,9 +8,13 @@ describe('Eventhandler Class', () => {
 
 		it('should prepare eventDomain string into event and delegateSelector', () => {
 
-			Eventhandler.prepareEventdomain('click').should.containDeep(['click', null]);
-			Eventhandler.prepareEventdomain('dbclick .abc').should.containDeep(['dbclick', '.abc']);
-			Eventhandler.prepareEventdomain('mouseup .abc .def').should.containDeep(['mouseup', '.abc .def']);
+			let eventHandler = new Eventhandler({
+				element: document.createElement("div"),
+			});
+
+			eventHandler.prepareEventdomain('click').should.containDeep(['click', null]);
+			eventHandler.prepareEventdomain('dbclick .abc').should.containDeep(['dbclick', '.abc']);
+			eventHandler.prepareEventdomain('mouseup .abc .def').should.containDeep(['mouseup', '.abc .def']);
 
 		});
 
@@ -80,14 +84,18 @@ describe('Eventhandler Class', () => {
 			* 		{ ".koo": function koo(){} },
 			* 	],
 			* 	"mousedown": [
-			* 		{ null:  naz},
-			* 		{ null:  laz},
+			* 		{ null:  function naz(){} },
+			* 		{ null:  function laz(){} },
 			* 	],
 			* }
 			**/
 
 			// group events
-			let groupedObject = Eventhandler.groupEvents(passedObject);
+			let eventHandler = new Eventhandler({
+				element: document.createElement("div"),
+			});
+
+			let groupedObject = eventHandler.groupEvents(passedObject);
 			// tests click group
 			groupedObject.should.have.propertyByPath("click", 0, ".foo").eql(foo);
 			groupedObject.should.have.propertyByPath("click", 1, ".bar").eql(bar);
@@ -113,8 +121,12 @@ describe('Eventhandler Class', () => {
 
 			// Test 1 ( with new created clone context )
 			let div = document.createElement('div');
+			let eventHandler = new Eventhandler({
+				element: document.createElement("div"),
+			});
+
 			div.innerHTML = 'Just Dom';
-			let newEvents = Eventhandler.bindObjectToEventList(events, div);
+			let newEvents = eventHandler.bindObjectToEventList(events, div);
 
 			newEvents[0][1]().should.be.equal(div);
 			newEvents[0][1]().innerHTML.should.be.equal('Just Dom');

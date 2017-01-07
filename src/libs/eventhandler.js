@@ -48,10 +48,10 @@ class Eventhandler {
 			if(!config.events){
 				return;
 			}
-			config.events = Eventhandler.bindObjectToEventList(config.events, config.bind);
+			config.events = this.bindObjectToEventList(config.events, config.bind);
 		}
 		// group events
-		this._config.events = Eventhandler.groupEvents(config.events);
+		this._config.events = this.groupEvents(config.events);
 
 		// add events eventListener
 		this._addEventCollection(this._config.events);
@@ -70,7 +70,7 @@ class Eventhandler {
 	 * @param  {String} eventDomain
 	 * @return {Array} [ type, delegateSelector ]
 	 */
-	static prepareEventdomain(eventDomain) {
+	prepareEventdomain(eventDomain) {
 
 		if(Object.prototype.toString.call(eventDomain).slice(8, -1) !== 'String'){
 			throw new Error('Passed argument must be a string');
@@ -92,13 +92,13 @@ class Eventhandler {
 	 * @param  {array} events
 	 * @return {Object}
 	 */
-	static groupEvents(events = []){
+	groupEvents(events = []){
 
 		let tmpConfig = {};
 
 		for(let [ eventDomain, handler ] of events){
 
-			let [ type, delegateSelector ] = Eventhandler.prepareEventdomain(eventDomain);
+			let [ type, delegateSelector ] = this.prepareEventdomain(eventDomain);
 			if(!tmpConfig[type]){
 				tmpConfig[type] = [];
 			}
@@ -118,7 +118,7 @@ class Eventhandler {
 	 * @param  {Object} bindObject
 	 * @return {array}
 	 */
-	static bindObjectToEventList(events = [], bindObject = {}){
+	bindObjectToEventList(events = [], bindObject = {}){
 
 		let contextBindContainer = [];
 
@@ -139,7 +139,7 @@ class Eventhandler {
 	 */
 	on(eventDomain, handler){
 
-		let [ type, delegateSelector ] = Eventhandler.prepareEventdomain(eventDomain);
+		let [ type, delegateSelector ] = this.prepareEventdomain(eventDomain);
 		// if event type not registered, add to eventlistener
 		if(!this._config.events[type]){
 			this._config.events[type] = [];
@@ -160,7 +160,7 @@ class Eventhandler {
 	 */
 	off(eventDomain) {
 
-		let [ type, delegateSelector ] = Eventhandler.prepareEventdomain(eventDomain);
+		let [ type, delegateSelector ] = this.prepareEventdomain(eventDomain);
 
 		if(!this._config.events[type]) {
 			return;
