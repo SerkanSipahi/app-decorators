@@ -44,12 +44,6 @@ class View {
 	_vars = {};
 
 	/**
-	 * Precompiled View-Template
-	 * @type {Function}
-	 */
-	_compiled = {};
-
-	/**
 	 * _slot description
 	 * @type {String}
 	 */
@@ -102,6 +96,9 @@ class View {
 				['rootNode',   rootNode],
 				['precompile', precompiler],
 				['prerender',  prerenderer],
+				['templates', new Map([
+					['base', '']
+				])]
 			])],
 		]);
 
@@ -225,22 +222,24 @@ class View {
      */
     compile(type = 'VARS', template, name = 'base'){
 
+		let templates = this._refs.get(this).get('templates');
+
         switch(type) {
             case NO_VARS: {
-                this._compiled[name] = () => template;
+				templates.set(name, () => template);
                 break;
             }
 			case VARS: {
-				this._compiled[name] = this._compile(template);
+				templates.set(name, this._compile(template));
 				break;
 			}
             case PRE_COMPILED: {
-                this._compiled[name] = this._prerender(template);
+				templates.set(name, this._prerender(template));
                 break;
             }
         }
 
-		return this._compiled[name];
+		return templates.get(name);
     }
 
 	/**
@@ -299,7 +298,7 @@ class View {
 	 * @param tmpLocalViewVars {object}
 	 */
 	_render(templateName, tmpLocalViewVars){
-		return this._compiled[templateName](tmpLocalViewVars);
+		return this._refs.get(this).get('templates').get(templateName)(tmpLocalViewVars);
 	}
 
 	/**
