@@ -99,9 +99,9 @@ class View {
 		// init refs
 		this._refs = new WeakMap([
 			[this, new Map([
-				['_rootNode',   rootNode],
-				['_precompile', precompiler],
-				['_prerender',  prerenderer],
+				['rootNode',   rootNode],
+				['precompile', precompiler],
+				['prerender',  prerenderer],
 			])],
 		]);
 
@@ -125,7 +125,7 @@ class View {
 	 * @type {Element}
 	 */
 	get el() {
-		return this._refs.get(this).get('_rootNode');
+		return this._refs.get(this).get('rootNode');
 	};
 
 	/**
@@ -349,7 +349,7 @@ class View {
 	 */
 	_precompile(template){
 
-		let precompiledString = this._refs.get(this).get('_precompile')(template);
+		let precompiledString = this._refs.get(this).get('precompile')(template);
 		let precompiledObject = (new Function('return ' + precompiledString)());
 
 		return precompiledObject;
@@ -362,7 +362,7 @@ class View {
 	 * @private
 	 */
 	_prerender(precompiled){
-		return this._refs.get(this).get('_prerender')(precompiled);
+		return this._refs.get(this).get('prerender')(precompiled);
 	}
 
 	/**
@@ -371,7 +371,7 @@ class View {
 	 * @private
 	 */
 	_getRootNode(){
-		return this._refs.get(this).get('_rootNode');
+		return this._refs.get(this).get('rootNode');
 	}
 
 	/**
@@ -418,7 +418,7 @@ class View {
 	 * @return {Element}
 	 */
 	getRootNode(){
-		return this._refs.get(this).get('_rootNode');
+		return this._refs.get(this).get('rootNode');
 	}
 
 	/**
@@ -442,7 +442,7 @@ class View {
 	trigger(type){
 
 		let event = new Event(type);
-		let _rootNode = this._refs.get(this).get('_rootNode');
+		let _rootNode = this._refs.get(this).get('rootNode');
 
 		_rootNode.dispatchEvent(event);
 	}
