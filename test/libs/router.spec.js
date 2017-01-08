@@ -1431,6 +1431,8 @@ describe('Class Router', async () => {
 
 		it('should handle promise or handler correctly', (done) => {
 
+			(async () => {
+
 			// setup
 			let router = Router.create({
 				scope: document.createElement('div'),
@@ -1458,12 +1460,13 @@ describe('Class Router', async () => {
 			spy_handler.callCount.should.equal(2);
 			spy_handler.args[1][0].should.propertyByPath('hello').eql('world');
 
-			// need this timeout for promise tests
-			setTimeout(() => {
-				// cleanup
-				router.destroy();
-				done();
-			}, 10);
+			await delay(1);
+
+			// cleanup
+			router.destroy();
+			done();
+
+			})();
 
 		});
 
@@ -1883,14 +1886,19 @@ describe('Class Router', async () => {
 
 		it('should trigger registered promise event', (done) => {
 
+			(async () => {
+
 			// test 1
 			router.on('SomePathURL /some/path/url.html').then(({fragment, id}) => {
 				return `${fragment}?id=${id}`;
 			}).should.be.finally.eql('/some/path/url.html?id=123');
 
-			router.trigger('SomePathURL', { fragment: '/some/path/url.html', id: 123 });
+			router.trigger('SomePathURL', {fragment: '/some/path/url.html', id: 123});
 
-			setTimeout(done, 200);
+			await delay(20);
+			done()
+
+			})()
 
 		});
 
@@ -2083,7 +2091,7 @@ describe('Class Router', async () => {
 
 	describe('init method', () => {
 
-		it('should init all registered events again if initialized with constructor', () => {
+		it('should init all registered events again if initialized with reinit', () => {
 
 			// setup
 			let spy_myRoute1 = sinon.spy(() => {});
