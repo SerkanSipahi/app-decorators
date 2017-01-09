@@ -2,9 +2,9 @@ export const VARS              = 'VARS';
 export const NO_VARS           = 'NO_VARS';
 export const PRE_COMPILED      = 'PRE_COMPILED';
 
-export const EVENT_VIEW_RENDER = 'view:render';
-export const EVENT_VIEW_SLOT   = 'view:slot';
-export const EVENT_VIEW_DONE   = 'view:done';
+export const EVENT_VIEW_RENDER = 'render';
+export const EVENT_VIEW_SLOT   = 'slotchange';
+export const EVENT_VIEW_DONE   = 'done';
 
 let classof = value => {
 	return Object.prototype.toString.call(value).slice(8, -1);
