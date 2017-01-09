@@ -9,16 +9,42 @@ class Eventhandler {
 	 * _rootNode
 	 * @type {WeakMap}
 	 */
-	_refs = null;
-
-	/**
-	 * Passed _config object
-	 * @type {Object}
-	 */
-	_config = {
+	_refs = {
 		events: {},
 		element: null,
 		bind: null,
+	};
+
+	/**
+	 * _element
+	 */
+	set _events(events) {
+		this._refs.get(this).set('events', events);
+	};
+	get _events() {
+		let _result = this._refs.get(this);
+		return _result && this._refs.get(this).get('events') || {};
+	};
+
+	/**
+	 * _element
+	 */
+	set _element(element) {
+		this._refs.get(this).set('element', element);
+	};
+	get _element() {
+		let _result = this._refs.get(this);
+		return _result && this._refs.get(this).get('element') || {};
+	};
+
+	/**
+	 * _bind
+	 */
+	set _bind(bind) {
+		this._refs.get(this).set('bind', bind);
+	};
+	get _bind() {
+		return this._refs.get(this).get('bind');
 	};
 
 	/**
@@ -28,41 +54,89 @@ class Eventhandler {
 	_mainEventCallackContainer = {};
 
 	/**
+	 * init
 	 * Initialize Eventhandler
 	 * @return {undefined}
 	 */
-	_init(config){
+	init({ element, events, bind } = {}){
 
-		/**
-		* Throw error if no element passed
-		*/
-		if(!config.element){
-			throw new Error('Please pass an element. See documentation!');
-		}
+		this._initRefs({ element, events, bind });
+
 		// Assign element
-		this._config.element = config.element;
+		this._element = element;
 
 		// bind bindObject
-		if(config.bind){
-			this._config.bind = config.bind;
-			if(!config.events){
+		if(bind){
+			this._bind = bind;
+			if(!events){
 				return;
 			}
-			config.events = this.bindObjectToEventList(config.events, config.bind);
+			events = this._bindObjectToEventList(events, bind);
 		}
+
 		// group events
-		this._config.events = this.groupEvents(config.events);
+		let groupedEvents = this._groupEvents(events);
+		this._events = groupedEvents;
 
 		// add events eventListener
-		this._addEventCollection(this._config.events);
+		this._addEventCollection(groupedEvents);
 
 	}
 
 	/**
-	 * Create and return an instace of Eventhandler
-	 * @param  {Object} ...args
-	 * @return {Object}
+	 * initialized
+	 * @returns {boolean}
 	 */
+	initialized(){
+		return this._refs.has(this);
+	}
+
+	/**
+	 * reinit (alias for init)
+	 * @param options {object}
+	 */
+	reinit(options){
+		this.init(options);
+	}
+
+	/**
+	 * destroy
+	 * it will delete references
+	 */
+	destroy(){
+		this._reset();
+		this._refs.delete(this);
+	}
+
+	/**
+	 * _initRefs
+	 * @param element {HTMLElement}
+	 * @param events {Array}
+	 * @param bind {Object}
+	 * @private
+	 */
+	_initRefs({ element, events, bind }){
+
+		// init refs
+		if(!element){
+			throw new Error(`
+				Required: element.
+				Optional: use "events" when registering over constructor.
+				Optional: use "bind" when bind object to handler.
+			`);
+		}
+
+		if(!element instanceof HTMLElement) {
+			throw new Error('Passed element should be instance of HTMLElement');
+		}
+
+		this._refs = new WeakMap([
+			[this, new Map([
+				['events', {}],
+				['element', null],
+				['bind',  null],
+			])],
+		]);
 	}
 
 	/**
@@ -70,7 +144,7 @@ class Eventhandler {
 	 * @param  {String} eventDomain
 	 * @return {Array} [ type, delegateSelector ]
 	 */
-	prepareEventdomain(eventDomain) {
+	_prepareEventdomain(eventDomain) {
 
 		if(Object.prototype.toString.call(eventDomain).slice(8, -1) !== 'String'){
 			throw new Error('Passed argument must be a string');
@@ -92,13 +166,13 @@ class Eventhandler {
 	 * @param  {array} events
 	 * @return {Object}
 	 */
-	groupEvents(events = []){
+	_groupEvents(events = []){
 
 		let tmpConfig = {};
 
 		for(let [ eventDomain, handler ] of events){
 
-			let [ type, delegateSelector ] = this.prepareEventdomain(eventDomain);
+			let [ type, delegateSelector ] = this._prepareEventdomain(eventDomain);
 			if(!tmpConfig[type]){
 				tmpConfig[type] = [];
 			}
@@ -118,7 +192,7 @@ class Eventhandler {
 	 * @param  {Object} bindObject
 	 * @return {array}
 	 */
-	bindObjectToEventList(events = [], bindObject = {}){
+	_bindObjectToEventList(events = [], bindObject = {}){
 
 		let contextBindContainer = [];
 
@@ -139,16 +213,18 @@ class Eventhandler {
 	 */
 	on(eventDomain, handler){
 
-		let [ type, delegateSelector ] = this.prepareEventdomain(eventDomain);
+		let events = this._events;
+		let [ type, delegateSelector ] = this._prepareEventdomain(eventDomain);
+
 		// if event type not registered, add to eventlistener
-		if(!this._config.events[type]){
-			this._config.events[type] = [];
-			this._addEvent(this._config.element, type, this._config.events);
+		if(!events[type]){
+			events[type] = [];
+			this._addEvent(this._element, type, events);
 		}
 
 		// add delegate selector to event list
-		this._config.events[type].push({
-			[ delegateSelector ]: this._config.bind ? this._config.bind::handler: handler,
+		events[type].push({
+			[ delegateSelector ]: this._bind ? this._bind::handler: handler,
 		});
 
 	}
@@ -160,29 +236,30 @@ class Eventhandler {
 	 */
 	off(eventDomain) {
 
-		let [ type, delegateSelector ] = this.prepareEventdomain(eventDomain);
+		let events = this._events;
+		let [ type, delegateSelector ] = this._prepareEventdomain(eventDomain);
 
-		if(!this._config.events[type]) {
+		if(!events[type]) {
 			return;
 		}
 
 		let index = 0;
-		for(let delegateObject of this._config.events[type]){
+		for(let delegateObject of events[type]){
 			// remove delegate callback if passed e.g. "click .foo"
 			if(delegateSelector && delegateObject[delegateSelector]){
-				this._config.events[type].splice(index, 1);
+				events[type].splice(index, 1);
 			}
 			// remove all callbacks if passed type e.g. "click" or e.g. "click" is empty
-			if((type && delegateSelector === null) || this._config.events[type].length === 0){
-				delete this._config.events[type];
+			if((type && delegateSelector === null) || events[type].length === 0){
+				delete events[type];
 			}
 			index++;
 		}
 
 		// remove listener if eventsList empty or not exists
-		if(!this._config.events[type]){
-			this._config.element.removeEventListener(type, this._mainEventCallackContainer[type]);
-			delete this._config.events[type];
+		if(!events[type]){
+			this._element.removeEventListener(type, this._mainEventCallackContainer[type]);
+			delete events[type];
 		}
 
 	}
@@ -199,7 +276,7 @@ class Eventhandler {
 			detail: value,
 			bubbles: true,
 		});
-		this._config.element.dispatchEvent(event);
+		this._element.dispatchEvent(event);
 
 	}
 
@@ -209,12 +286,12 @@ class Eventhandler {
 	 * @return {Array|null}
 	 */
 	getHandlers(eventType){
-		return this._config.events[eventType] || null;
+		return this._events[eventType] || null;
 	}
 
 	/**
 	 * Add collection of events
-	 * Example: see above constructor _config.events
+	 * Example: see above constructor _events
 	 * @param {Objbect} events
 	 */
 	_addEventCollection(events){
@@ -224,7 +301,7 @@ class Eventhandler {
 			if(!events.hasOwnProperty(type)){
 				continue;
 			}
-			this._addEvent(this._config.element, type, this._config.events);
+			this._addEvent(this._element, type, this._events);
 		}
 
 	}
@@ -268,15 +345,17 @@ class Eventhandler {
 	 * Removes all eventhandler
 	 * @return {undefined}
 	 */
-	reset() {
+	_reset() {
 
-		if(!Object.keys(this._config.events).length){
+		let events = this._events;
+
+		if(!Object.keys(events).length){
 			return;
 		}
 
 		// add events eventlistener
-		for(let type in this._config.events){
-			if(!this._config.events.hasOwnProperty(type)){
+		for(let type in events){
+			if(!events.hasOwnProperty(type)){
 				continue;
 			}
 			this.off(type);

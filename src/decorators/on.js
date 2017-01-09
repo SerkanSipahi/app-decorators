@@ -68,23 +68,38 @@ function on(eventDomain, listenerElement = 'local') {
 
 		map.get('@callbacks').get('attached').push(domNode => {
 
-			/*
-			 // info: $eventHandler.${context}_${event} <<-- nicht vergessen !
-			 (domNode.$eventHandler && domNode.$eventHandler.destroyed)
-			 ? domNode.$eventHandler.init()
-			 : null;
-			 */
+			let initialized = false;
+			Object.values(domNode.$eventHandler).forEach(eventHandler => {
+				if(eventHandler.initialized()){
+					initialized = true;
+				}
+			});
+
+			if(initialized){
+				return;
+			}
+
+			Object.entries(domNode.$eventHandler).forEach(([name, eventHandler]) => {
+
+				/**
+				 * Using the same instance is 30% faster in
+				 * (Chrome, Opera) and no difference in Firefox
+				 * @see: https://jsperf.com/new-class-vs-singleton
+				 */
+				eventHandler.reinit({
+					events:  map.get('@on').get('events').get(name),
+					element: domNode,
+					bind: domNode,
+				});
+			});
+
 		});
 
 		map.get('@callbacks').get('detached').push(domNode => {
 
-			// cleanup: remove all eventhandler
 			Object.values(domNode.$eventHandler).forEach(eventHandler => {
-				eventHandler.reset();
+				eventHandler.destroy();
 			});
-
-			// reset reference
-			//target.$eventHandler = null;
 		});
 
 		map.get('@on').set('callbacksDefined', true);

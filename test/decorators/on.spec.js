@@ -141,6 +141,53 @@ describe('@on decorator', async () => {
 
 		});
 
+		it('should test click when created and reinit (detached/attached) again', done => {
+
+			(async () => {
+
+			let clickCount = 0;
+			let testDiv = document.createElement('div');
+			testDiv.id = 'test-div';
+			document.body.appendChild(testDiv);
+
+			@view(`
+				<div class="a"> A </div>
+				<div class="b"> B </div>
+			`)
+			@component()
+			class Burger {
+				@on('click .a') onFoo_a() {
+					clickCount++;
+				}
+			}
+
+			// create instane
+			let burger = Burger.create();
+			testDiv.appendChild(burger);
+
+			// test 1
+			burger.querySelector('.a').click();
+			should(clickCount).be.eql(1);
+
+			// remove and test clicking
+			$('com-burger').remove();
+			await delay(10);
+
+			burger.querySelector('.a').click();
+			should(clickCount).be.eql(1);
+
+			// append again
+			testDiv.appendChild(burger);
+			await delay(10);
+
+			burger.querySelector('.a').click();
+			should(clickCount).be.eql(2);
+
+			done()
+
+			})()
+		});
+
 		it('should ensure that eventhandler has right context', () => {
 
 			@view('<div class="a"> A </div>', { renderedFlag: false })

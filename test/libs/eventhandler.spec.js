@@ -12,9 +12,9 @@ describe('Eventhandler Class', () => {
 				element: document.createElement("div"),
 			});
 
-			eventHandler.prepareEventdomain('click').should.containDeep(['click', null]);
-			eventHandler.prepareEventdomain('dbclick .abc').should.containDeep(['dbclick', '.abc']);
-			eventHandler.prepareEventdomain('mouseup .abc .def').should.containDeep(['mouseup', '.abc .def']);
+			eventHandler._prepareEventdomain('click').should.containDeep(['click', null]);
+			eventHandler._prepareEventdomain('dbclick .abc').should.containDeep(['dbclick', '.abc']);
+			eventHandler._prepareEventdomain('mouseup .abc .def').should.containDeep(['mouseup', '.abc .def']);
 
 		});
 
@@ -58,7 +58,7 @@ describe('Eventhandler Class', () => {
 
 	});
 
-	describe('Evenhandler.groupEvents', () => {
+	describe('Evenhandler._groupEvents', () => {
 
 		it('should groupby event type', () => {
 
@@ -95,7 +95,7 @@ describe('Eventhandler Class', () => {
 				element: document.createElement("div"),
 			});
 
-			let groupedObject = eventHandler.groupEvents(passedObject);
+			let groupedObject = eventHandler._groupEvents(passedObject);
 			// tests click group
 			groupedObject.should.have.propertyByPath("click", 0, ".foo").eql(foo);
 			groupedObject.should.have.propertyByPath("click", 1, ".bar").eql(bar);
@@ -110,7 +110,7 @@ describe('Eventhandler Class', () => {
 
 	});
 
-	describe('Eventhandler.bindObjectToEventList(events, bindObject)', () => {
+	describe('Eventhandler.prototype._bindObjectToEventList(events, bindObject)', () => {
 
 		it('should bind new context without overwriting orginal events object', () => {
 
@@ -126,7 +126,7 @@ describe('Eventhandler Class', () => {
 			});
 
 			div.innerHTML = 'Just Dom';
-			let newEvents = eventHandler.bindObjectToEventList(events, div);
+			let newEvents = eventHandler._bindObjectToEventList(events, div);
 
 			newEvents[0][1]().should.be.equal(div);
 			newEvents[0][1]().innerHTML.should.be.equal('Just Dom');
@@ -245,7 +245,7 @@ describe('Eventhandler Class', () => {
 			mouseupTestObject.should.have.propertyByPath('mouseup').eql(null);
 
 			eventHandler.off('mousedown');
-			Object.keys(eventHandler._config.events).should.have.length(0);
+			Object.keys(eventHandler._events).should.have.length(0);
 
 
 		});
@@ -316,7 +316,80 @@ describe('Eventhandler Class', () => {
 			mouseupTestObject.should.have.propertyByPath('mouseup').eql(null);
 
 			eventHandler.off('mousedown');
-			Object.keys(eventHandler._config.events).should.have.length(0);
+			Object.keys(eventHandler._events).should.have.length(0);
+
+		});
+
+
+		it('should not work when destroy called', () => {
+
+			let eventHandler = new Eventhandler({ element, bind: bindObject });
+			eventHandler.on("click .foo", clickFoo);
+
+			// setup tests (spying)
+			clickCallbacks = eventHandler.getHandlers('click');
+			sinon.spy(clickCallbacks[0], ".foo");
+
+			// test click event
+			element.querySelector('.foo').click();
+			clickCallbacks[0][".foo"].callCount.should.eql(1);
+
+			eventHandler.destroy();
+
+			// test click event
+			element.querySelector('.foo').click();
+			clickCallbacks[0][".foo"].callCount.should.eql(1);
+
+			//cleanup spy
+			clickCallbacks[0][".foo"].restore();
+
+		});
+
+		it('should work again when called destroy and reinit after again', () => {
+
+			let clickCount = 0;
+			let mockFunction = () => {};
+
+			let eventHandler = new Eventhandler({ element, bind: bindObject });
+			eventHandler.on("click .foo", clickFoo);
+
+			// setup tests (spying)
+			clickCallbacks = eventHandler.getHandlers('click');
+			sinon.spy(clickCallbacks[0], ".foo");
+
+			// test click event
+			element.querySelector('.foo').click();
+			clickCallbacks[0][".foo"].callCount.should.eql(1);
+
+			eventHandler.destroy();
+
+			// test click event
+			element.querySelector('.foo').click();
+			clickCallbacks[0][".foo"].callCount.should.eql(1);
+
+			//cleanup spy
+			clickCallbacks[0][".foo"].restore();
+			eventHandler.destroy();
+
+			// reinit again on the same instance
+			eventHandler.reinit({
+				element,
+				events: [
+					["click .foo", clickFoo]
+				],
+			});
+
+			// setup tests (spying)
+			clickCallbacks = eventHandler.getHandlers('click');
+			sinon.spy(clickCallbacks[0], ".foo");
+
+			// test click event
+			element.querySelector('.foo').click();
+			clickCallbacks[0][".foo"].callCount.should.eql(1);
+
+			//cleanup spy and eventhandler
+			eventHandler.destroy();
+			clickCallbacks[0][".foo"].restore();
 
 		});
 

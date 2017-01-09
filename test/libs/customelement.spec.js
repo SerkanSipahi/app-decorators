@@ -32,7 +32,7 @@ describe('Register', async () => {
 
 	describe('_addExtends method', () => {
 
-		it('should add extends prop by config', () => {
+		it('should add extends prop by _config', () => {
 
 			class Foo {}
 			Foo = Register._addExtends(Foo, { extends: 'img' });
