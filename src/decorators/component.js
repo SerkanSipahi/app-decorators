@@ -33,7 +33,7 @@ function getComponentName() {
  */
 function init(callbackName, callbacks = [() => {}], vars){
 
-	callbacks.forEach(cb => cb(this));
+	callbacks.forEach(cb => cb(this, vars));
 
 	this[callbackName]? this[callbackName](vars): null;
 	this::trigger(callbackName, vars);
