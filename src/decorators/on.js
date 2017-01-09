@@ -51,17 +51,16 @@ function on(eventDomain, listenerElement = 'local') {
 
 			// register local (domNode) events
 			let eventsLocal = map.get('@on').get('events').get('local');
-			let eventHandler = on.helper.createLocalEventHandler(eventsLocal, domNode);
-
 			if(eventsLocal.length){
+				let eventHandler = on.helper.createLocalEventHandler(eventsLocal, domNode);
 				namespace.create(domNode, '$eventHandler.local', eventHandler);
 			}
 
 			// register custom events
 			let eventsContext = map.get('@on').get('events').get('context');
 			if(eventsContext.length){
-				on.helper.createCustomEventHandler(eventsContext, domNode, (eventHandler, context, event) => {
-					namespace.create(domNode, `$eventHandler.${context}_${event}`, eventHandler);
+				on.helper.createCustomEventHandler(eventsContext, domNode, (eventHandler, name) => {
+					namespace.create(domNode, `$eventHandler.${name}`, eventHandler);
 				});
 			}
 
@@ -127,10 +126,11 @@ on.helper = {
 
 			let [ event, [ handler, node ] ] = eventEntry;
 			let eventHandler = new Eventhandler({ element: node, bind: domNode });
-			let context = Object.prototype.toString.call(node);
+			let contextName = Object.prototype.toString.call(node).slice(8, -1).toLowerCase();
+			let eventHandlerName = `${event}_${contextName}_${handler.name}`;
 
 			eventHandler.on(event, handler);
-			callback(eventHandler, context, event);
+			callback(eventHandler, eventHandlerName);
 		}
 
 		return domNode;

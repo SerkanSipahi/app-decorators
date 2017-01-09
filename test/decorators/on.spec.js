@@ -236,9 +236,7 @@ describe('@on decorator', async () => {
 			}
 
 			let context = Context.create();
-
-			let prefixName = Object.prototype.toString.call(window);
-			let context_resize_Callbacks = context.$eventHandler[`${prefixName}_resize`].getHandlers('resize');
+			let context_resize_Callbacks = context.$eventHandler['resize_window_onResize'].getHandlers('resize');
 			let onResize = context_resize_Callbacks[0][null];
 
 			document.body.appendChild(context);
