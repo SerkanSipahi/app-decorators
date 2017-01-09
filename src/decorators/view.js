@@ -41,7 +41,7 @@ function view(template, options = {}) {
 
 			let viewBinds = {};
 			let entries = map.get('@view').get('bind');
-			entries.forEach(item => viewBinds[item[0]] = item[1]);
+			entries.forEach(([key, value]) => viewBinds[key] = value);
 
 			let viewVars = Object.assign({},
 				viewBinds,
