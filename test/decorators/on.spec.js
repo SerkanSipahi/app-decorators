@@ -1,5 +1,5 @@
 import { bootstrapPolyfills } from 'src/bootstrap';
-import { isFirefox, isSafari } from 'src/helpers/browser-detect';
+import { isFirefox } from 'src/helpers/browser-detect';
 import { removeGutter } from 'src/helpers/string';
 import { delay } from 'src/helpers/delay';
 
@@ -119,11 +119,6 @@ describe('@on decorator', async () => {
 			let milkey_1_a_function_spy = sinon.spy(milkey_1_clickCallbacks[0], ".a");
 			let milkey_1_b_function_spy = sinon.spy(milkey_1_clickCallbacks[1], ".b");
 
-			// can simulate click on safari
-			if(isSafari) {
-				return;
-			}
-
 			// test 1
 			milkey_1.querySelector('.a').click();
 			milkey_1_a_function_spy.callCount.should.eql(1);
@@ -160,10 +155,6 @@ describe('@on decorator', async () => {
 				}
 			}
 
-			if(isSafari) {
-				return;
-			}
-
 			//create instances
 			let hanuta_1 = Hanuta.create({cid: 1});
 			let hanuta_2 = Hanuta.create({cid: 2});
@@ -190,10 +181,6 @@ describe('@on decorator', async () => {
 				@on('click .a') onFoo_a() {
 					this.baseMethod();
 				}
-			}
-
-			if(isSafari) {
-				return;
 			}
 
 			// create instane
