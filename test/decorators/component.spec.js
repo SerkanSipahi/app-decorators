@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import { bootstrapPolyfills } from 'src/bootstrap';
+import { delay } from 'src/helpers/delay';
 
 describe('@component', async () => {
 
@@ -85,18 +86,16 @@ describe('@component', async () => {
 			qux.outerHTML.should.equal('<form is="my-qux">Hello World!</form>');
 		});
 
-		it('should create a element by passed @component config (name, extends) from out of dom', (done) => {
+		it('should create a element by passed @component config (name, extends) from out of dom', async () => {
 
 			$('body').append('<form is="my-qux"></form>');
 
-			// setTimeout is required for browsers that use the customelement polyfill (onyl for test)
-			setTimeout(() => {
-				// test
-				$('form[is="my-qux"]').get(0).outerHTML.should.equal('<form is="my-qux">Hello World!</form>');
-				//cleanup
-				$('form[is="my-qux"]').remove();
-				done();
-			}, 0);
+			await delay(1);
+
+			// test
+			$('form[is="my-qux"]').get(0).outerHTML.should.equal('<form is="my-qux">Hello World!</form>');
+			//cleanup
+			$('form[is="my-qux"]').remove();
 
 		});
 	});

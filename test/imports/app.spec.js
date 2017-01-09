@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import { bootstrapPolyfills } from 'src/bootstrap';
+import { delay } from 'src/helpers/delay';
 
 describe('imported component', async() => {
 
@@ -23,16 +24,14 @@ describe('imported component', async() => {
 
 	}
 
-	it('should create an domnode', done => {
+	it('should create an domnode', async () => {
 
 		let col = Col.create({
 			testEl: Test.create()
 		});
 
-		setTimeout(() => {
-			col.outerHTML.should.equal(`<com-col><com-test rendered="true"><div class="A">1</div></com-test></com-col>`);
-			done();
-		}, 20);
+        await delay(5);
+		col.outerHTML.should.equal(`<com-col><com-test rendered="true"><div class="A">1</div></com-test></com-col>`);
 	});
 
 });

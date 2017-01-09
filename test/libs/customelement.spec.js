@@ -1,5 +1,6 @@
 import { elements } from 'src/configs/elements';
 import { bootstrapPolyfills } from 'src/bootstrap';
+import { delay } from 'src/helpers/delay';
 
 import sinon from 'sinon';
 
@@ -181,7 +182,7 @@ describe('Register', async () => {
 
 		});
 
-		it('should call foo bar baz if created by dom it self', (done) => {
+		it('should call foo bar baz if created by dom it self', async () => {
 
 			class MyLang extends HTMLFormElement {
 				createdCallback(){
@@ -208,20 +209,16 @@ describe('Register', async () => {
 			document.body.appendChild(div);
 			div.innerHTML = '<form is="coffee-lang"></form>';
 
-			setTimeout(() => {
+			await delay(10);
 
-				// start tests
-				document.querySelector('[is="coffee-lang"]').foo().should.be.equal(1234);
-				spy_myLang_foo.calledOnce.should.be.true();
-				spy_myLang_bar.calledOnce.should.be.true();
+			// start tests
+			document.querySelector('[is="coffee-lang"]').foo().should.be.equal(1234);
+			spy_myLang_foo.calledOnce.should.be.true();
+			spy_myLang_bar.calledOnce.should.be.true();
 
-				// cleanup (tearDown)
-				spy_myLang_foo.restore();
-				spy_myLang_bar.restore();
-
-				done();
-
-			}, 10);
+			// cleanup (tearDown)
+			spy_myLang_foo.restore();
+			spy_myLang_bar.restore();
 
 		});
 	});

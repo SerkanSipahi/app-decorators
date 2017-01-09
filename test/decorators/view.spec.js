@@ -37,9 +37,7 @@ describe('@view decorator', async () => {
 		}
 
 
-		it('should call customElements hooks in right order', done => {
-
-			(async () => {
+		it('should call customElements hooks in right order', async () => {
 
 			/**
 			 *  Setup
@@ -73,15 +71,13 @@ describe('@view decorator', async () => {
 			attachedCallback[0].restore();
 			detachedCallback[0].restore();
 
-			done();
-
-			})();
-
 		});
 
-		it('should also create a element if element created from out of dom', done => {
+		it('should reinit view after removing and appending', done => {
+			done();
+		});
 
-			(async () => {
+		it('should also create a element if element created from out of dom', async () => {
 
 			// First test
 			let $vc = $('#view-decorator');
@@ -110,15 +106,9 @@ describe('@view decorator', async () => {
 			$serkan1.html().removeGutter().should.be.equal('<span>Hello</span><p>Mars</p>');
 			$serkan2.html().removeGutter().should.be.equal('<span>Hello</span><p>Pluto</p>');
 
-			done();
-
-			})();
-
 		});
 
-		it('should also create a element if element with view vars although created from out of dom', done => {
-
-			(async () => {
+		it('should also create a element if element with view vars although created from out of dom', async () => {
 
 			// decorate
 			@view(`<span>{{id}}.)<b>{{class}}</b>{{b}}</span><p>{{c}}</p>`)
@@ -148,15 +138,9 @@ describe('@view decorator', async () => {
 			$fire1.html().should.equal('<span>id-1.)<b>First</b>Thats</span><p>on!</p>');
 			$fire2.html().should.equal('<span>id-2.)<b>Second</b>Whats</span><p>waw!</p>');
 
-			done();
-
-			})();
-
 		});
 
-		it('should render template if call domNode.render directly or over domNode.$.view.render', done => {
-
-			(async () => {
+		it('should render template if call domNode.render directly or over domNode.$.view.render', async () => {
 
 			let $vc = $('#view-decorator');
 			$vc.append(`<com-serkan></com-serkan>`);
@@ -168,10 +152,6 @@ describe('@view decorator', async () => {
 
 			$vc.find('com-serkan').get(0).$view.render({n: 'Hey', p: 'there!'}, { force: true });
 			$vc.find('com-serkan').get(0).outerHTML.removeGutter().should.equal('<com-serkan rendered="true"><span>Hey</span><p>there!</p></com-serkan>');
-
-			done();
-
-			})();
 
 		});
 
@@ -265,9 +245,7 @@ describe('@view decorator', async () => {
 
 	});
 
-	it('should not render because rendered flag is set', done => {
-
-		(async () => {
+	it('should not render because rendered flag is set', async () => {
 
 		@view(`
 			<div>Should render if flag is not set</div>
@@ -298,15 +276,9 @@ describe('@view decorator', async () => {
 		// cleanup
 		$('my-shouldnotrender').remove();
 
-		done();
-
-		})();
-
 	});
 
-	it('render slot component', (done) => {
-
-		(async () => {
+	it('render slot component', async () => {
 
 		@view(`
 			<div class="a"></div>
@@ -337,15 +309,9 @@ describe('@view decorator', async () => {
 		// cleanup
 		$('my-innercomponent').remove();
 
-		done();
-
-		})();
-
 	});
 
-	it('render compontents only once on nested component', done => {
-
-		(async () => {
+	it('render compontents only once on nested component', async () => {
 
 		@view(`
 			<div class="x"></div>
@@ -488,10 +454,6 @@ describe('@view decorator', async () => {
 		MyQuxust.prototype.created.restore();
 		MySpecialCom.prototype.created.restore();
 		MyAwesomeCom.prototype.created.restore();
-
-		done();
-
-		})();
 
 	});
 

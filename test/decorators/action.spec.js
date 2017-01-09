@@ -15,9 +15,7 @@ describe('@action decorator', async() => {
 
     describe('@action decorator', () => {
 
-        it('should call customElements hooks in right order', done => {
-
-            (async () => {
+        it('should call customElements hooks in right order', async () => {
 
             @component({
                 name: 'right-order-action',
@@ -61,10 +59,6 @@ describe('@action decorator', async() => {
             attachedCallback[0].restore();
             detachedCallback[0].restore();
             $('.test-right-order').remove();
-
-            done();
-
-            })();
 
         });
 
@@ -151,9 +145,7 @@ describe('@action decorator', async() => {
                 }
             }
 
-            it('should reinit router after removing and appending', done => {
-
-                (async () => {
+            it('should reinit router after removing and appending', async () => {
 
                 let page = Page3.create();
                 fixtureElement.appendChild(page);
@@ -207,16 +199,10 @@ describe('@action decorator', async() => {
                 page_actionName1_1_spy.restore();
                 page_actionName2_1_spy.restore();
 
-                done();
-
-                })();
-
             });
 
 
-            it('should pass correct args after clicking route', done => {
-
-                (async () => {
+            it('should pass correct args after clicking route', async () => {
 
                 let page = Page3.create();
                 fixtureElement.appendChild(page);
@@ -251,13 +237,9 @@ describe('@action decorator', async() => {
                 page_actionName1_spy.restore();
                 page_actionName2_spy.restore();
 
-                done();
-
-                })();
-
             });
 
-            it('should call destroy method of router if component element detached', (done) => {
+            it('should call destroy method of router if component element detached', async () => {
 
                 let page = Page3.create();
                 fixtureElement.appendChild(page);
@@ -269,25 +251,21 @@ describe('@action decorator', async() => {
                 $(fixtureElement).append(page);
                 $(fixtureElement).find('com-page3').remove();
 
-                setTimeout(() => page.$router.trigger('actionName1'), 20);
-                setTimeout(() => {
+                await delay(5);
+                page.$router.trigger('actionName1');
+                await delay(5);
 
-                    $router_destroy_spy.callCount.should.equal(2);
-                    page_actionName1_spy.callCount.should.equal(0);
+                $router_destroy_spy.callCount.should.equal(2);
+                page_actionName1_spy.callCount.should.equal(0);
 
-                    $router_destroy_spy.restore();
-                    page_actionName1_spy.restore();
-
-                    done();
-
-                }, 30);
+                $router_destroy_spy.restore();
+                page_actionName1_spy.restore();
 
             });
 
-            it('should call correct methods if router detached and attached', done => {
+            it('should call correct methods if router detached and attached', async () => {
 
                 // prepare test data
-
                 let page = Page3.create();
                 fixtureElement.appendChild(page);
 
@@ -296,46 +274,38 @@ describe('@action decorator', async() => {
                 let page_actionName1_spy = sinon.spy(page.$router.scope.getHandlers('actionName1')[0], null);
 
                 // start tests
+                $(fixtureElement).find('com-page3').remove();
+                await delay(5);
 
-                setTimeout(() => $(fixtureElement).find('com-page3').remove(),  10);
-                setTimeout(() => page.$router.trigger('actionName1'),  20);
+                page.$router.trigger('actionName1');
+                await delay(5);
 
-                setTimeout(() => {
+                $router_destroy_spy.callCount.should.equal(1);
+                $router_init_spy.callCount.should.equal(0);
+                page_actionName1_spy.callCount.should.equal(0);
 
-                    $router_destroy_spy.callCount.should.equal(1);
-                    $router_init_spy.callCount.should.equal(0);
-                    page_actionName1_spy.callCount.should.equal(0);
+                page_actionName1_spy.restore();
 
-                    page_actionName1_spy.restore();
-
-                }, 30);
-
-                setTimeout(() => $(fixtureElement).append(page),  40);
+                $(fixtureElement).append(page);
+                await delay(5);
 
                 let page_actionName1_spy_b = null;
 
-                setTimeout(() => page_actionName1_spy_b = sinon.spy(page.$router.scope.getHandlers('actionName1')[0], null),  50);
-                setTimeout(() => $(page).find('.path-1').get(0).click(), 60);
+                page_actionName1_spy_b = sinon.spy(page.$router.scope.getHandlers('actionName1')[0], null);
+                $(page).find('.path-1').get(0).click();
+                await delay(5);
 
-                setTimeout(() => {
+                $router_destroy_spy.callCount.should.equal(1);
+                $router_init_spy.callCount.should.equal(1);
+                page_actionName1_spy_b.callCount.should.equal(1);
 
-                    $router_destroy_spy.callCount.should.equal(1);
-                    $router_init_spy.callCount.should.equal(1);
-                    page_actionName1_spy_b.callCount.should.equal(1);
-
-                    $router_destroy_spy.restore();
-                    $router_init_spy.restore();
-                    page_actionName1_spy_b.restore();
-
-                    done();
-
-                }, 70);
+                $router_destroy_spy.restore();
+                $router_init_spy.restore();
+                page_actionName1_spy_b.restore();
 
             });
 
-            it('should differ between different route instance on history back/forward', done => {
-
-                (async () => {
+            it('should differ between different route instance on history back/forward', async () => {
 
                 let page1 = Page3.create();
                 let page_actionName1_spy = sinon.spy(page1.$router.scope.getHandlers('actionName1')[0], null);
@@ -377,10 +347,6 @@ describe('@action decorator', async() => {
                 // cleanup
                 page_actionName1_spy.restore();
                 page_actionName2_spy.restore();
-
-                done();
-
-                })();
 
             });
 

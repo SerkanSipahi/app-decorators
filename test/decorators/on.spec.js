@@ -12,9 +12,7 @@ describe('@on decorator', async () => {
 
 	describe('@on decorator', () => {
 
-		it('should call customElements hooks in right order', done => {
-
-			(async () => {
+		it('should call customElements hooks in right order', async () => {
 
 			@component({
 				name: 'right-order-on',
@@ -60,15 +58,11 @@ describe('@on decorator', async () => {
 			detachedCallback[0].restore();
 			$('.test-right-on').remove();
 
-			done();
-
-			})();
-
 		});
 
 	});
 
-	describe('Snack events', function() {
+	describe('Snack storage.get(Snack) events', function() {
 
 		it('should contain registered events over @on', () => {
 
@@ -141,9 +135,7 @@ describe('@on decorator', async () => {
 
 		});
 
-		it('should test click when created and reinit (detached/attached) again', done => {
-
-			(async () => {
+		it('should test click when created and reinit (detached/attached) again', async () => {
 
 			let clickCount = 0;
 			let testDiv = document.createElement('div');
@@ -183,9 +175,6 @@ describe('@on decorator', async () => {
 			burger.querySelector('.a').click();
 			should(clickCount).be.eql(2);
 
-			done()
-
-			})()
 		});
 
 		it('should ensure that eventhandler has right context', () => {

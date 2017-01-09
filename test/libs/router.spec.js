@@ -1429,9 +1429,7 @@ describe('Class Router', async () => {
 
 	describe('on method', () => {
 
-		it('should handle promise or handler correctly', (done) => {
-
-			(async () => {
+		it('should handle promise or handler correctly', async () => {
 
 			// setup
 			let router = Router.create({
@@ -1464,9 +1462,6 @@ describe('Class Router', async () => {
 
 			// cleanup
 			router.destroy();
-			done();
-
-			})();
 
 		});
 
@@ -1612,9 +1607,7 @@ describe('Class Router', async () => {
 
 		});
 
-		it('should call registered callback on element.click()', done => {
-
-			(async () => {
+		it('should call registered callback on element.click()', async () => {
 
 			await $('.foo', element).clickAndWait(20);
 			await $('.bar', element).clickAndWait(20);
@@ -1629,15 +1622,9 @@ describe('Class Router', async () => {
 			spy_urlchange.args[1][0].fragment.should.equal('/index/details');
 			spy_urlchange.args[2][0].fragment.should.equal('/index/details?a=1&b=2');
 
-			done();
-
-			})();
-
 		});
 
-		it('should call registered callback on router.back()', done => {
-
-			(async () => {
+		it('should call registered callback on router.back()', async () => {
 
 			await $('.foo', element).clickAndWait(20);
 			await $('.bar', element).clickAndWait(20);
@@ -1654,10 +1641,6 @@ describe('Class Router', async () => {
 			spy_urlchange.args[2][0].fragment.should.equal('/index/details?a=1&b=2');
 			spy_urlchange.args[3][0].fragment.should.equal('/index/details');
 			spy_urlchange.args[4][0].fragment.should.equal('/index');
-
-			done();
-
-			})();
 
 		});
 
@@ -1711,9 +1694,7 @@ describe('Class Router', async () => {
 
 	describe('on method', () => {
 
-		it('should match registered static and dynamic url route', done => {
-
-			(async () => {
+		it('should match registered static and dynamic url route', async () => {
 
 			// register events
 			router.on('Index /index.html', spy_handler);
@@ -1879,14 +1860,9 @@ describe('Class Router', async () => {
 				'hash-tag': null,
 			});
 
-			done();
-
-			})();
 		});
 
-		it('should trigger registered promise event', (done) => {
-
-			(async () => {
+		it('should trigger registered promise event', async () => {
 
 			// test 1
 			router.on('SomePathURL /some/path/url.html').then(({fragment, id}) => {
@@ -1896,9 +1872,6 @@ describe('Class Router', async () => {
 			router.trigger('SomePathURL', {fragment: '/some/path/url.html', id: 123});
 
 			await delay(20);
-			done()
-
-			})()
 
 		});
 
