@@ -13,9 +13,9 @@ function action(route) {
         throw new Error('Please pass an action');
     }
 
-    return (target, method, descriptor) => {
+    return ({ constructor }, method, { value }) => {
 
-        let Class = target.constructor;
+        let Class = constructor;
 
         initCoreMap(storage, Class);
         initActionMap(storage, Class);
@@ -23,7 +23,7 @@ function action(route) {
         let map = storage.get(Class);
 
         map.get('@action').get('events').push([
-            `${method} ${route}`, descriptor.value
+            `${method} ${route}`, value
         ]);
 
         /**

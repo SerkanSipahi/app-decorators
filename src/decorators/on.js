@@ -15,16 +15,16 @@ function on(eventDomain, listenerElement = 'local') {
 		throw new Error('Please pass an event type e.g "click"');
 	}
 
-	return (target, method, descriptor) => {
+	return ({ constructor }, method, { value }) => {
 
-		let Class = target.constructor;
+		let Class = constructor;
 
 		initCoreMap(storage, Class);
 		initOnMap(storage, Class);
 
 		let map = storage.get(Class);
 
-		let handler = descriptor.value;
+		let handler = value;
 		let eventsMap = map.get('@on').get('events');
 
 		if(listenerElement === 'local'){

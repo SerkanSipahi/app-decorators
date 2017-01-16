@@ -1,4 +1,9 @@
 /**
+ * We setup a map for each component when is required. E.g when a component
+ * just use @action and @view it will setup map for only these components
+ */
+
+/**
  * initCoreMap
  * @param storage {WeakMap}
  * @param Class {function}

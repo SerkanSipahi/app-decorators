@@ -20,7 +20,7 @@ function view(template, options = {}) {
 		throw new Exception('Please pass a template!');
 	}
 
-	return function decorator(Class){
+	return Class => {
 
 		let renderedFlag = !(options.renderedFlag === false);
 

@@ -49,7 +49,7 @@ function component(settings = {}) {
 	 * decorator
 	 * @param  {function} ComponentClass
 	 */
-	return function decorator(Class) {
+	return Class => {
 
 		initCoreMap(storage, Class);
 
