@@ -1,6 +1,6 @@
 
 // internal libs
-import { component, view, on } from 'src/app-decorators';
+import { component, view, on, model, collection } from 'app-decorators';
 
 describe.skip('@pipe decorator', () => {
 
