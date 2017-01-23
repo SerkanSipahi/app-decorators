@@ -60,6 +60,8 @@ describe('Class Stylesheet ', () => {
         stylesheet = new Stylesheet(options);
         should(stylesheet._scope).be.instanceof(HTMLElement);
 
+    });
+
 
     });
 
