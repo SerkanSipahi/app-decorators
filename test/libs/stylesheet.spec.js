@@ -19,4 +19,16 @@ describe('Class Stylesheet ', () => {
 
     });
 
+    it('should not throw when passed arguments correct', () => {
+
+        let element = document.createElement('div');
+        let options1 = {
+            appendTo: element,
+            styles: '. foo { color: blue}'
+        };
+
+        new Stylesheet(options1);
+
+    });
+
 });

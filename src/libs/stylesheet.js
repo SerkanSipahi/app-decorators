@@ -99,15 +99,15 @@ class Stylesheet {
         this._attachOn = attachOn || this._attachOn;
         this._appendTo = appendTo;
 
-        if(this._isAlreadyDone(this._attachOn)){
-            this._runProcess(styles);
-            return;
-        }
-
         if(this._eventStateRege.test(this._attachOn)){
             this._scope = window;
         } else {
             this._scope = this._appendTo;
+        }
+
+        if(this._isAlreadyDone(this._attachOn)){
+            this._runProcess(styles);
+            return;
         }
 
         this._runProcessListener = () => {
@@ -134,9 +134,10 @@ class Stylesheet {
             promise = Promise.resolve(this._stylesElement);
         } else {
             promise = new Promise(resolve =>
-                this._scope.addEventListener(event, _ =>
-                    resolve(this._stylesElement)
-                , false)
+                this._scope.addEventListener(event, e => {
+                    e.stopPropagation();
+                    resolve(this._stylesElement);
+                }, false)
             );
         }
         return promise;
@@ -279,7 +280,7 @@ class Stylesheet {
         let event = new CustomEvent(eventName, {
             bubbles: true,
         });
-        this._element.dispatchEvent(event);
+        this._scope.dispatchEvent(event);
 
     }
 }
