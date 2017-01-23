@@ -1,10 +1,20 @@
 import { Stylesheet } from 'src/libs/stylesheet';
+import sinon from 'sinon';
 
 describe('Class Stylesheet ', () => {
 
-    it('should throw error required properties missing', () => {
+    let element = null;
+    let defaultOptions = null;
 
-        let element = document.createElement('div');
+    beforeEach(() => {
+        element = document.createElement('div');
+        defaultOptions = {
+            appendTo: element,
+            styles: '. foo { color: blue}',
+        };
+    });
+
+    it('should throw error required properties missing', () => {
 
         let options1 = { appendTo: element };
         let options2 = { styles: element };
@@ -21,13 +31,35 @@ describe('Class Stylesheet ', () => {
 
     it('should not throw when passed arguments correct', () => {
 
-        let element = document.createElement('div');
         let options1 = {
             appendTo: element,
-            styles: '. foo { color: blue}'
+            styles: '. foo { color: blue}',
         };
 
         new Stylesheet(options1);
+    });
+
+    it('should add correct element to instance._scope during the creation', () => {
+
+        // setup
+        let stylesheet = null;
+        let options = null;
+
+        // Test 1
+        options = Object.assign({}, defaultOptions, { attachOn: 'DOMContentLoaded' });
+        stylesheet = new Stylesheet(options);
+        should(stylesheet._scope).be.instanceof(Window);
+
+        // Test 2
+        options = Object.assign({}, defaultOptions, { attachOn: 'load' });
+        stylesheet = new Stylesheet(options);
+        should(stylesheet._scope).be.instanceof(Window);
+
+        // Test 2
+        options = Object.assign({}, defaultOptions, { attachOn: 'some-custom-event' });
+        stylesheet = new Stylesheet(options);
+        should(stylesheet._scope).be.instanceof(HTMLElement);
+
 
     });
 

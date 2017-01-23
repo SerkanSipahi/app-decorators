@@ -176,8 +176,16 @@ class Stylesheet {
     _isAlreadyDone(state){
 
         return (
-            document.readyState == this._stateSettings[state]
+            this._getDocumentReadyState() == this._stateSettings[state]
         );
+    }
+
+    /**
+     * @returns {string}
+     * @private
+     */
+    _getDocumentReadyState(){
+        return document.readyState;
     }
 
     /**
