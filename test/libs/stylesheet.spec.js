@@ -62,7 +62,10 @@ describe('Class Stylesheet ', () => {
 
     });
 
+    it.skip('', () => {
 
+        sinon.stub(Stylesheet.prototype, "_getDocumentReadyState", _ => 'pending' );
+        Stylesheet.prototype._getDocumentReadyState.restore();
     });
 
 });
