@@ -66,7 +66,7 @@ class Stylesheet {
     };
 
     /**
-     * _stylesheetElement {String|Function}
+     * _stylesElement {String|Function}
      */
     set _stylesElement(stylesElement) {
         this._refs.get(this).set('stylesElement', stylesElement);
@@ -94,17 +94,29 @@ class Stylesheet {
      */
     init({ appendTo, styles, attachOn } = {}){
 
-        this._initRefs({ appendTo, styles });
+        if(!appendTo || !styles){
+            throw new Error('Required: appendTo and styles');
+        }
 
+        if(!(appendTo instanceof HTMLElement)) {
+            throw new Error('Passed appendTo element should be instance of HTMLElement');
+        }
+
+        this._initRefs();
+
+        // init props
         this._attachOn = attachOn || this._attachOn;
         this._appendTo = appendTo;
+        this._styles   = styles;
 
+        // determine _scope
         if(this._eventStateRege.test(this._attachOn)){
             this._scope = window;
         } else {
             this._scope = this._appendTo;
         }
 
+        // run process if readyState already reached
         if(this._isAlreadyDone(this._attachOn)){
             this._runProcess(styles);
             return;
@@ -114,6 +126,7 @@ class Stylesheet {
             this._runProcess(styles)
         };
 
+        // listen readyState
         this._scope.addEventListener(
             this._attachOn,
             this._runProcessListener,
@@ -253,25 +266,14 @@ class Stylesheet {
     }
 
     /**
-     * @param appendTo {Element}
-     * @param styles {string}
      * @private
      */
-    _initRefs({ appendTo, styles } = {}){
-
-        // init refs
-        if(!appendTo || !styles){
-            throw new Error('Required: appendTo and styles');
-        }
-
-        if(!(appendTo instanceof HTMLElement)) {
-            throw new Error('Passed appendTo element should be instance of HTMLElement');
-        }
+    _initRefs(){
 
         this._refs = new WeakMap([
             [this, new Map([
                 ['appendTo', null],
-                ['stylesheetElement', null],
+                ['stylesElement', null],
                 ['scope', null],
             ])],
         ]);
