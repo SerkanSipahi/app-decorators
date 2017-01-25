@@ -74,12 +74,13 @@ module.exports = function (config) {
 				'src/configs/*.js',
 				'src/apps/*.js',
 				'src/datas/*.js',
+
 				// external libs/files
 				'jspm_packages/npm/regenerator-runtime@0.9.6/**/*.js',
 				'jspm_packages/npm/babel-runtime@6.18.0/**/*.js',
 				'jspm_packages/npm/core-js@2.4.1/**/*.js',
-				'jspm_packages/github/webcomponents/shadydom@master/shadydom.min.js',
 
+				'node_modules/@webcomponents/shadydom/shadydom.min.js',
 				'node_modules/core-js/**/*.js',
 				'node_modules/handlebars/dist/**/*.js',
 				'node_modules/webcomponents.js/webcomponents-lite.js',

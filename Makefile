@@ -31,10 +31,20 @@ test:
 	$(karma) start
 
 clean:
-	rm -rf node_modules jspm_packages
+	rm -rf node_modules jspm_packages; make clean-dist
 
 clean-dist:
 	rm -rf dist
+
+install-dependencies:
+	cd ./node_modules/app-decorators; \
+	npm install \
+	named-js-regexp@1.3.2 \
+	core-js@2.4.1 \
+	webcomponents.js@0.7.23 \
+	handlebars@4.0.6 \
+	extend@3.0.0 \
+	github:webcomponents/shadydom
 
 prepare-compile:
 	rm -rf dist; mkdir dist; cd dist; \
