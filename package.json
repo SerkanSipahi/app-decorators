@@ -1,6 +1,6 @@
 {
   "name": "app-decorators",
-  "version": "0.7.2",
+  "version": "0.7.201",
   "description": "Collection of useful ES7 Decorators, writtin in ES6, that can be used for building webapps",
   "main": "lib/index.js",
   "repository": {
@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/SerkanSipahi/app-decorators#readme",
   "scripts": {
-    "postinstall": "cd ./node_modules/app-decorators; npm install named-js-regexp@1.3.2 core-js@2.4.1 webcomponents.js@0.7.23 handlebars@4.0.6 extend@3.0.0 github:webcomponents/shadydom"
+    "postinstall": "cd npm install named-js-regexp@1.3.2 core-js@2.4.1 webcomponents.js@0.7.23 handlebars@4.0.6 extend@3.0.0 github:webcomponents/shadydom"
   },
   "keywords": [
     "es6",

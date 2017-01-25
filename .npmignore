@@ -15,5 +15,6 @@ gulpfile.babel.js
 idee2.md.rtf
 info.md
 jspm.browser.js
+jspm.config.js
 karma.conf.js
 Makefile
