@@ -109,7 +109,7 @@ describe('Register', async () => {
 			class MyLang extends HTMLDivElement {}
 			MyLang = Register._registerElement(MyLang, 'java-lang');
 
-			(() => { MyLang.create({ text: 'Hello World' }, 'just-arg'); }).should.throw();
+			(() => MyLang.create({ text: 'Hello World' }, 'just-arg')).should.throw();
 
 		});
 
@@ -118,9 +118,9 @@ describe('Register', async () => {
 			class MyLang extends HTMLDivElement {}
 			MyLang = Register._registerElement(MyLang, 'ruby-lang');
 
-			(() => { MyLang.create('hello world'); }).should.throw();
-			(() => { MyLang.create(true); }).should.throw();
-			(() => { MyLang.create(1234); }).should.throw();
+			(() => MyLang.create('hello world') ).should.throw();
+			(() => MyLang.create(true) ).should.throw();
+			(() => MyLang.create(1234) ).should.throw();
 
 		});
 

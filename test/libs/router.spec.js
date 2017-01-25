@@ -210,33 +210,32 @@ describe('Class Router', async () => {
 
 		it('should throw error if duplicate route added', () => {
 
-			(() => { router._addRoute('/this/is/a/route/1', 'name1'); }).should.throw();
-			(() => { router._addRoute('/this/is/a/route/2', 'name2'); }).should.throw();
-			(() => { router._addRoute('/this/is/{{a}}/route/3', 'name3'); }).should.throw();
-			(() => { router._addRoute('/this/is/{{b}}/{{c}}/route/4', 'name4'); }).should.throw();
-			(() => { router._addRoute('?id={{id}}&name={{name}}', 'name5'); }).should.throw();
-			(() => { router._addRoute('?name=serkan', 'name6'); }).should.throw();
-			(() => { router._addRoute('#im-{{foo}}', 'name7'); }).should.throw();
-			(() => { router._addRoute('#scroll-to-foo', 'name8'); }).should.throw();
+			(() => router._addRoute('/this/is/a/route/1', 'name1')).should.throw();
+			(() => router._addRoute('/this/is/a/route/2', 'name2')).should.throw();
+			(() => router._addRoute('/this/is/{{a}}/route/3', 'name3')).should.throw();
+			(() => router._addRoute('?id={{id}}&name={{name}}', 'name5')).should.throw();
+			(() => router._addRoute('?name=serkan', 'name6')).should.throw();
+			(() => router._addRoute('#im-{{foo}}', 'name7')).should.throw();
+			(() => router._addRoute('#scroll-to-foo', 'name8')).should.throw();
 		});
 
 		it('should throw error if not valid route passed', () => {
 
-			(() => { router._addRoute('/a/b?id=5', 'name1'); }).should.throw();
-			(() => { router._addRoute('/a/b?id=5#foo', 'name2'); }).should.throw();
-			(() => { router._addRoute('?id=5#foo', 'name3'); }).should.throw();
+			(() => router._addRoute('/a/b?id=5', 'name1')).should.throw();
+			(() => router._addRoute('/a/b?id=5#foo', 'name2')).should.throw();
+			(() => router._addRoute('?id=5#foo', 'name3')).should.throw();
 		});
 
 		it('should throw error if eventName already exists', () => {
 
-			(() => { router._addRoute('/x/y?id=11', 'name1'); }).should.throw();
+			(() => router._addRoute('/x/y?id=11', 'name1')).should.throw();
 
 		});
 
 		it('should throw error if not correct prefixed with "/, ?, #', () => {
 
-			(() => { router._addRoute('a/b.html', 'name1'); }).should.throw();
-			(() => { router._addRoute('a=b', 'name2'); }).should.throw();
+			(() => router._addRoute('a/b.html', 'name1')).should.throw();
+			(() => router._addRoute('a=b', 'name2')).should.throw();
 
 		});
 
@@ -913,15 +912,15 @@ describe('Class Router', async () => {
 				scope: document.createElement('div'),
 			});
 
-			(() => { router.on('route /a/b/c.html', null) }).should.throw();
-			(() => { router.on('route /a/b/c.html', '') }).should.throw();
-			(() => { router.on('route /a/b/c.html', 123) }).should.throw();
-			(() => { router.on('route /a/b/c.html', true) }).should.throw();
-			(() => { router.on('route /a/b/c.html', []) }).should.throw();
-			(() => { router.on('route /a/b/c.html', {}) }).should.throw();
+			(() => router.on('route /a/b/c.html', null)).should.throw();
+			(() => router.on('route /a/b/c.html', '')).should.throw();
+			(() => router.on('route /a/b/c.html', 123)).should.throw();
+			(() => router.on('route /a/b/c.html', true)).should.throw();
+			(() => router.on('route /a/b/c.html', [])).should.throw();
+			(() => router.on('route /a/b/c.html', {})).should.throw();
 
-			(() => { router.on('route /a/b/c.html', () => {}) }).should.not.throw();
-			(() => { router.on('route /a/b/c.html', undefined) }).should.not.throw();
+			(() => router.on('route /a/b/c.html', () => {})).should.not.throw();
+			(() => router.on('route /a/b/c.html', undefined)).should.not.throw();
 
 			// cleanup
 			router.destroy();
@@ -1139,10 +1138,10 @@ describe('Class Router', async () => {
 			let router = Router.create();
 
 			// should throw if not params passed
-			(() => { router._constructDynamicURL('/person/{{name}}') }).should.throw();
+			(() => router._constructDynamicURL('/person/{{name}}')).should.throw();
 
 			// should throw if param is missing
-			(() => { router._constructDynamicURL('/person/{{name}}', { id: 1 }) }).should.throw();
+			(() => router._constructDynamicURL('/person/{{name}}', { id: 1 })).should.throw();
 
 			// cleanup
 			router.destroy();
@@ -1216,7 +1215,7 @@ describe('Class Router', async () => {
 			let router = Router.create();
 
 			// test 1
-			(() => { router._constructURL() }).should.throw();
+			(() => router._constructURL()).should.throw();
 
 			// cleanup
 			router.destroy();
@@ -1229,7 +1228,7 @@ describe('Class Router', async () => {
 			let router = Router.create();
 
 			// test 1
-			(() => { router._constructURL('notExistsRoute') }).should.throw();
+			(() => router._constructURL('notExistsRoute')).should.throw();
 
 			// cleanup
 			router.destroy();
@@ -1341,7 +1340,7 @@ describe('Class Router', async () => {
 			});
 
 			// test
-			(() => { router.on() }).should.throw();
+			(() => router.on()).should.throw();
 
 			// cleanup
 			router.destroy();
@@ -1485,7 +1484,7 @@ describe('Class Router', async () => {
 			Object.keys(router._routes.pathname).should.be.length(4);
 
 			// should throw error because route is already exists
-			(() => { router.on('Detailpage /details.html', () => {}); }).should.throw();
+			(() => router.on('Detailpage /details.html', () => {})).should.throw();
 
 			// cleanup
 			router.destroy();
@@ -2017,7 +2016,7 @@ describe('Class Router', async () => {
 			});
 
 			// test
-			(() => { router.off() }).should.throw();
+			(() => router.off()).should.throw();
 
 			// cleanup
 			router.destroy();
