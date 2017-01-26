@@ -49,6 +49,10 @@ class Stylesheet {
      */
     _eventStateRege = /DOMContentLoaded|load/;
 
+    /**
+     * @type {{DOMContentLoaded: string, load: string}}
+     * @private
+     */
     _stateSettings = {
         DOMContentLoaded: 'interactive',
         load: 'complete',
@@ -116,22 +120,7 @@ class Stylesheet {
             this._scope = this._appendTo;
         }
 
-        // run process if readyState already reached
-        if(this._isAlreadyDone(this._attachOn)){
-            this._runProcess(styles);
-            return;
-        }
-
-        this._runProcessListener = () => {
-            this._runProcess(styles)
-        };
-
-        // listen readyState
-        this._scope.addEventListener(
-            this._attachOn,
-            this._runProcessListener,
-            false
-        );
+        this._run(styles);
     }
 
     /**
@@ -183,13 +172,47 @@ class Stylesheet {
     }
 
     /**
+     * @param styles {string}
+     * @private
+     */
+    _run(styles){
+
+        // run process if readyState already reached
+        if(this._isAlreadyDone(this._attachOn)){
+            this._runProcess(styles);
+            return;
+        }
+
+        // listen for readyState
+        this._addEventListener(this._scope, this._attachOn,
+            _ => this._processListener(styles),
+        false);
+    }
+
+    /**
+     * @param element {HTMLElement}
+     * @param event {string}
+     * @param callback {function}
+     * @param useCapture {boolean}
+     * @private
+     */
+    _addEventListener(element, event, callback, useCapture) {
+
+        element.addEventListener(event, callback, useCapture);
+    }
+
+    /**
      * @returns {boolean}
      * @private
      */
     _isAlreadyDone(state){
 
+        if(this._getDocumentReadyState() === 'complete' && state === 'DOMContentLoaded') {
+            return true;
+        }
+
         return (
-            this._getDocumentReadyState() == this._stateSettings[state]
+            this._getDocumentReadyState() === this._stateSettings[state]
         );
     }
 
@@ -202,16 +225,24 @@ class Stylesheet {
     }
 
     /**
-     * @param styles
+     * @param styles {string}
      * @private
      */
     _runProcess(styles){
 
         this._stylesElement = this._createStylesheet(styles);
-        this._insertStylesheet(this._stylesElement);
+        this._insertStylesheet(this._appendTo, this._stylesElement);
         this._trigger(this._event);
 
         this._cleanup();
+    }
+
+    /**
+     * @param styles {string}
+     * @private
+     */
+    _processListener(styles){
+        this._runProcess(styles);
     }
 
     /**
@@ -219,27 +250,28 @@ class Stylesheet {
      */
     _cleanup(){
 
-        if(!this._runProcessListener){
+        if(!this._processListener){
             return;
         }
 
         this._scope.removeEventListener(
             this._attachOn,
-            this._runProcessListener
+            this._processListener
         );
     }
 
     /**
+     * appendTo {Element}
      * stylesElement {Element}
      * @private
      */
-    _insertStylesheet(stylesElement) {
+    _insertStylesheet(appendTo, stylesElement) {
 
-        let [ node ] = this._appendTo.children;
+        let [ node ] = appendTo.children;
         if(node){
-            this._appendTo.insertBefore(stylesElement, node);
+            appendTo.insertBefore(stylesElement, node);
         } else {
-            this._appendTo.appendChild(stylesElement);
+            appendTo.appendChild(stylesElement);
         }
     }
 
