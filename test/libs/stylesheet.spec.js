@@ -68,7 +68,7 @@ describe('Class Stylesheet ', () => {
         let element = document.createElement('div');
         let defaultOptions = {
             appendTo: element,
-            styles: '. foo { color: blue}',
+            styles: '. foo { color: blue }',
         };
         let getOptions = options => Object.assign({}, defaultOptions, options);
         let stub = (method, value) => sinon.stub(Stylesheet.prototype, method, _ => value);
@@ -90,6 +90,8 @@ describe('Class Stylesheet ', () => {
             Stylesheet.prototype._processListener.restore();
             Stylesheet.prototype._addEventListener.restore();
 
+            stylesheet.cleanup();
+
         });
 
         /**
@@ -104,6 +106,7 @@ describe('Class Stylesheet ', () => {
             stylesheet._isAlreadyDone.returnValues[0].should.be.equal(false);
             stylesheet._runProcess.callCount.should.be.equal(0);
             stylesheet._addEventListener.callCount.should.be.equal(1);
+            stylesheet._processListener.callCount.should.be.equal(0);
 
         });
 
@@ -115,6 +118,7 @@ describe('Class Stylesheet ', () => {
             stylesheet._isAlreadyDone.returnValues[0].should.be.equal(false);
             stylesheet._runProcess.callCount.should.be.equal(0);
             stylesheet._addEventListener.callCount.should.be.equal(1);
+            stylesheet._processListener.callCount.should.be.equal(0);
 
         });
 
@@ -130,6 +134,7 @@ describe('Class Stylesheet ', () => {
             stylesheet._isAlreadyDone.returnValues[0].should.be.equal(true);
             stylesheet._runProcess.callCount.should.be.equal(1);
             stylesheet._addEventListener.callCount.should.be.equal(0);
+            stylesheet._processListener.callCount.should.be.equal(0);
 
         });
 
@@ -141,6 +146,7 @@ describe('Class Stylesheet ', () => {
             stylesheet._isAlreadyDone.returnValues[0].should.be.equal(false);
             stylesheet._runProcess.callCount.should.be.equal(0);
             stylesheet._addEventListener.callCount.should.be.equal(1);
+            stylesheet._processListener.callCount.should.be.equal(0);
 
         });
 
@@ -156,6 +162,7 @@ describe('Class Stylesheet ', () => {
             stylesheet._isAlreadyDone.returnValues[0].should.be.equal(true);
             stylesheet._runProcess.callCount.should.be.equal(1);
             stylesheet._addEventListener.callCount.should.be.equal(0);
+            stylesheet._processListener.callCount.should.be.equal(0);
 
         });
 
@@ -167,6 +174,27 @@ describe('Class Stylesheet ', () => {
             stylesheet._isAlreadyDone.returnValues[0].should.be.equal(true);
             stylesheet._runProcess.callCount.should.be.equal(1);
             stylesheet._addEventListener.callCount.should.be.equal(0);
+            stylesheet._processListener.callCount.should.be.equal(0);
+
+        });
+
+
+        it('should work as expected when trigger load event', () => {
+
+            stub("_getDocumentReadyState", 'loading');
+            stylesheet = new Stylesheet(getOptions({ attachOn: 'load' }));
+            stylesheet._isAlreadyDone.args[0][0].should.be.equal('load');
+            stylesheet._isAlreadyDone.returnValues[0].should.be.equal(false);
+            stylesheet._addEventListener.callCount.should.be.equal(1);
+            stylesheet._processListener.callCount.should.be.equal(0);
+            stylesheet._runProcess.callCount.should.be.equal(0);
+
+            window.dispatchEvent(
+                new Event('load')
+            );
+
+            stylesheet._processListener.callCount.should.be.equal(1);
+            stylesheet._runProcess.callCount.should.be.equal(1);
 
         });
 

@@ -59,6 +59,12 @@ class Stylesheet {
     };
 
     /**
+     * @type {function}
+     * @private
+     */
+    _listenerWrapper = () => {};
+
+    /**
      * _appendTo {Element}
      */
     set _appendTo(appendTo) {
@@ -135,12 +141,14 @@ class Stylesheet {
         if(this._attached){
             promise = Promise.resolve(this._stylesElement);
         } else {
-            promise = new Promise(resolve =>
-                this._scope.addEventListener(event, e => {
+            promise = new Promise(resolve => {
+                let onListener = e => {
                     e.stopPropagation();
                     resolve(this._stylesElement);
-                }, false)
-            );
+                    this._scope.removeEventListener(event, onListener, false);
+                };
+                this._scope.addEventListener(event, onListener, false);
+            });
         }
         return promise;
     }
@@ -166,9 +174,19 @@ class Stylesheet {
     destroy() {
 
         if(!this._refs.has(this)){
-            return null;
+            return;
         }
 
+        this._cleanup();
+        this._refs.delete(this);
+
+    }
+
+    /**
+     * removes eventListener
+     */
+    cleanup(){
+        this._cleanup();
     }
 
     /**
@@ -183,9 +201,17 @@ class Stylesheet {
             return;
         }
 
-        // listen for readyState
+        /**
+         * listen for readyState
+         */
+
+        // wrapper for removeListener
+        this._listenerWrapper = _ => {
+            this._processListener(styles);
+        };
+        // listen event
         this._addEventListener(this._scope, this._attachOn,
-            _ => this._processListener(styles),
+            this._listenerWrapper,
         false);
     }
 
@@ -255,8 +281,7 @@ class Stylesheet {
         }
 
         this._scope.removeEventListener(
-            this._attachOn,
-            this._processListener
+            this._attachOn, this._listenerWrapper, false
         );
     }
 
