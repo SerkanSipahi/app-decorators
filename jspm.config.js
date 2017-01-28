@@ -4,6 +4,17 @@ SystemJS.config({
     "app-decorators": "src/index",
     "app-decorators-helper/register-customelement": "src/libs/customelement",
     "app-decorators-helper/random-storage": "src/libs/random-storage"
+  },
+  packages: {
+      "src": {
+          "defaultExtension": "js"
+      },
+      "test": {
+          "defaultExtension": "js"
+      },
+      "node_modules": {
+          "defaultExtension": "js"
+      },
   }
 });
 
