@@ -56,7 +56,8 @@ module.exports = function (config) {
 			config: "jspm.config.js",
 
 		    loadFiles: [
-				'jspm_packages/npm/babel-polyfill@6.16.0/dist/polyfill.js',
+				// includes regenerator-runtime: useful for async await
+				'jspm_packages/npm/babel-polyfill@6.22.0/dist/polyfill.js',
 
 				'test/decorators/*spec.js',
 				'test/libs/*spec.js',
@@ -74,11 +75,6 @@ module.exports = function (config) {
 				'src/configs/*.js',
 				'src/apps/*.js',
 				'src/datas/*.js',
-
-				// external libs/files
-				'jspm_packages/npm/regenerator-runtime@0.9.6/**/*.js',
-				'jspm_packages/npm/babel-runtime@6.18.0/**/*.js',
-				'jspm_packages/npm/core-js@2.4.1/**/*.js',
 
 				'node_modules/@webcomponents/shadydom/shadydom.min.js',
 				'node_modules/core-js/**/*.js',
