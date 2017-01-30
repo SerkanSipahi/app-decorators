@@ -4,53 +4,37 @@
     <a href="https://david-dm.org/SerkanSipahi/app-decorators/?type=dev"><img src="https://david-dm.org/SerkanSipahi/david/dev-status.svg" alt="devDependency Status"></a>
 </p>
 
+##### Quickstart: 
+Please use our [Todomvc Example](https://github.com/SerkanSipahi/app-decorators-todomvc) as boilerplate
 
-## Getting Started
-
-```
-npm install app-decorators babel-preset-app-decorators@1.0.0-beta.1 --save
-npm install babel-preset-es2015 --save-dev
-```
-
-#### Usage
-
-#### Via `.babelrc` (Recommended)
-
-**.babelrc**
-
-```json
-{
-    "presets": ["es2015", "app-decorators"]
-}
-```
-
-##### How to start (quickstart): 
-Please use for the first the [TodoMvc Example](https://github.com/SerkanSipahi/app-decorators-todomvc) as boilerplate
+## Simple example
 
 ##### Item.js
 ```js
-import { component, view, on } from 'app-decorators';
+import { component, view, on, action } from 'app-decorators';
 
 @view(`
-	<h3>{{head}}</h3>
-	<div>{{count}}</div>
-	<div>
-		<span class="up"> + </span>
-		<span class="down"> - </span>
-	</div>
+    <h3>{{head}}</h3>
+    <div>{{count}}</div>
+    <div>
+        <span class="up"> + </span>
+        <span class="down"> - </span>
+    </div>
 `)
+@component({
+    name: 'my-box'
+})
 class Item {
 
-	@view.bind count = 0;
-
-	@on('click .up') onClickUp() {
-	    ++this.count
-	}
-
-	@on('click .down') onClickUp() {
-	    --this.count
-	}
-
+    @view.bind count = 0;
+    
+    @on('click .up') onClickUp() {
+        ++this.count
+    }
+    
+    @on('click .down') onClickUp() {
+        --this.count
+    }
 }
 
 export {
@@ -62,7 +46,7 @@ export {
 ```js
 
 let item = Item.create({
-	head: 'Some Head'
+    head: 'Some Head'
 });
 
 document.body.appendChild(item);
@@ -83,10 +67,6 @@ document.body.appendChild(item);
     </body>
 </html>
 ```
-
-## Todomvc
-
-[Example](https://github.com/SerkanSipahi/app-decorators-todomvc)
 
 ## Documentation
 
