@@ -108,10 +108,7 @@ class Stylesheet {
             throw new Error('Required: appendTo and styles');
         }
 
-        if(!(appendTo instanceof HTMLElement)) {
-            throw new Error('Passed appendTo element should be instance of HTMLElement');
-        }
-
+        this._checkElement(appendTo);
         this._initRefs();
 
         // init props
@@ -141,14 +138,17 @@ class Stylesheet {
         if(this._attached){
             promise = Promise.resolve(this._stylesElement);
         } else {
-            promise = new Promise(resolve => {
+
+            let promiseHandler = resolve => {
                 let onListener = e => {
                     e.stopPropagation();
                     resolve(this._stylesElement);
                     this._scope.removeEventListener(event, onListener, false);
                 };
                 this._scope.addEventListener(event, onListener, false);
-            });
+            };
+
+            promise = new Promise(promiseHandler);
         }
         return promise;
     }
@@ -157,8 +157,12 @@ class Stylesheet {
      * alias for init
      * @param options {object}
      */
-    reinit(options){
-        this.init(options);
+    reinit({ appendTo }){
+
+        this._checkElement(appendTo);
+
+        this._attachOn = appendTo;
+        this._stylesElement = appendTo.querySelector('style');
     }
 
     /**
@@ -174,7 +178,7 @@ class Stylesheet {
     destroy() {
 
         if(!this._refs.has(this)){
-            return;
+            return null;
         }
 
         this._cleanup();
@@ -187,6 +191,17 @@ class Stylesheet {
      */
     cleanup(){
         this._cleanup();
+    }
+
+    /**
+     * @param element {HTMLElement}
+     * @private
+     */
+    _checkElement(element){
+
+        if(!(element instanceof HTMLElement)) {
+            throw new Error('Passed appendTo element should be instance of HTMLElement');
+        }
     }
 
     /**
@@ -286,8 +301,10 @@ class Stylesheet {
     }
 
     /**
-     * appendTo {Element}
-     * stylesElement {Element}
+     *
+     * @param appendTo {HTMLElement}
+     * @param stylesElement {Element}
+     * @returns appendTo {HTMLElement}
      * @private
      */
     _insertStylesheet(appendTo, stylesElement) {
@@ -298,6 +315,8 @@ class Stylesheet {
         } else {
             appendTo.appendChild(stylesElement);
         }
+
+        return appendTo;
     }
 
     /**
