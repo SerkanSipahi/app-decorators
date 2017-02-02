@@ -8,18 +8,18 @@ String.prototype.removeGutter = function(){
 
 describe('Class Stylesheet ', () => {
 
+    let element = null;
+    let defaultOptions = null;
+
+    beforeEach(() => {
+        element = document.createElement('div');
+        defaultOptions = {
+            appendTo: element,
+            styles: '. foo { color: blue}',
+        };
+    });
+
     describe('initialize', () => {
-
-        let element = null;
-        let defaultOptions = null;
-
-        beforeEach(() => {
-            element = document.createElement('div');
-            defaultOptions = {
-                appendTo: element,
-                styles: '. foo { color: blue}',
-            };
-        });
 
         it('should throw error required properties missing', () => {
 
@@ -77,18 +77,35 @@ describe('Class Stylesheet ', () => {
 
     });
 
-    describe('_insertStylesheet' ,() => {
+    describe('_createStylesheet' ,() => {
 
-        it('logic inside of _insertStylesheet', () => {
+        it.only('should create style element by given stylesheet', () => {
 
+            let styleElement = null;
+            let stylesheet = new Stylesheet(defaultOptions);
+
+            // Test 1
+            styleElement = stylesheet._createStylesheet('.a { color: #faf }');
+            styleElement.should.be.instanceof(HTMLStyleElement);
+            styleElement.outerHTML.should.be.equal('<style>.a { color: #faf }</style>')
+
+            // Test 2
+            styleElement = stylesheet._createStylesheet();
+            styleElement.should.be.instanceof(HTMLStyleElement);
+            styleElement.outerHTML.should.be.equal('<style></style>')
 
         });
 
     });
 
-    describe('_createStylesheet' ,() => {
+    describe('_insertStylesheet' ,() => {
 
-        it('logic inside of _createStylesheet', () => {
+        it('should append stylesElement to an empty element (appendTo)', () => {
+
+
+        });
+
+        it('should append stylesElement to an element (appendTo) with nodes', () => {
 
 
         });
@@ -124,7 +141,7 @@ describe('Class Stylesheet ', () => {
 
         let expectedResult =
         '<div id="appendToElement">'+
-            '<style type="text/css">'+
+            '<style>'+
                 '.foo { color: blue }'+
             '</style>'+
         '</div>';
@@ -182,7 +199,7 @@ describe('Class Stylesheet ', () => {
 
             stylesheet._appendTo.outerHTML.should.be.equal(
                 '<div id="appendToElement">'+
-                    '<style type="text/css">'+
+                    '<style>'+
                         '.foo { color: blue }'+
                     '</style>'+
                     '<div class="bar">Hello World</div>'+

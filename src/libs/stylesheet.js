@@ -320,14 +320,14 @@ class Stylesheet {
     }
 
     /**
+     * _createStylesheet
      * @param styles {string}
      * @returns element {Element}
      * @private
      */
-    _createStylesheet(styles){
+    _createStylesheet(styles = ''){
 
         let element = document.createElement('style');
-        element.type = 'text/css';
 
         // Support for IE
         if (element.styleSheet){
