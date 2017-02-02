@@ -79,7 +79,7 @@ describe('Class Stylesheet ', () => {
 
     describe('_createStylesheet' ,() => {
 
-        it.only('should create style element by given stylesheet', () => {
+        it('should create style element by given stylesheet', () => {
 
             let styleElement = null;
             let stylesheet = new Stylesheet(defaultOptions);
@@ -87,12 +87,12 @@ describe('Class Stylesheet ', () => {
             // Test 1
             styleElement = stylesheet._createStylesheet('.a { color: #faf }');
             styleElement.should.be.instanceof(HTMLStyleElement);
-            styleElement.outerHTML.should.be.equal('<style>.a { color: #faf }</style>')
+            styleElement.outerHTML.should.be.equal('<style>.a { color: #faf }</style>');
 
             // Test 2
             styleElement = stylesheet._createStylesheet();
             styleElement.should.be.instanceof(HTMLStyleElement);
-            styleElement.outerHTML.should.be.equal('<style></style>')
+            styleElement.outerHTML.should.be.equal('<style></style>');
 
         });
 
@@ -102,11 +102,25 @@ describe('Class Stylesheet ', () => {
 
         it('should append stylesElement to an empty element (appendTo)', () => {
 
+            let stylesheet = new Stylesheet(defaultOptions);
+            let styleElement = stylesheet._createStylesheet('.a { color: #bab }');
+            // clear element
+            stylesheet._appendTo.innerHTML = '';
+
+            element = stylesheet._insertStylesheet(element, styleElement);
+            element.outerHTML.should.be.equal('<div><style>.a { color: #bab }</style></div>');
 
         });
 
         it('should append stylesElement to an element (appendTo) with nodes', () => {
 
+            let stylesheet = new Stylesheet(defaultOptions);
+            let styleElement = stylesheet._createStylesheet('.a { color: #bab }');
+            // clear element
+            stylesheet._appendTo.innerHTML = '<b>zZz</b>';
+
+            element = stylesheet._insertStylesheet(element, styleElement);
+            element.outerHTML.should.be.equal('<div><style>.a { color: #bab }</style><b>zZz</b></div>');
 
         });
 
