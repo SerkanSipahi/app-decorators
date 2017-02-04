@@ -116,13 +116,7 @@ class Stylesheet {
         this._appendTo = appendTo;
         this._styles   = styles;
 
-        // determine _scope
-        if(this._eventStateRege.test(this._attachOn)){
-            this._scope = window;
-        } else {
-            this._scope = this._appendTo;
-        }
-
+        this._initScope();
         this._run(styles);
     }
 
@@ -157,12 +151,15 @@ class Stylesheet {
      * alias for init
      * @param options {object}
      */
-    reinit({ appendTo }){
+    reinit(element){
 
-        this._checkElement(appendTo);
+        this._checkElement(element);
 
-        this._attachOn = appendTo;
-        this._stylesElement = appendTo.querySelector('style');
+        this._initRefs();
+        this._appendTo = element;
+        this._stylesElement = element.querySelector('style');
+
+        this._initScope();
     }
 
     /**
@@ -255,6 +252,18 @@ class Stylesheet {
         return (
             this._getDocumentReadyState() === this._stateSettings[state]
         );
+    }
+
+    /**
+     * @private
+     */
+    _initScope(){
+
+        if(this._eventStateRege.test(this._attachOn)){
+            this._scope = window;
+        } else {
+            this._scope = this._appendTo;
+        }
     }
 
     /**

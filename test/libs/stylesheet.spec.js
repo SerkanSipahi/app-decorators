@@ -15,7 +15,7 @@ describe('Class Stylesheet ', () => {
         element = document.createElement('div');
         defaultOptions = {
             appendTo: element,
-            styles: '. foo { color: blue}',
+            styles: '.foo { color: blue}',
         };
     });
 
@@ -26,7 +26,7 @@ describe('Class Stylesheet ', () => {
             let options1 = { appendTo: element };
             let options2 = { styles: element };
             let options3 = { appendTo: element, styles: '' };
-            let options4 = { appendTo: true, styles: '. foo { color: blue}' };
+            let options4 = { appendTo: true, styles: '.foo { color: blue}' };
 
             (() => new Stylesheet() ).should.throw('Required: appendTo and styles');
             (() => new Stylesheet(options1) ).should.throw('Required: appendTo and styles');
@@ -36,17 +36,16 @@ describe('Class Stylesheet ', () => {
 
         });
 
-        it('wenn kein appendTo, dann als default in <head> ', () => {
+        it.skip('wenn kein appendTo, dann als default in <head> ', () => {
             // in head kann nur angehängt werden wenn mindestens DOMContenLoaded state
-            // erreicht ist, weil dann <head> element gezogen werden kann. Und
-            // dann prüfen was in onAttach on steht
+            // erreicht ist (domtree muss zur Verfügung stehen)
         });
 
         it('should not throw when passed arguments correct', () => {
 
             let options1 = {
                 appendTo: element,
-                styles: '. foo { color: blue}',
+                styles: '.foo { color: blue}',
             };
 
             (() => new Stylesheet(options1) ).should.not.throw();
@@ -138,6 +137,28 @@ describe('Class Stylesheet ', () => {
 
             element = stylesheet._runProcess('.abc { color: #cac }');
             stylesheet._appendTo.outerHTML.should.be.equal('<div><style>.abc { color: #cac }</style></div>');
+
+        });
+
+    });
+
+    describe('reinit', () => {
+
+        it('should work when destroy and reinit again', () => {
+
+            let stylesheet = new Stylesheet(defaultOptions);
+            should(stylesheet._refs.get(stylesheet)).be.instanceof(Map);
+
+            stylesheet.destroy();
+            should(stylesheet._refs.get(stylesheet)).be.not.ok();
+            should(stylesheet._scope).be.not.ok();
+            should(stylesheet._stylesElement).be.not.ok();
+            should(stylesheet._appendTo).be.not.ok();
+
+            stylesheet.reinit(element);
+            should(stylesheet._scope).be.instanceof(Window);
+            stylesheet._stylesElement.outerHTML.should.be.equal('<style>.foo { color: blue}</style>'),
+            stylesheet._appendTo.outerHTML.should.be.equal('<div><style>.foo { color: blue}</style></div>');
 
         });
 
