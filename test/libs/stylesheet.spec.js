@@ -128,8 +128,16 @@ describe('Class Stylesheet ', () => {
 
     describe('_runProcess' ,() => {
 
-        it('logic inside of _runProcess', () => {
+        it('logic inside of _runProcess', done => {
 
+            // this test this._trigger inside of _runProcess
+            element.addEventListener('attached-stylesheet', () => done());
+            let stylesheet = new Stylesheet(defaultOptions);
+            // clear element
+            stylesheet._appendTo.innerHTML = '';
+
+            element = stylesheet._runProcess('.abc { color: #cac }');
+            stylesheet._appendTo.outerHTML.should.be.equal('<div><style>.abc { color: #cac }</style></div>');
 
         });
 
@@ -137,7 +145,7 @@ describe('Class Stylesheet ', () => {
 
     describe('on' ,() => {
 
-        it('logic inside of on', () => {
+        it.skip('logic inside of on', () => {
 
 
         });
@@ -188,6 +196,11 @@ describe('Class Stylesheet ', () => {
             stylesheet.destroy();
 
         });
+
+        /*************************************************************************
+         * _cleanup is here tested! Remove for test cases removeListener in _cleanup
+         * and see whats going on
+         *************************************************************************/
 
         /**
          *  readyState == loading for document.{ load, DOMContentLoaded }

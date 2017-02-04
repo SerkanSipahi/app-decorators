@@ -41,7 +41,7 @@ class Stylesheet {
      * @type {string}
      * @private
      */
-    _event = 'attached';
+    _event = 'attached-stylesheet';
 
     /**
      * @type {RegExp}
@@ -267,15 +267,18 @@ class Stylesheet {
 
     /**
      * @param styles {string}
+     * @returns {HTMLElement} element
      * @private
      */
     _runProcess(styles){
 
         this._stylesElement = this._createStylesheet(styles);
-        this._insertStylesheet(this._appendTo, this._stylesElement);
-        this._trigger(this._event);
+        let element = this._insertStylesheet(this._appendTo, this._stylesElement);
 
+        this._trigger(this._event);
         this._cleanup();
+
+        return element;
     }
 
     /**
@@ -366,7 +369,7 @@ class Stylesheet {
         let event = new CustomEvent(eventName, {
             bubbles: true,
         });
-        this._scope.dispatchEvent(event);
+        this._appendTo.dispatchEvent(event);
 
     }
 }
