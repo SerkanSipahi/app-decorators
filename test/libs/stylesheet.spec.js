@@ -224,6 +224,22 @@ describe('Class Stylesheet ', () => {
          *************************************************************************/
 
         /**
+         * "attachOn == immediately"
+         */
+
+        it('should work as expected when "readyState == loading" and "attachOn == immediately"', () => {
+
+            stub("_getDocumentReadyState", 'loading');
+            stylesheet = new Stylesheet(getOptions({ attachOn: 'immediately' }));
+            stylesheet._isAlreadyDone.args[0][0].should.be.equal('immediately');
+            stylesheet._isAlreadyDone.returnValues[0].should.be.equal(true);
+            stylesheet._runProcess.callCount.should.be.equal(1);
+            stylesheet._addEventListener.callCount.should.be.equal(0);
+            stylesheet._processListener.callCount.should.be.equal(0);
+
+        });
+
+        /**
          *  readyState == loading for document.{ load, DOMContentLoaded }
          */
 

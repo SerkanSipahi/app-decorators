@@ -245,6 +245,10 @@ class Stylesheet {
      */
     _isAlreadyDone(state){
 
+        if(this._attachOn === 'immediately') {
+            return true;
+        }
+
         if(this._getDocumentReadyState() === 'complete' && state === 'DOMContentLoaded') {
             return true;
         }
