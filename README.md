@@ -54,7 +54,7 @@ export {
 ```js
 
 let item = Item.create({
-    head: 'Some Head'
+    head: 'Some description'
 });
 
 document.body.appendChild(item);
@@ -78,8 +78,8 @@ document.body.appendChild(item);
                     border: 1px solid gray;
                 }
             </style>
-            <h3>{{head}}</h3>
-            <div>{{count}}</div>
+            <h3>Some description</h3>
+            <div>0</div>
             <div>
                 <span class="up"> + </span>
                 <span class="down"> - </span>
