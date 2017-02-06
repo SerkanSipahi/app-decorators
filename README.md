@@ -100,7 +100,11 @@ document.body.appendChild(item);
             <div>
                 <span class="up"> + </span>
                 <span class="down"> - </span>
-            </div>        
+            </div>  
+            <div>
+                <a href="?state=reset">clear count</a>
+                <a href="?state=destroy">destroy</a>
+            </div>
         </com-item>
     </body>
 </html>
