@@ -89,9 +89,7 @@ function view(template, options = {}) {
 		});
 
 		map.get('@callbacks').get('detached').push(domNode => {
-
 			domNode.$view.destroy();
-
 		});
 	}
 }

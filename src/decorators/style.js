@@ -32,16 +32,30 @@ function style(styles) {
         let map = storage.get(Class);
         map.get('@style').set('stylesheets', styles);
 
-        map.get('@callbacks').get('created').push(domNode => {
+        map.get('@callbacks').get('created').push((domNode) => {
+
+            let styles =  map.get('@style').get('stylesheets');
+            let stylesheet = new Stylesheet({
+                appendTo: domNode,
+                styles: styles,
+            });
+
+            domNode.$stylesheet = stylesheet;
 
 		});
 
-        map.get('@callbacks').get('attached').push(domNode => {
+        map.get('@callbacks').get('attached').push((domNode) => {
+
+            if(domNode.$stylesheet.initialized()){
+                return null;
+            }
+
+            domNode.$stylesheet.reinit(domNode);
 
         });
 
-        map.get('@callbacks').get('detached').push(domNode => {
-
+        map.get('@callbacks').get('detached').push((domNode) => {
+            domNode.$stylesheet.destroy();
         });
 	}
 }
