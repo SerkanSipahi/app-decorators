@@ -71,9 +71,25 @@ let initViewMap = (storage, Class) => {
     }
 };
 
+/**
+ * initStyleMap
+ * @param storage {WeakMap}
+ * @param Class {function}
+ */
+let initStyleMap = (storage, Class) => {
+
+    let map = storage.get(Class);
+    if(!map.has('@style')){
+        map.set('@style', new Map([
+            ["stylesheets", null],
+        ]));
+    }
+};
+
 export {
     initCoreMap,
     initActionMap,
     initOnMap,
     initViewMap,
+    initStyleMap,
 }

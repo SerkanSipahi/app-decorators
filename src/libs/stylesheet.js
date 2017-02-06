@@ -1,6 +1,13 @@
 class Stylesheet {
 
     /**
+     * @type {{attachOn: string}}
+     */
+    static defaultOptions = {
+        attachOn: 'load'
+    };
+
+    /**
      * @Ideas:
      * - implement "containment: strict" for avoiding repaint, recalc, etc
      */
