@@ -28,6 +28,10 @@ import { component, view, on, action, style } from 'app-decorators';
         <span class="up"> + </span>
         <span class="down"> - </span>
     </div>
+    <div>
+        <a href="?state=reset">clear count</a>
+        <a href="?state=destroy">destroy</a>
+    </div>
 `)
 @component({
     name: 'my-box'
@@ -42,6 +46,18 @@ class Item {
     
     @on('click .down') onClickUp() {
         --this.count
+    }
+    
+    @action('?state={{type}}') onClearCount({ params }){
+        
+        let { type } = params;
+        if(type === 'reset'){
+            this.count = 0;   
+        }
+        // remove it self
+        else if(type === 'destroy') {
+            this.parentNode.removeChild(this);
+        }
     }
 }
 
