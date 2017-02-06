@@ -69,7 +69,7 @@ document.body.appendChild(item);
     </head>
     <body>
         <com-item>
-            <!-- for fast rendering, style will be apppend onLoad -->
+            <!-- for fast rendering, style will be appended onLoad -->
             <style>
                 my-box h3 {
                     font-size: 14px;
