@@ -23,7 +23,7 @@ import { component, view, on, action, style } from 'app-decorators';
 `)
 @view(`
     <h3>{{head}}</h3>
-    <div>{{count}}</div>
+    <div class="count">{{count}}</div>
     <div>
         <span class="up"> + </span>
         <span class="down"> - </span>
@@ -79,7 +79,8 @@ document.body.appendChild(item);
                 }
             </style>
             <h3>Some description</h3>
-            <div>0</div>
+            <div class="count">0</div>
+            <!-- on click .up or .down it will increment/decrement .count -->
             <div>
                 <span class="up"> + </span>
                 <span class="down"> - </span>
