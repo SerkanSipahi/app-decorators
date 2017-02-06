@@ -48,7 +48,7 @@ class Item {
         --this.count
     }
     
-    @action('?state={{type}}') onClearCount({ params }){
+    @action('?state={{type}}') onUrlStateChanged({ params }){
         
         let { type } = params;
         if(type === 'reset'){
