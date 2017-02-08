@@ -118,7 +118,6 @@ document.body.appendChild(item);
 </body>
 ```
 
-
 ## Documentation
 
 ##### Decorators
@@ -126,16 +125,14 @@ document.body.appendChild(item);
 * [@view](./docs/decorators/view.md)
 * [@on](./docs/decorators/on.md)
 * [@action](./docs/decorators/action.md)
-* [@style] : in progress
-* [@model] : in progress
+* [@style](./docs/decorators/style.md)
 
 ##### Libraries
 * [Router](./docs/libs/router.md)
 * [Customelement](./docs/libs/customelement.md)
 * [Eventhandler](./docs/libs/eventhandler.md)
 * [View](./docs/libs/view.md)
-* Model : in progress
-
+* [Stylesheet](./docs/libs/stylesheet.md)
 
 ## Tests
 ```
