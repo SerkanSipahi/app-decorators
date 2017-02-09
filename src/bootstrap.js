@@ -1,5 +1,6 @@
 import { polyfills } from './datas/polyfills';
-import { lazyPolyfillLoader} from './helpers/lazyPolyfillLoader'
+import { lazyPolyfillLoader} from './helpers/lazyPolyfillLoader';
+
 
 let bootstrapPolyfills = lazyPolyfillLoader(System, polyfills);
 
