@@ -1,0 +1,38 @@
+{
+  "name": "babel-plugin-app-decorators-component",
+  "description": "Babel plugin for app-decorators @component",
+  "version": "0.7.511",
+  "author": "Serkan Sipahi <serkan.sipahi@yahoo.de>",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SerkanSipahi/babel-plugin-app-decorators-component.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SerkanSipahi/babel-plugin-app-decorators-component/issues"
+  },
+  "prepublish": "make compile",
+  "keywords": [
+    "babel",
+    "babel-plugin",
+    "es7",
+    "decorators",
+    "component"
+  ],
+  "devDependencies": {
+    "babel-cli": "6.22.2",
+    "babel-core": "6.22.1",
+    "babel-plugin-transform-runtime": "6.22.0",
+    "babel-preset-es2015": "6.22.0",
+    "chai": "3.5.0",
+    "mocha": "3.2.0"
+  },
+  "dependencies": {
+    "babel-plugin-syntax-decorators": "6.13.0",
+    "babel-plugin-transform-function-bind": "6.22.0",
+    "babel-runtime": "6.22.0",
+    "babel-traverse": "6.22.1",
+    "babylon": "6.15.0"
+  }
+}

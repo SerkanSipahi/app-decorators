@@ -1,0 +1,33 @@
+{
+  "name": "babel-preset-app-decorators",
+  "version": "0.7.511",
+  "description": "custom babel-preset for app-decorators",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SerkanSipahi/babel-preset-app-decorators.git"
+  },
+  "keywords": [
+    "babel-preset",
+    "app-decorators"
+  ],
+  "author": "Serkan Sipahi <serkan.sipahi@yahoo.de>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SerkanSipahi/babel-preset-app-decorators/issues"
+  },
+  "prepublish": "make compile",
+  "homepage": "https://github.com/SerkanSipahi/babel-preset-app-decorators#readme",
+  "dependencies": {
+    "babel-plugin-app-decorators-component": "^0.7.511",
+    "babel-plugin-app-decorators-component-register": "^0.7.511",
+    "babel-plugin-app-decorators-view-precompile": "^0.7.511",
+    "babel-plugin-transform-class-properties": "6.22.0",
+    "babel-plugin-transform-decorators-legacy": "1.3.4",
+    "babel-plugin-transform-function-bind": "6.22.0"
+  },
+  "devDependencies": {
+    "babel-cli": "6.22.2",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.22.0"
+  }
+}
