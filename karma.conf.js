@@ -1,7 +1,7 @@
 module.exports = function (config) {
 
 	config.set({
-		basePath: './dist',
+		basePath: './packages/app-decorators',
 		frameworks: [
 			'jspm',
 			'mocha',
@@ -52,12 +52,12 @@ module.exports = function (config) {
 		*/
 		jspm: {
 
-			browser: "jspm.browser.js",
-			config: "jspm.config.js",
+			browser: "tmp/jspm.browser.js",
+			config: "tmp/jspm.config.js",
 
 		    loadFiles: [
 				// includes regenerator-runtime: useful for async await
-				'jspm_packages/npm/babel-polyfill@6.22.0/dist/polyfill.js',
+				'jspm_packages/npm/babel-polyfill*/dist/polyfill.js',
 
 				'test/decorators/*spec.js',
 				'test/libs/*spec.js',
