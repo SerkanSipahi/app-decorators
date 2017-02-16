@@ -9,16 +9,16 @@ default:
 	@echo "   make publish (npm)"
 	@echo ""
 
-install: clean clean-dist node_modules jspm_packages
+install: node_modules jspm-install-packages lerna-bootstrap
 
 compile: prepare-compile gulp-compile-watch
 
-publish: prepare-compile gulp-compile npm-publish
+publish: lerna-publish
 
 node_modules:
-	npm install; npm run postinstall;
+	npm install; npm run postinstall
 
-jspm_packages:
+jspm-install-packages:
 	$(jspm) install
 
 gulp-compile:
@@ -27,31 +27,53 @@ gulp-compile:
 gulp-compile-watch:
 	$(gulp) compile-watch;
 
+lerna-init:
+	$(lerna) init $(set);
+
+lerna-bootstrap:
+	$(lerna) bootstrap $(set)
+
+lerna-publish-version:
+	$(lerna) publish --repo-version $(version) --exact --force-publish=* $(set);
+
+lerna-publish:
+	$(lerna) publish --exact --force-publish=* $(set);
+
+lerna-updated:
+	$(lerna) updated $(set);
+
+lerna-clean:
+	$(lerna) clean --yes $(set);
+
+lerna-test:
+	$(lerna) run test --ignore=babel-preset-app-decorators
+
 test:
 	$(karma) start
 
 clean:
-	rm -rf node_modules jspm_packages; make clean-dist
+	make lerna-clean; \
+	rm -rf node_modules jspm_packages; \
+	make clean-package-compiled;
 
-clean-dist:
-	rm -rf dist
+clean-package-compiled:
+	rm -rf packages/*/lib; \
+	rm -rf packages/app-decorators/src; \
+	rm -rf packages/app-decorators/test; \
+	rm -rf packages/app-decorators/node-modules; \
+	rm -rf packages/app-decorators/jspm_packages;
 
 prepare-compile:
-	rm -rf dist; mkdir dist; cd dist; \
-	ln -s ../jspm_packages jspm_packages; \
-	ln -s ../node_modules node_modules; \
-	cd ..; \
-	cp jspm.browser.js jspm.config.js dist; \
+	cp jspm.browser.js jspm.config.js packages/app-decorators/tmp; \
+	cd packages/app-decorators; \
+	ln -sf ../../jspm_packages jspm_packages; \
+	ln -sf ../../node_modules node_modules; \
+	cd ../../;
 
-npm-publish:
-	rm -rf lib; mkdir lib; \
-	cp -r dist/src/ lib; \
-	npm publish . &&  \
-	rm -rf lib;
+jspm   = ./node_modules/.bin/jspm
+karma  = ./node_modules/.bin/karma
+gulp   = ./node_modules/.bin/gulp
+lerna  = ./node_modules/.bin/lerna
 
-jspm  = ./node_modules/.bin/jspm
-karma = ./node_modules/.bin/karma
-gulp  = ./node_modules/.bin/gulp
-
-.PHONY: install test clean node_modules jspm_packages compile test;
+.PHONY: install test clean node_modules jspm-install-packages compile test lerna-init lerna-bootstrap lerna-publish;
 MAKEFLAGS = -s
