@@ -9,4 +9,3 @@ packages/**/lib/
 packages/**/tmp/
 packages/**/node_modules
 packages/**/jspm_packages
-packages/**/test
