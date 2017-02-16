@@ -1,8 +1,12 @@
+.idea
 ideas
+.DS_Store
+docs/.DS_Store
 node_modules
 jspm_packages
-dist
-examples
-.DS_Store
-.idea
-docs/.DS_Store
+packages/app-decorators/src
+packages/**/lib/
+packages/**/tmp/
+packages/**/node_modules
+packages/**/jspm_packages
+packages/**/test
