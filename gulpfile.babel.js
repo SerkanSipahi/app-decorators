@@ -5,20 +5,21 @@ import changed from 'gulp-changed';
 
 gulp.task('compile:src', () => {
 	return gulp.src('src/**/*.js')
-		.pipe(changed('dist/src'))
+		.pipe(changed('packages/app-decorators/src'))
 		.pipe(sourcemaps.init())
 		.pipe(babel())
 		.pipe(sourcemaps.write('.'))
-		.pipe(gulp.dest('dist/src'));
+		.pipe(gulp.dest('packages/app-decorators/src'))
+    	.pipe(gulp.dest('packages/app-decorators/lib'));
 });
 
 gulp.task('compile:test', () => {
 	return gulp.src('test/**/*.js')
-		.pipe(changed('dist/test'))
+		.pipe(changed('packages/app-decorators/test'))
 		.pipe(sourcemaps.init())
 		.pipe(babel())
 		.pipe(sourcemaps.write('.'))
-		.pipe(gulp.dest('dist/test'));
+		.pipe(gulp.dest('packages/app-decorators/test'));
 });
 
 gulp.task('watch', function() {
