@@ -1,0 +1,1 @@
+see: https://github.com/SerkanSipahi/app-decorators/issues/48
