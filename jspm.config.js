@@ -1,4 +1,4 @@
-SystemJS.config({
+System.config({
   transpiler: false,
   map: {
     "app-decorators": "src/index",
@@ -18,7 +18,7 @@ SystemJS.config({
   }
 });
 
-SystemJS.config({
+System.config({
   packageConfigPaths: [
     "npm:@*/*.json",
     "npm:*.json",
