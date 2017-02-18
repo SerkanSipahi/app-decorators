@@ -1,7 +1,7 @@
 {
   "name": "babel-plugin-app-decorators-component",
   "description": "Babel plugin for app-decorators @component",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "author": "Serkan Sipahi <serkan.sipahi@yahoo.de>",
   "main": "lib/index.js",
   "license": "MIT",
