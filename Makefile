@@ -64,7 +64,7 @@ clean-package-compiled:
 	rm -rf packages/app-decorators/jspm_packages;
 
 prepare-compile:
-	mkdir packages/app-decorators/tmp;
+	mkdir -p packages/app-decorators/tmp;
 	cp jspm.browser.js jspm.config.js packages/app-decorators/tmp; \
 	cd packages/app-decorators; \
 	ln -sf ../../jspm_packages jspm_packages; \

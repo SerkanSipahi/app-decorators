@@ -64,6 +64,8 @@ module.exports = function (config) {
 				'test/helpers/*spec.js',
 				'test/imports/*.js',
 				'test/mocks/*.js',
+
+                '!test/libs/pipe.spec.js',
 			],
 			serveFiles: [
 				// internal libs/files
