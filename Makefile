@@ -43,7 +43,7 @@ lerna-updated:
 	$(lerna) updated $(set);
 
 lerna-clean:
-	$(lerna) clean --yes $(set);
+	command -v $(lerna) >/dev/null && $(lerna) clean --yes $(set);
 
 lerna-test:
 	$(lerna) run test --ignore=babel-preset-app-decorators
@@ -58,13 +58,10 @@ clean:
 
 clean-package-compiled:
 	rm -rf packages/*/lib; \
-	rm -rf packages/app-decorators/src; \
-	rm -rf packages/app-decorators/test; \
-	rm -rf packages/app-decorators/node-modules; \
-	rm -rf packages/app-decorators/jspm_packages;
+	rm -rf packages/app-decorators/{build,tmp,src,test,node_modules,jspm_packages};
 
 prepare-compile:
-	mkdir -p packages/app-decorators/tmp;
+	mkdir -p packages/app-decorators/{build,tmp};
 	cp jspm.browser.js jspm.config.js packages/app-decorators/tmp; \
 	cd packages/app-decorators; \
 	ln -sf ../../jspm_packages jspm_packages; \

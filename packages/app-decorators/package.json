@@ -13,6 +13,7 @@
     "url": "https://github.com/SerkanSipahi/app-decorators/issues"
   },
   "scripts": {
+    "prepublish": "make build",
     "test": "make test"
   },
   "keywords": [
@@ -38,7 +39,6 @@
     "core-js": "2.4.1",
     "webcomponents.js": "0.7.23",
     "handlebars": "4.0.6",
-    "extend": "3.0.0",
-    "shadowdom": "git+https://github.com/webcomponents/shadydom.git"
+    "extend": "3.0.0"
   }
 }

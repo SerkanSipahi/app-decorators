@@ -8,13 +8,11 @@ default:
 test:
 	$(karma) start ../../karma.conf.js --single-run
 
-compile:
-	echo "compile";
-
 build:
-	echo "build";
+	$(jspm) bundle app-decorators build/app-decorators.js --minify --config build.json
 
-karma = ./../../node_modules/.bin/karma
+karma      = ./../../node_modules/.bin/karma
+jspm       = ./../../node_modules/.bin/jspm
 
 .PHONY: test compile build;
 MAKEFLAGS = -s
