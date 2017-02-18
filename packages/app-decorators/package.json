@@ -34,7 +34,7 @@
     "mixin"
   ],
   "dependencies": {
-    "systemjs": "0.20.7",
+    "systemjs": "0.20.9",
     "core-js": "2.4.1",
     "webcomponents.js": "0.7.23"
   }

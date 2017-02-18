@@ -9,7 +9,7 @@ default:
 	@echo "   make publish (npm)"
 	@echo ""
 
-install: node_modules jspm-install-packages lerna-bootstrap
+install: node_modules jspm-install-packages prepare-compile gulp-compile lerna-bootstrap
 
 compile: prepare-compile gulp-compile-watch
 
