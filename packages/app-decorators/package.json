@@ -14,6 +14,7 @@
   },
   "scripts": {
     "prepublish": "make build",
+    "postinstall": "npm install core-js@2.4.1 webcomponents.js@0.7.23 github:webcomponents/shadydom",
     "test": "make test"
   },
   "keywords": [
@@ -32,10 +33,5 @@
     "convention",
     "webapp",
     "mixin"
-  ],
-  "dependencies": {
-    "systemjs": "0.20.9",
-    "core-js": "2.4.1",
-    "webcomponents.js": "0.7.23"
-  }
+  ]
 }

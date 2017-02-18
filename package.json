@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/SerkanSipahi/app-decorators#readme",
   "scripts": {
-    "postinstall": "npm install named-js-regexp@1.3.2 core-js@2.4.1 webcomponents.js@0.7.23 handlebars@4.0.6 extend@3.0.0 github:webcomponents/shadydom"
+    "postinstall": "npm install github:webcomponents/shadydom"
   },
   "keywords": [
     "es6",
@@ -60,7 +60,11 @@
     "lerna": "2.0.0-beta.37",
     "mocha": "3.2.0",
     "should": "11.2.0",
-    "sinon": "1.17.7"
+    "sinon": "1.17.7",
+    "named-js-regexp": "1.3.2",
+    "webcomponents.js": "0.7.23",
+    "handlebars": "4.0.6",
+    "extend": "3.0.0"
   },
   "jspm": {
     "name": "app-decorators",
