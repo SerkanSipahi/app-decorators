@@ -1,6 +1,6 @@
 {
   "lerna": "2.0.0-beta.37",
-  "version": "0.7.511",
+  "version": "0.8.0",
   "commands": {
     "publish": {
       "ignore": [
@@ -16,5 +16,7 @@
       ]
     }
   },
-  "packages": ["packages/*"]
+  "packages": [
+    "packages/*"
+  ]
 }
