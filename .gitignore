@@ -5,6 +5,8 @@ docs/.DS_Store
 node_modules
 jspm_packages
 packages/app-decorators/src
+packages/app-decorators/test
+packages/app-decorators/build
 packages/**/lib/
 packages/**/tmp/
 packages/**/node_modules

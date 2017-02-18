@@ -1,7 +1,3 @@
-
-// internal libs
-import { component, view, on, model, collection } from 'app-decorators';
-
 describe.skip('@pipe decorator', () => {
 
 	// 1.) alle componenten inhalte instance(domNode) als blob speichern um sie beim nächsten mal als local file zu laden.
