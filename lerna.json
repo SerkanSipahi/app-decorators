@@ -9,7 +9,9 @@
         "tmp",
         "node_modules",
         "jspm_packages",
+        "CHANGELOG.md",
         "Makefile",
+        ".babelrc",
         ".idea"
       ]
     }
