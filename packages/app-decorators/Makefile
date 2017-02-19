@@ -11,12 +11,11 @@ test:
 
 build:
 	$(jspm) bundle app-decorators build/app-decorators.js \
-	--config $(buildJson) \
+	--config build.json \
 	--minify
 
 karma     = ./../../node_modules/.bin/karma
 jspm      = ./../../node_modules/.bin/jspm
-buildJson = ./../../build.json
 
 .PHONY: test compile build;
 MAKEFLAGS = -s
