@@ -31,7 +31,9 @@ lerna-init:
 	$(lerna) init $(set);
 
 lerna-bootstrap:
-	$(lerna) bootstrap $(set)
+	make fix-nested-node_modules; \
+	$(lerna) bootstrap $(set); \
+	make fix-nested-node_modules;
 
 lerna-publish-version:
 	$(lerna) publish --repo-version $(version) --exact --force-publish=* $(set);
@@ -66,7 +68,11 @@ prepare-compile:
 	cd packages/app-decorators; \
 	ln -sf ../../jspm_packages jspm_packages; \
 	ln -sf ../../node_modules node_modules; \
-	cd ../../;
+	cd ../../; \
+	make fix-nested-node_modules;
+
+fix-nested-node_modules:
+	rm -rf packages/app-decorators/node_modules/node_modules;
 
 jspm   = ./node_modules/.bin/jspm
 karma  = ./node_modules/.bin/karma
