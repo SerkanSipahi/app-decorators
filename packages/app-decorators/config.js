@@ -1,32 +1,33 @@
 System.config({
-    transpiler: false,
-    packageConfigPaths: [
+    "transpiler": false,
+    "packageConfigPaths": [
         "npm:@*/*.json",
         "npm:*.json",
         "github:*/*.json"
     ],
-    paths: {
-        "github:": "jspm_packages/github/",
+    "paths": {
+        "github": "jspm_packages/github/",
         "npm:": "jspm_packages/npm/",
-        "app-dec:": "node_modules/app-decorators/",
-        "src/": "src/",
+        "app/": "app/",
+        "src/": "dist/src/",
         "test/": "test/",
+        "app-decorators/": "node_modules/app-decorators/"
     },
-    map: {
-        "app-decorators": "app-dec:lib/index",
-        "app-decorators/bootstrap": "app-dec:lib/bootstrap",
-        "app-decorators-helper/register-customelement": "app-dec:lib/libs/customelement",
-        "app-decorators-helper/random-storage": "app-dec:lib/libs/random-storage",
+    "map": {
+        "app-decorators": "app-decorators/src/index",
+        "app-decorators/bootstrap": "app-decorators/src/bootstrap",
+        "app-decorators-helper/register-customelement": "app-decorators/src/libs/customelement",
+        "app-decorators-helper/random-storage": "app-decorators/src/libs/random-storage"
     },
-    packages: {
-        "node_modules": {
-            "defaultExtension": "js"
-        },
+    "packages": {
         "src": {
             "defaultExtension": "js"
         },
         "test": {
             "defaultExtension": "js"
         },
+        "node_modules": {
+            "defaultExtension": "js"
+        }
     }
 });

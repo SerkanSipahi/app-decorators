@@ -9,9 +9,9 @@
     "github": "jspm_packages/github/",
     "npm:": "jspm_packages/npm/",
     "app/": "app/",
-    "src/": "dist/src/",
+    "src/": "src/",
     "test/": "test/",
-    "app-decorators/": "node_modules/app-decorators/"
+    "app-decorators/": "./"
   },
   "map": {
     "app-decorators": "app-decorators/src/index",
