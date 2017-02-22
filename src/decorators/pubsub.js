@@ -8,7 +8,7 @@ function publish(...args) {
     return function(target, name, descriptor) {
 
     }
-};
+}
 
 /**
  * subscribe
@@ -19,7 +19,7 @@ function subscribe(...args) {
     return function(target, name, descriptor) {
 
     }
-};
+}
 
 export {
     publish,

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en" data-framework="app-decorators">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>App-Decorators • TodoMVC</title>
+    <link rel="stylesheet" href="./node_modules/todomvc-common/base.css">
+    <link rel="stylesheet" href="./node_modules/todomvc-app-css/index.css">
+</head>
+<body>
+    <app-todomvc></app-todomvc>
+    <footer class="info">
+        <p>Double-click to edit a todo</p>
+        <p>
+            Created by
+            <a href="https://github.com/SerkanSipahi">Serkan Sipahi</a> using <a href="https://github.com/SerkanSipahi/app-decorators">app-decorators</a>
+        </p>
+        <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+    </footer>
+    <script src="./node_modules/systemjs/dist/system.js"></script>
+    <script src="./node_modules/app-decorators/bootstrap.js"></script>
+    <script src="./node_modules/app-decorators/jspm.config.js"></script>
+    <script src="./app-decorators.js"></script>
+    <script>
+        bootstrap('src/app-todomvc');
+    </script>
+</body>
+</html>

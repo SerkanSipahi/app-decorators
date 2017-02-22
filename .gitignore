@@ -6,7 +6,7 @@ node_modules
 jspm_packages
 packages/app-decorators/src
 packages/app-decorators/test
-packages/app-decorators/build
+packages/app-decorators-todomvc/dist/
 packages/**/lib/
 packages/**/tmp/
 packages/**/node_modules

@@ -8,8 +8,7 @@ System.config({
     "paths": {
         "github": "jspm_packages/github/",
         "npm:": "jspm_packages/npm/",
-        "app/": "app/",
-        "src/": "dist/src/",
+        "src/": "lib/",
         "test/": "test/",
         "app-decorators/": "node_modules/app-decorators/"
     },
