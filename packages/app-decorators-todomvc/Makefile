@@ -13,7 +13,7 @@ compile:
 
 start: bundle start-express
 
-bundle: compile prepare-compile bundle-app bundle-core
+bundle: prepare-compile compile bundle-app bundle-core
 
 bundle-app:
 	$(jspm) bundle src/app-todomvc - app-decorators dist/lib/app-todomvc.js \
@@ -36,8 +36,9 @@ clean-dist:
 
 prepare-compile: clean-dist
 	mkdir -p dist; \
-	cp index.html jspm.config.js dist; \
+	cp index.html dist; \
 	cd dist; \
+	ln -sf ../jspm_packages jspm_packages; \
 	ln -sf ../node_modules node_modules; \
 	cd ..;
 
