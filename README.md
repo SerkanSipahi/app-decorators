@@ -5,7 +5,7 @@
 </p>
 
 ##### Quickstart: 
-Please use our [Todomvc Example](https://github.com/SerkanSipahi/app-decorators-todomvc) as boilerplate
+Please use our [Todomvc Example](https://github.com/SerkanSipahi/app-decorators/tree/master/packages/app-decorators-todomvc) as boilerplate
 
 ## Simple example
 
