@@ -1,15 +1,11 @@
 ---
 ## app-decorates
-<p>
-    <a href="https://david-dm.org/SerkanSipahi/app-decorators?type=dev"><img src="https://david-dm.org/SerkanSipahi/david/dev-status.svg" alt="devDependency Status"></a>
-</p>
 ---
 ### Core Packages
 
-
 | Package | Version | Dependencies | DevDependencies |
 |--------|-------|------------|------------|
-| [`app-decorators`](/packages/app-decorators) | [![npm](https://img.shields.io/npm/v/app-decorators.svg?maxAge=2592000)](https://www.npmjs.com/package/app-decorators) | - | - |
+| [`app-decorators`](/packages/app-decorators) | [![npm](https://img.shields.io/npm/v/app-decorators.svg?maxAge=2592000)](https://www.npmjs.com/package/app-decorators) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg)](https://david-dm.org/SerkanSipahi/app-decorators) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?type=dev)](https://david-dm.org/SerkanSipahi/app-decorators?type=dev) |
 | [`babel-plugin-app-decorators-component`](/packages/babel-plugin-app-decorators-component) | [![npm](https://img.shields.io/npm/v/babel-plugin-app-decorators-component.svg?maxAge=2592000)](https://www.npmjs.com/package/babel-plugin-app-decorators-component) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/babel-plugin-app-decorators-component)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/babel-plugin-app-decorators-component) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/babel-plugin-app-decorators-component&type=dev)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/babel-plugin-app-decorators-component&type=dev) |
 ---
 ##### Quickstart: 
