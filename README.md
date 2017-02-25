@@ -1,7 +1,7 @@
 ---
 ## app-decorates
 <p>
-    <a href="https://david-dm.org/SerkanSipahi/app-decorators/?type=dev"><img src="https://david-dm.org/SerkanSipahi/david/dev-status.svg" alt="devDependency Status"></a>
+    <a href="https://david-dm.org/SerkanSipahi/app-decorators?type=dev"><img src="https://david-dm.org/SerkanSipahi/david/dev-status.svg" alt="devDependency Status"></a>
 </p>
 ---
 ### Core Packages
@@ -10,7 +10,8 @@
 | Package | Version | Dependencies | DevDependencies |
 |--------|-------|------------|------------|
 | [`app-decorators`](/packages/app-decorators) | [![npm](https://img.shields.io/npm/v/app-decorators.svg?maxAge=2592000)](https://www.npmjs.com/package/app-decorators) | - | - |
-
+| [`babel-plugin-app-decorators-component`](/babel-plugin-app-decorators-component) | [![npm](https://img.shields.io/npm/v/babel-plugin-app-decorators-component.svg?maxAge=2592000)](https://www.npmjs.com/package/babel-plugin-app-decorators-component) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/babel-plugin-app-decorators-component)](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/babel-plugin-app-decorators-component) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/babel-plugin-app-decorators-component&type=dev)](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/babel-plugin-app-decorators-component&type=dev) |
+---
 ##### Quickstart: 
 Please use our [Todomvc Example](https://github.com/SerkanSipahi/app-decorators/tree/master/packages/app-decorators-todomvc) as boilerplate
 
