@@ -2,8 +2,8 @@
 Babel Plugin for extend HTMLElement by options for Babeljs v6.x
 
 <p>
-    <a href="https://david-dm.org/SerkanSipahi/babel-plugin-app-decorators-component"><img src="https://david-dm.org/SerkanSipahi/david.svg" alt="Dependency Status"></a>
-    <a href="https://david-dm.org/SerkanSipahi/babel-plugin-app-decorators-component/?type=dev"><img src="https://david-dm.org/SerkanSipahi/david/dev-status.svg" alt="devDependency Status"></a>
+    <a href="https://david-dm.org/SerkanSipahi/app-decorators?path=packages/babel-plugin-app-decorators-component"><img src="https://david-dm.org/SerkanSipahi/david.svg" alt="Dependency Status"></a>
+    <a href="https://david-dm.org/SerkanSipahi/app-decorators??path=packages/babel-plugin-app-decorators-component&type=dev"><img src="https://david-dm.org/SerkanSipahi/david/dev-status.svg" alt="devDependency Status"></a>
 </p>
 
 ### Installation

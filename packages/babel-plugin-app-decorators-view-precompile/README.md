@@ -2,8 +2,8 @@
 Babel Plugin for auto generating code
 
 <p>
-    <a href="https://david-dm.org/SerkanSipahi/babel-plugin-app-decorators-view-precompile"><img src="https://david-dm.org/SerkanSipahi/david.svg" alt="Dependency Status"></a>
-    <a href="https://david-dm.org/SerkanSipahi/babel-plugin-app-decorators-view-precompile/?type=dev"><img src="https://david-dm.org/SerkanSipahi/david/dev-status.svg" alt="devDependency Status"></a>
+    <a href="https://david-dm.org/SerkanSipahi/app-decorators?path=packages/babel-plugin-app-decorators-view-precompile"><img src="https://david-dm.org/SerkanSipahi/david.svg" alt="Dependency Status"></a>
+    <a href="https://david-dm.org/SerkanSipahi/app-decorators?path=packages/babel-plugin-app-decorators-view-precompile&type=dev"><img src="https://david-dm.org/SerkanSipahi/david/dev-status.svg" alt="devDependency Status"></a>
 </p>
 
 ### Installation
