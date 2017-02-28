@@ -8,10 +8,9 @@
   "paths": {
     "github": "jspm_packages/github/",
     "npm:": "jspm_packages/npm/",
-    "app/": "app/",
-    "src/": "src/",
+    "src/": "lib/",
     "test/": "test/",
-    "app-decorators/": "./"
+    "app-decorators/": "packages/app-decorators/"
   },
   "map": {
     "app-decorators": "app-decorators/src/index",
@@ -20,13 +19,7 @@
     "app-decorators-helper/random-storage": "app-decorators/src/libs/random-storage"
   },
   "packages": {
-    "src": {
-      "defaultExtension": "js"
-    },
-    "test": {
-      "defaultExtension": "js"
-    },
-    "node_modules": {
+    "packages": {
       "defaultExtension": "js"
     }
   }

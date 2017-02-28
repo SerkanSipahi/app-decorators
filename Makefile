@@ -8,6 +8,17 @@ default:
 	@echo "   make clean"
 	@echo "   make publish (npm)"
 	@echo ""
+	@echo "   lerna-test"
+	@echo "   lerna-clean"
+	@echo "   lerna-bootstrap"
+	@echo "   lerna-publish"
+	@echo "   lerna-publish-version version=1.0.0"
+	@echo "   lerna-updated"
+	@echo "   lerna-ncu"
+	@echo "   lerna-ncu-update"
+	@echo "   lerna-npm-install-save module=underscore"
+	@echo "   lerna-npm-install-save-dev module=app-decorators"
+	@echo ""
 
 install: node_modules jspm-install-packages prepare-compile gulp-compile lerna-bootstrap
 
@@ -44,11 +55,29 @@ lerna-publish:
 lerna-updated:
 	$(lerna) updated $(set);
 
+lerna-ncu:
+	$(lerna) exec -- ncu;
+
+lerna-ncu-update:
+	$(lerna) exec -- ncu -u;
+
+lerna-npm-install-save:
+	$(lerna) exec -- npm install $(moduls -lle) --save;
+
+lerna-npm-install-save-dev:
+	$(lerna) exec -- npm install $(module) --save-dev;
+
 lerna-clean:
 	command -v $(lerna) >/dev/null && $(lerna) clean --yes $(set);
 
 lerna-test:
 	$(lerna) run test --ignore=babel-preset-app-decorators
+
+bundle-runtime:
+	$(jspm) bundle app-decorators packages/app-decorators/runtime.js \
+	--config build-runtime.json \
+	--minify \
+	--skip-source-maps;
 
 test:
 	$(karma) start
@@ -74,10 +103,10 @@ prepare-compile:
 fix-nested-node_modules:
 	rm -rf packages/app-decorators/node_modules/node_modules;
 
-jspm   = ./node_modules/.bin/jspm
-karma  = ./node_modules/.bin/karma
-gulp   = ./node_modules/.bin/gulp
-lerna  = ./node_modules/.bin/lerna
+jspm  = ./node_modules/.bin/jspm
+karma = ./node_modules/.bin/karma
+gulp  = ./node_modules/.bin/gulp
+lerna = ./node_modules/.bin/lerna
 
 .PHONY: install test clean node_modules jspm-install-packages compile test lerna-init lerna-bootstrap lerna-publish;
 MAKEFLAGS = -s
