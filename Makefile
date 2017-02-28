@@ -62,7 +62,7 @@ lerna-ncu-update:
 	$(lerna) exec -- ncu -u;
 
 lerna-npm-install-save:
-	$(lerna) exec -- npm install $(moduls -lle) --save;
+	$(lerna) exec -- npm install $(module) --save;
 
 lerna-npm-install-save-dev:
 	$(lerna) exec -- npm install $(module) --save-dev;
@@ -89,7 +89,7 @@ clean:
 
 clean-package-compiled:
 	rm -rf packages/*/lib; \
-	rm -rf packages/app-decorators/{build,tmp,src,test,node_modules,jspm_packages};
+	rm -rf packages/app-decorators/{build,dist,tmp,src,test,node_modules,jspm_packages};
 
 prepare-compile:
 	mkdir -p packages/app-decorators/{build,tmp};
