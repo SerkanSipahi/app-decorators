@@ -24,7 +24,7 @@ start-express:
 	node index.js
 
 bundle-app:
-	$(jspm) bundle src/app-todomvc - app-decorators dist/lib/app-todomvc.js \
+	$(jspm) bundle src/app - app-decorators dist/lib/app.js \
 	--minify \
 	--skip-source-maps;
 
