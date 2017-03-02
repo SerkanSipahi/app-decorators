@@ -1,6 +1,6 @@
 {
   "name": "app-decorators",
-  "version": "0.8.203",
+  "version": "0.8.204",
   "description": "Collection of useful ES7 Decorators, writtin in ES6, that can be used for building webapps",
   "main": "lib/index.js",
   "repository": {
