@@ -10,28 +10,23 @@ default:
 
 install: npm-install-packages jspm-install-packages
 
-live: prepare-compile compile bundle-app bundle-core start-express
+live: prepare-compile compile bundle-app
 
-dev: prepare-compile compile-watch bundle-app bundle-core start-express
+dev: prepare-compile compile-watch
 
-compile:
+compile: prepare-compile
 	$(babel) src --out-dir lib
 
-compile-watch:
-	$(babel) src --out-dir lib -w
+compile-watch: prepare-compile
+	$(gulp) compile-watch
+
+start-express:
+	node index.js
 
 bundle-app:
 	$(jspm) bundle src/app-todomvc - app-decorators dist/lib/app-todomvc.js \
 	--minify \
 	--skip-source-maps;
-
-bundle-core:
-	$(jspm) bundle app-decorators dist/app-decorators.js \
-	--minify \
-	--skip-source-maps;
-
-start-express:
-	node index.js
 
 npm-install-packages:
 	npm install
@@ -43,7 +38,7 @@ clean:
 	make clean-dist; rm -rf node_modules jspm_packages
 
 clean-dist:
-	rm -rf dist
+	rm -rf dist lib;
 
 prepare-compile: clean-dist
 	mkdir -p dist; \
@@ -57,5 +52,5 @@ babel = ./node_modules/.bin/babel
 gulp  = ./node_modules/.bin/gulp
 jspm  = ./node_modules/.bin/jspm
 
-.PHONY: compile compile-watch live production bundle-app bundle-core start-express;
+.PHONY: compile compile-watch live production bundle-app start-express prepare-compile;
 MAKEFLAGS = -s

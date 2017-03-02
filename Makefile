@@ -92,7 +92,7 @@ clean-package-compiled:
 	rm -rf packages/app-decorators/{build,dist,tmp,src,test,node_modules,jspm_packages};
 
 prepare-compile:
-	mkdir -p packages/app-decorators/{build,tmp};
+	mkdir -p packages/app-decorators/tmp;
 	cp jspm.browser.js jspm.config.js packages/app-decorators/tmp; \
 	cd packages/app-decorators; \
 	ln -sf ../../jspm_packages jspm_packages; \
