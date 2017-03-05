@@ -10,17 +10,20 @@ default:
 
 install: npm-install-packages jspm-install-packages
 
-live: prepare-compile compile bundle-app
+production: prepare-compile compile bundle-app
 
-dev: prepare-compile compile-watch
+dev: prepare-compile gulp-compile
 
 compile: prepare-compile
 	$(babel) src --out-dir lib
 
-compile-watch: prepare-compile
+gulp-compile: prepare-compile
+	$(gulp) compile
+
+gulp-compile-watch: prepare-compile
 	$(gulp) compile-watch
 
-start-express:
+server:
 	node index.js
 
 bundle-app:
@@ -52,5 +55,5 @@ babel = ./node_modules/.bin/babel
 gulp  = ./node_modules/.bin/gulp
 jspm  = ./node_modules/.bin/jspm
 
-.PHONY: compile compile-watch live production bundle-app start-express prepare-compile;
+.PHONY: compile compile-watch live production bundle-app server prepare-compile;
 MAKEFLAGS = -s

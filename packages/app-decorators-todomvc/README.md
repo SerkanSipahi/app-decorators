@@ -11,10 +11,13 @@
 </p>
 ---
 ```bash
-git clone https://github.com/SerkanSipahi/app-decorators-todomvc.git
-cd app-decorators-todomvc
-make install
-make start
+git clone https://github.com/SerkanSipahi/app-decorators.git
+cd app-decorators/packages/app-decorators-todomvc
+make install production server
+```
+or
+```bash
+make install dev server
 ```
 
 open following url `http://localhost:3000/` in your browser.
