@@ -10,7 +10,7 @@ default:
 
 install: npm-install-packages jspm-install-packages
 
-live: prepare-compile compile bundle-app
+live: prepare-compile compile
 
 dev: prepare-compile compile-watch
 
@@ -23,13 +23,8 @@ compile: prepare-compile
 compile-watch: prepare-compile
 	$(gulp) compile-watch
 
-start-express:
+server:
 	node index.js
-
-bundle-app:
-	$(jspm) bundle src/app-todomvc - app-decorators dist/lib/app-todomvc.js \
-	--minify \
-	--skip-source-maps;
 
 npm-install-packages:
 	npm install
@@ -56,5 +51,5 @@ gulp  = ./node_modules/.bin/gulp
 jspm  = ./node_modules/.bin/jspm
 karma = ./../../node_modules/.bin/karma
 
-.PHONY: compile compile-watch live production bundle-app start-express prepare-compile;
+.PHONY: compile compile-watch live production bundle-app server prepare-compile;
 MAKEFLAGS = -s
