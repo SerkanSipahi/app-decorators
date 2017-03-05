@@ -44,5 +44,9 @@
     "gulp-replace": "0.5.4",
     "gulp-sourcemaps": "2.4.1",
     "jspm": "0.17.0-beta.40"
+  },
+  "jspm": {
+    "dependencies": {},
+    "devDependencies": {}
   }
 }
