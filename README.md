@@ -1,19 +1,32 @@
 ## app-decorates
 ---
-### Core Packages
+### Runtime package
 
 | Package | Version | Dependencies | DevDependencies |
 |--------|-------|------------|------------|
-| [`app-decorators`](/packages/app-decorators) | [![npm](https://img.shields.io/npm/v/app-decorators.svg?maxAge=2592000)](https://www.npmjs.com/package/app-decorators) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg)](https://david-dm.org/SerkanSipahi/app-decorators) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?type=dev)](https://david-dm.org/SerkanSipahi/app-decorators?type=dev) |
+| [`app-decorators`](./) | [![npm](https://img.shields.io/npm/v/app-decorators.svg?maxAge=2592000)](https://www.npmjs.com/package/app-decorators) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg)](https://david-dm.org/SerkanSipahi/app-decorators) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?type=dev)](https://david-dm.org/SerkanSipahi/app-decorators?type=dev) |
+---
+### core packages
+
+| Package | Version | Dependencies | DevDependencies |
+|--------|-------|------------|------------|
 | [`app-decorators-component`](/packages/babel-plugin-app-decorators-component) | [![npm](https://img.shields.io/npm/v/babel-plugin-app-decorators-component.svg?maxAge=2592000)](https://www.npmjs.com/package/babel-plugin-app-decorators-component) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/babel-plugin-app-decorators-component)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/babel-plugin-app-decorators-component) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/babel-plugin-app-decorators-component&type=dev)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/babel-plugin-app-decorators-component&type=dev) |
 | [`app-decorators-component-register`](/packages/babel-plugin-app-decorators-component-register) | [![npm](https://img.shields.io/npm/v/babel-plugin-app-decorators-component-register.svg?maxAge=2592000)](https://www.npmjs.com/package/babel-plugin-app-decorators-component-register) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/babel-plugin-app-decorators-component-register)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/babel-plugin-app-decorators-component-register) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/babel-plugin-app-decorators-component-register&type=dev)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/babel-plugin-app-decorators-component-register&type=dev) |
 | [`app-decorators-view-precompile`](/packages/babel-plugin-app-decorators-view-precompile) | [![npm](https://img.shields.io/npm/v/babel-plugin-app-decorators-view-precompile.svg?maxAge=2592000)](https://www.npmjs.com/package/babel-plugin-app-decorators-view-precompile) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/babel-plugin-app-decorators-view-precompile)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/babel-plugin-app-decorators-view-precompile) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/babel-plugin-app-decorators-view-precompile&type=dev)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/babel-plugin-app-decorators-view-precompile&type=dev) |
 | [`preset-app-decorators`](/packages/babel-preset-app-decorators) | [![npm](https://img.shields.io/npm/v/babel-preset-app-decorators.svg?maxAge=2592000)](https://www.npmjs.com/package/babel-preset-app-decorators) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/babel-preset-app-decorators)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/babel-preset-app-decorators) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/babel-preset-app-decorators&type=dev)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/babel-preset-app-decorators&type=dev) |
 ---
-##### Quickstart: 
-Please use our [Todomvc Example](https://github.com/SerkanSipahi/app-decorators/tree/master/packages/app-decorators-todomvc) as boilerplate
 
-## Simple example
+### todomvc
+
+| Package | Version | Dependencies | DevDependencies |
+|--------|-------|------------|------------|
+| [`app-decorators-todomvc`](/packages/app-decorators-todomvc) | [![npm](https://img.shields.io/npm/v/app-decorators-todomvc.svg?maxAge=2592000)](https://www.npmjs.com/package/app-decorators-todomvc) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/app-decorators-todomvc)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/app-decorators-todomvc) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/app-decorators-todomvc&type=dev)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/app-decorators-todomvc&type=dev) |
+---
+
+* This package (todomvc) can be used in the meanwhile as boilerplate
+* We are working hard on cli. See [`appdec-cli`](https://github.com/SerkanSipahi/app-decortors-cli)
+
+### Simple example
 
 ##### Item.js
 ```js
