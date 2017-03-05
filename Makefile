@@ -71,7 +71,7 @@ lerna-clean:
 	command -v $(lerna) >/dev/null && $(lerna) clean --yes $(set);
 
 lerna-test:
-	$(lerna) run test --ignore=babel-preset-app-decorators
+	$(lerna) run test --ignore={babel-preset-app-decorators,app-decorators-todomvc}
 
 bundle-runtime:
 	$(jspm) bundle app-decorators packages/app-decorators/runtime.js \
