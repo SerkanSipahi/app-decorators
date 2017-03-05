@@ -22,4 +22,13 @@ or
 make install dev server
 ```
 
+#### or use it as as boilerplate
+```bash
+make install dev server
+```
+and then start in new session
+```bash
+make gulp-compile-watch
+```
+
 open following url `http://localhost:3000/` in your browser.
