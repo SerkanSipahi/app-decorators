@@ -10,6 +10,8 @@
   <img src="./assets/todomvc-app-decorators.png" alt="todomvc app-decorators">
 </p>
 ---
+
+#### Playground environment for todomvc
 ```bash
 git clone https://github.com/SerkanSipahi/app-decorators.git
 cd app-decorators/packages/app-decorators-todomvc
