@@ -26,6 +26,8 @@
 
 #### Simple example
 
+---
+
 ##### Item.js
 ```js
 import { component, view, on, action, style } from 'app-decorators';
