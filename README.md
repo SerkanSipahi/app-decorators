@@ -24,9 +24,9 @@
 * This package (todomvc) can be used in the meanwhile as boilerplate
 * We are working hard on cli. See [`appdec-cli`](https://github.com/SerkanSipahi/app-decortors-cli)
 
-#### Simple example
-
 ---
+
+#### Simple example
 
 ##### Item.js
 ```js
