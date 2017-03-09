@@ -160,9 +160,9 @@ make compile
 make test
 ```
 
-### Source
+## Source
 
 app-decorators and its [packages](https://github.com/SerkanSipahi/app-decorators/tree/master/packages) are distributed as a [monorepo](https://github.com/babel/babel/blob/master/doc/design/monorepo.md).
 
-(c) 2015 - 2017 Serkan Sipahi
+## (c) 2015 - 2017 Serkan Sipahi
 App-Decorators may be freely distributed under the [MIT license](https://github.com/SerkanSipahi/app-decorators/blob/master/LICENSE).
