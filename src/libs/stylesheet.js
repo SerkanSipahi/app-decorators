@@ -327,7 +327,12 @@ class Stylesheet {
 
         let [ node ] = appendTo.children;
         if(node){
-            appendTo.insertBefore(stylesElement, node);
+            if(node.localName.toLocaleLowerCase() === 'style'){
+                // insert after
+                appendTo.insertBefore(stylesElement, node.nextSibling);
+            } else {
+                appendTo.insertBefore(stylesElement, node);
+            }
         } else {
             appendTo.appendChild(stylesElement);
         }

@@ -112,4 +112,71 @@ describe('@style decorator', async () => {
         should($('#test-style-order com-style-basic').get(0).outerHTML).be.equal(expectedHTML);
     });
 
+    it('should create style element in order of document.readyState', async () => {
+
+        @style([
+            {
+                attachOn: 'immediately',
+                styles:
+                    '.foo {' +
+                        'color: blue;' +
+                    '}',
+            },
+            {
+                attachOn: 'DOMContentLoaded',
+                styles:
+                    '.bar {' +
+                        'color: red;' +
+                    '}',
+            },
+            {
+                attachOn: 'load',
+                styles:
+                    '.baz {' +
+                        'color: green;' +
+                    '}',
+            }
+        ])
+        @view('<div class="foo">Hello World</div>')
+        @component({
+            name: 'com-style-collection',
+        })
+        class Style {
+        }
+
+
+        $('body').append('<div class="test-style-order"></div>');
+
+        /**
+         *  Setup
+         */
+
+        let element = Style.create();
+        let expectedHTML =
+            '<com-style-collection rendered="true">' +
+                '<style>' +
+                    '.foo {' +
+                        'color: blue;' +
+                    '}' +
+                '</style>' +
+                '<style>' +
+                    '.baz {' +
+                        'color: green;' +
+                    '}' +
+                '</style>' +
+                '<style>' +
+                    '.bar {' +
+                        'color: red;' +
+                    '}' +
+                '</style>' +
+                '<div class="foo">Hello World</div>' +
+            '</com-style-collection>';
+
+        /**
+         * Test
+         */
+        element.outerHTML.should.be.equal(expectedHTML);
+
+    });
+
 });
