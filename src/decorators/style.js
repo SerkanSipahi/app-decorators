@@ -63,12 +63,6 @@ function style(styles) {
 	}
 }
 
-style.helper = {
-      createStyleSheet(){
-
-      }
-};
-
 export {
 	style
 };

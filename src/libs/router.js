@@ -297,7 +297,7 @@ class Router {
 	}
 
 	/**
-	 * off
+	 * destroy
 	 * @return {Undefined}
 	 */
 	destroy() {

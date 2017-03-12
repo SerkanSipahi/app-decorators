@@ -112,7 +112,7 @@ describe('@style decorator', async () => {
         should($('#test-style-order com-style-basic').get(0).outerHTML).be.equal(expectedHTML);
     });
 
-    it('should create style element in order of document.readyState', async () => {
+    it('should create style element in order of document.readyState', () => {
 
         @style([
             {
