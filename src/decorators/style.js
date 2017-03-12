@@ -4,7 +4,7 @@ import { storage } from 'app-decorators-helper/random-storage';
 
 /**
  * Style
- * @param  {string} styles
+ * @param  {string|Array} styles
  * @return {Function}
  */
 function style(styles) {
@@ -19,7 +19,9 @@ function style(styles) {
         initStyleMap(storage, Class);
 
         if(getTypeof(styles) === 'String'){
-            //Object.assign(Stylesheet.defaultOptions, { styles });
+            styles = [{
+                styles: styles
+            }];
         }
 
 
@@ -28,31 +30,44 @@ function style(styles) {
 
         map.get('@callbacks').get('created').push(domNode => {
 
-            let styles =  map.get('@style').get('stylesheets');
-            let stylesheet = new Stylesheet({
-                appendTo: domNode,
-                styles: styles,
-            });
+            if(!(domNode.$stylesheets && domNode.$stylesheets.length)){
+                domNode.$stylesheets = [];
+            }
 
-            domNode.$stylesheet = stylesheet;
-
+            let styles = map.get('@style').get('stylesheets');
+            for(let style of styles){
+                domNode.$stylesheets.push(new Stylesheet({
+                    appendTo: domNode,
+                    attachOn: style.attachOn,
+                    styles: style.styles,
+                }));
+            }
 		});
 
         map.get('@callbacks').get('attached').push(domNode => {
 
-            if(domNode.$stylesheet.initialized()){
-                return null;
+            for(let stylesheet of domNode.$stylesheets){
+                if(stylesheet.initialized()){
+                    return null;
+                }
+                stylesheet.reinit(domNode);
             }
-
-            domNode.$stylesheet.reinit(domNode);
-
         });
 
-        map.get('@callbacks').get('detached').push((domNode) => {
-            domNode.$stylesheet.destroy();
+        map.get('@callbacks').get('detached').push(domNode => {
+
+            for(let stylesheet of domNode.$stylesheets){
+                stylesheet.destroy();
+            }
         });
 	}
 }
+
+style.helper = {
+      createStyleSheet(){
+
+      }
+};
 
 export {
 	style
