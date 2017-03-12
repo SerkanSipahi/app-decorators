@@ -119,7 +119,7 @@ on.helper = {
 	 * @param  {HTMLElement} domNode
 	 * @return {Eventhandler} eventHandler
 	 */
-	createLocalEventHandler: (localScopeEvents, domNode) => {
+	createLocalEventHandler(localScopeEvents, domNode){
 
 		return new Eventhandler({
 			events: localScopeEvents,
@@ -135,7 +135,7 @@ on.helper = {
 	 * @param  {function} callback
 	 * @return {HTMLElement} domNode
 	 */
-	createCustomEventHandler: (eventsEntries, domNode, callback = () => {}) => {
+	createCustomEventHandler(eventsEntries, domNode, callback = () => {}) {
 
 		for(let eventEntry of eventsEntries){
 

@@ -19,20 +19,14 @@ function style(styles) {
         initStyleMap(storage, Class);
 
         if(getTypeof(styles) === 'String'){
-            Object.assign(Stylesheet.defaultOptions, { styles });
+            //Object.assign(Stylesheet.defaultOptions, { styles });
         }
 
-        /**
-         * when passed multiple styles with different attachOn
-         */
-        if(getTypeof(styles) === 'Array'){
-
-        }
 
         let map = storage.get(Class);
         map.get('@style').set('stylesheets', styles);
 
-        map.get('@callbacks').get('created').push((domNode) => {
+        map.get('@callbacks').get('created').push(domNode => {
 
             let styles =  map.get('@style').get('stylesheets');
             let stylesheet = new Stylesheet({
@@ -44,7 +38,7 @@ function style(styles) {
 
 		});
 
-        map.get('@callbacks').get('attached').push((domNode) => {
+        map.get('@callbacks').get('attached').push(domNode => {
 
             if(domNode.$stylesheet.initialized()){
                 return null;

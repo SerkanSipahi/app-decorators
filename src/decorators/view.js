@@ -129,7 +129,7 @@ view.helper = {
 	 * @param viewBinds
 	 * @returns {Object} target
      */
-	registerSetGet: (target, viewBinds) => {
+	registerSetGet(target, viewBinds) {
 
 		// make viewBinds immutable
 		viewBinds = JSON.parse(JSON.stringify(viewBinds));
