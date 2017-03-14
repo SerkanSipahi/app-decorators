@@ -9,7 +9,7 @@
   "author": "Serkan Sipahi",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/SerkanSipahi/app-decorators-todomvc/issues"
+    "url": "https://github.com/SerkanSipahi/app-decorators/issues"
   },
   "scripts": {
     "prepublish": "make compile"

@@ -10,7 +10,7 @@
     "url": "https://github.com/SerkanSipahi/app-decorators/tree/master/packages/babel-plugin-app-decorators-component-register"
   },
   "bugs": {
-    "url": "https://github.com/SerkanSipahi/babel-plugin-app-decorators-component-register/issues"
+    "url": "https://github.com/SerkanSipahi/app-decorators/issues"
   },
   "scripts": {
     "prepublish": "make compile",
