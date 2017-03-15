@@ -4,18 +4,26 @@ import * as postcss from 'postcss';
  * create Config
  * @param attachOn {string}
  * @param styles {string}
+ * @returns {{ attachOn: string, styles: string }}
  */
 let createConfig = (attachOn, styles) => ({ attachOn, styles: `${styles} ` });
 
 /**
  * Determine if node is on root layer
- * @param node {object}
+ * @param node {{
+ *   parent: {
+ *      type: string
+ *   }
+ * }}
+ * @returns boolean
  */
 let isRootNode = node => node.parent && /root/.test(node.parent.type);
 
 /**
  * Stringify ast node
- * @param node {object}
+ * @param node {{
+ *   type: string
+ * }}
  * @returns {string}
  */
 let stringifyAstNode = node => {
@@ -49,8 +57,12 @@ let stringifyAstNodes = nodes => {
 
 /**
  * Get at rule config
- * @param atRuleNode {object}
- * @returns {object|undefined}
+ * @param atRuleNode {{
+ *   nodes: Array,
+ *   params: string,
+ *   name: string
+ * }}
+ * @returns {object|null}
  */
 let getAtRuleConfig = atRuleNode => {
 
@@ -59,7 +71,7 @@ let getAtRuleConfig = atRuleNode => {
     }
 
     if(!atRuleNode.nodes) {
-        return;
+        return null;
     }
 
     let matcher = /\(("|')?([a-z]+)("|')\)/i;
@@ -69,23 +81,21 @@ let getAtRuleConfig = atRuleNode => {
         throw new Error(['Failed: only letters allowed', params]);
     }
 
-    let atRuleConfig = createConfig(matched[2], stringifyAstNodes(atRuleNode.nodes));
-    return atRuleConfig;
+    return createConfig(matched[2], stringifyAstNodes(atRuleNode.nodes));
 };
 
 /**
  * Get rule config
  * @param ruleNode {object}
- * @returns {object|undefined}
+ * @returns {object}
  */
 let getRuleConfig = ruleNode => {
 
     if(!isRootNode(ruleNode)) {
-        return;
+        return null;
     }
 
-    let styleEvent = createConfig('immediately', stringifyAstNode(ruleNode));
-    return styleEvent;
+    return createConfig('immediately', stringifyAstNode(ruleNode));
 };
 
 /**
