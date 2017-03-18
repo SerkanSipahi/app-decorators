@@ -20,6 +20,13 @@ let createConfig = (attachOn, styles) => ({ attachOn, styles: `${styles} ` });
 let isRootNode = node => node.parent && /root/.test(node.parent.type);
 
 /**
+ * push when config exists to given container
+ * @param container {Array}
+ * @param config {object}
+ */
+let push = (container, config) => config ? container.push(config) : null;
+
+/**
  * Stringify ast node
  * @param node {{
  *   type: string
@@ -98,30 +105,33 @@ let getRuleConfig = node => {
 };
 
 /**
+ * getConfig
+ * @param node {object}
+ * @returns {{ attachOn: string, styles: string }}
+ */
+let getConfig = node => {
+
+    if(node.name === 'on'){
+        return getAtRuleConfig(node);
+    } else {
+        return getRuleConfig(node);
+    }
+};
+
+/**
  * Parse passed css styles
  * @param styles {string}
  * @returns {Array}
  */
 let parse = styles => {
 
-    let configs = [];
+    let container = [];
     let ast = postcss.parse(styles);
 
-    ast.walkAtRules(node => {
-        let config = getAtRuleConfig(node);
-        if(config) {
-            configs.push(config);
-        }
-    });
+    ast.walkAtRules(node => push(container, getConfig(node)));
+    ast.walkRules(node => push(container, getConfig(node)));
 
-    ast.walkRules(node => {
-        let config = getRuleConfig(node);
-        if(config) {
-            configs.push(config);
-        }
-    });
-
-    return configs;
+    return container;
 };
 
 export {
