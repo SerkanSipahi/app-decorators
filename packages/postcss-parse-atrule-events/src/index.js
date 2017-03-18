@@ -34,7 +34,6 @@ let stringifyAstNode = node => {
 
     let result = '';
     postcss.stringify(node, i => result += i);
-
     return result;
 };
 
@@ -51,51 +50,51 @@ let stringifyAstNodes = nodes => {
 
     let result = '';
     nodes.forEach(node => result += stringifyAstNode(node));
-
     return result;
 };
 
 /**
  * Get at rule config
- * @param atRuleNode {{
+ * @param node {{
  *   nodes: Array,
  *   params: string,
  *   name: string
  * }}
  * @returns {object|null}
  */
-let getAtRuleConfig = atRuleNode => {
+let getAtRuleConfig = node => {
 
-    if(atRuleNode.name === 'on' && !isRootNode(atRuleNode)){
+    let { name, nodes, params } = node;
+
+    if(name === 'on' && !isRootNode(node)){
         throw new Error('Failed: please use @on at root layer');
     }
 
-    if(!atRuleNode.nodes) {
+    if(!nodes) {
         return null;
     }
 
-    let matcher = /\(("|')?([a-z]+)("|')\)/i;
-    let params  = atRuleNode.params;
-    let matched = params.match(matcher);
+    let pattern = /\(("|')?([a-z]+)("|')\)/i;
+    let matched = params.match(pattern);
     if(!matched) {
         throw new Error(['Failed: only letters allowed', params]);
     }
 
-    return createConfig(matched[2], stringifyAstNodes(atRuleNode.nodes));
+    return createConfig(matched[2], stringifyAstNodes(node.nodes));
 };
 
 /**
  * Get rule config
- * @param ruleNode {object}
+ * @param node {object}
  * @returns {object}
  */
-let getRuleConfig = ruleNode => {
+let getRuleConfig = node => {
 
-    if(!isRootNode(ruleNode)) {
+    if(!isRootNode(node)) {
         return null;
     }
 
-    return createConfig('immediately', stringifyAstNode(ruleNode));
+    return createConfig('immediately', stringifyAstNode(node));
 };
 
 /**
@@ -108,21 +107,21 @@ let parse = styles => {
     let configs = [];
     let ast = postcss.parse(styles);
 
-    ast.walkAtRules(atRuleNode => {
-        let atRuleconfig = getAtRuleConfig(atRuleNode);
-        if(atRuleconfig) {
-            configs.push(atRuleconfig);
+    ast.walkAtRules(node => {
+        let config = getAtRuleConfig(node);
+        if(config) {
+            configs.push(config);
         }
     });
 
-    ast.walkRules(ruleNode => {
-        let ruleConfig = getRuleConfig(ruleNode);
-        if(ruleConfig) {
-            configs.push(ruleConfig);
+    ast.walkRules(node => {
+        let config = getRuleConfig(node);
+        if(config) {
+            configs.push(config);
         }
     });
 
-    return configs
+    return configs;
 };
 
 export {
