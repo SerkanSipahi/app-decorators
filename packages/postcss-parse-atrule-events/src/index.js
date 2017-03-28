@@ -6,7 +6,7 @@ import * as postcss from 'postcss';
  * @param styles {string}
  * @returns {{ attachOn: string, styles: string }}
  */
-let createConfig = (attachOn, styles) => ({ attachOn, styles: `${styles} ` });
+let createConfig = (attachOn, styles) => ({ attachOn, styles: `${styles} \n` });
 
 /**
  * Determine if node is on root layer
@@ -23,8 +23,32 @@ let isRootNode = node => node.parent && /root/.test(node.parent.type);
  * push when config exists to given container
  * @param container {Array}
  * @param config {object}
+ * @param pushUniqueKey {string}
  */
-let push = (container, config) => config ? container.push(config) : null;
+let pushUnique = (container, config, pushUniqueKey = 'attachOn') => {
+
+    if(!config){
+        return;
+    }
+
+    if(!container.length){
+        container.push(config);
+        return;
+    }
+
+    let found = false;
+    for(let rule of container){
+        if(rule[pushUniqueKey] === config[pushUniqueKey]){
+            rule.styles += config.styles;
+            found = true;
+            break;
+        }
+    }
+
+    if(!found) {
+        container.push(config);
+    }
+};
 
 /**
  * Stringify ast node
@@ -128,8 +152,8 @@ let parse = styles => {
     let container = [];
     let ast = postcss.parse(styles);
 
-    ast.walkAtRules(node => push(container, getConfig(node)));
-    ast.walkRules(node => push(container, getConfig(node)));
+    ast.walkAtRules(node => pushUnique(container, getConfig(node)));
+    ast.walkRules(node => pushUnique(container, getConfig(node)));
 
     return container;
 };
