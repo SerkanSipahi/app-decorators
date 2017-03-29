@@ -1,7 +1,7 @@
 {
   "name": "postcss-parse-atrule-events",
   "description": "postcss plugin for parsing atrule events",
-  "version": "0.8.205",
+  "version": "0.8.206",
   "author": "Serkan Sipahi <serkan.sipahi@yahoo.de>",
   "main": "lib/index.js",
   "license": "MIT",
@@ -11,10 +11,6 @@
   },
   "bugs": {
     "url": "https://github.com/SerkanSipahi/app-decorators/issues"
-  },
-  "scripts": {
-    "test": "./node_modules/.bin/babel-node $(mocha) -- test",
-    "prepublish": "./node_modules/.bin/babel src -d lib;"
   },
   "keywords": [
     "postcss",
