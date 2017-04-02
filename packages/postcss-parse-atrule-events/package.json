@@ -12,6 +12,10 @@
   "bugs": {
     "url": "https://github.com/SerkanSipahi/app-decorators/issues"
   },
+  "scripts": {
+    "prepublish": "echo 'compile'",
+    "test": "echo 'test'"
+  },
   "keywords": [
     "postcss",
     "parse atrule events"
