@@ -24,11 +24,11 @@
     "component"
   ],
   "devDependencies": {
-    "babel-cli": "6.23.0",
-    "babel-core": "6.23.1",
+    "babel-cli": "6.24.0",
+    "babel-core": "6.24.0",
     "babel-plugin-syntax-function-bind": "6.13.0",
-    "babel-preset-es2015": "6.22.0",
-    "babel-template": "6.23.0",
+    "babel-preset-es2015": "6.24.0",
+    "babel-template": "6.23.0q",
     "babel-types ": "6.23.0",
     "chai": "3.5.0",
     "mocha": "3.2.0"

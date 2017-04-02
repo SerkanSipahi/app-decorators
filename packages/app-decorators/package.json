@@ -35,19 +35,19 @@
   ],
   "dependencies": {
     "app-decorators": "0.8.206",
-    "express": "4.15.0",
-    "systemjs": "0.20.9"
+    "express": "4.15.2",
+    "systemjs": "0.20.11"
   },
   "devDependencies": {
-    "babel-cli": "6.23.0",
+    "babel-cli": "6.24.0",
     "babel-preset-app-decorators": "0.8.206",
-    "babel-preset-es2015": "6.22.0",
+    "babel-preset-es2015": "6.24.0",
     "gulp": "3.9.1",
     "gulp-babel": "6.1.2",
     "gulp-changed": "2.0.0",
     "gulp-concat": "2.6.1",
     "gulp-replace": "0.5.4",
-    "gulp-sourcemaps": "2.4.1",
-    "jspm": "0.17.0-beta.40"
+    "gulp-sourcemaps": "2.5.0",
+    "jspm": "0.17.0-beta.41"
   }
 }
