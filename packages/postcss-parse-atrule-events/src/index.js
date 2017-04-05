@@ -4,9 +4,13 @@ import * as postcss from 'postcss';
  * create Config
  * @param attachOn {string}
  * @param styles {string}
+ * @param type {string}
+ * @param imports {array}
  * @returns {{ attachOn: string, styles: string }}
  */
-let createConfig = (attachOn, styles) => ({ attachOn, styles: `${styles} \n` });
+let createConfig = (attachOn, styles, type, imports) => ({
+    attachOn, styles: `${styles} \n`, type, imports,
+});
 
 /**
  * Determine if node is on root layer
@@ -20,12 +24,12 @@ let createConfig = (attachOn, styles) => ({ attachOn, styles: `${styles} \n` });
 let isRootNode = node => node.parent && /root/.test(node.parent.type);
 
 /**
- * push when config exists to given container
+ * push when config
  * @param container {Array}
  * @param config {object}
  * @param pushUniqueKey {string}
  */
-let pushUnique = (container, config, pushUniqueKey = 'attachOn') => {
+let push = (container, config) => {
 
     if(!config){
         return;
@@ -36,18 +40,7 @@ let pushUnique = (container, config, pushUniqueKey = 'attachOn') => {
         return;
     }
 
-    let found = false;
-    for(let rule of container){
-        if(rule[pushUniqueKey] === config[pushUniqueKey]){
-            rule.styles += config.styles;
-            found = true;
-            break;
-        }
-    }
-
-    if(!found) {
-        container.push(config);
-    }
+    container.push(config);
 };
 
 /**
@@ -97,8 +90,8 @@ let getAtRuleConfig = node => {
 
     let { name, nodes, params } = node;
 
-    if(name === 'on' && !isRootNode(node)){
-        throw new Error('Failed: please use @on at root layer');
+    if(!isRootNode(node)){
+        throw new Error('Failed: @on and @rel only on first layer allowed!');
     }
 
     if(!nodes) {
@@ -111,7 +104,34 @@ let getAtRuleConfig = node => {
         throw new Error(['Failed: only letters allowed', params]);
     }
 
-    return createConfig(matched[2], stringifyAstNodes(node.nodes));
+    // nodes of @on and @rel
+    let imports = [];
+    for(let node of node.nodes) {
+
+        // no childs found
+        if(!node.walkAtRules){
+            continue;
+        }
+
+        // Parent must be an atRule event @on and not
+        node.walkAtRules(({name} = node) => {
+            if(name === 'fetch'){
+                throw new Error(['Failed: Parent must be an atRule event @on and not', node.parent]);
+            }
+        });
+
+        if(node.name !== 'fetch'){
+            continue;
+        }
+
+        if(!node.params) {
+            throw new Error('Failed: not path declared');
+        }
+
+        imports.push(node.params);
+    }
+
+    return createConfig(matched[2], stringifyAstNodes(node.nodes), name, imports);
 };
 
 /**
@@ -152,8 +172,8 @@ let parse = styles => {
     let container = [];
     let ast = postcss.parse(styles);
 
-    ast.walkAtRules(node => pushUnique(container, getConfig(node)));
-    ast.walkRules(node => pushUnique(container, getConfig(node)));
+    ast.walkAtRules(node => push(container, getConfig(node)));
+    ast.walkRules(node => push(container, getConfig(node)));
 
     return container;
 };
