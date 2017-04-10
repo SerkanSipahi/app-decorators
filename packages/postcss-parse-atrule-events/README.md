@@ -20,8 +20,6 @@ $ npm install postcss-parse-atrule-events --save
 let result = require('postcss-parse-atrule-events').parse('code');
 ```
 
-### The goal of this babel-plugin is precompile template with handlebars that is inside of app-decorators @view:
-
 #### Example
 Input:
 ```js
