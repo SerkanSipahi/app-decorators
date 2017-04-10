@@ -1,7 +1,7 @@
 {
   "name": "babel-plugin-app-decorators-view-precompile",
   "description": "Babel plugin for app-decorators @view",
-  "version": "0.8.209",
+  "version": "0.8.210",
   "author": "Serkan Sipahi <serkan.sipahi@yahoo.de>",
   "main": "lib/index.js",
   "license": "MIT",
@@ -24,13 +24,13 @@
     "view"
   ],
   "dependencies": {
-    "babylon": "6.16.1",
     "babel-core": "6.24.1",
-    "babel-preset-es2015": "6.24.1",
     "babel-plugin-syntax-function-bind": "6.13.0",
     "babel-plugin-transform-function-bind": "6.22.0",
+    "babel-preset-es2015": "6.24.1",
     "babel-template": "6.24.1",
     "babel-types ": "6.24.1",
+    "babylon": "6.16.1",
     "handlebars": "4.0.6"
   },
   "devDependencies": {
