@@ -83,7 +83,7 @@
       "handlebars": "npm:handlebars@4.0.6",
       "jquery": "npm:jquery@2.2.0",
       "should": "npm:should@11.2.0",
-      "sinon": "npm:sinon@1.17.7"
+      "sinon": "npm:sinon@2.1.0"
     }
   }
 }

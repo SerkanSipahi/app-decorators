@@ -180,7 +180,7 @@ describe('Class Stylesheet ', () => {
         let defaultOptions = null;
 
         let getOptions = options => Object.assign({}, defaultOptions, options);
-        let stub = (method, value) => sinon.stub(Stylesheet.prototype, method, _ => value);
+        let stub = (method, value) => sinon.stub(Stylesheet.prototype, method).callsFake(_ => value);
 
         let expectedResult =
         '<div id="appendToElement">'+
