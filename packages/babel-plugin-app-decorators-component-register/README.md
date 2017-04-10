@@ -76,8 +76,8 @@ _register.Register.customElement(Foo, _storage.storage);
 
 #### Tests
 ```bash
-git clone https://github.com/SerkanSipahi/babel-plugin-app-decorators-component-register.git
-cd babel-plugin-app-decorators-component-register
+git clone https://github.com/SerkanSipahi/app-decorators.git
+cd app-decorators/packages/babel-plugin-app-decorators-component-register
 make install
 make test
 ```

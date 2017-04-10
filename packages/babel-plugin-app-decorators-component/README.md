@@ -117,8 +117,8 @@ class Foo extends Bar {
 
 #### Tests
 ```bash
-git clone https://github.com/SerkanSipahi/babel-plugin-app-decorators-component.git
-cd babel-plugin-app-decorators-component
+git clone https://github.com/SerkanSipahi/app-decorators.git
+cd app-decorators/packages/babel-plugin-app-decorators-component
 make install
 make test
 ```
