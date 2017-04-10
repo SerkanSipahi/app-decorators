@@ -155,9 +155,13 @@ document.body.appendChild(item);
 
 ## Tests
 ```
+// only once
 make install
-make compile
-make test
+npm run lerna-bootstrap
+
+// run this commands separately
+make compile (watch compile)
+npm run test
 ```
 
 ## Source
