@@ -25,7 +25,7 @@ let result = require('postcss-parse-atrule-events').parse('code');
 #### Example
 Input:
 ```js
-@style(`
+let input =`
     @rel('preload') {
         @fetch load/my/styles2.css;
         @fetch load/my/styles3.css;
@@ -42,13 +42,10 @@ Input:
         color: red;
     }
 `)
-class Foo {
-
-}
 ```
 Output:
 ```js
-    [
+let output = [
         {
             type: "rel",
             attachOn: "preload",
