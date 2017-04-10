@@ -10,7 +10,6 @@ default:
 	@echo ""
 	@echo "   lerna-test"
 	@echo "   lerna-clean"
-	@echo "   lerna-bootstrap"
 	@echo "   lerna-publish"
 	@echo "   lerna-publish-version version=1.0.0"
 	@echo "   lerna-updated"
@@ -20,14 +19,14 @@ default:
 	@echo "   lerna-npm-install-save-dev module=app-decorators"
 	@echo ""
 
-install: node_modules jspm-install-packages prepare-compile gulp-compile lerna-bootstrap
+install: node_modules jspm-install-packages prepare-compile gulp-compile
 
 compile: prepare-compile gulp-compile-watch
 
 publish: lerna-publish
 
 node_modules:
-	npm install; npm run postinstall
+	npm install
 
 jspm-install-packages:
 	$(jspm) install
@@ -40,11 +39,6 @@ gulp-compile-watch:
 
 lerna-init:
 	$(lerna) init $(set);
-
-lerna-bootstrap:
-	make fix-nested-node_modules; \
-	$(lerna) bootstrap $(set); \
-	make fix-nested-node_modules;
 
 lerna-publish-version:
 	$(lerna) publish --repo-version $(version) --exact --force-publish=* $(set);
@@ -71,7 +65,7 @@ lerna-clean:
 	command -v $(lerna) >/dev/null && $(lerna) clean --yes $(set);
 
 lerna-test:
-	$(lerna) run test --ignore={babel-preset-app-decorators,app-decorators-todomvc}
+	$(lerna) run test --ignore={babel-preset-app-decorators,app-decorators,app-decorators-todomvc}
 
 bundle-runtime:
 	$(jspm) bundle app-decorators packages/app-decorators/runtime.js \
@@ -108,5 +102,5 @@ karma = ./node_modules/.bin/karma
 gulp  = ./node_modules/.bin/gulp
 lerna = ./node_modules/.bin/lerna
 
-.PHONY: install test clean node_modules jspm-install-packages compile test lerna-init lerna-bootstrap lerna-publish;
+.PHONY: install test clean node_modules jspm-install-packages compile test lerna-init lerna-publish;
 MAKEFLAGS = -s

@@ -43,13 +43,11 @@ module.exports = function (config) {
 	        pattern: '**/*.js.map',
 	        included: false
 		}],
-		/*
 		client: {
 			mocha: {
-				opts: 'test/mocha.opts' // update to karma-mocha 1.3.0
+                opts: './mocha.opts'
 			},
 		},
-		*/
 		jspm: {
 
 			browser: "tmp/jspm.browser.js",

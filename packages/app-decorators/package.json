@@ -34,20 +34,18 @@
     "mixin"
   ],
   "dependencies": {
-    "app-decorators": "0.8.208",
-    "express": "4.15.2",
-    "systemjs": "0.20.11"
+    "systemjs": "0.20.12"
   },
   "devDependencies": {
-    "babel-cli": "6.24.0",
+    "babel-cli": "6.24.1",
     "babel-preset-app-decorators": "0.8.208",
-    "babel-preset-es2015": "6.24.0",
+    "babel-preset-es2015": "6.24.1",
     "gulp": "3.9.1",
     "gulp-babel": "6.1.2",
     "gulp-changed": "2.0.0",
     "gulp-concat": "2.6.1",
     "gulp-replace": "0.5.4",
-    "gulp-sourcemaps": "2.5.0",
+    "gulp-sourcemaps": "2.5.1",
     "jspm": "0.17.0-beta.41"
   }
 }
