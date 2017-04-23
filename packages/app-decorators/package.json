@@ -1,6 +1,6 @@
 {
   "name": "app-decorators",
-  "version": "0.8.212",
+  "version": "0.8.213",
   "description": "Collection of useful ES7 Decorators, writtin in ES6, that can be used for building webapps",
   "author": "Serkan Sipahi <serkan.sipahi@yahoo.de>",
   "main": "lib/index.js",
@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "babel-cli": "6.24.1",
-    "babel-preset-app-decorators": "0.8.212",
+    "babel-preset-app-decorators": "0.8.213",
     "babel-preset-es2015": "6.24.1",
     "gulp": "3.9.1",
     "gulp-babel": "6.1.2",
