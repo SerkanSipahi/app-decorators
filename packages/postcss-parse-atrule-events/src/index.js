@@ -27,7 +27,6 @@ let isRootNode = node => node.parent && /root/.test(node.parent.type);
  * push when config
  * @param container {Array}
  * @param config {object}
- * @param pushUniqueKey {string}
  */
 let push = (container, config) => {
 
@@ -91,7 +90,7 @@ let getAtRuleConfig = node => {
     let { name, nodes, params } = node;
 
     if(!isRootNode(node)){
-        throw new Error('Failed: @on and @rel only on first layer allowed!');
+        throw new Error('Failed: @on and @rel only on root layer allowed!');
     }
 
     if(!nodes) {
@@ -105,30 +104,59 @@ let getAtRuleConfig = node => {
     }
 
     // nodes of @on and @rel
+    // collect imports
+    let importIndexes = [];
     let imports = [];
-    for(let node of node.nodes) {
+    for(let i = 0; i < node.nodes.length; i++) {
+
+        let _node = node.nodes[i];
 
         // no childs found
-        if(!node.walkAtRules){
+        if(!_node.walkAtRules){
             continue;
         }
 
         // Parent must be an atRule event @on and not
-        node.walkAtRules(({name} = node) => {
+        _node.walkAtRules(({name} = _node) => {
             if(name === 'fetch'){
-                throw new Error(['Failed: Parent must be an atRule event @on and not', node.parent]);
+                throw new Error(['Failed: Parent must be an atRule event @on or @rel and not', {
+                    correct: `
+                    @on('load') {
+                        @fetch load/my111/styles2.css!async;
+                    }
+                    `,
+                    wrong: `
+                    @on('load') {
+                        .nut {
+                            @fetch load/my111/styles2.css!async;
+                        }
+                    }
+                    `
+                }]);
             }
         });
 
-        if(node.name !== 'fetch'){
+        if(_node.name !== 'fetch'){
             continue;
         }
 
-        if(!node.params) {
-            throw new Error('Failed: not path declared');
+        if(!_node.params) {
+            throw new Error('Failed: not path declared', {
+                correct : '@fetch load/my111/styles2.css',
+                wrong: '@fetch',
+            });
         }
 
-        imports.push(node.params);
+        //keep index of @fetch ...
+        importIndexes.push(i);
+        // push @fetch value
+        imports.push(_node.params);
+    }
+
+    // remove @fetch
+    // http://stackoverflow.com/questions/9425009/remove-multiple-elements-from-array-in-javascript-jquery#9425230
+    for (let i = importIndexes.length -1; i >= 0; i--){
+        node.nodes.splice(importIndexes[i],1);
     }
 
     return createConfig(matched[2], stringifyAstNodes(node.nodes), name, imports);
@@ -145,17 +173,17 @@ let getRuleConfig = node => {
         return null;
     }
 
-    return createConfig('immediately', stringifyAstNode(node));
+    return createConfig('immediately', stringifyAstNode(node), 'default', []);
 };
 
 /**
  * getConfig
  * @param node {object}
- * @returns {{ attachOn: string, styles: string }}
+ * @returns {{ attachOn: string, styles: string } || null}
  */
 let getConfig = node => {
 
-    if(node.name === 'on'){
+    if(/on|rel/.test(node.name)){
         return getAtRuleConfig(node);
     } else {
         return getRuleConfig(node);
