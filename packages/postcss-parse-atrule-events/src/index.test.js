@@ -64,14 +64,14 @@ it('should create "attachOn: immediately" objects', () => {
     let fooClass =
         '.foo {'+
             'color: gray;'+
-        '} \n';
-    let barClass =
+        '} \n',
+        barClass =
         '#foo {'+
-        'color: gray;'+
-        '} \n' ;
-    let bazClass =
+            'color: gray;'+
+        '} \n' ,
+        bazClass =
         'foo {'+
-        'color: gray;'+
+            'color: gray;'+
         '} \n' ;
 
     let styles =
