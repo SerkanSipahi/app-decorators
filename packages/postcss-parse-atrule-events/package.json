@@ -27,7 +27,7 @@
     "parse atrule events"
   ],
   "dependencies": {
-    "assert": "1.4.1",
+    "assert-diff": "1.2.0",
     "babel-cli": "6.24.1",
     "babel-plugin-transform-es2015-modules-commonjs": "6.24.1",
     "postcss": "5.2.17",

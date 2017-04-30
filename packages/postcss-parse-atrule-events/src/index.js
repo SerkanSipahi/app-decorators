@@ -67,11 +67,11 @@ let stringifyAstNode = node => {
  */
 let stringifyAstNodes = nodes => {
 
+    let result = '';
     if(!nodes || (nodes && !nodes.length)) {
-        throw new Error('Failed: please pass AST collection; array[ast1, ast2, ast3]');
+        return result;
     }
 
-    let result = '';
     nodes.forEach(node => result += stringifyAstNode(node));
     return result;
 };
@@ -177,25 +177,35 @@ let getRuleConfig = node => {
 };
 
 /**
- * getConfig
- * @param node {object}
- * @returns {{ attachOn: string, styles: string } || null}
+ * will check the grammar
+ * @param container {Array}
+ * @param config {object}
+ * @param pushUniqueKey {string}
  */
-let getConfig = node => {
+let grammarCheck = node => {
 
-    if(/on|rel/.test(node.name)){
-        return getAtRuleConfig(node);
-    } else {
-        return getRuleConfig(node);
-    }
+    // grammarCheck()
+    // 1.) Wenn @import und parent @on dann passt
+    // 2.) Wenn @import und parent @rel dann passt
+    // 3.) Wenn selectoren und parent @rel dann macht kein sinn
+    // 3.) Wenn selectoren und parent @on dann macht sinn
+    // 4.) Wenn @import + !property und parent @rel dann macht kein sinn
+    // 5.) Wenn @import + !property und parent @on dann passt
+
+    return {}
+};
+
+let optimize = simpleAst => {
+    return simpleAst;
 };
 
 /**
  * Parse passed css styles
  * @param styles {string}
+ * @param options {{optimize: boolean, grammarCheck: boolean}}
  * @returns {Array}
  */
-let parse = styles => {
+let parse = (styles, options = {}) => {
 
     let container = [];
     let ast = postcss.parse(styles);
@@ -209,6 +219,15 @@ let parse = styles => {
 
     // walk trough classic css selectors
     ast.walkRules(node => push(container, getRuleConfig(node)));
+
+
+    if(options.optimize){
+        container = optimize(container);
+    }
+
+    if(options.grammarCheck) {
+        grammarCheck(container);
+    }
 
     return container;
 };
