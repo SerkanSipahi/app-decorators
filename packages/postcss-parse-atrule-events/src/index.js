@@ -5,7 +5,7 @@ import * as postcss from 'postcss';
  * @param attachOn {string}
  * @param styles {string}
  * @param type {string}
- * @param imports {array}
+ * @param imports {Array}
  * @returns {{ attachOn: string, styles: string }}
  */
 let createConfig = (attachOn, styles, type, imports) => ({
@@ -200,8 +200,15 @@ let parse = styles => {
     let container = [];
     let ast = postcss.parse(styles);
 
-    ast.walkAtRules(node => push(container, getConfig(node)));
-    ast.walkRules(node => push(container, getConfig(node)));
+    // walk trough @on and @rel
+    ast.walkAtRules(node => {
+        if(/on|rel/.test(node.name)){
+            push(container, getAtRuleConfig(node))
+        }
+    });
+
+    // walk trough classic css selectors
+    ast.walkRules(node => push(container, getRuleConfig(node)));
 
     return container;
 };
