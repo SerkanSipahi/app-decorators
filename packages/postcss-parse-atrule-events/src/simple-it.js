@@ -10,7 +10,7 @@ it.run  = () => {
           test();
           console.log(`Test Ok: ${description}`);
       } catch(e){
-          console.log(`Failed in: ${description}, Message: ${e.message}`);
+          console.log(`Failed in: ${description}, Message: ${e}`);
       }
   }
 };

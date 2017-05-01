@@ -2,6 +2,9 @@ import * as compiler from 'postcss';
 import postcss from 'postcss';
 import nestedCss from 'postcss-nested';
 
+const IMMEDIATELY = "immediately";
+const DEFAUlT = "default";
+
 /**
  * create Config
  * @param attachOn {string}
@@ -74,17 +77,13 @@ let stringifyAstNodes = nodes => {
         return result;
     }
 
-    nodes.forEach(node => result += stringifyAstNode(node));
+    nodes.forEach(node => result += stringifyAstNode(node)+" \n");
     return result;
 };
 
 /**
  * Get at rule config
- * @param node {{
- *   nodes: Array,
- *   params: string,
- *   name: string
- * }}
+ * @param node {object}
  * @returns {object|null}
  */
 let getAtRuleConfig = node => {
@@ -94,36 +93,35 @@ let getAtRuleConfig = node => {
         return null;
     }
 
+    // skip if atRule has atRule as parent
+    if(!isRootNode(node)) {
+        return null;
+    }
+
     let pattern = /(rel|on)\(("|')?([a-z]+)("|')\)/i;
     let [,type,,attachOn] = params.match(pattern) || [];
-    if(!type && node.name !== 'media') {
-        // kann aufgenommen werden
-        return null;
+
+    if(!type) {
+        return createConfig(IMMEDIATELY, stringifyAstNodes([node]), DEFAUlT, []);
     }
 
     // nodes of @on and @rel
     // collect imports
-    let importIndexes = [];
     let imports = [];
+    let importIndexes = [];
 
-    /**
-     * In Funktion auslagern, so das hier dann per if geprüft werden kann
-     * ob @on oder @rel, ansonsten kann es immediately aufgenommen werden
-     */
-    for(let i = 0; i < node.nodes.length; i++) {
+    for(let i = 0, len = nodes.length; i < len; i++) {
 
-        let _node = node.nodes[i];
+        let { walkAtRules, name, params } = nodes[i];
 
         // no childs found
-        if(!_node.walkAtRules){
+        if(!walkAtRules){
             continue;
         }
-
-        if(_node.name !== 'fetch'){
+        if(name !== 'fetch'){
             continue;
         }
-
-        if(!_node.params) {
+        if(!params) {
             throw new Error('Failed: not path declared', {
                 correct : '@fetch load/my111/styles2.css',
                 wrong: '@fetch',
@@ -133,16 +131,16 @@ let getAtRuleConfig = node => {
         //keep index of @fetch ...
         importIndexes.push(i);
         // push @fetch value
-        imports.push(_node.params);
+        imports.push(params);
     }
 
     // remove @fetch
     // http://stackoverflow.com/questions/9425009/remove-multiple-elements-from-array-in-javascript-jquery#9425230
     for (let i = importIndexes.length -1; i >= 0; i--){
-        node.nodes.splice(importIndexes[i],1);
+        nodes.splice(importIndexes[i],1);
     }
 
-    return createConfig(attachOn, stringifyAstNodes(node.nodes), type, imports);
+    return createConfig(attachOn, stringifyAstNodes(nodes), type, imports);
 };
 
 /**
@@ -152,11 +150,12 @@ let getAtRuleConfig = node => {
  */
 let getRuleConfig = node => {
 
+    // skip if rule (selector) has atRule as parent
     if(!isRootNode(node)) {
         return null;
     }
 
-    return createConfig('immediately', stringifyAstNode(node), 'default', []);
+    return createConfig(IMMEDIATELY, stringifyAstNode(node), DEFAUlT, []);
 };
 
 /**
@@ -192,26 +191,21 @@ let parse = (styles, options = {}) => {
 
     let container = [];
     let ast = compiler.parse(
+        // normalize nested css before converting to ast
         postcss([nestedCss]).process(styles).content
     );
 
     // walk trough @media rel('preload'), @media on(...)
-    ast.walkAtRules(node =>
-        push(container, getAtRuleConfig(node))
-    );
+    ast.walkAtRules(node => push(container, getAtRuleConfig(node)));
 
     // walk trough classic css selectors
-    ast.walkRules(node =>
-        push(container, getRuleConfig(node))
-    );
+    ast.walkRules(node => push(container, getRuleConfig(node)));
 
-    if(options.optimize){
-        container = optimize(container);
-    }
+    // combine/concat same attachOn´s
+    options.optimize ? container = optimize(container) : null;
 
-    if(options.grammarCheck) {
-        grammarCheck(container);
-    }
+    // check in which constellation @media on and @media rel allowed
+    options.grammarCheck ? grammarCheck(container) : null;
 
     return container;
 };

@@ -7,6 +7,12 @@ let stylesFixture = `
 @media on('load') {
     .foo {
         color: violette;
+        .bar {
+            color: gray;
+        }
+    }
+    .baz {
+        color: serkan;
     }
 }
 
@@ -31,13 +37,22 @@ let stylesFixture = `
         @fetch load/my/styles3.css!defer;
     }
     */
+    c. {
+        color: cologne;
+    }
 }
 /**
  * Should not be removed, should be included in "immediately"
  */ 
 @media print {
     .a {
-        color: yellow
+        color: yellow;
+        .b {
+            color: b;
+            .c {
+                color: c;
+            }
+        }
     }
 }
 
@@ -55,6 +70,10 @@ let stylesFixture = `
     .baz {
         width: 23px;
     }
+}
+
+#serkan {
+    background-color: liya;
 }
 
 `;
