@@ -22,13 +22,12 @@ let result = require('postcss-parse-atrule-events').parse('code');
 
 #### Example
 Input:
-```js
-let input =`
-    @rel('preload') {
+```css
+    @media rel('preload') {
         @fetch load/my/styles2.css;
         @fetch load/my/styles3.css;
     }
-    @on('load') {
+    @media on('load') {
         @fetch load/my111/styles2.css!async;
         @fetch load/my111/styles3.css!defer;
     }
@@ -39,7 +38,6 @@ let input =`
     .bar {
         color: red;
     }
-`)
 ```
 Output:
 ```js

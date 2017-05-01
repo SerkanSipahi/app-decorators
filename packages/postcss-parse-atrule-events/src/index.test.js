@@ -4,19 +4,19 @@ import { it } from './simple-it';
 import 'should';
 
 let stylesFixture = `
-@on('load') {
+@media on('load') {
     .foo {
         color: violette;
     }
 }
 
-@on('load') {
+@media on('load') {
     @import "load/my/styles1.css";
     .nut {
         color: magento;
     }
 }
-@on('load') {
+@media on('load') {
     .a {
         color: red;
     }
@@ -32,27 +32,31 @@ let stylesFixture = `
     }
     */
 }
+/**
+ * Should not be removed, should be included in "immediately"
+ */ 
 @media print {
     .a {
         color: yellow
     }
 }
 
-@rel('preload') {
+@media rel('preload') {
     .foo {
         color: blue;
     }
 }
-@rel('preload') {
+@media rel('preload') {
 	@fetch load/my/styles2.css!async;
 	@fetch load/my/styles3.css!defer;
 }
 
-@on('myCustomEvent') {
+@media on('myCustomEvent') {
     .baz {
         width: 23px;
     }
 }
+
 `;
 
 it('should create "attachOn: immediately" objects', () => {

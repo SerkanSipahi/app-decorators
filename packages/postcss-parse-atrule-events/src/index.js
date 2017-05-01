@@ -1,4 +1,6 @@
-import * as postcss from 'postcss';
+import * as compiler from 'postcss';
+import postcss from 'postcss';
+import nestedCss from 'postcss-nested';
 
 /**
  * create Config
@@ -56,7 +58,7 @@ let stringifyAstNode = node => {
     }
 
     let result = '';
-    postcss.stringify(node, i => result += i);
+    compiler.stringify(node, i => result += i);
     return result;
 };
 
@@ -87,26 +89,27 @@ let stringifyAstNodes = nodes => {
  */
 let getAtRuleConfig = node => {
 
-    let { name, nodes, params } = node;
-
-    if(!isRootNode(node)){
-        throw new Error('Failed: @on and @rel only on root layer allowed!');
-    }
-
+    let { nodes, params } = node;
     if(!nodes) {
         return null;
     }
 
-    let pattern = /\(("|')?([a-z]+)("|')\)/i;
-    let matched = params.match(pattern);
-    if(!matched) {
-        throw new Error(['Failed: only letters allowed', params]);
+    let pattern = /(rel|on)\(("|')?([a-z]+)("|')\)/i;
+    let [,type,,attachOn] = params.match(pattern) || [];
+    if(!type && node.name !== 'media') {
+        // kann aufgenommen werden
+        return null;
     }
 
     // nodes of @on and @rel
     // collect imports
     let importIndexes = [];
     let imports = [];
+
+    /**
+     * In Funktion auslagern, so das hier dann per if geprüft werden kann
+     * ob @on oder @rel, ansonsten kann es immediately aufgenommen werden
+     */
     for(let i = 0; i < node.nodes.length; i++) {
 
         let _node = node.nodes[i];
@@ -115,26 +118,6 @@ let getAtRuleConfig = node => {
         if(!_node.walkAtRules){
             continue;
         }
-
-        // Parent must be an atRule event @on and not
-        _node.walkAtRules(({name} = _node) => {
-            if(name === 'fetch'){
-                throw new Error(['Failed: Parent must be an atRule event @on or @rel and not', {
-                    correct: `
-                    @on('load') {
-                        @fetch load/my111/styles2.css!async;
-                    }
-                    `,
-                    wrong: `
-                    @on('load') {
-                        .nut {
-                            @fetch load/my111/styles2.css!async;
-                        }
-                    }
-                    `
-                }]);
-            }
-        });
 
         if(_node.name !== 'fetch'){
             continue;
@@ -159,7 +142,7 @@ let getAtRuleConfig = node => {
         node.nodes.splice(importIndexes[i],1);
     }
 
-    return createConfig(matched[2], stringifyAstNodes(node.nodes), name, imports);
+    return createConfig(attachOn, stringifyAstNodes(node.nodes), type, imports);
 };
 
 /**
@@ -208,18 +191,19 @@ let optimize = simpleAst => {
 let parse = (styles, options = {}) => {
 
     let container = [];
-    let ast = postcss.parse(styles);
+    let ast = compiler.parse(
+        postcss([nestedCss]).process(styles).content
+    );
 
-    // walk trough @on and @rel
-    ast.walkAtRules(node => {
-        if(/on|rel/.test(node.name)){
-            push(container, getAtRuleConfig(node))
-        }
-    });
+    // walk trough @media rel('preload'), @media on(...)
+    ast.walkAtRules(node =>
+        push(container, getAtRuleConfig(node))
+    );
 
     // walk trough classic css selectors
-    ast.walkRules(node => push(container, getRuleConfig(node)));
-
+    ast.walkRules(node =>
+        push(container, getRuleConfig(node))
+    );
 
     if(options.optimize){
         container = optimize(container);

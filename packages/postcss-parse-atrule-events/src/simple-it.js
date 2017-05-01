@@ -8,9 +8,9 @@ it.run  = () => {
       let [description, test] = it;
       try {
           test();
-          console.log(`Test: ${description}`);
+          console.log(`Test Ok: ${description}`);
       } catch(e){
-          console.log(`Failed: ${description}`, e.message);
+          console.log(`Failed in: ${description}, Message: ${e.message}`);
       }
   }
 };
