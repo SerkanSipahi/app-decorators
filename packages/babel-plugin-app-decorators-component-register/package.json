@@ -31,7 +31,7 @@
     "babel-template": "6.24.1",
     "babel-types ": "6.24.1",
     "chai": "3.5.0",
-    "mocha": "3.2.0"
+    "mocha": "3.3.0"
   },
   "dependencies": {
     "babel-plugin-syntax-decorators": "6.13.0",

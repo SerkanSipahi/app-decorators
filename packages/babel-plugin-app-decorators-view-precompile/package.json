@@ -31,12 +31,12 @@
     "babel-template": "6.24.1",
     "babel-types ": "6.24.1",
     "babylon": "6.17.0",
-    "handlebars": "4.0.6"
+    "handlebars": "4.0.8"
   },
   "devDependencies": {
     "babel-cli": "6.24.1",
     "chai": "3.5.0",
-    "mocha": "3.2.0",
+    "mocha": "3.3.0",
     "should": "11.2.1"
   }
 }
