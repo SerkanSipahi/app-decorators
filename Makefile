@@ -44,7 +44,7 @@ lerna-publish-version:
 	$(lerna) publish --repo-version $(version) --exact --force-publish=* $(set);
 
 lerna-publish:
-	$(lerna) publish --exact --force-publish=* $(set);
+	make bundle-runtime && $(lerna) publish --exact --force-publish=* $(set);
 
 lerna-updated:
 	$(lerna) updated $(set);
@@ -62,7 +62,7 @@ lerna-npm-install-save-dev:
 	$(lerna) exec -- npm install $(module) --save-dev;
 
 lerna-clean:
-	command -v $(lerna) >/dev/null && $(lerna) clean --yes $(set);
+	command -v $(lerna) >/dev/null && $(lerna) clean --yes;
 
 lerna-test:
 	$(lerna) run test --ignore={babel-preset-app-decorators,app-decorators,app-decorators-todomvc,app-decorators-cli-deps}
