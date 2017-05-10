@@ -65,11 +65,11 @@ lerna-clean:
 	command -v $(lerna) >/dev/null && $(lerna) clean --yes $(set);
 
 lerna-test:
-	$(lerna) run test --ignore={babel-preset-app-decorators,app-decorators,app-decorators-todomvc}
+	$(lerna) run test --ignore={babel-preset-app-decorators,app-decorators,app-decorators-todomvc,app-decorators-cli-deps}
 
 lerna-bootstrap:
 	make fix-nested-node_modules; \
-	$(lerna) bootstrap $(set); \
+	$(lerna) bootstrap --ignore=app-decorators-cli-deps; \
 	make fix-nested-node_modules;
 
 bundle-runtime:
