@@ -1,0 +1,21 @@
+{
+  "name": "{{name}}",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "dependencies": {
+    "app-decorators": "{{version}}",
+    "babel-preset-app-decorators": "{{version}}",
+    "babel-cli": "6.24.1",
+    "babel-preset-es2015": "6.24.1",
+    "jspm": "0.17.0-beta.41",
+    "express": "4.15.0"
+  },
+  "devDependencies": {
+    "babel-cli": "6.24.1",
+    "express": "4.15.0"
+  },
+  "appdec": {
+    "name": "{{name}}",
+    "version": "{{version}}"
+  }
+}
