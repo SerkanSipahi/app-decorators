@@ -6,13 +6,11 @@ it.only = (description, test) => its.push([description, test, true]);
 it.skip = () => 1;
 
 let testSuccLog = value => console.log(`Test Ok: ${value}`);
-let testFailLog = (value, e) => console.log(`Failed in: ${value}, Message: ${e}`);
+let testFailLog = (value, e) => console.warn(`Failed in: ${value}, Message:`, e.stack, 'Actual: ', e.actual);
 
 it.run = () => {
 
-  if(only) {
-      return;
-  }
+  if(only) return;
 
   let _its = its.filter(item => item[2]);
   _its.length && (its = _its);
@@ -22,7 +20,7 @@ it.run = () => {
           test();
           testSuccLog(description);
       } catch(e){
-          testFailLog(description, JSON.stringify(e));
+          testFailLog(description, e);
       }
   }
 };

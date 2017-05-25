@@ -1,9 +1,11 @@
 import * as compiler from 'postcss';
 import postcss from 'postcss';
 import nestedCss from 'postcss-nested';
+import matchMediaQuery from 'regex-css-media-query';
 
 const IMMEDIATELY = "immediately";
 const DEFAUlT = "default";
+const MEDIA_MATCH = "mediaMatch";
 
 /**
  * create Config
@@ -14,7 +16,7 @@ const DEFAUlT = "default";
  * @returns {{ attachOn: string, styles: string }}
  */
 let createConfig = (attachOn, styles, type, imports) => ({
-    attachOn, styles: `${styles} \n`, type, imports,
+    attachOn, styles: (styles ? `${styles} \n` : ''), type, imports,
 });
 
 /**
@@ -82,28 +84,11 @@ let stringifyAstNodes = nodes => {
 };
 
 /**
- * Get at rule config
- * @param node {object}
- * @returns {object|null}
+ * Stringify ast nodes
+ * @param nodes {Array}
+ * @returns {Array}
  */
-let getAtRuleConfig = node => {
-
-    let { nodes, params } = node;
-    if(!nodes) {
-        return null;
-    }
-
-    // skip if atRule has atRule as parent
-    if(!isRootNode(node)) {
-        return null;
-    }
-
-    let pattern = /(rel|on)\(("|')?([a-z]+)("|')\)/i;
-    let [,type,,attachOn] = params.match(pattern) || [];
-
-    if(!type) {
-        return createConfig(IMMEDIATELY, stringifyAstNodes([node]), DEFAUlT, []);
-    }
+let resolveMediaChildNodes = nodes => {
 
     // nodes of @on and @rel
     // collect imports
@@ -121,12 +106,6 @@ let getAtRuleConfig = node => {
         if(name !== 'fetch'){
             continue;
         }
-        if(!params) {
-            throw new Error('Failed: not path declared', {
-                correct : '@fetch load/my111/styles2.css',
-                wrong: '@fetch',
-            });
-        }
 
         //keep index of @fetch ...
         importIndexes.push(i);
@@ -140,7 +119,35 @@ let getAtRuleConfig = node => {
         nodes.splice(importIndexes[i],1);
     }
 
-    return createConfig(attachOn, stringifyAstNodes(nodes), type, imports);
+    return [nodes, imports];
+};
+
+/**
+ * Get at rule config
+ * @param node {object}
+ * @returns {object|null}
+ */
+let getAtRuleConfig = node => {
+
+    let { nodes, params, parent, name } = node;
+
+    if(name === 'fetch' && parent.type === 'root') {
+        return createConfig(IMMEDIATELY, '', 'default', [params]);
+    }
+    if(!nodes) {
+        return null;
+    }
+
+    let isMediaQuery = name == "media" && matchMediaQuery().test(params);
+    let pattern = /(rel|on)\(("|')?([a-z]+)("|')\)/i;
+    let [,type,,attachOn] = params.match(pattern) || (isMediaQuery && [,MEDIA_MATCH,,params]) || [];
+
+    if(type && attachOn) {
+        let [newNodes, imports ] = resolveMediaChildNodes(nodes);
+        return createConfig(attachOn, stringifyAstNodes(newNodes), type, imports);
+    }
+
+    return createConfig(IMMEDIATELY, stringifyAstNodes([node]), DEFAUlT, []);
 };
 
 /**
@@ -204,7 +211,7 @@ let parse = (styles, options = {}) => {
     // combine/concat same attachOn´s
     options.optimize ? container = optimize(container) : null;
 
-    // check in which constellation @media on and @media rel allowed
+    // check in which constellation @media on() and @media rel() allowed
     options.grammarCheck ? grammarCheck(container) : null;
 
     return container;
