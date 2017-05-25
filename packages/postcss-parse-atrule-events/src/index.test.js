@@ -353,12 +353,48 @@ it('should create "attachOn: preload, load" when @media on and rel nested', () =
                     display: flex;
                 }
             }
-        }
-        `;
+        }`.r();
 
     let result = parse(styles);
-    //console.log(result)
 
+    // should have correct length
+    result.should.be.have.length(4);
+
+    // Test 1
+    result[0].styles = result[0].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[0], {
+        attachOn: "load",
+        imports: [],
+        styles: ".laz .faz { height: 300px }",
+        type: "on",
+    });
+
+    // Test 2
+    result[1].styles = result[1].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[1], {
+        attachOn: "preload",
+        imports: [],
+        styles: ".laz .faz { display: flex }",
+        type: "rel",
+    });
+
+    // Test 3
+    result[2].styles = result[2].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[2], {
+        attachOn: "immediately",
+        imports: [],
+        styles: ".laz { width: 300px; }",
+        type: "default",
+    });
+
+    // Test 4
+    result[3].styles = result[3].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[3], {
+        attachOn: "immediately",
+        imports: [],
+        styles: ".laz .faz { right: 6px; left: 3px; }",
+        type: "default",
+    });
 });
 
 it('integration test', () => {
@@ -453,9 +489,6 @@ it('integration test', () => {
             }    
         }
 
-        /** 
-         * https://gist.github.com/milosdjakonovic/d0863620fdb9fbefa46e53926a59991a 
-         **/
         @media (max-width: 360px) {
             @fetch load/my/styles3.css;
         }
