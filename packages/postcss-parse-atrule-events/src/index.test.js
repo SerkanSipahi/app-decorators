@@ -124,34 +124,29 @@ it('should create "attachOn: immediately" with only @fetch on root layer', () =>
 
 });
 
-// this can be tested in grammercheck
-it.skip('should throw error when @fetch has no path declared', () => {
-
-    let styles1 =
-        `@fetch;
-         @fetch load/my111/styles99.css!defer;`.r();
-
-    let styles2 =
-        `@media on('load') {
-            @fetch;
-            @fetch load/my111/styles99.css!defer;
-         }`.r();
-
-    (() => parse(styles1)).should.throw("Failed: no @fetch path declared");
-    (() => parse(styles2)).should.throw("Failed: no @fetch path declared");
-
-});
-
-it('should create "attachOn: mediaMatch" for type "max-width: 768px"', () => {
+it('should create "attachOn: mediaMatch" for type "media query"', () => {
 
     let styles =
         `@media only screen and (max-width:639px) and (orientation: portrait) {
             @fetch load/my/styles3.css;
         }`.r();
 
-    let result = parse(styles);
-    //console.log(result)
 
+    let result = parse(styles);
+
+    // should have correct length
+    result.should.be.have.length(1);
+
+    // Test 1
+    result[0].styles = result[0].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[0], {
+        attachOn: "only screen and (max-width:639px) and (orientation: portrait)",
+        imports: [
+            "load/my/styles3.css",
+        ],
+        styles: "",
+        type: "mediaMatch",
+    });
 });
 
 
