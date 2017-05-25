@@ -419,12 +419,6 @@ it('integration test', () => {
         `.foo {
             color: gray;
         }
-        #foo {
-            color: pink;
-        }
-        foo {
-            color: back
-        }
         
         @media on('load') {
             .foo {
@@ -470,7 +464,7 @@ it('integration test', () => {
         @fetch load/my111/styles333.css!defer;
         
         @media on('load') {
-            @import "load/my/styles1.css";
+            @import load/my/styles1.css;
             .nut {
                 color: magento;
             }
@@ -494,6 +488,10 @@ it('integration test', () => {
             }
         }
         
+        foo {
+            color: back;
+        }
+        
         @media rel('preload') {
             @fetch load/my/styles2.css;
             @fetch load/my/styles3.css;
@@ -505,15 +503,23 @@ it('integration test', () => {
             }    
         }
 
+        @media rel('preload') {
+            @fetch load/my/styles2.css;
+            @fetch load/my/styles3.css;
+            .foo {
+                color: blue;
+            }   
+        }    
+
+        #foo {
+            color: pink;
+        }
+
         @media (max-width: 360px) {
             @fetch load/my/styles3.css;
         }
 
-        @media (max-width: 768px) {
-            @fetch load/my/styles3.css;
-        }
-        
-        @media (max-width: 1300px) {
+        @media only screen and (min-device-width:320px) and (max-device-width:639px) {
             .lol {
                 color: yellow;
                 .b {
@@ -523,14 +529,199 @@ it('integration test', () => {
                     color: c;
                 }
             }
-        }`;
+        }`.r();
 
         let result = parse(styles);
-        //console.log(result);
 
+        // should have correct length
+        result.should.be.have.length(19);
 
-        // test also the right order
+        // Test 1
+        result[0].styles = result[0].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[0], {
+            attachOn: "load",
+            imports: [],
+            styles: ".foo { color: violette; } .foo .bar { color: gray; } .baz { color: serkan; }",
+            type: "on",
+        });
 
+        // Test 2
+        result[1].styles = result[1].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[1], {
+            attachOn: "load",
+            imports: [],
+            styles: ".laz .faz { height: 300px }",
+            type: "on",
+        });
+
+        // Test 3
+        result[2].styles = result[2].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[2], {
+            attachOn: "preload",
+            imports: [],
+            styles: ".laz .faz { display: flex }",
+            type: "rel",
+        });
+
+        // Test 4
+        result[3].styles = result[3].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[3], {
+            attachOn: "load",
+            imports: [
+                "load/my111/styles2.css!async",
+                "load/my111/styles3.css!defer",
+            ],
+            styles: ".a { color: red; } .b { color: blue; } .c { color: cologne; }",
+            type: "on",
+        });
+
+        // Test 5
+        result[4].styles = result[4].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[4], {
+            attachOn: "immediately",
+            imports: [
+                "load/my111/styles222.css!async",
+            ],
+            styles: "",
+            type: "default",
+        });
+
+        // Test 6
+        result[5].styles = result[5].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[5], {
+            attachOn: "immediately",
+            imports: [
+                "load/my111/styles333.css!defer",
+            ],
+            styles: "",
+            type: "default",
+        });
+
+        // Test 7
+        result[6].styles = result[6].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[6], {
+            attachOn: "load",
+            imports: [],
+            // @Fixme: may be wrong due import need trailing semicolon, but postcss remove it ?!?
+            styles: "@import load/my/styles1.css .nut { color: magento; }",
+            type: "on",
+        });
+
+        // Test 8
+        result[7].styles = result[7].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[7], {
+            attachOn: "print",
+            imports: [],
+            styles: ".a { color: yellow; } .a .b { color: b; } .a .c { color: c; }",
+            type: "mediaMatch",
+        });
+
+        // Test 9
+        result[8].styles = result[8].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[8], {
+            attachOn: "myCustomEvent",
+            imports: [],
+            styles: ".baz { width: 23px; }",
+            type: "on",
+        });
+
+        // Test 10
+        result[9].styles = result[9].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[9], {
+            attachOn: "preload",
+            imports: [
+                "load/my/styles2.css",
+                "load/my/styles3.css",
+            ],
+            styles: "",
+            type: "rel",
+        });
+
+        // Test 11
+        result[10].styles = result[10].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[10], {
+            attachOn: "preload",
+            imports: [],
+            styles: ".foo { color: blue; }",
+            type: "rel",
+        });
+
+        // Test 12
+        result[11].styles = result[11].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[11], {
+            attachOn: "preload",
+            imports: [
+                "load/my/styles2.css",
+                "load/my/styles3.css",
+            ],
+            styles: ".foo { color: blue; }",
+            type: "rel",
+        });
+
+        // Test 13
+        result[12].styles = result[12].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[12], {
+            attachOn: "(max-width: 360px)",
+            imports: [
+                "load/my/styles3.css",
+            ],
+            styles: "",
+            type: "mediaMatch",
+        });
+
+        // Test 14
+        result[13].styles = result[13].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[13], {
+            attachOn: "only screen and (min-device-width:320px) and (max-device-width:639px)",
+            imports: [],
+            styles: ".lol { color: yellow; } .lol .b { color: b; } .lol .c { color: c; }",
+            type: "mediaMatch",
+        });
+
+        // Test 15
+        result[14].styles = result[14].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[14], {
+            attachOn: "immediately",
+            imports: [],
+            styles: ".foo { color: gray; }",
+            type: "default",
+        });
+
+        // Test 16
+        result[15].styles = result[15].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[15], {
+            attachOn: "immediately",
+            imports: [],
+            styles: ".laz { width: 300px; }",
+            type: "default",
+        });
+
+        // Test 17
+        result[16].styles = result[16].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[16], {
+            attachOn: "immediately",
+            imports: [],
+            styles: ".laz .faz { right: 6px; left: 3px; }",
+            type: "default",
+        });
+
+        // Test 18
+        result[17].styles = result[17].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[17], {
+            attachOn: "immediately",
+            imports: [],
+            styles: "foo { color: back; }",
+            type: "default",
+        });
+
+        // Test 19
+        result[18].styles = result[18].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[18], {
+            attachOn: "immediately",
+            imports: [],
+            styles: "#foo { color: pink; }",
+            type: "default",
+        });
 });
 
 it.run();
