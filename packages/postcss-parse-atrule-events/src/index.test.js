@@ -397,6 +397,22 @@ it('should create "attachOn: preload, load" when @media on and rel nested', () =
     });
 });
 
+it('stream css', () => {
+
+    /**
+     * Very useful if you want to apply your css while downloading
+     * and not applying after its downloaded!
+     */
+
+    let styles1 =
+        `@stream load/my/styles3.css;`;
+
+    let styles2 =
+        `@media (max-width: 360px) {
+            @stream load/my/styles3.css;
+        }`;
+});
+
 it('integration test', () => {
 
     let styles =
