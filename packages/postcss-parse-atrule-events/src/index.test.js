@@ -207,6 +207,7 @@ it('should create "attachOn: on" with classes and @import', () => {
         attachOn: "load",
         imports: [],
         // @Fixme: may be wrong due import need trailing semicolon, but postcss remove it ?!?
+        // @update: this is according standard not allowd. Grammer should throw error
         styles: '@import "load/my/styles1.css" .nut { color: magento; }',
         type: "on",
     });
@@ -397,20 +398,40 @@ it('should create "attachOn: preload, load" when @media on and rel nested', () =
     });
 });
 
-it('stream css', () => {
+it('match fetch types', () => {
 
     /**
      * Very useful if you want to apply your css while downloading
      * and not applying after its downloaded!
+     * https://jakearchibald.com/2016/streams-ftw/
      */
 
     let styles1 =
-        `@stream load/my/styles3.css;`;
+        `@fetch load/my/styles3.css
+         @fetch load/my/styles3.css!defer;
+         @fetch load/my/styles3.css!async;
+         @fetch load/my/styles3.css!stream;`;
+
+    //let result = parse(styles2);
+
+});
+
+it('should parse mediaQuery inline statements according standard', () => {
+
+    // https://developer.mozilla.org/de/docs/Web/CSS/@import
+
+    let styles1 =
+        `@fetch load/my/styles3.css!async only screen and (min-device-width:320px);`;
 
     let styles2 =
-        `@media (max-width: 360px) {
-            @stream load/my/styles3.css;
-        }`;
+        `@fetch load/my/styles3.css @media on('load');`;
+
+    let styles3 =
+        `@fetch load/my/styles3.css @media rel('preload');`;
+
+    let result = parse(styles2);
+    //console.log(result)
+
 });
 
 it('integration test', () => {
@@ -603,6 +624,7 @@ it('integration test', () => {
             attachOn: "load",
             imports: [],
             // @Fixme: may be wrong due import need trailing semicolon, but postcss remove it ?!?
+            // @update: this is according standard not allowd. Grammer should throw error
             styles: "@import load/my/styles1.css .nut { color: magento; }",
             type: "on",
         });

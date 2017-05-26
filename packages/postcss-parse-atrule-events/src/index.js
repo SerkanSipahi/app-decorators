@@ -6,6 +6,7 @@ import matchMediaQuery from 'regex-css-media-query';
 const IMMEDIATELY = "immediately";
 const DEFAUlT = "default";
 const MEDIA_MATCH = "mediaMatch";
+const IMPORT_REGEX = /fetch/;
 
 /**
  * create Config
@@ -103,7 +104,8 @@ let resolveMediaChildNodes = nodes => {
         if(!walkAtRules){
             continue;
         }
-        if(name !== 'fetch'){
+        let mached = `${name}`.match(IMPORT_REGEX);
+        if(!mached){
             continue;
         }
 
@@ -131,7 +133,8 @@ let getAtRuleConfig = node => {
 
     let { nodes, params, parent, name } = node;
 
-    if(name === 'fetch' && parent.type === 'root') {
+    let mached = `${name}`.match(IMPORT_REGEX);
+    if(mached && parent.type === 'root') {
         return createConfig(IMMEDIATELY, '', 'default', [params]);
     }
     if(!nodes) {
