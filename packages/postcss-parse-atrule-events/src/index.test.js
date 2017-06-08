@@ -457,6 +457,32 @@ it('should match any @media expression', () => {
     });
 });
 
+it('match action types', () => {
+
+    let styles =
+        `@media action('/this/{{value}}/path.html') {
+            @fetch load/my111/styles11.css;
+            @fetch load/my111/styles22.css;
+        }`.r();
+
+    let result = parse(styles);
+
+    // should have correct length
+    result.should.be.have.length(1);
+
+    result[0].styles = result[0].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[0], {
+        attachOn: '/this/{{value}}/path.html',
+        imports: [
+            "load/my111/styles11.css",
+            "load/my111/styles22.css"
+        ],
+        styles: "",
+        type: "action",
+    });
+
+});
+
 it('match fetch types', () => {
 
     /**
