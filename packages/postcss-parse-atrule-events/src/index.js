@@ -139,7 +139,7 @@ let getAtRuleConfig = node => {
     }
 
     let isMediaQuery = name == "media" && matchMediaQuery().test(params);
-    let pattern = /(rel|on|action)\(("|')?([a-z]+)("|')\)/i;
+    let pattern = /(rel|on|action)\(("|')?(.*?)("|')?\)/i;
     let [,type,,attachOn] = params.match(pattern) || (isMediaQuery && [,MEDIA_MATCH,,params]) || [];
 
     if(type && attachOn && nodes && nodes.length) {

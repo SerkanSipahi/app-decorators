@@ -439,6 +439,24 @@ it('should create "attachOn: preload, load" when @media on and rel nested', () =
     });
 });
 
+it('should match any @media expression', () => {
+
+    let styles =
+        `@media on('click .foo[a="c"] #foo[a][c="d"][e="s"].c') {
+            @fetch load/my/styles3.css!async;
+        }`.r();
+
+    let result = parse(styles);
+
+    result[0].styles = result[0].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[0], {
+        attachOn: 'click .foo[a="c"] #foo[a][c="d"][e="s"].c',
+        imports: ["load/my/styles3.css!async"],
+        styles: "",
+        type: "on",
+    });
+});
+
 it('match fetch types', () => {
 
     /**
