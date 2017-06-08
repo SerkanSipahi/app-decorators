@@ -124,6 +124,47 @@ it('should create "attachOn: immediately" with only @fetch on root layer', () =>
 
 });
 
+it('import', () => {
+    let styles =
+        `.a {
+            color: green;
+        }
+        @import a/b/c.css;
+        .b {
+            height: 100px;
+        }`.r();
+
+    let result = parse(styles);
+
+    // should have correct length
+    result.should.be.have.length(3);
+
+    // Test 1
+    result[0].styles = result[0].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[0], {
+        attachOn: "immediately",
+        imports: [],
+        styles: "@import a/b/c.css",
+        type: "default",
+    });
+
+    result[1].styles = result[1].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[1], {
+        attachOn: "immediately",
+        imports: [],
+        styles: ".a { color: green; }",
+        type: "default",
+    });
+
+    result[2].styles = result[2].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[2], {
+        attachOn: "immediately",
+        imports: [],
+        styles: ".b { height: 100px; }",
+        type: "default",
+    });
+});
+
 it('should create "attachOn: mediaMatch" for type "media query"', () => {
 
     let styles =
@@ -474,7 +515,7 @@ it('integration test', () => {
             .b {
                 color: blue;
             }
-            @fetch load/my111/styles2.css!async;
+            @import load/my111/styles2.css!async;
             @fetch load/my111/styles3.css!defer;
             .c {
                 color: cologne;
@@ -550,12 +591,19 @@ it('integration test', () => {
                     color: c;
                 }
             }
+        }
+        .beforeImport {
+            color: green;
+        }
+
+        .afterImport {
+            color: red;
         }`.r();
 
         let result = parse(styles);
 
         // should have correct length
-        result.should.be.have.length(19);
+        result.should.be.have.length(21);
 
         // Test 1
         result[0].styles = result[0].styles.cs(); // remove "new-lines"
@@ -589,10 +637,9 @@ it('integration test', () => {
         assert.deepEqual(result[3], {
             attachOn: "load",
             imports: [
-                "load/my111/styles2.css!async",
                 "load/my111/styles3.css!defer",
             ],
-            styles: ".a { color: red; } .b { color: blue; } .c { color: cologne; }",
+            styles: ".a { color: red; } .b { color: blue; } @import load/my111/styles2.css!async .c { color: cologne; }",
             type: "on",
         });
 
@@ -696,6 +743,7 @@ it('integration test', () => {
         assert.deepEqual(result[13], {
             attachOn: "only screen and (min-device-width:320px) and (max-device-width:639px)",
             imports: [],
+            // TODO: write styles into file for loading on match
             styles: ".lol { color: yellow; } .lol .b { color: b; } .lol .c { color: c; }",
             type: "mediaMatch",
         });
@@ -742,6 +790,24 @@ it('integration test', () => {
             attachOn: "immediately",
             imports: [],
             styles: "#foo { color: pink; }",
+            type: "default",
+        });
+
+        // Test 20
+        result[19].styles = result[19].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[19], {
+            attachOn: "immediately",
+            imports: [],
+            styles: ".beforeImport { color: green; }",
+            type: "default",
+        });
+
+        // Test 21
+        result[20].styles = result[20].styles.cs(); // remove "new-lines"
+        assert.deepEqual(result[20], {
+            attachOn: "immediately",
+            imports: [],
+            styles: ".afterImport { color: red; }",
             type: "default",
         });
 });
