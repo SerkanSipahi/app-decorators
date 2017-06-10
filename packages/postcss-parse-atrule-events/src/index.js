@@ -133,11 +133,17 @@ let getAtRuleConfig = node => {
 
     let { nodes, params, parent, name } = node;
 
+    /**
+     * if something on root layer that we can accept, then take it, e.g. fetch or stream.
+     */
     let mached = `${name}`.match(IMPORT_REGEX);
     if(mached && parent.type === 'root') {
         return createConfig(IMMEDIATELY, '', DEFAUlT, [params]);
     }
 
+    /**
+     * we also accept @media, so take it.
+     */
     let isMediaQuery = name == "media" && matchMediaQuery().test(params);
     let pattern = /(rel|on|action)\(("|')?(.*?)("|')?\)/i;
     let [,type,,attachOn] = params.match(pattern) || (isMediaQuery && [,MEDIA_MATCH,,params]) || [];
@@ -147,9 +153,14 @@ let getAtRuleConfig = node => {
         return createConfig(attachOn, stringifyAstNodes(newNodes), type, imports);
     }
 
+    /**
+     * if something like @import, @document, etc. so take it, but normal styles
+     */
     if(parent.type === 'root') {
         return createConfig(IMMEDIATELY, stringifyAstNodes([node]), DEFAUlT, []);
     }
+
+    // Everything else can be skipped!
 };
 
 /**
