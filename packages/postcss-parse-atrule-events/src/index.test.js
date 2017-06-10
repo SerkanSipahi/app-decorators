@@ -483,7 +483,7 @@ it('match action types', () => {
 
 });
 
-it('match fetch types', () => {
+it.skip('match fetch types', () => {
 
     /**
      * Very useful if you want to apply your css while downloading
@@ -491,31 +491,24 @@ it('match fetch types', () => {
      * https://jakearchibald.com/2016/streams-ftw/
      */
 
-    let styles1 =
-        `@fetch load/my/styles3.css
-         @fetch load/my/styles3.css!defer;
-         @fetch load/my/styles3.css!async;
-         @fetch load/my/styles3.css!stream;`;
+    let styles =
+        `@stream load/my/styles3.css`;
 
-    //let result = parse(styles2);
+    //let result = parse(styles);
 
 });
 
-it('should parse mediaQuery inline statements according standard', () => {
+it.skip('should parse mediaQuery inline statements according standard', () => {
 
     // https://developer.mozilla.org/de/docs/Web/CSS/@import
 
     let styles1 =
-        `@fetch load/my/styles3.css!async only screen and (min-device-width:320px);`;
+        `@fetch load/my/styles3.css!stream only screen and (min-device-width:320px);`;
 
     let styles2 =
-        `@fetch load/my/styles3.css @media on('load');`;
+        `@fetch load/my/styles3.css!async on('load');`;
 
-    let styles3 =
-        `@fetch load/my/styles3.css @media rel('preload');`;
-
-    let result = parse(styles2);
-    //console.log(result)
+    let result = parse(styles1);
 
 });
 
