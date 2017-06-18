@@ -1,6 +1,6 @@
 {
   "name": "app-decorators-todomvc",
-  "version": "0.8.220",
+  "version": "0.8.221",
   "description": "Todomvc with app-decorators",
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
     "webapp"
   ],
   "dependencies": {
-    "app-decorators": "0.8.220",
+    "app-decorators": "0.8.221",
     "express": "4.15.3",
     "systemjs": "0.20.14",
     "todomvc-app-css": "2.1.0",
