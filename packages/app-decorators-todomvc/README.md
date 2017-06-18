@@ -15,20 +15,15 @@
 ```bash
 git clone https://github.com/SerkanSipahi/app-decorators.git
 cd app-decorators/packages/app-decorators-todomvc
-make install production server
+make install
+```
+then
+```bash
+make dev server
 ```
 or
-```bash
-make install dev server
 ```
-
-#### or use it as as boilerplate
-```bash
-make install dev server
-```
-and then start in new session
-```bash
-make gulp-compile-watch
+make production server
 ```
 
 open following url `http://localhost:3000/` in your browser.

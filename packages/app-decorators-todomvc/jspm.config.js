@@ -1,10 +1,5 @@
 SystemJS.config({
     "transpiler": false,
-    "packageConfigPaths": [
-        "npm:@*/*.json",
-        "npm:*.json",
-        "github:*/*.json"
-    ],
     "paths": {
         "github": "jspm_packages/github/",
         "npm:": "jspm_packages/npm/",
@@ -18,13 +13,6 @@ SystemJS.config({
         "app-decorators-helper/register-customelement": "app-decorators/src/libs/customelement",
         "app-decorators-helper/random-storage": "app-decorators/src/libs/random-storage"
     },
-    /*
-    "meta": {
-        "app-decorators": {
-            "build": false
-        }
-    },
-    */
     "packages": {
         "src": {
             "defaultExtension": "js"
@@ -36,4 +24,16 @@ SystemJS.config({
             "defaultExtension": "js"
         }
     }
+});
+
+SystemJS.config({
+    packageConfigPaths: [
+        "npm:@*/*.json",
+        "npm:*.json",
+        "github:*/*.json"
+    ],
+    map: {
+        "jquery": "npm:jquery@3.2.1"
+    },
+    packages: {}
 });
