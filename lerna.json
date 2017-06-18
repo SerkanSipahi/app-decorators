@@ -1,6 +1,6 @@
 {
   "lerna": "2.0.0-rc.5",
-  "version": "0.8.219",
+  "version": "0.8.220",
   "commands": {
     "publish": {
       "ignore": [
