@@ -3,5 +3,5 @@ let app = express();
 
 app.use(express.static('./'));
 app.listen(3000, () =>
-    console.log('Start test server')
+    console.log('Server: localhost:3000')
 );
