@@ -1,7 +1,9 @@
 let express = require('express');
 let app = express();
 
+let [,,type, number] = process.argv;
+let port = 3000;
+type === 'port' && number && (port = number);
+
 app.use(express.static('./'));
-app.listen(3000, () =>
-    console.log('Server: localhost:3000')
-);
+app.listen(port, () => console.log(`Server: localhost: ${port}`));
