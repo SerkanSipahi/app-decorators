@@ -18,13 +18,6 @@ SystemJS.config({
         "app-decorators-helper/register-customelement": "app-decorators/src/libs/customelement",
         "app-decorators-helper/random-storage": "app-decorators/src/libs/random-storage"
     },
-    /*
-    "meta": {
-        "app-decorators": {
-            "build": false
-        }
-    },
-    */
     "packages": {
         "src": {
             "defaultExtension": "js"
