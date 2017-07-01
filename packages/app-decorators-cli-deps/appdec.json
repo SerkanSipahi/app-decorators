@@ -11,5 +11,9 @@
   "appdec": {
     "name": "{{name}}",
     "version": "{{version}}"
+  },
+  "jspm": {
+    "dependencies": {},
+    "devDependencies": {}
   }
 }
