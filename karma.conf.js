@@ -11,23 +11,23 @@ module.exports = function (config) {
 		plugins: [
 			'karma-chrome-launcher',
 			'karma-firefox-launcher',
-			'karma-opera-launcher',
-			//'karma-safari-launcher',
 			'karma-mocha',
 			'karma-sinon',
 			'karma-should',
 			'karma-jspm',
+			//'karma-opera-launcher',
+			//'karma-safari-launcher',
 	    ],
 		browsers: [
 			'Chrome',
 			'ChromeCanary',
 			'Firefox',
-			'Opera',
 			//'Safari',
+			//'Opera',
 			//'FirefoxEnableWebComponents',
 		],
+		/*
 		customLaunchers: {
-
 		    FirefoxEnableWebComponents: {
 		        base: 'Firefox',
 		        prefs: {
@@ -37,8 +37,9 @@ module.exports = function (config) {
 			Chrome_travis_ci: {
 	          base: 'Chrome',
 	          flags: ['--no-sandbox']
-		  },
+		  	},
 		},
+		*/
 		files: [{
 	        pattern: '**/*.js.map',
 	        included: false
