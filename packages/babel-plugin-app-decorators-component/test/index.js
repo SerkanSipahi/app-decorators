@@ -34,7 +34,9 @@ describe('@component', () => {
 
         let expected = `
             @component()
-            class Foo extends HTMLDivElement {}`;
+            class Foo extends HTMLDivElement {
+                static $$componentName = "Foo";
+            }`;
 
         let generated = transformCode(actual);
 
@@ -56,6 +58,7 @@ describe('@component', () => {
                extends: 'img'
             })
             class Foo extends HTMLImageElement {
+                static $$componentName = 'Foo';
                 static get extends() {
                     return 'img';
             }}`;
@@ -85,6 +88,7 @@ describe('@component', () => {
                extends: 'progress'
             })
             class Bar extends HTMLProgressElement {
+                static $$componentName = 'Bar';
                 static get extends() {
                     return 'progress';
             }}

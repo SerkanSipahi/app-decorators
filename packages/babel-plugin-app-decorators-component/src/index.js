@@ -116,6 +116,22 @@ let addSuperClass = function(element, t) {
 };
 
 /**
+ * add static string property
+ * @param prop {string}
+ * @param value {string}
+ * @param t {object}
+ */
+let addStaticStringProperty = function(prop, value, t) {
+
+    let a = t.classProperty(
+        t.identifier(prop),
+        t.stringLiteral(value)
+    );
+    a.static = true;
+    this.body.body.push(a);
+};
+
+/**
  * addStaticGetterProperty
  * @param type {string}
  * @param superClass {string}
@@ -167,8 +183,10 @@ let plugin = ({types: t}) => {
                     return;
                 }
 
-                let superClass = component::getArguments(t).extends;
+                let className = node.id.name;
+                node::addStaticStringProperty('$$componentName', className, t);
 
+                let superClass = component::getArguments(t).extends;
                 let element = getElementClassByName(superClass, elements);
                 node::addSuperClass(element, t);
 
