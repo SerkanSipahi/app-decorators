@@ -58,7 +58,7 @@ let Register = {
 	 */
 	_getClassName(Class){
 
-		return Class.$$componentName;
+		return Class.$$componentName || Class.prototype.constructor.name;
 	},
 
 	/**
