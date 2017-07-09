@@ -1,6 +1,6 @@
 {
   "name": "babel-preset-app-decorators",
-  "version": "0.8.221",
+  "version": "0.8.222",
   "description": "custom babel-preset for app-decorators",
   "main": "lib/index.js",
   "repository": {
@@ -22,9 +22,9 @@
   },
   "homepage": "https://github.com/SerkanSipahi/babel-preset-app-decorators#readme",
   "dependencies": {
-    "babel-plugin-app-decorators-component": "0.8.221",
-    "babel-plugin-app-decorators-component-register": "0.8.221",
-    "babel-plugin-app-decorators-view-precompile": "0.8.221",
+    "babel-plugin-app-decorators-component": "0.8.222",
+    "babel-plugin-app-decorators-component-register": "0.8.222",
+    "babel-plugin-app-decorators-view-precompile": "0.8.222",
     "babel-plugin-transform-class-properties": "6.24.1",
     "babel-plugin-transform-decorators-legacy": "1.3.4",
     "babel-plugin-transform-function-bind": "6.22.0"
