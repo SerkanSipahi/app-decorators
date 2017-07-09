@@ -54,11 +54,11 @@ let Register = {
 	/**
 	 *
 	 * @param Class {function}
-	 * @returns className {string}
+	 * @returns className {string}ls l
 	 */
 	_getClassName(Class){
 
-		return Class.prototype.constructor.name;
+		return Class.$$componentName;
 	},
 
 	/**
