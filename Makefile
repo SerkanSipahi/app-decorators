@@ -69,7 +69,7 @@ lerna-test:
 
 lerna-bootstrap:
 	make fix-nested-node_modules; \
-	$(lerna) bootstrap --ignore=app-decorators-cli-deps; \
+	$(lerna) bootstrap --ignore={app-decorators-cli-deps,app-decorators}; \
 	make fix-nested-node_modules;
 
 bundle-runtime:
