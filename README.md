@@ -158,13 +158,18 @@ document.body.appendChild(item);
 
 ## Tests
 ```
-// only once
+// 1.0) init
 make install
 npm run lerna-bootstrap
 
-// run this commands separately
-make compile (watch compile)
-npm run test
+// 1.1) optional: watch test
+make compile
+
+// 3.1) browser test
+make test
+
+// 3.2) packages test
+make lerna-test
 ```
 
 ## Source
