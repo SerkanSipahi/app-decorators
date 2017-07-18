@@ -1,4 +1,4 @@
-import { Eventhandler } from 'src/libs/eventhandler';
+import { Eventhandler } from '../../src/libs/eventhandler';
 
 import sinon from 'sinon';
 

@@ -1,7 +1,7 @@
-import { bootstrapPolyfills } from 'src/bootstrap';
-import { isFirefox } from 'src/helpers/browser-detect';
-import { removeGutter } from 'src/helpers/string';
-import { delay } from 'src/helpers/delay';
+import { bootstrapPolyfills } from '../../src/bootstrap';
+import { isFirefox } from '../../src/helpers/browser-detect';
+import { delay } from '../../src/helpers/delay';
+import '../../src/helpers/string';
 
 import sinon from 'sinon';
 

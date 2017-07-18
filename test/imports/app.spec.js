@@ -1,6 +1,6 @@
 import $ from 'jquery';
-import { bootstrapPolyfills } from 'src/bootstrap';
-import { delay } from 'src/helpers/delay';
+import { bootstrapPolyfills } from '../../src/bootstrap';
+import { delay } from '../../src/helpers/delay';
 
 describe('imported component', async() => {
 

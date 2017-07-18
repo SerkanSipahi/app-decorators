@@ -1,4 +1,4 @@
-import { View, VARS, NO_VARS, PRE_COMPILED } from 'src/libs/view';
+import { View, VARS, NO_VARS, PRE_COMPILED } from '../../src/libs/view';
 import Handlebars from '../../node_modules/handlebars/dist/handlebars';
 
 describe('class View', () => {

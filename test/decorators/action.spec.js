@@ -1,10 +1,10 @@
-import { bootstrapPolyfills } from 'src/bootstrap';
-import { storage } from "src/libs/random-storage";
-import { delay } from 'src/helpers/delay';
+import { bootstrapPolyfills } from '../../src/bootstrap';
+import { storage } from "../../src/libs/random-storage";
+import { delay } from '../../src/helpers/delay';
 
 import $ from 'jquery';
-import 'src/helpers/jquery.click-and-wait';
-import 'src/helpers/history.back-forward-and-wait';
+import '../../src/helpers/jquery.click-and-wait';
+import '../../src/helpers/history.back-forward-and-wait';
 
 import sinon from 'sinon';
 

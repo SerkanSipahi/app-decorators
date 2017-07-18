@@ -1,4 +1,4 @@
-import { queryString } from 'src/helpers/queryString';
+import { queryString } from '../../src/helpers/queryString';
 
 describe('queryString', () => {
 

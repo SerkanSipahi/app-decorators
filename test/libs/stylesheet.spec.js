@@ -1,4 +1,4 @@
-import { Stylesheet } from 'src/libs/stylesheet';
+import { Stylesheet } from '../../src/libs/stylesheet';
 import sinon from 'sinon';
 
 // init special innerHTML for test

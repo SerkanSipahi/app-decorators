@@ -1,4 +1,4 @@
-import { guid } from 'src/helpers/guid';
+import { guid } from '../../src/helpers/guid';
 
 describe('guid', () => {
 

@@ -1,8 +1,8 @@
 import $ from 'jquery';
-import { bootstrapPolyfills } from 'src/bootstrap';
-import { EVENT_VIEW_RENDER } from 'src/libs/view';
-import { delay } from 'src/helpers/delay';
-import { storage } from "src/libs/random-storage";
+import { bootstrapPolyfills } from '../../src/bootstrap';
+import { EVENT_VIEW_RENDER } from '../../src/libs/view';
+import { delay } from '../../src/helpers/delay';
+import { storage } from "../../src/libs/random-storage";
 
 import sinon from 'sinon';
 

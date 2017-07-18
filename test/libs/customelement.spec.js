@@ -1,6 +1,5 @@
-import { elements } from 'src/configs/elements';
-import { bootstrapPolyfills } from 'src/bootstrap';
-import { delay } from 'src/helpers/delay';
+import { bootstrapPolyfills } from '../../src/bootstrap';
+import { delay } from '../../src/helpers/delay';
 
 import sinon from 'sinon';
 

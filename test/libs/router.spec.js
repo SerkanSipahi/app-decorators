@@ -1,12 +1,11 @@
-import { bootstrapPolyfills } from 'src/bootstrap';
-import { XRegExp } from 'src/libs/dependencies';
-import { Event } from 'test/mocks/event';
-import { Location } from 'test/mocks/location';
-import { delay } from 'src/helpers/delay';
+import { bootstrapPolyfills } from '../../src/bootstrap';
+import { XRegExp } from '../../src/libs/dependencies';
+import { Event } from '../mocks/event';
+import { delay } from '../../src/helpers/delay';
 import $ from 'jquery';
 
-import 'src/helpers/jquery.click-and-wait';
-import 'src/helpers/history.back-forward-and-wait';
+import '../../src/helpers/jquery.click-and-wait';
+import '../../src/helpers/history.back-forward-and-wait';
 
 import sinon from 'sinon';
 
