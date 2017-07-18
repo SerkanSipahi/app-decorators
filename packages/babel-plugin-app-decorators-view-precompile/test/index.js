@@ -102,7 +102,7 @@ describe('@view', () => {
                 "compiler": [7, ">= 4.0.0"],
                 "main": function (container, depth0, helpers, partials, data) {
                     var helper;
-                    return "Hello " + container.escapeExpression((helper = (helper = helpers.item || (depth0 != null ? depth0.item : depth0)) != null ? helper : helpers.helperMissing, typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {}, {
+                    return "Hello " + container.escapeExpression((helper = (helper = helpers.item || (depth0 != null ? depth0.item : depth0)) != null ? helper : helpers.helperMissing, typeof helper === "function" ? helper.call(depth0 != null ? depth0 : container.nullContext || {}, {
                         "name": "item",
                         "hash": {},
                         "data": data
@@ -127,7 +127,7 @@ describe('@view', () => {
                 "compiler": [7, ">= 4.0.0"],
                 "main": function (container, depth0, helpers, partials, data) {
                     var helper;
-                    return "Hello " + container.escapeExpression((helper = (helper = helpers.item || (depth0 != null ? depth0.item : depth0)) != null ? helper : helpers.helperMissing, typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {}, {
+                    return "Hello " + container.escapeExpression((helper = (helper = helpers.item || (depth0 != null ? depth0.item : depth0)) != null ? helper : helpers.helperMissing, typeof helper === "function" ? helper.call(depth0 != null ? depth0 : container.nullContext || {}, {
                         "name": "item",
                         "hash": {},
                         "data": data
