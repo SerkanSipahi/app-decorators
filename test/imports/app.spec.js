@@ -31,7 +31,7 @@ describe('imported component', async() => {
 		});
 
         await delay(5);
-		col.outerHTML.should.equal(`<com-col><com-test rendered="true"><div class="A">1</div></com-test></com-col>`);
+		col.outerHTML.should.equal(`<com-col><com-test rendered="true"><div class="A">1</div> </com-test></com-col>`);
 	});
 
 });
