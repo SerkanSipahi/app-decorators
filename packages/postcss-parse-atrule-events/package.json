@@ -30,8 +30,8 @@
     "assert-diff": "1.2.0",
     "babel-cli": "6.24.1",
     "babel-plugin-transform-es2015-modules-commonjs": "6.24.1",
-    "postcss": "6.0.2",
-    "postcss-nested": "2.0.2",
+    "postcss": "6.0.7",
+    "postcss-nested": "2.0.4",
     "regex-css-media-query": "1.0.0",
     "should": "11.2.1"
   }
