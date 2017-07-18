@@ -153,9 +153,6 @@ document.body.appendChild(item);
 * [View](./docs/libs/view.md)
 * [Stylesheet](./docs/libs/stylesheet.md)
 
-'<com-col><com-test rendered="true"><div class="A">1</div> </com-test></com-col>' to be 
-'<com-col><com-test rendered="true"><div class="A">1</div></com-test></com-col>'
-
 ## Tests
 ```
 // 1.0) init
