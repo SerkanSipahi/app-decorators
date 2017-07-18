@@ -82,12 +82,11 @@ test:
 	$(karma) start
 
 clean:
-	make lerna-clean; \
 	rm -rf node_modules jspm_packages; \
 	make clean-package-compiled;
 
 clean-package-compiled:
-	rm -rf packages/*/lib; \
+	rm -rf packages/*/{lib,dist}; \
 	rm -rf packages/app-decorators/{build,dist,tmp,src,test,node_modules,jspm_packages};
 
 prepare-compile:
