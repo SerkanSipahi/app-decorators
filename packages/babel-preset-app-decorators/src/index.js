@@ -11,8 +11,8 @@ export default {
         [transformAppDecComponentRegister, {
             "storage_pointer": '@component',
             "imports": [
-                { "IMPORT_NAME": "Register", "SOURCE": "app-decorators-helper/register-customelement" },
-                { "IMPORT_NAME": "storage",  "SOURCE": "app-decorators-helper/random-storage" },
+                { "IMPORT_NAME": "Register", "SOURCE": "app-decorators/src/libs/customelement" },
+                { "IMPORT_NAME": "storage",  "SOURCE": "app-decorators/src/libs/random-storage" },
             ],
         }],
         [transformAppDecViewPrecompiler, {
