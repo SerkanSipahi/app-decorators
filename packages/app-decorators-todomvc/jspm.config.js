@@ -10,8 +10,8 @@ SystemJS.config({
     "map": {
         "app-decorators": "app-decorators/src/index",
         "app-decorators/bootstrap": "app-decorators/src/bootstrap",
-        "app-decorators-helper/register-customelement": "app-decorators/src/libs/customelement",
-        "app-decorators-helper/random-storage": "app-decorators/src/libs/random-storage"
+        "app-decorators/src/libs/customelement": "app-decorators/src/libs/customelement",
+        "app-decorators/src/libs/random-storage": "app-decorators/src/libs/random-storage"
     },
     "packages": {
         "src": {

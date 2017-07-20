@@ -4,7 +4,7 @@ SystemJS.config({
         "app-decorators": "src/index",
         "app-decorators/bootstrap": "src/bootstrap",
         "app-decorators/src/libs/customelement": "src/libs/customelement",
-        "app-decorators/src/libs/random-storage": "src/libs/random-storage",
+        "app-decorators/src/libs/random-storage": "src/libs/random-storage"
     },
     packages: {
         "src": {
