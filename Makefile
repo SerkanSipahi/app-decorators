@@ -38,38 +38,38 @@ gulp-compile-watch:
 	$(gulp) compile-watch;
 
 lerna-init:
-	$(lerna) init $(set);
+	lerna init $(set);
 
 lerna-publish-version:
-	$(lerna) publish --repo-version $(version) --exact --force-publish=* $(set);
+	lerna publish --repo-version $(version) --exact --force-publish=* $(set);
 
 lerna-publish:
-	make bundle-runtime && $(lerna) publish --exact --force-publish=* $(set);
+	make bundle-runtime && lerna publish --exact --force-publish=* $(set);
 
 lerna-updated:
-	$(lerna) updated $(set);
+	lerna updated $(set);
 
 lerna-ncu:
-	$(lerna) exec -- ncu;
+	lerna exec -- ncu;
 
 lerna-ncu-update:
-	$(lerna) exec -- ncu -u;
+	lerna exec -- ncu -u;
 
 lerna-npm-install-save:
-	$(lerna) exec -- npm install $(module) --save;
+	lerna exec -- npm install $(module) --save;
 
 lerna-npm-install-save-dev:
-	$(lerna) exec -- npm install $(module) --save-dev;
+	lerna exec -- npm install $(module) --save-dev;
 
 lerna-clean:
-	command -v $(lerna) >/dev/null && $(lerna) clean --yes;
+	command -v lerna >/dev/null && lerna clean --yes;
 
 lerna-test:
-	$(lerna) run test --ignore={babel-preset-app-decorators,app-decorators,app-decorators-todomvc,app-decorators-cli-deps}
+	lerna run test --ignore={babel-preset-app-decorators,app-decorators,app-decorators-todomvc,app-decorators-cli-deps}
 
 lerna-bootstrap:
 	make fix-nested-node_modules; \
-	$(lerna) bootstrap --ignore={app-decorators-cli-deps,app-decorators}; \
+	lerna bootstrap --ignore={app-decorators-cli-deps,app-decorators}; \
 	make fix-nested-node_modules;
 
 bundle-runtime:
@@ -104,7 +104,6 @@ fix-nested-node_modules:
 jspm  = ./node_modules/.bin/jspm
 karma = ./node_modules/.bin/karma
 gulp  = ./node_modules/.bin/gulp
-lerna = ./node_modules/.bin/lerna
 
 .PHONY: install test clean node_modules jspm-install-packages compile test lerna-init lerna-publish;
 MAKEFLAGS = -s
