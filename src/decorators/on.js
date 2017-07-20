@@ -1,7 +1,7 @@
 import { Eventhandler } from '../libs/eventhandler';
 import { namespace } from '../helpers/namespace';
 import { initCoreMap, initOnMap } from '../datas/init-maps';
-import { storage } from 'app-decorators-helper/random-storage';
+import { storage } from '../libs/random-storage';
 
 /**
  * on (EventHandler)

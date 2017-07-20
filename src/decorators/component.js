@@ -1,6 +1,6 @@
 import { trigger } from '../helpers/trigger';
 import { initCoreMap } from '../datas/init-maps';
-import { storage } from 'app-decorators-helper/random-storage';
+import { storage } from '../libs/random-storage';
 
 /**
  * customElementHooks

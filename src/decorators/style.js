@@ -1,6 +1,8 @@
 import { Stylesheet } from '../libs/stylesheet';
 import { initCoreMap, initStyleMap } from '../datas/init-maps';
-import { storage } from 'app-decorators-helper/random-storage';
+import { storage } from '../libs/random-storage';
+
+let getTypeof = value => Object.prototype.toString.call(value).slice(8,-1);
 
 /**
  * Style
@@ -8,10 +10,6 @@ import { storage } from 'app-decorators-helper/random-storage';
  * @return {Function}
  */
 function style(styles) {
-
-    let getTypeof = value => {
-        return Object.prototype.toString.call(value).slice(8,-1);
-    };
 
 	return Class => {
 
