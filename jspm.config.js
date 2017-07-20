@@ -2,7 +2,7 @@ SystemJS.config({
     transpiler: false,
     map: {
         "app-decorators": "src/index",
-        "app-decorators/bootstrap": "src/bootstrap",
+        "app-decorators/src/bootstrap": "src/bootstrap",
         "app-decorators/src/libs/customelement": "src/libs/customelement",
         "app-decorators/src/libs/random-storage": "src/libs/random-storage"
     },

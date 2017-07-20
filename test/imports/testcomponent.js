@@ -1,6 +1,6 @@
 import { component, view } from 'app-decorators';
 
-@view(`<div class="{{name}}">{{content}}</div>`, { renderedFlag: false })
+@view(`<div class="{{name}}">{{content}}</div> `, { renderedFlag: false })
 @component()
 class Test {
 

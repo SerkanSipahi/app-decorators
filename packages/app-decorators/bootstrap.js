@@ -1,7 +1,7 @@
 window.bootstrap = function(app) {
 
     let bootstrap = Promise.all([
-        System.import('app-decorators/bootstrap'),
+        System.import('app-decorators/src/bootstrap'),
         System.import(app),
     ]).then(function() {
         console.log('App: running!');
