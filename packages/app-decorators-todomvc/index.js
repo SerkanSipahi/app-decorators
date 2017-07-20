@@ -1,9 +1,9 @@
+let express = require('express');
+let app = express();
 
-var express = require('express');
-var app = express();
+let [,,type, number] = process.argv;
+let port = 3000;
+type === 'port' && number && (port = number);
 
 app.use(express.static('./dist'));
-
-app.listen(3000, function () {
-    console.log('Start test server');
-});
+app.listen(port, () => console.log(`Server: localhost: ${port}`));
