@@ -11,7 +11,7 @@
         <script src="./jspm.config.js"></script>
         <script src="./runtime.js"></script>
         <script>
-            bootstrap('src/index');
+            bootstrap('lib/index');
         </script>
     </body>
 </html>

@@ -3,8 +3,6 @@ SystemJS.config({
     "paths": {
         "github": "jspm_packages/github/",
         "npm:": "jspm_packages/npm/",
-        "src/": "lib/",
-        "test/": "test/",
         "app-decorators/": "node_modules/app-decorators/"
     },
     "map": {
@@ -14,10 +12,7 @@ SystemJS.config({
         "app-decorators/src/libs/random-storage": "app-decorators/src/libs/random-storage"
     },
     "packages": {
-        "src": {
-            "defaultExtension": "js"
-        },
-        "test": {
+        "lib": {
             "defaultExtension": "js"
         },
         "node_modules": {

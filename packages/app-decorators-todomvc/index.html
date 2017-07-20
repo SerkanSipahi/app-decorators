@@ -21,8 +21,16 @@
     <script src="./node_modules/app-decorators/bootstrap.js"></script>
     <script src="./node_modules/app-decorators/jspm.config.js"></script>
     <script src="./node_modules/app-decorators/runtime.js"></script>
+    <!-- enable when using bundle -->
+    <!--
+    <script src="./src/bundle.js"></script>
+    -->
     <script>
-        bootstrap('src/app');
+        /**
+         * jspm bundle lib/app - app-decorators dist/src/bundle.js
+         * - the bundle name is the initianal start name of bootstrap
+         */
+        bootstrap('lib/app');
     </script>
 </body>
 </html>
