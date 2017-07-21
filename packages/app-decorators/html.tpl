@@ -10,8 +10,17 @@
         <script src="./bootstrap.js"></script>
         <script src="./jspm.config.js"></script>
         <script src="./runtime.js"></script>
+        <!-- enable <script bundle> when using "jspm bundle" and target "appname" name is "not" equal src "appname" -->
+        <!-- jspm bundle lib/app - app-decorators dist/src/bundle.js -->
+        <!-- <script src="./lib/bundle.js"></script> -->
+
+        <!-- when src "appname" is equal target "appname", you dont need extra bundle file before -->
         <script>
-            bootstrap('lib/index');
+            /**
+             * jspm bundle lib/app - app-decorators dist/src/bundle.js
+             * - the bundle name is the initianal start name of bootstrap
+             */
+            bootstrap('lib/app');
         </script>
     </body>
 </html>

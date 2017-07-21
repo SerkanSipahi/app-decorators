@@ -27,7 +27,7 @@ server:
 	node index.js
 
 bundle-app:
-	$(jspm) bundle lib/app - app-decorators dist/src/bundle.js \
+	$(jspm) bundle lib/app - app-decorators dist/lib/app.js \
 	--skip-source-maps \
 	--minify;
 

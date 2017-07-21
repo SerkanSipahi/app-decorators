@@ -21,10 +21,11 @@
     <script src="./node_modules/app-decorators/bootstrap.js"></script>
     <script src="./node_modules/app-decorators/jspm.config.js"></script>
     <script src="./node_modules/app-decorators/runtime.js"></script>
-    <!-- enable when using bundle -->
-    <!--
-    <script src="./src/bundle.js"></script>
-    -->
+    <!-- enable <script bundle> when using "jspm bundle" and target "appname" name is "not" equal src "appname" -->
+    <!-- jspm bundle lib/app - app-decorators dist/src/bundle.js -->
+    <!-- <script src="./lib/bundle.js"></script> -->
+
+    <!-- when src "appname" is equal target "appname", you dont need extra bundle file before -->
     <script>
         /**
          * jspm bundle lib/app - app-decorators dist/src/bundle.js
