@@ -20,7 +20,7 @@
              * jspm bundle lib/app - app-decorators dist/src/bundle.js
              * - the bundle name is the initianal start name of bootstrap
              */
-            bootstrap('lib/app');
+            bootstrap('lib/index');
         </script>
     </body>
 </html>
