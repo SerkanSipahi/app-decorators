@@ -21,8 +21,13 @@
 |--------|-------|------------|------------|
 | [`app-decorators-todomvc`](/packages/app-decorators-todomvc) | [![npm](https://img.shields.io/npm/v/app-decorators-todomvc.svg?maxAge=2592000)](https://www.npmjs.com/package/app-decorators-todomvc) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/app-decorators-todomvc)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/app-decorators-todomvc) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/app-decorators-todomvc&type=dev)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/app-decorators-todomvc&type=dev) |
 
-* This package (todomvc) can be used in the meanwhile as boilerplate
-* We are working hard on cli. See [`appdec-cli`](https://github.com/SerkanSipahi/app-decorators-cli) (under construction)
+#### Quickstart with app-decorators-cli
+```sh
+appdec create my-module
+appdec run --name=my-module --watch --server
+```
+
+* See [`app-decorators-cli`](https://github.com/SerkanSipahi/app-decorators-cli)(Beta)
 
 ---
 
