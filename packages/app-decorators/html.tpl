@@ -10,11 +10,19 @@
         <script src="./bootstrap.js"></script>
         <script src="./jspm.config.js"></script>
         <script src="./runtime.js"></script>
+
+        <!-- 1.) -->
         <!-- enable <script bundle> when using "jspm bundle" and target "appname" name is "not" equal src "appname" -->
         <!-- jspm bundle lib/app - app-decorators dist/src/bundle.js -->
         <!-- <script src="./lib/bundle.js"></script> -->
-
         <!-- when src "appname" is equal target "appname", you dont need extra bundle file before -->
+
+        <!-- 2.) -->
+        <!--
+            when runtime.js is removed, then it will load appdec libs
+            separately (see network panel) otherwise just runtime.js
+        -->
+
         <script>
             /**
              * jspm bundle lib/app - app-decorators dist/src/bundle.js
