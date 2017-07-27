@@ -45,6 +45,13 @@ class Stylesheet {
 
 
     /**
+     * will remove event after node appended
+     * @type {boolean}
+     * @private
+     */
+    _removeEvent = true;
+
+    /**
      * _eventFactory
      * @type {object}
      * @private
@@ -128,13 +135,11 @@ class Stylesheet {
      * @param styles {string}
      * @param attachOn {string}
      */
-    init({ appendTo, styles, attachOn, imports, type, eventFactory } = {}){
+    init({ appendTo, styles, attachOn, imports, type, eventFactory, removeEvent } = {}){
 
         if(!appendTo || !styles){
             throw new Error('Required: appendTo and styles');
         }
-
-        this.timestamp = Date.now();
 
         this._checkElement(appendTo);
         this._initRefs();
@@ -146,6 +151,7 @@ class Stylesheet {
         this._imports      = imports;
         this._type         = type || this._type;
         this._eventFactory = eventFactory;
+        this._removeEvent  = typeof removeEvent === 'boolean' ? removeEvent : this._removeEvent;
 
         this._initScope();
         this._eventListener = this._eventFactory(this._scope);
@@ -262,7 +268,12 @@ class Stylesheet {
      */
     _addEventListener(attachOn, styles) {
 
-        this._eventListener.on(attachOn, _ => this._processListener(styles));
+        this._eventListener.on(attachOn, () => {
+            this._processListener(styles);
+            // Remove listener after stylesheet is appended.
+            // We dont want multiple style elements on multiple events
+            this._removeEvent ? this._eventListener.off(this._attachOn) : null;
+        });
     }
 
     /**
@@ -314,10 +325,8 @@ class Stylesheet {
      */
     _runProcess(styles){
 
-        // FIXME: _createStylesheet rename to _createNode
-        this._stylesElement = this._createStylesheet(styles);
-        // FIXME: _insertStylesheet rename to insertNode
-        let element = this._insertStylesheet(this._appendTo, this._stylesElement);
+        this._stylesElement = this._createStylesheetNode(styles);
+        let element = this._insertStylesheetNode(this._appendTo, this._stylesElement);
 
         this._trigger(this._event);
 
@@ -345,13 +354,13 @@ class Stylesheet {
     }
 
     /**
-     *
+     * _insertStylesheetNode
      * @param appendTo {HTMLElement}
      * @param stylesElement {Element}
      * @returns appendTo {HTMLElement}
      * @private
      */
-    _insertStylesheet(appendTo, stylesElement) {
+    _insertStylesheetNode(appendTo, stylesElement) {
 
         let [ node ] = appendTo.children;
         if(node){
@@ -369,12 +378,12 @@ class Stylesheet {
     }
 
     /**
-     * _createStylesheet
+     * _createStylesheetNode
      * @param styles {string}
      * @returns element {Element}
      * @private
      */
-    _createStylesheet(styles = ''){
+    _createStylesheetNode(styles = ''){
 
         let element = document.createElement('style');
 
@@ -398,8 +407,6 @@ class Stylesheet {
         this._refs = new WeakMap([
             [this, new Map([
                 ['appendTo', null],
-                //['stylesElement', null],
-                // TODO: soll raus
                 ['scope', null],
                 ['eventListener', null],
             ])],

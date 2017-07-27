@@ -42,6 +42,8 @@ function style(styles) {
             styles = [{
                 styles: styles,
                 type: 'on',
+                attachOn: 'load',
+                imports: [],
             }];
         }
 
