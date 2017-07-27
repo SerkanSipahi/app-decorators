@@ -29,6 +29,14 @@ function view(template, options = {}) {
 
 		let map = storage.get(Class);
 
+		/**
+		 * Its required when we use @style multiple times!
+		 * Only once registration!
+		 */
+		if(map.get('@view').get('callbacksDefined')){
+			return;
+		}
+
 		map.get('@callbacks').get('created').push((domNode, createVars = {}) => {
 
 			// get and merge dom view var attributes
@@ -91,6 +99,8 @@ function view(template, options = {}) {
 		map.get('@callbacks').get('detached').push(domNode => {
 			domNode.$view.destroy();
 		});
+
+		map.get('@view').set('callbacksDefined', true);
 	}
 }
 

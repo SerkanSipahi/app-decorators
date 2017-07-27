@@ -51,6 +51,14 @@ function style(styles) {
         let map = storage.get(Class);
         map.get('@style').set('stylesheets', styles);
 
+        /**
+         * Its required when we use @style multiple times!
+         * Only once registration!
+         */
+        if(map.get('@style').get('callbacksDefined')){
+            return;
+        }
+
         map.get('@callbacks').get('created').push(domNode => {
 
             if(!(domNode.$stylesheets && domNode.$stylesheets.length)){
@@ -86,6 +94,8 @@ function style(styles) {
                 stylesheet.destroy();
             }
         });
+
+        map.get('@style').set('callbacksDefined', true);
 	}
 }
 
