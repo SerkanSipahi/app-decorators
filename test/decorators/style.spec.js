@@ -116,6 +116,8 @@ describe('@style decorator', async () => {
         @style([
             {
                 attachOn: 'immediately',
+                type: 'default',
+                imports: [],
                 styles:
                     '.foo {' +
                         'color: blue;' +
@@ -123,6 +125,8 @@ describe('@style decorator', async () => {
             },
             {
                 attachOn: 'DOMContentLoaded',
+                type: 'on',
+                imports: [],
                 styles:
                     '.bar {' +
                         'color: red;' +
@@ -130,6 +134,8 @@ describe('@style decorator', async () => {
             },
             {
                 attachOn: 'load',
+                type: 'on',
+                imports: [],
                 styles:
                     '.baz {' +
                         'color: green;' +

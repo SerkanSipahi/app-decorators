@@ -1,8 +1,30 @@
 import { Stylesheet } from '../libs/stylesheet';
 import { initCoreMap, initStyleMap } from '../datas/init-maps';
 import { storage } from '../libs/random-storage';
+import { Eventhandler } from '../libs/eventhandler';
+import { Router } from '../libs/router';
 
 let getTypeof = value => Object.prototype.toString.call(value).slice(8,-1);
+
+/**
+ *
+ * @param type {string}
+ * @param element {Element}
+ * @returns {*}
+ */
+let getHandler = (type, element) => {
+
+    if(type === "on") {
+        return new Eventhandler({ element });
+    } else if(type === "action") {
+        return Router.create({
+            scope: element
+        });
+    } else if(type === "mediaMatch") {
+        // https://wicg.github.io/ResizeObserver/
+        return "mediaMatch";
+    }
+};
 
 /**
  * Style
@@ -18,7 +40,8 @@ function style(styles) {
 
         if(getTypeof(styles) === 'String'){
             styles = [{
-                styles: styles
+                styles: styles,
+                type: 'on',
             }];
         }
 
@@ -37,7 +60,10 @@ function style(styles) {
                 domNode.$stylesheets.push(new Stylesheet({
                     appendTo: domNode,
                     attachOn: style.attachOn,
+                    imports: style.imports,
                     styles: style.styles,
+                    type: style.type,
+                    eventFactory: scope => getHandler(style.type, scope),
                 }));
             }
 		});

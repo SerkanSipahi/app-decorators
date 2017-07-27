@@ -1,4 +1,5 @@
 import { Stylesheet } from '../../src/libs/stylesheet';
+import { Eventhandler } from '../../src/libs/eventhandler';
 import sinon from 'sinon';
 
 // init special innerHTML for test
@@ -10,14 +11,18 @@ describe('Class Stylesheet ', () => {
 
     let element = null;
     let defaultOptions = null;
+    let stylesheet = null;
 
     beforeEach(() => {
         element = document.createElement('div');
         defaultOptions = {
             appendTo: element,
             styles: '.foo { color: blue}',
+            eventFactory: scope => new Eventhandler({ element: scope }),
         };
     });
+
+    afterEach(() => stylesheet ? stylesheet.destroy() : null);
 
     describe('initialize', () => {
 
@@ -46,6 +51,7 @@ describe('Class Stylesheet ', () => {
             let options1 = {
                 appendTo: element,
                 styles: '.foo { color: blue}',
+                eventFactory: scope => new Eventhandler({ element: scope }),
             };
 
             (() => new Stylesheet(options1) ).should.not.throw();
@@ -54,7 +60,6 @@ describe('Class Stylesheet ', () => {
         it('should add correct element to instance._scope during the creation', () => {
 
             // setup
-            let stylesheet = null;
             let options = null;
 
             // Test 1
@@ -81,7 +86,7 @@ describe('Class Stylesheet ', () => {
         it('should create style element by given stylesheet', () => {
 
             let styleElement = null;
-            let stylesheet = new Stylesheet(defaultOptions);
+            stylesheet = new Stylesheet(defaultOptions);
 
             // Test 1
             styleElement = stylesheet._createStylesheet('.a { color: #faf }');
@@ -101,7 +106,7 @@ describe('Class Stylesheet ', () => {
 
         it('should append stylesElement to an empty element (appendTo)', () => {
 
-            let stylesheet = new Stylesheet(defaultOptions);
+            stylesheet = new Stylesheet(defaultOptions);
             let styleElement = stylesheet._createStylesheet('.a { color: #bab }');
             // clear element
             stylesheet._appendTo.innerHTML = '';
@@ -113,7 +118,7 @@ describe('Class Stylesheet ', () => {
 
         it('should append stylesElement to an element (appendTo) with nodes', () => {
 
-            let stylesheet = new Stylesheet(defaultOptions);
+            stylesheet = new Stylesheet(defaultOptions);
             let styleElement = stylesheet._createStylesheet('.a { color: #bab }');
             // clear element
             stylesheet._appendTo.innerHTML = '<b>zZz</b>';
@@ -131,7 +136,7 @@ describe('Class Stylesheet ', () => {
 
             // this test this._trigger inside of _runProcess
             element.addEventListener('attached-stylesheet', () => done());
-            let stylesheet = new Stylesheet(defaultOptions);
+            stylesheet = new Stylesheet(defaultOptions);
             // clear element
             stylesheet._appendTo.innerHTML = '';
 
@@ -146,10 +151,14 @@ describe('Class Stylesheet ', () => {
 
         it('should work when destroy and reinit again', () => {
 
-            let stylesheet = new Stylesheet(defaultOptions);
+            stylesheet = new Stylesheet(defaultOptions);
             should(stylesheet._refs.get(stylesheet)).be.instanceof(Map);
 
             stylesheet.destroy();
+            let event = new Event('load');
+            window.dispatchEvent(event);
+            window.dispatchEvent(event);
+
             should(stylesheet._refs.get(stylesheet)).be.not.ok();
             should(stylesheet._scope).be.not.ok();
             should(stylesheet._stylesElement).be.not.ok();
@@ -164,24 +173,14 @@ describe('Class Stylesheet ', () => {
 
     });
 
-    describe('on' ,() => {
-
-        it.skip('logic inside of on', () => {
-
-
-        });
-
-    });
-
     describe('logic inside of _run method', () => {
 
+        // declarations
         let stylesheet = null;
         let element = null;
         let defaultOptions = null;
-
         let getOptions = options => Object.assign({}, defaultOptions, options);
         let stub = (method, value) => sinon.stub(Stylesheet.prototype, method).callsFake(_ => value);
-
         let expectedResult =
         '<div id="appendToElement">'+
             '<style>'+
@@ -197,6 +196,7 @@ describe('Class Stylesheet ', () => {
             defaultOptions = {
                 appendTo: element,
                 styles: '.foo { color: blue }',
+                eventFactory: scope => new Eventhandler({ element: scope }),
             };
 
             sinon.spy(Stylesheet.prototype, "_isAlreadyDone");

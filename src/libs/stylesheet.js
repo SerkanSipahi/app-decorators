@@ -32,6 +32,26 @@ class Stylesheet {
     _styles = '';
 
     /**
+     * @type {Array}
+     * @private
+     */
+    _imports = [];
+
+    /**
+     * @type {string}
+     * @private
+     */
+    _type = 'on';
+
+
+    /**
+     * _eventFactory
+     * @type {object}
+     * @private
+     */
+    _eventFactory = function(scope){};
+
+    /**
      * @type {boolean}
      * @private
      */
@@ -44,10 +64,10 @@ class Stylesheet {
     _event = 'attached-stylesheet';
 
     /**
-     * @type {RegExp}
+     * @type {Array}
      * @private
      */
-    _eventStateRege = /DOMContentLoaded|load/;
+    _eventStatePattern = [/DOMContentLoaded|load/, 'on'];
 
     /**
      * @type {{DOMContentLoaded: string, load: string}}
@@ -57,12 +77,6 @@ class Stylesheet {
         DOMContentLoaded: 'interactive',
         load: 'complete',
     };
-
-    /**
-     * @type {function}
-     * @private
-     */
-    _listenerWrapper = () => {};
 
     /**
      * _appendTo {Element}
@@ -78,6 +92,7 @@ class Stylesheet {
     /**
      * _stylesElement {String|Function}
      */
+
     set _stylesElement(stylesElement) {
         this._refs.get(this).set('stylesElement', stylesElement);
     };
@@ -98,53 +113,44 @@ class Stylesheet {
     };
 
     /**
+     * _eventListener {}
+     */
+    set _eventListener(listener) {
+        this._refs.get(this).set('eventListener', listener);
+    };
+    get _eventListener() {
+        let _result = this._refs.get(this);
+        return _result && this._refs.get(this).get('eventListener');
+    };
+
+    /**
      * @param appendTo {Element}
      * @param styles {string}
      * @param attachOn {string}
      */
-    init({ appendTo, styles, attachOn } = {}){
+    init({ appendTo, styles, attachOn, imports, type, eventFactory } = {}){
 
         if(!appendTo || !styles){
             throw new Error('Required: appendTo and styles');
         }
 
+        this.timestamp = Date.now();
+
         this._checkElement(appendTo);
         this._initRefs();
 
         // init props
-        this._attachOn = attachOn || this._attachOn;
-        this._appendTo = appendTo;
-        this._styles   = styles;
+        this._attachOn     = attachOn || this._attachOn;
+        this._appendTo     = appendTo;
+        this._styles       = styles;
+        this._imports      = imports;
+        this._type         = type || this._type;
+        this._eventFactory = eventFactory;
 
         this._initScope();
+        this._eventListener = this._eventFactory(this._scope);
+
         this._run(styles);
-    }
-
-    /**
-     * promise based eventhandler
-     * @param event {string}
-     * @returns {Promise}
-     */
-    on(event) {
-
-        let promise = null;
-
-        if(this._attached){
-            promise = Promise.resolve(this._stylesElement);
-        } else {
-
-            let promiseHandler = resolve => {
-                let onListener = e => {
-                    e.stopPropagation();
-                    resolve(this._stylesElement);
-                    this._scope.removeEventListener(event, onListener, false);
-                };
-                this._scope.addEventListener(event, onListener, false);
-            };
-
-            promise = new Promise(promiseHandler);
-        }
-        return promise;
     }
 
     /**
@@ -154,12 +160,13 @@ class Stylesheet {
     reinit(element){
 
         this._checkElement(element);
-
         this._initRefs();
         this._appendTo = element;
         this._stylesElement = element.querySelector('style');
-
         this._initScope();
+        this._eventListener = this._eventFactory(this._scope);
+
+        this._addEventListener(this._attachOn, this._styles);
     }
 
     /**
@@ -180,7 +187,6 @@ class Stylesheet {
 
         this._cleanup();
         this._refs.delete(this);
-
     }
 
     /**
@@ -208,35 +214,55 @@ class Stylesheet {
     _run(styles){
 
         // run process if readyState already reached
+        // FIMXE: attachOn == load|DOMContentLoaded and type == on
+
+        //let [attachOn, type] = this._eventStatePattern;
+        //if(attachOn.test(this._attachOn) && type === this._type){
+        // TODO: was tun wenn action (also route erreicht ist)
+        // TODO: was tun wenn mediaMatch (erreicht)
+
+        // @TODO: funktion auflösen
         if(this._isAlreadyDone(this._attachOn)){
             this._runProcess(styles);
             return;
         }
 
-        /**
-         * listen for readyState
-         */
+        // attachOn == preload and type == 'rel'
+        else if(true){
 
-        // wrapper for removeListener
-        this._listenerWrapper = _ => {
-            this._processListener(styles);
-        };
+        }
+
+        // https://developer.mozilla.org/de/docs/Web/API/Window/matchMedia
+        // mit radius, also z.B. +-30
+        // attachOn == '(max-width: 360px' and type == 'mediaMatch)' && type == 'mediaMatch'
+        else if(true){
+
+        }
+
+        // kann raus weil es auch injected wird(wird also vom _addEventListener behandelt)
+        // attachOn != this._eventStatePattern[0](dom|DOMContentLoaded) && type == 'on'
+        else if(true){
+
+        }
+
+        // kann raus weil es auch injected wird(wird also vom _addEventListener behandelt)
+        // attachOn == '/this/{{value}}/path.html' && type == 'action'
+        else if(true){
+
+        }
+
         // listen event
-        this._addEventListener(this._scope, this._attachOn,
-            this._listenerWrapper,
-        false);
+        this._addEventListener(this._attachOn, styles);
     }
 
     /**
-     * @param element {HTMLElement}
-     * @param event {string}
-     * @param callback {function}
-     * @param useCapture {boolean}
+     * @param attachOn {string}
+     * @param styles {string}
      * @private
      */
-    _addEventListener(element, event, callback, useCapture) {
+    _addEventListener(attachOn, styles) {
 
-        element.addEventListener(event, callback, useCapture);
+        this._eventListener.on(attachOn, _ => this._processListener(styles));
     }
 
     /**
@@ -245,10 +271,12 @@ class Stylesheet {
      */
     _isAlreadyDone(state){
 
+        // fire immediately no matter what status is reached
         if(this._attachOn === 'immediately') {
             return true;
         }
 
+        // fire when load (complete) event already reached but we declared as DOMContentLoaded
         if(this._getDocumentReadyState() === 'complete' && state === 'DOMContentLoaded') {
             return true;
         }
@@ -263,7 +291,8 @@ class Stylesheet {
      */
     _initScope(){
 
-        if(this._eventStateRege.test(this._attachOn)){
+        let [attachOn, type] = this._eventStatePattern;
+        if(attachOn.test(this._attachOn) && type === this._type){
             this._scope = window;
         } else {
             this._scope = this._appendTo;
@@ -285,11 +314,12 @@ class Stylesheet {
      */
     _runProcess(styles){
 
+        // FIXME: _createStylesheet rename to _createNode
         this._stylesElement = this._createStylesheet(styles);
+        // FIXME: _insertStylesheet rename to insertNode
         let element = this._insertStylesheet(this._appendTo, this._stylesElement);
 
         this._trigger(this._event);
-        this._cleanup();
 
         return element;
     }
@@ -311,9 +341,7 @@ class Stylesheet {
             return;
         }
 
-        this._scope.removeEventListener(
-            this._attachOn, this._listenerWrapper, false
-        );
+        this._eventListener.off(this._attachOn);
     }
 
     /**
@@ -370,8 +398,10 @@ class Stylesheet {
         this._refs = new WeakMap([
             [this, new Map([
                 ['appendTo', null],
-                ['stylesElement', null],
+                //['stylesElement', null],
+                // TODO: soll raus
                 ['scope', null],
+                ['eventListener', null],
             ])],
         ]);
     }

@@ -60,7 +60,7 @@ class Eventhandler {
 	 */
 	init({ element, events, bind } = {}){
 
-		this._initRefs({ element, events, bind });
+		this._initRefs({ element });
 
 		// Assign element
 		this._element = element;
@@ -111,11 +111,9 @@ class Eventhandler {
 	/**
 	 * _initRefs
 	 * @param element {HTMLElement}
-	 * @param events {Array}
-	 * @param bind {Object}
 	 * @private
 	 */
-	_initRefs({ element, events, bind }){
+	_initRefs({ element }){
 
 		// init refs
 		if(!element){
