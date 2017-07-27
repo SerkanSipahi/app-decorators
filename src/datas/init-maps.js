@@ -66,7 +66,8 @@ let initViewMap = (storage, Class) => {
     let map = storage.get(Class);
     if(!map.has('@view')){
         map.set('@view', new Map([
-            ["bind", []]
+            ["bind", []],
+            ["callbacksDefined", false],
         ]));
     }
 };
@@ -82,6 +83,7 @@ let initStyleMap = (storage, Class) => {
     if(!map.has('@style')){
         map.set('@style', new Map([
             ["stylesheets", null],
+            ["callbacksDefined", false],
         ]));
     }
 };
