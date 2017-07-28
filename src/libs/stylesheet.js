@@ -68,7 +68,7 @@ class Stylesheet {
      * @type {string}
      * @private
      */
-    _event = 'attached-stylesheet';
+    _event = 'attached';
 
     /**
      * @type {Array}
@@ -423,9 +423,11 @@ class Stylesheet {
 
         let event = new CustomEvent(eventName, {
             bubbles: true,
+            detail: {
+                type: 'stylesheet',
+            },
         });
         this._appendTo.dispatchEvent(event);
-
     }
 }
 

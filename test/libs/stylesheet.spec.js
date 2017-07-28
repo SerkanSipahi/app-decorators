@@ -135,7 +135,7 @@ describe('Class Stylesheet ', () => {
         it('logic inside of _runProcess', done => {
 
             // this test this._trigger inside of _runProcess
-            element.addEventListener('attached-stylesheet', () => done());
+            element.addEventListener('attached', () => done());
             stylesheet = new Stylesheet(defaultOptions);
             // clear element
             stylesheet._appendTo.innerHTML = '';
