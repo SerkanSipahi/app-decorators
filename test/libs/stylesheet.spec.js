@@ -167,6 +167,7 @@ describe('Class Stylesheet ', () => {
                 appendTo: element,
                 attachOn: 'foo',
                 removeEvent: false,
+                type: 'on',
             });
             stylesheet = new Stylesheet(options);
 
@@ -175,6 +176,12 @@ describe('Class Stylesheet ', () => {
             element.dispatchEvent(new Event('foo'));
 
             stylesheet._processListener.callCount.should.be.equal(3);
+            stylesheet._appendTo.outerHTML.should.be.equal(
+            '<div>' +
+                '<style>.foo { color: blue}</style>' +
+                '<style>.foo { color: blue}</style>' +
+                '<style>.foo { color: blue}</style>' +
+            '</div>');
 
         });
 
@@ -184,6 +191,7 @@ describe('Class Stylesheet ', () => {
             let options = Object.assign({}, defaultOptions, {
                 appendTo: element,
                 attachOn: 'foo',
+                type: 'on',
             });
             stylesheet = new Stylesheet(options);
 
@@ -192,7 +200,46 @@ describe('Class Stylesheet ', () => {
             element.dispatchEvent(new Event('foo'));
 
             stylesheet._processListener.callCount.should.be.equal(1);
+            stylesheet._appendTo.outerHTML.should.be.equal(
+            '<div>' +
+                '<style>.foo { color: blue}</style>' +
+            '</div>');
 
+        });
+
+    });
+
+    describe('click event', () => {
+
+        let element = null;
+
+        beforeEach(() => {
+            element = document.createElement('div');
+            element.innerHTML = '<div class="foo">Foo</div>';
+            sinon.spy(Stylesheet.prototype, "_processListener");
+        });
+
+        afterEach(() => {
+            Stylesheet.prototype._processListener.restore();
+            stylesheet.destroy();
+        });
+
+        it('should trigger on click', () => {
+
+            let options = Object.assign({}, defaultOptions, {
+                appendTo: element,
+                attachOn: 'click .foo',
+                type: 'on',
+            });
+            stylesheet = new Stylesheet(options);
+            element.querySelector('.foo').click();
+
+            stylesheet._processListener.callCount.should.be.equal(1);
+            stylesheet._appendTo.outerHTML.should.be.equal(
+            '<div>' +
+                '<style>.foo { color: blue}</style>' +
+                '<div class="foo">Foo</div>' +
+            '</div>');
         });
 
     });
