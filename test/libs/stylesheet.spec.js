@@ -29,15 +29,11 @@ describe('Class Stylesheet ', () => {
         it('should throw error required properties missing', () => {
 
             let options1 = { appendTo: element };
-            let options2 = { styles: element };
-            let options3 = { appendTo: element, styles: '' };
-            let options4 = { appendTo: true, styles: '.foo { color: blue}' };
+            let options2 = { appendTo: true, styles: '.foo { color: blue}' };
 
-            (() => new Stylesheet() ).should.throw('Required: appendTo and styles');
-            (() => new Stylesheet(options1) ).should.throw('Required: appendTo and styles');
-            (() => new Stylesheet(options2) ).should.throw('Required: appendTo and styles');
-            (() => new Stylesheet(options3) ).should.throw('Required: appendTo and styles');
-            (() => new Stylesheet(options4) ).should.throw('Passed appendTo element should be instance of HTMLElement');
+            (() => new Stylesheet()).should.throw('Required: appendTo');
+            (() => new Stylesheet(options1)).should.throw('Required: styles or imports');
+            (() => new Stylesheet(options2)).should.throw('Passed appendTo element should be instance of HTMLElement');
 
         });
 
@@ -206,6 +202,119 @@ describe('Class Stylesheet ', () => {
             '</div>');
 
         });
+
+    });
+
+    describe('async load css from external sources', () => {
+
+        let element = null;
+        let importSrc = null;
+        let importSrc2 = null;
+
+        beforeEach(() => {
+            element = document.createElement('div');
+            element.innerHTML = '<figure>Foo</figure>';
+            importSrc = "https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css";
+            importSrc2 = "https://cdnjs.cloudflare.com/ajax/libs/sanitize.css/2.0.0/sanitize.min.css";
+            sinon.spy(Stylesheet.prototype, "_runProcess");
+        });
+
+        afterEach(() => {
+            Stylesheet.prototype._runProcess.restore();
+            Stylesheet.prototype._supportRelPreload.restore();
+            stylesheet.destroy();
+        });
+
+        it('should load css by link rel="preload"', () => {
+
+            // fake _supportRelPreload for forcing link rel="preload"
+            sinon.stub(Stylesheet.prototype, '_supportRelPreload').callsFake(() => true);
+
+            let options = Object.assign({}, defaultOptions, {
+                styles: "",
+                appendTo: element,
+                attachOn: 'immediately',
+                type: 'default',
+                imports: [ importSrc ],
+            });
+            stylesheet = new Stylesheet(options);
+
+            stylesheet._runProcess.callCount.should.be.equal(1);
+            // we need this hack because, when we force "preload" on devices that doesnt
+            // support it, it remove as attr. So we have to append it afterwards.
+            stylesheet._appendTo.querySelector('link').setAttribute('as', "style");
+
+            let linkElement = stylesheet._appendTo.querySelector('link');
+            linkElement.getAttribute('rel').should.be.equal("preload");
+            linkElement.getAttribute('href').should.be.equal(importSrc);
+            linkElement.getAttribute('as').should.be.equal("style");
+
+            // If this is not required, onLoad event on link node will not fired
+            document.body.append(stylesheet._appendTo);
+
+        });
+
+        it('should load css by link rel="stylesheet" with async media attr hack', done => {
+
+            // fake _supportRelPreload for forcing link rel="stylesheet"
+            sinon.stub(Stylesheet.prototype, '_supportRelPreload').callsFake(() => false);
+
+            let options = Object.assign({}, defaultOptions, {
+                styles: "",
+                appendTo: element,
+                attachOn: 'bar',
+                type: 'on',
+                imports: [ importSrc ],
+                // works only with link[rel="stylesheet"]
+                onLoadImports: (mustCall, node) => {
+                    mustCall(done);
+                    // after loaded
+                    node.getAttribute("media").should.be.equal("all");
+                },
+            });
+            stylesheet = new Stylesheet(options);
+            element.dispatchEvent(new Event('bar'));
+
+            stylesheet._runProcess.callCount.should.be.equal(1);
+            stylesheet._appendTo.outerHTML.should.be.equal(
+            '<div>' +
+                // see for media="only x" hack => https://github.com/filamentgroup/loadCSS/blob/master/src/loadCSS.js#L25
+                '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" media="only x">' +
+                '<figure>Foo</figure>' +
+            '</div>');
+
+            // If this is not required, onLoad event on link node will not fired
+            document.body.append(stylesheet._appendTo);
+
+        });
+
+        it('should load multiple imports by rel="stylesheet"', () => {
+
+            // fake _supportRelPreload for forcing link rel="stylesheet"
+            sinon.stub(Stylesheet.prototype, '_supportRelPreload').callsFake(() => false);
+
+            let options = Object.assign({}, defaultOptions, {
+                styles: "",
+                appendTo: element,
+                attachOn: 'click figure',
+                type: 'on',
+                imports: [ importSrc, importSrc2 ],
+            });
+            stylesheet = new Stylesheet(options);
+            element.querySelector("figure").click();
+
+            stylesheet._runProcess.callCount.should.be.equal(1);
+            stylesheet._appendTo.outerHTML.should.be.equal(
+            '<div>' +
+                '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" media="only x">' +
+                '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sanitize.css/2.0.0/sanitize.min.css" media="only x">' +
+                '<figure>Foo</figure>' +
+            '</div>');
+
+            // If this is not required, onLoad event on link node will not fired
+            document.body.append(stylesheet._appendTo);
+
+        })
 
     });
 

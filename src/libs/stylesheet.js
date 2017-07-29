@@ -59,6 +59,11 @@ class Stylesheet {
     _eventFactory = function(scope){};
 
     /**
+     * @private
+     */
+    _onLoadImports = null;
+
+    /**
      * @type {boolean}
      * @private
      */
@@ -135,28 +140,33 @@ class Stylesheet {
      * @param styles {string}
      * @param attachOn {string}
      */
-    init({ appendTo, styles, attachOn, imports, type, eventFactory, removeEvent } = {}){
+    init({ appendTo, styles, attachOn, imports, type, eventFactory, removeEvent, onLoadImports } = {}){
 
-        if(!appendTo || !styles){
-            throw new Error('Required: appendTo and styles');
+        if(!appendTo){
+            throw new Error('Required: appendTo');
+        }
+
+        if(!styles && !imports){
+            throw new Error('Required: styles or imports');
         }
 
         this._checkElement(appendTo);
         this._initRefs();
 
         // init props
-        this._attachOn     = attachOn || this._attachOn;
-        this._appendTo     = appendTo;
-        this._styles       = styles;
-        this._imports      = imports;
-        this._type         = type || this._type;
-        this._eventFactory = eventFactory;
-        this._removeEvent  = typeof removeEvent === 'boolean' ? removeEvent : this._removeEvent;
+        this._attachOn      = attachOn || this._attachOn;
+        this._appendTo      = appendTo;
+        this._styles        = styles;
+        this._imports       = imports  || [];
+        this._type          = type     || this._type;
+        this._eventFactory  = eventFactory;
+        this._onLoadImports = onLoadImports || this._onLoadImports;
+        this._removeEvent   = typeof removeEvent === 'boolean' ? removeEvent : this._removeEvent;
 
         this._initScope();
         this._eventListener = this._eventFactory(this._scope);
 
-        this._run(styles);
+        this._run(styles, imports);
     }
 
     /**
@@ -172,7 +182,7 @@ class Stylesheet {
         this._initScope();
         this._eventListener = this._eventFactory(this._scope);
 
-        this._addEventListener(this._attachOn, this._styles);
+        this._addEventListener(this._attachOn, this._styles, this._imports);
     }
 
     /**
@@ -215,64 +225,38 @@ class Stylesheet {
 
     /**
      * @param styles {string}
+     * @param imports {Array}
      * @private
      */
-    _run(styles){
+    _run(styles, imports){
 
-        // run process if readyState already reached
-        // FIMXE: attachOn == load|DOMContentLoaded and type == on
-
-        //let [attachOn, type] = this._eventStatePattern;
-        //if(attachOn.test(this._attachOn) && type === this._type){
-        // TODO: was tun wenn action (also route erreicht ist)
-        // TODO: was tun wenn mediaMatch (erreicht)
+        // @TODO: was tun wenn action (also route erreicht ist)
+        // @TODO: was tun wenn mediaMatch (erreicht)
+        // @TODO: wenn für eine componente der style geladen worden ist, braucht es nicht mehr geladen werden
 
         // @TODO: funktion auflösen
         if(this._isAlreadyDone(this._attachOn)){
-            this._runProcess(styles);
+            this._runProcess(styles, imports);
             return;
         }
 
-        // attachOn == preload and type == 'rel'
-        else if(true){
-
-        }
-
-        // https://developer.mozilla.org/de/docs/Web/API/Window/matchMedia
-        // mit radius, also z.B. +-30
-        // attachOn == '(max-width: 360px' and type == 'mediaMatch)' && type == 'mediaMatch'
-        else if(true){
-
-        }
-
-        // kann raus weil es auch injected wird(wird also vom _addEventListener behandelt)
-        // attachOn != this._eventStatePattern[0](dom|DOMContentLoaded) && type == 'on'
-        else if(true){
-
-        }
-
-        // kann raus weil es auch injected wird(wird also vom _addEventListener behandelt)
-        // attachOn == '/this/{{value}}/path.html' && type == 'action'
-        else if(true){
-
-        }
-
         // listen event
-        this._addEventListener(this._attachOn, styles);
+        this._addEventListener(this._attachOn, styles, imports);
     }
 
     /**
      * @param attachOn {string}
      * @param styles {string}
+     * @param imports {Array}
      * @private
      */
-    _addEventListener(attachOn, styles) {
+    _addEventListener(attachOn, styles, imports) {
 
         this._eventListener.on(attachOn, () => {
-            this._processListener(styles);
+            this._processListener(styles, imports);
             // Remove listener after stylesheet is appended.
             // We dont want multiple style elements on multiple events
-            this._removeEvent ? this._eventListener.off(this._attachOn) : null;
+            this._removeEvent ? this._eventListener.off(attachOn) : null;
         });
     }
 
@@ -320,13 +304,27 @@ class Stylesheet {
 
     /**
      * @param styles {string}
+     * @param imports {Array}
      * @returns {HTMLElement} element
      * @private
      */
-    _runProcess(styles){
+    _runProcess(styles, imports = []){
 
-        this._stylesElement = this._createStylesheetNode(styles);
-        let element = this._insertStylesheetNode(this._appendTo, this._stylesElement);
+        let element = null;
+        if(styles) {
+            this._stylesElement = this._createStylesheetNode(styles);
+            element = this._insertStylesheetNode(this._appendTo, this._stylesElement);
+        }
+
+        for(let href of imports){
+            if(this._supportRelPreload()){
+                let preloadNode = this._createLinkRelPreloadNode(href);
+                element = this._insertStylesheetNode(this._appendTo, preloadNode);
+            } else {
+                let linkRelStyleNode = this._createLinkRelStylesheetNode(href);
+                element = this._insertStylesheetNode(this._appendTo, linkRelStyleNode);
+            }
+        }
 
         this._trigger(this._event);
 
@@ -335,10 +333,11 @@ class Stylesheet {
 
     /**
      * @param styles {string}
+     * @param imports {Array}
      * @private
      */
-    _processListener(styles){
-        this._runProcess(styles);
+    _processListener(styles, imports){
+        this._runProcess(styles, imports);
     }
 
     /**
@@ -364,7 +363,7 @@ class Stylesheet {
 
         let [ node ] = appendTo.children;
         if(node){
-            if(node.localName.toLocaleLowerCase() === 'style'){
+            if(/style|link/.test(node.localName.toLocaleLowerCase())){
                 // insert after
                 appendTo.insertBefore(stylesElement, node.nextSibling);
             } else {
@@ -400,6 +399,58 @@ class Stylesheet {
     }
 
     /**
+     *
+     * @param href {string}
+     * @returns {Element}
+     * @private
+     */
+    _createLinkRelPreloadNode(href){
+
+        let linkElement = this._createElement('link');
+
+        linkElement.rel    = 'preload';
+        linkElement.as     = 'style';
+        linkElement.href   = href;
+        linkElement.onload = "this.rel='stylesheet'";
+
+        return linkElement;
+    }
+
+    /**
+     *
+     * @param href
+     * @param attachOn
+     * @returns {Element}
+     * @private
+     */
+    _createLinkRelStylesheetNode(href, attachOn = 'all'){
+
+        let self        = this;
+        let linkElement = this._createElement('link');
+
+        linkElement.rel    = 'stylesheet';
+        linkElement.href   = href;
+        // temporarily set media to something inapplicable to ensure it'll fetch without blocking render
+        // see: https://github.com/filamentgroup/loadCSS/blob/master/src/loadCSS.js#L25
+        linkElement.media  = "only x";
+        linkElement.onload = function(){
+            let self2 = this;
+            if(!self._onLoadImports) {
+                self2.media=`${attachOn}`;
+                return;
+            }
+            self._onLoadImports(
+                function call(done){
+                    self2.media=`${attachOn}`;
+                    done ? done() : null;
+                }, self2
+            )
+        };
+
+        return linkElement;
+    }
+
+    /**
      * @private
      */
     _initRefs(){
@@ -428,6 +479,31 @@ class Stylesheet {
             },
         });
         this._appendTo.dispatchEvent(event);
+    }
+
+    /**
+     * @param type {string}
+     * @returns {Element}
+     * @private
+     */
+    _createElement(type){
+        return document.createElement(type);
+    }
+
+    /**
+     * @returns {boolean}
+     * @private
+     */
+    _supportRelPreload(){
+
+        let hasPreload = false;
+        try {
+            hasPreload = window.document.createElement( "link" ).relList.supports( "preload" );
+        } catch (e) {
+            hasPreload = false;
+        }
+
+        return hasPreload;
     }
 }
 
