@@ -28,8 +28,8 @@ Input:
         @fetch load/my/styles3.css;
     }
     @media on('load') {
-        @fetch load/my111/styles2.css!async;
-        @fetch load/my111/styles3.css!defer;
+        @fetch load/my111/styles2.css;
+        @fetch load/my111/styles3.css;
     }
     .foo {
         with: 200px;
@@ -57,8 +57,8 @@ let output = [
             attachOn: "load",
             styles: "",
             imports: [
-                "load/my111/styles2.css!async",
-                "load/my111/styles3.css!defer"
+                "load/my111/styles2.css",
+                "load/my111/styles3.css"
             ]
             
         },

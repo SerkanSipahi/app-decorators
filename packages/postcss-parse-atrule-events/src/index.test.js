@@ -93,8 +93,8 @@ it('should create "attachOn: on" with classes', () => {
 it('should create "attachOn: immediately" with only @fetch on root layer', () => {
 
     let styles =
-        `@fetch load/my111/styles4.css!async;
-         @fetch load/my111/styles5.css!defer;`.r();
+        `@fetch load/my111/styles4.css;
+         @fetch load/my111/styles5.css;`.r();
 
         let result = parse(styles);
 
@@ -106,7 +106,7 @@ it('should create "attachOn: immediately" with only @fetch on root layer', () =>
         assert.deepEqual(result[0], {
             attachOn: "immediately",
             imports: [
-                "load/my111/styles4.css!async",
+                "load/my111/styles4.css",
             ],
             styles: "",
             type: "default",
@@ -116,7 +116,7 @@ it('should create "attachOn: immediately" with only @fetch on root layer', () =>
         assert.deepEqual(result[1], {
             attachOn: "immediately",
             imports: [
-                "load/my111/styles5.css!defer"
+                "load/my111/styles5.css"
             ],
             styles: "",
             type: "default",
@@ -201,8 +201,8 @@ it('should create "attachOn: on" with classes and @fetch', () => {
             .b {
                 color: blue;
             }
-            @fetch load/my111/styles2.css!async;
-            @fetch load/my111/styles3.css!defer;
+            @fetch load/my111/styles2.css;
+            @fetch load/my111/styles3.css;
             .c {
                 color: cologne;
             }`.r()+
@@ -218,8 +218,8 @@ it('should create "attachOn: on" with classes and @fetch', () => {
     assert.deepEqual(result[0], {
         attachOn: "load",
         imports: [
-            "load/my111/styles2.css!async",
-            "load/my111/styles3.css!defer",
+            "load/my111/styles2.css",
+            "load/my111/styles3.css",
         ],
         styles: ".a { color: red; } .b { color: blue; } .c { color: cologne; }",
         type: "on",
@@ -443,7 +443,7 @@ it('should match any @media expression', () => {
 
     let styles =
         `@media on('click .foo[a="c"] #foo[a][c="d"][e="s"].c') {
-            @fetch load/my/styles3.css!async;
+            @fetch load/my/styles3.css;
         }`.r();
 
     let result = parse(styles);
@@ -451,7 +451,7 @@ it('should match any @media expression', () => {
     result[0].styles = result[0].styles.cs(); // remove "new-lines"
     assert.deepEqual(result[0], {
         attachOn: 'click .foo[a="c"] #foo[a][c="d"][e="s"].c',
-        imports: ["load/my/styles3.css!async"],
+        imports: ["load/my/styles3.css"],
         styles: "",
         type: "on",
     });
@@ -492,7 +492,7 @@ it.skip('match fetch types', () => {
      */
 
     let styles =
-        `@stream load/my/styles3.css`;
+        `@fetch load/my/styles3.css!stream`;
 
     //let result = parse(styles);
 
@@ -506,7 +506,11 @@ it.skip('should parse mediaQuery inline statements according standard', () => {
         `@fetch load/my/styles3.css!stream only screen and (min-device-width:320px);`;
 
     let styles2 =
-        `@fetch load/my/styles3.css!async on('load');`;
+        `@fetch load/my/styles3.css on('load');`;
+
+    let result = parse(styles1);
+
+});
 
     let result = parse(styles1);
 
@@ -552,15 +556,15 @@ it('integration test', () => {
             .b {
                 color: blue;
             }
-            @import load/my111/styles2.css!async;
-            @fetch load/my111/styles3.css!defer;
+            @import load/my111/styles2.css;
+            @fetch load/my111/styles3.css;
             .c {
                 color: cologne;
             }
         }
         
-        @fetch load/my111/styles222.css!async;
-        @fetch load/my111/styles333.css!defer;
+        @fetch load/my111/styles222.css;
+        @fetch load/my111/styles333.css;
         
         @media on('load') {
             @import load/my/styles1.css;
@@ -674,9 +678,9 @@ it('integration test', () => {
         assert.deepEqual(result[3], {
             attachOn: "load",
             imports: [
-                "load/my111/styles3.css!defer",
+                "load/my111/styles3.css",
             ],
-            styles: ".a { color: red; } .b { color: blue; } @import load/my111/styles2.css!async .c { color: cologne; }",
+            styles: ".a { color: red; } .b { color: blue; } @import load/my111/styles2.css .c { color: cologne; }",
             type: "on",
         });
 
@@ -685,7 +689,7 @@ it('integration test', () => {
         assert.deepEqual(result[4], {
             attachOn: "immediately",
             imports: [
-                "load/my111/styles222.css!async",
+                "load/my111/styles222.css",
             ],
             styles: "",
             type: "default",
@@ -696,7 +700,7 @@ it('integration test', () => {
         assert.deepEqual(result[5], {
             attachOn: "immediately",
             imports: [
-                "load/my111/styles333.css!defer",
+                "load/my111/styles333.css",
             ],
             styles: "",
             type: "default",
