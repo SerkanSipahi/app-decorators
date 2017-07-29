@@ -65,6 +65,12 @@ function style(styles) {
                 domNode.$stylesheets = [];
             }
 
+            // return if style/s node already created
+            // Note: avoid multiple style nodes per component creation!
+            if(map.get('@style').get('created')){
+                return;
+            }
+
             let styles = map.get('@style').get('stylesheets');
             for(let style of styles){
                 domNode.$stylesheets.push(new Stylesheet({
@@ -76,6 +82,9 @@ function style(styles) {
                     eventFactory: scope => getHandler(style.type, scope),
                 }));
             }
+
+            map.get('@style').set('created', true);
+
 		});
 
         map.get('@callbacks').get('attached').push(domNode => {

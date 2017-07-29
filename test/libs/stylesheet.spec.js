@@ -249,7 +249,7 @@ describe('Class Stylesheet ', () => {
             linkElement.getAttribute('href').should.be.equal(importSrc);
             linkElement.getAttribute('as').should.be.equal("style");
 
-            // If this is not required, onLoad event on link node will not fired
+            // when this not happend then onload event will not fired
             document.body.append(stylesheet._appendTo);
 
         });
@@ -283,7 +283,7 @@ describe('Class Stylesheet ', () => {
                 '<figure>Foo</figure>' +
             '</div>');
 
-            // If this is not required, onLoad event on link node will not fired
+            // when this not happend then onload event will not fired
             document.body.append(stylesheet._appendTo);
 
         });
@@ -311,7 +311,7 @@ describe('Class Stylesheet ', () => {
                 '<figure>Foo</figure>' +
             '</div>');
 
-            // If this is not required, onLoad event on link node will not fired
+            // when this not happend then onload event will not fired
             document.body.append(stylesheet._appendTo);
 
         });
@@ -351,7 +351,7 @@ describe('Class Stylesheet ', () => {
                 '<figure>Foo</figure>' +
             '</div>');
 
-            // If this is not required, onLoad event on link node will not fired
+            // when this not happend then onload event will not fired
             document.body.append(stylesheet._appendTo);
 
         });

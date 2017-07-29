@@ -7,7 +7,7 @@ import sinon from 'sinon';
 
 // init special innerHTML for test
 String.prototype.removeGutter = function(){
-    return this.replace(/[\t\n\r]/gm, '');
+    return this.replace(/[\t\n\r]+/gm, '');
 };
 
 describe('@style decorator', async () => {
@@ -181,6 +181,70 @@ describe('@style decorator', async () => {
          * Test
          */
         element.outerHTML.should.be.equal(expectedHTML);
+
+    });
+
+    it('should create only once style element when creating many instances', () => {
+
+        @style(`.foo { color: blue }`)
+        @view(`<div class="foo">Hello World</div>`)
+        @component({
+            name: 'com-once-style',
+        })
+        class Style {
+        }
+
+        @style(`.baz { color: red }`)
+        @view(`<div class="foo">Hello Mars</div>`)
+        @component({
+            name: 'com-once-style2',
+        })
+        class Style2 {
+        }
+
+        /**
+         * com-once-style
+         */
+        let style1 = Style.create();
+        style1.outerHTML.should.be.equal('' +
+        '<com-once-style rendered="true">' +
+            '<style>.foo { color: blue }</style>' +
+            '<div class="foo">Hello World</div>' +
+        '</com-once-style>');
+
+        let style2 = Style.create();
+        style2.outerHTML.should.be.equal('' +
+        '<com-once-style rendered="true">' +
+            '<div class="foo">Hello World</div>' +
+        '</com-once-style>');
+
+        let style3 = Style.create();
+        style3.outerHTML.should.be.equal('' +
+        '<com-once-style rendered="true">' +
+            '<div class="foo">Hello World</div>' +
+        '</com-once-style>');
+
+        /**
+         * com-once-style2
+         */
+        let style2_1 = Style2.create();
+        style2_1.outerHTML.should.be.equal('' +
+        '<com-once-style2 rendered="true">' +
+            '<style>.baz { color: red }</style>' +
+            '<div class="foo">Hello Mars</div>' +
+        '</com-once-style2>');
+
+        let style2_2 = Style2.create();
+        style2_2.outerHTML.should.be.equal('' +
+        '<com-once-style2 rendered="true">' +
+            '<div class="foo">Hello Mars</div>' +
+        '</com-once-style2>');
+
+        let style2_3 = Style2.create();
+        style2_3.outerHTML.should.be.equal('' +
+        '<com-once-style2 rendered="true">' +
+            '<div class="foo">Hello Mars</div>' +
+        '</com-once-style2>');
 
     });
 
