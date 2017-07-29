@@ -314,7 +314,47 @@ describe('Class Stylesheet ', () => {
             // If this is not required, onLoad event on link node will not fired
             document.body.append(stylesheet._appendTo);
 
-        })
+        });
+
+        it('should reinit load css by link rel="stylesheet" with async media attr hack when it destroyed', done => {
+
+            // fake _supportRelPreload for forcing link rel="stylesheet"
+            sinon.stub(Stylesheet.prototype, '_supportRelPreload').callsFake(() => false);
+
+            let options = Object.assign({}, defaultOptions, {
+                styles: "",
+                appendTo: element,
+                attachOn: 'bar',
+                type: 'on',
+                imports: [ importSrc ],
+                // works only with link[rel="stylesheet"]
+                onLoadImports: (mustCall, node) => {
+                    mustCall(done);
+                    // after loaded
+                    node.getAttribute("media").should.be.equal("all");
+                },
+            });
+            stylesheet = new Stylesheet(options);
+
+            stylesheet.destroy();
+            element.dispatchEvent(new Event('bar'));
+            stylesheet._runProcess.callCount.should.be.equal(0);
+
+            stylesheet.reinit(element);
+            element.dispatchEvent(new Event('bar'));
+            stylesheet._runProcess.callCount.should.be.equal(1);
+
+            stylesheet._appendTo.outerHTML.should.be.equal(
+            '<div>' +
+                // see for media="only x" hack => https://github.com/filamentgroup/loadCSS/blob/master/src/loadCSS.js#L25
+                '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" media="only x">' +
+                '<figure>Foo</figure>' +
+            '</div>');
+
+            // If this is not required, onLoad event on link node will not fired
+            document.body.append(stylesheet._appendTo);
+
+        });
 
     });
 
