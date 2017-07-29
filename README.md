@@ -6,7 +6,7 @@ appdec create my-module
 appdec run --name=my-module --watch --server
 ```
 
-* See [`app-decorators-cli`](https://github.com/SerkanSipahi/app-decorators-cli)(Beta)
+See [`app-decorators-cli`](https://github.com/SerkanSipahi/app-decorators-cli)(Beta)
 
 ---
 
