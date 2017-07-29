@@ -39,7 +39,7 @@ function on(eventDomain, listenerElement = 'local') {
 
 		/**
 		 * ### Ensure "registerCallback('created', ..." (see below) registered only once ###
-		 * This function will called every time if an event registered e.g. @on('click .foo')
+		 * This function will called every time if an event will be registered e.g. over @on('click .foo')
 		 * but registerOnCreatedCallback can only call once because we want only Create
 		 * one Eventhandler
 		 */
