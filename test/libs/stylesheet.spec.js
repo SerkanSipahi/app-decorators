@@ -37,11 +37,6 @@ describe('Class Stylesheet ', () => {
 
         });
 
-        it.skip('wenn kein appendTo, dann als default in <head> ', () => {
-            // in head kann nur angehängt werden wenn mindestens DOMContenLoaded state
-            // erreicht ist (domtree muss zur Verfügung stehen)
-        });
-
         it('should not throw when passed arguments correct', () => {
 
             let options1 = {
@@ -389,6 +384,161 @@ describe('Class Stylesheet ', () => {
                 '<style>.foo { color: blue}</style>' +
                 '<div class="foo">Foo</div>' +
             '</div>');
+        });
+
+    });
+
+    describe('style and link order', () => {
+
+        let element = null;
+        let container = [];
+        let styles = [
+            {
+                attachOn: 'load',
+                type: 'on',
+                imports: ["a.css", "b.css", "c.css"],
+                styles: '.baz {color: green;}',
+            },
+            {
+                attachOn: 'load',
+                type: 'lala',
+                imports: ["e.css", "f.css"],
+                styles: '.laz {color: green;}',
+            },
+            {
+                attachOn: 'immediately',
+                type: 'default',
+                imports: [],
+                styles: '.foo {color: blue;}',
+            },
+            {
+                attachOn: 'immediately',
+                type: 'default',
+                imports: [],
+                styles:'.naz {color: yellow;}',
+            },
+            {
+                attachOn: 'DOMContentLoaded',
+                type: 'on',
+                imports: ["d.css"],
+                styles:'.bar {color: red;}',
+            },
+        ];
+
+        beforeEach(() => element = document.createElement('div'));
+        afterEach(() => {
+            Stylesheet.prototype._supportRelPreload.restore();
+            stylesheet && stylesheet.destroy ? stylesheet.destroy(): null;
+            container.forEach(stylesheet => stylesheet.destroy());
+        });
+
+        it('should add style firstly then imports in array order', () => {
+
+            sinon.stub(Stylesheet.prototype, '_supportRelPreload').callsFake(() => false);
+
+            let options = Object.assign({}, defaultOptions, {
+                appendTo: element,
+                attachOn: 'foo',
+                type: 'on',
+                order: 0,
+                imports: [
+                    "a.css",
+                    "b.css",
+                    "c.css",
+                ],
+                styles:
+                '.baz {' +
+                    'color: green;' +
+                '}',
+            });
+            stylesheet = new Stylesheet(options);
+            element.dispatchEvent(new Event('foo'));
+
+            element.outerHTML.should.be.equal(
+            '<div>' +
+                '<style class="style-order-0">.baz {color: green;}</style>' +
+                '<link rel="stylesheet" href="a.css" media="only x" class="style-order-0">' +
+                '<link rel="stylesheet" href="b.css" media="only x" class="style-order-0">' +
+                '<link rel="stylesheet" href="c.css" media="only x" class="style-order-0">' +
+            '</div>');
+        });
+
+        it('should create style element in order of pass array ', () => {
+
+            sinon.stub(Stylesheet.prototype, '_supportRelPreload').callsFake(() => false);
+
+            for(let i = 0, len = styles.length; i < len; i++){
+                let style = styles[i];
+                container.push(new Stylesheet(Object.assign({}, defaultOptions,{
+                    appendTo: element,
+                    attachOn: style.attachOn,
+                    imports: style.imports,
+                    styles: style.styles,
+                    type: style.type,
+                    order: i,
+                })));
+            }
+
+            setTimeout(() => {
+                element.outerHTML.should.be.equal(
+                '<div>' +
+                    '<style class="style-order-0">.baz {color: green;}</style>' +
+                    '<link rel="stylesheet" href="a.css" media="only x" class="style-order-0">' +
+                    '<link rel="stylesheet" href="b.css" media="only x" class="style-order-0">' +
+                    '<link rel="stylesheet" href="c.css" media="only x" class="style-order-0">' +
+                    '<style class="style-order-1">.laz {color: green;}</style>' +
+                    '<link rel="stylesheet" href="e.css" media="only x" class="style-order-1">' +
+                    '<link rel="stylesheet" href="f.css" media="only x" class="style-order-1">' +
+                    '<style class="style-order-2">.foo {color: blue;}</style>' +
+                    '<style class="style-order-3">.naz {color: yellow;}</style>' +
+                    '<style class="style-order-4">.bar {color: red;}</style>' +
+                    '<link rel="stylesheet" href="d.css" media="only x" class="style-order-4">' +
+                '</div>');
+                done();
+            }, 500);
+
+            element.dispatchEvent(new Event("lala"));
+
+        });
+
+        it('should create style element in order of pass array with inner <header> element', () => {
+
+            sinon.stub(Stylesheet.prototype, '_supportRelPreload').callsFake(() => false);
+
+            for(let i = 0, len = styles.length; i < len; i++){
+                let style = styles[i];
+                container.push(new Stylesheet(Object.assign({}, defaultOptions,{
+                    appendTo: element,
+                    attachOn: style.attachOn,
+                    imports: style.imports,
+                    styles: style.styles,
+                    type: style.type,
+                    order: i,
+                })));
+            }
+
+            element.innerhTML = '<header>Hello World</header>';
+            setTimeout(() => {
+                element.outerHTML.should.be.equal(
+                    '<div>' +
+                    '<style class="style-order-0">.baz {color: green;}</style>' +
+                    '<link rel="stylesheet" href="a.css" media="only x" class="style-order-0">' +
+                    '<link rel="stylesheet" href="b.css" media="only x" class="style-order-0">' +
+                    '<link rel="stylesheet" href="c.css" media="only x" class="style-order-0">' +
+                    '<style class="style-order-1">.laz {color: green;}</style>' +
+                    '<link rel="stylesheet" href="e.css" media="only x" class="style-order-1">' +
+                    '<link rel="stylesheet" href="f.css" media="only x" class="style-order-1">' +
+                    '<style class="style-order-2">.foo {color: blue;}</style>' +
+                    '<style class="style-order-3">.naz {color: yellow;}</style>' +
+                    '<style class="style-order-4">.bar {color: red;}</style>' +
+                    '<link rel="stylesheet" href="d.css" media="only x" class="style-order-4">' +
+                    '<header>Hello World</header>' +
+                    '</div>');
+                done();
+            }, 1000);
+
+            element.dispatchEvent(new Event("lala"));
+
         });
 
     });

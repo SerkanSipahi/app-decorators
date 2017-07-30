@@ -64,6 +64,18 @@ class Stylesheet {
     _onLoadImports = null;
 
     /**
+     * @type {undefined}
+     * @private
+     */
+    _order = undefined;
+
+    /**
+     * @type {boolean}
+     * @private
+     */
+    _fallback = false;
+
+    /**
      * @type {boolean}
      * @private
      */
@@ -136,11 +148,21 @@ class Stylesheet {
     };
 
     /**
-     * @param appendTo {Element}
+     * @param config {object}
      * @param styles {string}
      * @param attachOn {string}
      */
-    init({ appendTo, styles, attachOn, imports, type, eventFactory, removeEvent, onLoadImports } = {}){
+    init({
+        appendTo,
+        styles,
+        attachOn,
+        imports,
+        type,
+        eventFactory,
+        removeEvent,
+        onLoadImports,
+        order,
+        fallback} = {}){
 
         if(!appendTo){
             throw new Error('Required: appendTo');
@@ -162,6 +184,8 @@ class Stylesheet {
         this._eventFactory  = eventFactory;
         this._onLoadImports = onLoadImports || this._onLoadImports;
         this._removeEvent   = typeof removeEvent === 'boolean' ? removeEvent : this._removeEvent;
+        this._fallback      = typeof fallback === 'boolean' ? fallback : this._fallback;
+        this._order         = order >= 0 ? order : this._order;
 
         this._initScope();
         this._eventListener = this._eventFactory(this._scope);
@@ -318,12 +342,11 @@ class Stylesheet {
 
         for(let href of imports){
             if(this._supportRelPreload()){
-                let preloadNode = this._createLinkRelPreloadNode(href);
-                element = this._insertStylesheetNode(this._appendTo, preloadNode);
+                this._stylesElement = this._createLinkRelPreloadNode(href);
             } else {
-                let linkRelStyleNode = this._createLinkRelStylesheetNode(href);
-                element = this._insertStylesheetNode(this._appendTo, linkRelStyleNode);
+                this._stylesElement = this._createLinkRelStylesheetNode(href);
             }
+            element = this._insertStylesheetNode(this._appendTo, this._stylesElement);
         }
 
         this._trigger(this._event);
@@ -361,18 +384,28 @@ class Stylesheet {
      */
     _insertStylesheetNode(appendTo, stylesElement) {
 
-        let [ node ] = appendTo.children;
-        if(node){
-            if(/style|link/.test(node.localName.toLocaleLowerCase())){
-                // insert after
-                appendTo.insertBefore(stylesElement, node.nextSibling);
-            } else {
-                appendTo.insertBefore(stylesElement, node);
-            }
+        this._addOrderClass(this._order);
+
+        let [node] = [];
+        let styleQuery = `.style-order-${this._order}`;
+        let styleOrderNodes = appendTo.querySelectorAll(styleQuery);
+
+        if(this._order >=0 && styleOrderNodes.length) {
+            node = this._lastItem(styleOrderNodes);
         } else {
-            appendTo.appendChild(stylesElement);
+            node = this._lastItem(appendTo.children);
         }
 
+        if(node){
+            if(/style|link/.test(node.localName.toLowerCase())){
+                node.after(stylesElement);
+            } else {
+                node.before(stylesElement);
+            }
+            return appendTo;
+        }
+
+        appendTo.appendChild(stylesElement);
         return appendTo;
     }
 
@@ -491,10 +524,32 @@ class Stylesheet {
     }
 
     /**
+     * @param items {NodeList|HTMLElement[]}
+     * @private
+     */
+    _lastItem(items){
+        return items[items.length-1];
+    }
+
+    /**
+     * @param order {number}
+     * @private
+     */
+    _addOrderClass(order = undefined){
+        if(order >=0){
+            this._stylesElement.classList.add(`style-order-${order}`);
+        }
+    }
+
+    /**
      * @returns {boolean}
      * @private
      */
     _supportRelPreload(){
+
+        if(this._fallback){
+            return false;
+        }
 
         let hasPreload = false;
         try {

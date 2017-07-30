@@ -31,7 +31,7 @@ let getHandler = (type, element) => {
  * @param  {string|Array} styles
  * @return {Function}
  */
-function style(styles) {
+function style(styles, options = {}) {
 
 	return Class => {
 
@@ -72,13 +72,16 @@ function style(styles) {
             }
 
             let styles = map.get('@style').get('stylesheets');
-            for(let style of styles){
+            for(let i = 0, len = styles.length; i < len; i++){
+                let style = styles[i];
                 domNode.$stylesheets.push(new Stylesheet({
                     appendTo: domNode,
                     attachOn: style.attachOn,
                     imports: style.imports,
                     styles: style.styles,
                     type: style.type,
+                    order: i,
+                    fallback: options.fallback,
                     eventFactory: scope => getHandler(style.type, scope),
                 }));
             }

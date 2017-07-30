@@ -86,14 +86,14 @@ describe('@style decorator', async () => {
 
         let element = Style.create();
         let expectedHTML =
-            '<com-style-basic rendered="true">' +
-                '<style>' +
-                    'com-style-basic .foo {' +
-                        ' color: blue ' +
-                    '}' +
-                '</style>' +
-                '<div class="foo">Hello World</div>' +
-            '</com-style-basic>';
+        '<com-style-basic rendered="true">' +
+            '<style class="style-order-0">' +
+                'com-style-basic .foo {' +
+                    ' color: blue ' +
+                '}' +
+            '</style>' +
+            '<div class="foo">Hello World</div>' +
+        '</com-style-basic>';
 
         /**
          * Test
@@ -109,38 +109,39 @@ describe('@style decorator', async () => {
 
         $('#test-style-order').append(element);
         should($('#test-style-order com-style-basic').get(0).outerHTML).be.equal(expectedHTML);
+
     });
 
-    it('should create style element in order of document.readyState', () => {
+    it('should create style element in order of pass array with only styles', () => {
 
         @style([
+            {
+                attachOn: 'load',
+                type: 'on',
+                imports: [],
+                styles:
+                '.baz {' +
+                    'color: green;' +
+                '}',
+            },
             {
                 attachOn: 'immediately',
                 type: 'default',
                 imports: [],
                 styles:
-                    '.foo {' +
-                        'color: blue;' +
-                    '}',
+                '.foo {' +
+                    'color: blue;' +
+                '}',
             },
             {
                 attachOn: 'DOMContentLoaded',
                 type: 'on',
                 imports: [],
                 styles:
-                    '.bar {' +
-                        'color: red;' +
-                    '}',
+                '.bar {' +
+                    'color: red;' +
+                '}',
             },
-            {
-                attachOn: 'load',
-                type: 'on',
-                imports: [],
-                styles:
-                    '.baz {' +
-                        'color: green;' +
-                    '}',
-            }
         ])
         @view('<div class="foo">Hello World</div>')
         @component({
@@ -158,29 +159,96 @@ describe('@style decorator', async () => {
 
         let element = Style.create();
         let expectedHTML =
-            '<com-style-collection rendered="true">' +
-                '<style>' +
-                    '.foo {' +
-                        'color: blue;' +
-                    '}' +
-                '</style>' +
-                '<style>' +
-                    '.baz {' +
-                        'color: green;' +
-                    '}' +
-                '</style>' +
-                '<style>' +
-                    '.bar {' +
-                        'color: red;' +
-                    '}' +
-                '</style>' +
-                '<div class="foo">Hello World</div>' +
-            '</com-style-collection>';
+        '<com-style-collection rendered="true">' +
+            '<style class="style-order-0">' +
+                '.baz {' +
+                    'color: green;' +
+                '}' +
+            '</style>' +
+            '<style class="style-order-1">' +
+                '.foo {' +
+                    'color: blue;' +
+                '}' +
+            '</style>' +
+            '<style class="style-order-2">' +
+                '.bar {' +
+                    'color: red;' +
+                '}' +
+            '</style>' +
+            '<div class="foo">Hello World</div>' +
+        '</com-style-collection>';
 
         /**
          * Test
          */
         element.outerHTML.should.be.equal(expectedHTML);
+
+    });
+
+
+    it('should create style element in order of pass array styles and link-rel', done => {
+
+        @style([
+            {
+                attachOn: 'load',
+                type: 'on',
+                imports: ["a.css", "b.css", "c.css"],
+                styles: '.baz {color: green;}',
+            },
+            {
+                attachOn: 'load',
+                type: 'lala',
+                imports: ["e.css", "f.css"],
+                styles: '.laz {color: green;}',
+            },
+            {
+                attachOn: 'immediately',
+                type: 'default',
+                imports: [],
+                styles: '.foo {color: blue;}',
+            },
+            {
+                attachOn: 'immediately',
+                type: 'default',
+                imports: [],
+                styles:'.naz {color: yellow;}',
+            },
+            {
+                attachOn: 'DOMContentLoaded',
+                type: 'on',
+                imports: ["d.css"],
+                styles:'.bar {color: red;}',
+            },
+        ], { fallback: true })
+        @view('<div class="foo">Hello World</div>')
+        @component({
+            name: 'com-passed-array',
+        })
+        class Style {
+        }
+
+        let element = Style.create();
+        element.innerhTML = '<header>Hello World</header>';
+        setTimeout(() => {
+            element.outerHTML.should.be.equal(
+            '<com-passed-array rendered="true">' +
+                '<style class="style-order-0">.baz {color: green;}</style>' +
+                '<link rel="stylesheet" href="a.css" media="only x" class="style-order-0">' +
+                '<link rel="stylesheet" href="b.css" media="only x" class="style-order-0">' +
+                '<link rel="stylesheet" href="c.css" media="only x" class="style-order-0">' +
+                '<style class="style-order-1">.laz {color: green;}</style>' +
+                '<link rel="stylesheet" href="e.css" media="only x" class="style-order-1">' +
+                '<link rel="stylesheet" href="f.css" media="only x" class="style-order-1">' +
+                '<style class="style-order-2">.foo {color: blue;}</style>' +
+                '<style class="style-order-3">.naz {color: yellow;}</style>' +
+                '<style class="style-order-4">.bar {color: red;}</style>' +
+                '<link rel="stylesheet" href="d.css" media="only x" class="style-order-4">' +
+                '<div class="foo">Hello World</div>' +
+            '</com-passed-array>');
+            done();
+        }, 500);
+
+        element.dispatchEvent(new Event("lala"));
 
     });
 
@@ -208,7 +276,7 @@ describe('@style decorator', async () => {
         let style1 = Style.create();
         style1.outerHTML.should.be.equal('' +
         '<com-once-style rendered="true">' +
-            '<style>.foo { color: blue }</style>' +
+            '<style class="style-order-0">.foo { color: blue }</style>' +
             '<div class="foo">Hello World</div>' +
         '</com-once-style>');
 
@@ -230,7 +298,7 @@ describe('@style decorator', async () => {
         let style2_1 = Style2.create();
         style2_1.outerHTML.should.be.equal('' +
         '<com-once-style2 rendered="true">' +
-            '<style>.baz { color: red }</style>' +
+            '<style class="style-order-0">.baz { color: red }</style>' +
             '<div class="foo">Hello Mars</div>' +
         '</com-once-style2>');
 
