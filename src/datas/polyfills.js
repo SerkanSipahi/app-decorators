@@ -11,6 +11,7 @@ let polyfills = [
     [window, 'Reflect', 'node_modules/core-js/library/fn/reflect'],
     [window, 'WeakMap', 'node_modules/core-js/library/fn/weak-map'],
     [window, 'Map', 'node_modules/core-js/library/fn/map'],
+    [Element.prototype, 'after', 'node_modules/dom4/build/dom4.js', true],
 ];
 
 export {
