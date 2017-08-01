@@ -144,23 +144,25 @@ it('import', () => {
     assert.deepEqual(result[0], {
         attachOn: "immediately",
         imports: [],
-        styles: "@import a/b/c.css",
-        type: "default",
-    });
-
-    result[1].styles = result[1].styles.cs(); // remove "new-lines"
-    assert.deepEqual(result[1], {
-        attachOn: "immediately",
-        imports: [],
         styles: ".a { color: green; }",
         type: "default",
     });
 
+    // Test 2
+    result[1].styles = result[1].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[1], {
+        attachOn: "immediately",
+        imports: [],
+        styles: ".b { height: 100px; }",
+        type: "default",
+    });
+
+    // Test 3
     result[2].styles = result[2].styles.cs(); // remove "new-lines"
     assert.deepEqual(result[2], {
         attachOn: "immediately",
         imports: [],
-        styles: ".b { height: 100px; }",
+        styles: "@import a/b/c.css",
         type: "default",
     });
 });
@@ -217,33 +219,13 @@ it('should create "attachOn: on" with classes and @fetch', () => {
     result[0].styles = result[0].styles.cs(); // remove "new-lines"
     assert.deepEqual(result[0], {
         attachOn: "load",
-        imports: [],
-        styles: ".a { color: red; } .b { color: blue; }",
-        type: "on",
-    });
-
-    // Vorschlag zur strucktur
-    /*
-    assert.deepEqual(result[0], {
-        attachOn: "load",
+        imports: [
+            "load/my111/styles2.css",
+            "load/my111/styles3.css"
+        ],
         styles: ".a { color: red; } .b { color: blue; } .c { color: cologne; }",
         type: "on",
     });
-    assert.deepEqual(result[0], {
-        attachOn: "load",
-        imports: [
-            "load/my111/styles2.css",
-            "load/my111/styles3.css",
-        ],
-        type: "on",
-    });
-    assert.deepEqual(result[0], {
-        attachOn: "load",
-        imports: [],
-        styles: ".c { color: cologne; }",
-        type: "on",
-    });
-    */
 
 });
 
@@ -347,38 +329,10 @@ it('should create "attachOn: myCustomEvent" with classes', () => {
 
 });
 
-it('should create "attachOn: preload" with only @fetch/s', () => {
+it('should create "attachOn: on" with classes', () => {
 
     let styles =
-        "@media rel('preload') {"+
-            `@fetch load/my/styles2.css;
-             @fetch load/my/styles3.css;
-            `.r()+
-        "}";
-
-    let result = parse(styles);
-
-    // should have correct length
-    result.should.be.have.length(1);
-
-    // Test 1
-    result[0].styles = result[0].styles.cs(); // remove "new-lines"
-    assert.deepEqual(result[0], {
-        attachOn: "preload",
-        imports: [
-            "load/my/styles2.css",
-            "load/my/styles3.css",
-        ],
-        styles: "",
-        type: "rel",
-    });
-
-});
-
-it('should create "attachOn: preload" with classes', () => {
-
-    let styles =
-        "@media rel('preload') {"+
+        "@media on('click .my-button') {"+
             `.foo {
                 color: blue;
             }`.r()+
@@ -392,15 +346,15 @@ it('should create "attachOn: preload" with classes', () => {
     // Test 1
     result[0].styles = result[0].styles.cs(); // remove "new-lines"
     assert.deepEqual(result[0], {
-        attachOn: "preload",
+        attachOn: "click .my-button",
         imports: [],
         styles: ".foo { color: blue; }",
-        type: "rel",
+        type: "on",
     });
 
 });
 
-it('should create "attachOn: preload, load" when @media on and rel nested', () => {
+it('should create "attachOn: action, load" when @media on and rel nested', () => {
 
     let styles =
         `.laz {
@@ -411,7 +365,7 @@ it('should create "attachOn: preload, load" when @media on and rel nested', () =
                     height: 300px;
                 }
                 left: 3px;
-                @media rel('preload') {
+                @media action('/a/{{dyn}}/c.html') {
                     display: flex;
                 }
             }
@@ -423,39 +377,39 @@ it('should create "attachOn: preload, load" when @media on and rel nested', () =
     result.should.be.have.length(4);
 
     // Test 1
-    result[0].styles = result[0].styles.cs(); // remove "new-lines"
+    result[0].styles = result[0].styles.cs();
     assert.deepEqual(result[0], {
-        attachOn: "load",
-        imports: [],
-        styles: ".laz .faz { height: 300px }",
-        type: "on",
-    });
-
-    // Test 2
-    result[1].styles = result[1].styles.cs(); // remove "new-lines"
-    assert.deepEqual(result[1], {
-        attachOn: "preload",
-        imports: [],
-        styles: ".laz .faz { display: flex }",
-        type: "rel",
-    });
-
-    // Test 3
-    result[2].styles = result[2].styles.cs(); // remove "new-lines"
-    assert.deepEqual(result[2], {
         attachOn: "immediately",
         imports: [],
         styles: ".laz { width: 300px; }",
         type: "default",
     });
 
-    // Test 4
-    result[3].styles = result[3].styles.cs(); // remove "new-lines"
-    assert.deepEqual(result[3], {
+    // Test 2
+    result[1].styles = result[1].styles.cs();
+    assert.deepEqual(result[1], {
         attachOn: "immediately",
         imports: [],
         styles: ".laz .faz { right: 6px; left: 3px; }",
         type: "default",
+    });
+
+    // Test 3
+    result[2].styles = result[2].styles.cs();
+    assert.deepEqual(result[2], {
+        attachOn: "load",
+        imports: [],
+        styles: ".laz .faz { height: 300px }",
+        type: "on",
+    });
+
+    // Test 4
+    result[3].styles = result[3].styles.cs();
+    assert.deepEqual(result[3], {
+        attachOn: "/a/{{dyn}}/c.html",
+        imports: [],
+        styles: ".laz .faz { display: flex }",
+        type: "action",
     });
 });
 
@@ -511,8 +465,7 @@ it.skip('match fetch types', () => {
      * https://jakearchibald.com/2016/streams-ftw/
      */
 
-    let styles =
-        `@fetch load/my/styles3.css!stream`;
+    let styles = `@fetch load/my/styles3.css!stream`;
 
     //let result = parse(styles);
 
@@ -522,11 +475,9 @@ it.skip('should parse mediaQuery inline statements according standard', () => {
 
     // https://developer.mozilla.org/de/docs/Web/CSS/@import
 
-    let styles1 =
-        `@fetch load/my/styles3.css only screen and (min-device-width:320px);`;
+    let styles1 = `@fetch load/my/styles3.css only screen and (min-device-width:320px);`;
 
-    let styles2 =
-        `@fetch load/my/styles3.css on('load');`;
+    let styles2 = `@fetch load/my/styles3.css on('load');`;
 
     let result = parse(styles1);
 
@@ -544,12 +495,20 @@ it.skip('depending on connecting and filesize it should decide whether stream or
 
 });
 
-it('integration test', () => {
+it.skip('integration test', () => {
 
     let styles =
         `.foo {
             color: gray;
         }
+        .bar {
+            .laz .kaz {
+                color: blue;
+            }
+        }
+        
+        @fetch load/my111/styles1.css;
+        @fetch load/my222/styles2.css;
         
         @media on('load') {
             .foo {
@@ -558,22 +517,12 @@ it('integration test', () => {
                     color: gray;
                 }
             }
+            
+            @fetch load/my333/styles3.css;
+            @fetch load/my444/styles4.css;
+            
             .baz {
                 color: serkan;
-            }
-        }
-        
-        .laz {
-            width: 300px;
-            .faz {
-                right: 6px;
-                @media on('load') {
-                    height: 300px;
-                }
-                left: 3px;
-                @media rel('preload') {
-                    display: flex;
-                }
             }
         }
         
@@ -584,8 +533,8 @@ it('integration test', () => {
             .b {
                 color: blue;
             }
-            @import load/my111/styles2.css;
-            @fetch load/my111/styles3.css;
+            @fetch load/my555/styles5.css;
+            @fetch load/my666/styles6.css;
             .c {
                 color: cologne;
             }
@@ -613,6 +562,14 @@ it('integration test', () => {
             }
         }
         
+        @media action('/a/{{dyn/c.html}}') {
+            @fetch load/my777/styles7.css;
+        }
+        
+        @media on('click .my-button') {
+            @fetch load/my777/styles7.css;
+        }
+        
         @media on('myCustomEvent') {
             .baz {
                 width: 23px;
@@ -622,25 +579,6 @@ it('integration test', () => {
         foo {
             color: back;
         }
-        
-        @media rel('preload') {
-            @fetch load/my/styles2.css;
-            @fetch load/my/styles3.css;
-        }
-        
-        @media rel('preload') {
-            .foo {
-                color: blue;
-            }    
-        }
-
-        @media rel('preload') {
-            @fetch load/my/styles2.css;
-            @fetch load/my/styles3.css;
-            .foo {
-                color: blue;
-            }   
-        }    
 
         #foo {
             color: pink;
@@ -879,6 +817,7 @@ it('integration test', () => {
             styles: ".afterImport { color: red; }",
             type: "default",
         });
+        */
 });
 
 it.run();

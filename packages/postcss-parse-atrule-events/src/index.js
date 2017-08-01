@@ -187,12 +187,14 @@ let getRuleConfig = node => {
 let grammarCheck = node => {
 
     // grammarCheck()
-    // 1.) Wenn @import und parent @on dann passt
-    // 2.) Wenn @import und parent @rel dann passt
+    // 1.) Wenn @fetch und parent @on dann passt
+    // 2.) Wenn @fetch und parent @rel dann passt
     // 3.) Wenn selectoren und parent @rel dann macht kein sinn
     // 3.) Wenn selectoren und parent @on dann macht sinn
-    // 4.) Wenn @import + !property und parent @rel dann macht kein sinn
-    // 5.) Wenn @import + !property und parent @on dann passt
+    // 4.) Wenn @fetch + !property und parent @rel dann macht kein sinn
+    // 5.) Wenn @fetch + !property und parent @on dann passt
+    // 6.) Wenn @fetch ohne value dann failed
+    // 7.) Wenn @import in @media dann nicht erlaubt
 
     return {}
 };
@@ -215,11 +217,11 @@ let parse = (styles, options = {}) => {
         postcss([nestedCss]).process(styles).content
     );
 
-    // walk trough @media rel('preload'), @media on(...)
-    ast.walkAtRules(node => push(container, getAtRuleConfig(node)));
-
     // walk trough classic css selectors
     ast.walkRules(node => push(container, getRuleConfig(node)));
+
+    // walk trough @media rel('preload'), @media on(...)
+    ast.walkAtRules(node => push(container, getAtRuleConfig(node)));
 
     // combine/concat same attachOn´s
     options.optimize ? container = optimize(container) : null;
