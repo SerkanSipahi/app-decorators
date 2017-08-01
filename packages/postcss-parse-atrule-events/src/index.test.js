@@ -609,6 +609,7 @@ it.skip('integration test', () => {
 
         let result = parse(styles);
 
+        /*
         // should have correct length
         result.should.be.have.length(21);
 
