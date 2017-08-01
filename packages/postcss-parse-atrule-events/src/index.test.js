@@ -217,13 +217,33 @@ it('should create "attachOn: on" with classes and @fetch', () => {
     result[0].styles = result[0].styles.cs(); // remove "new-lines"
     assert.deepEqual(result[0], {
         attachOn: "load",
+        imports: [],
+        styles: ".a { color: red; } .b { color: blue; }",
+        type: "on",
+    });
+
+    // Vorschlag zur strucktur
+    /*
+    assert.deepEqual(result[0], {
+        attachOn: "load",
+        styles: ".a { color: red; } .b { color: blue; } .c { color: cologne; }",
+        type: "on",
+    });
+    assert.deepEqual(result[0], {
+        attachOn: "load",
         imports: [
             "load/my111/styles2.css",
             "load/my111/styles3.css",
         ],
-        styles: ".a { color: red; } .b { color: blue; } .c { color: cologne; }",
         type: "on",
     });
+    assert.deepEqual(result[0], {
+        attachOn: "load",
+        imports: [],
+        styles: ".c { color: cologne; }",
+        type: "on",
+    });
+    */
 
 });
 
@@ -503,7 +523,7 @@ it.skip('should parse mediaQuery inline statements according standard', () => {
     // https://developer.mozilla.org/de/docs/Web/CSS/@import
 
     let styles1 =
-        `@fetch load/my/styles3.css!stream only screen and (min-device-width:320px);`;
+        `@fetch load/my/styles3.css only screen and (min-device-width:320px);`;
 
     let styles2 =
         `@fetch load/my/styles3.css on('load');`;
@@ -511,6 +531,14 @@ it.skip('should parse mediaQuery inline statements according standard', () => {
     let result = parse(styles1);
 
 });
+
+it.skip('depending on connecting and filesize it should decide whether stream or not', () => {
+
+    // https://developer.mozilla.org/de/docs/Web/CSS/@import
+
+    let styles1 = `@fetch load/my/styles3.css only screen and (min-device-width:320px);`;
+
+    let styles2 = `@fetch load/my/styles3.css action('/a/{{foo}}/x.html');`;
 
     let result = parse(styles1);
 
