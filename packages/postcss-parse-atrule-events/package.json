@@ -28,8 +28,11 @@
   ],
   "dependencies": {
     "assert-diff": "1.2.0",
+    "autoprefixer": "7.1.2",
     "babel-cli": "6.24.1",
     "babel-plugin-transform-es2015-modules-commonjs": "6.24.1",
+    "core-js": "2.4.1",
+    "cssnano": "3.10.0",
     "postcss": "6.0.8",
     "postcss-nested": "2.0.4",
     "regex-css-media-query": "1.0.0",

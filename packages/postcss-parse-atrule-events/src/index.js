@@ -2,6 +2,7 @@ import * as compiler from 'postcss';
 import postcss from 'postcss';
 import nestedCss from 'postcss-nested';
 import matchMediaQuery from 'regex-css-media-query';
+import values from 'core-js/library/fn/object/values';
 
 const IMMEDIATELY = "immediately";
 const DEFAUlT = "default";
@@ -199,14 +200,38 @@ let grammarCheck = node => {
     return {}
 };
 
-let optimize = simpleAst => {
-    return simpleAst;
+/**
+ * optimize
+ * @param eventRules {Array}
+ */
+let optimize = eventRules => {
+
+    let optimizedRules = {};
+    for(let rule of eventRules){
+        let uniqName = `${rule.attachOn}::${rule.type}`;
+        if(!optimizedRules[uniqName]){
+            optimizedRules[uniqName] = {
+                attachOn: rule.attachOn,
+                imports: [],
+                styles: '',
+                type: rule.type
+            };
+        }
+        if(rule.imports.length){
+            optimizedRules[uniqName].imports.push(...rule.imports);
+        }
+        if(rule.styles){
+            optimizedRules[uniqName].styles += rule.styles;
+        }
+    }
+
+    return values(optimizedRules);
 };
 
 /**
  * Parse passed css styles
  * @param styles {string}
- * @param options {{optimize: boolean, grammarCheck: boolean}}
+ * @param options {object}
  * @returns {Array}
  */
 let parse = (styles, options = {}) => {
