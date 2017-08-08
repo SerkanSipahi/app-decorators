@@ -1,0 +1,41 @@
+{
+  "name": "babel-plugin-app-decorators-style-precompile",
+  "description": "babel plugin for app-decorators style decorator",
+  "version": "0.8.233",
+  "author": "Serkan Sipahi <serkan.sipahi@yahoo.de>",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SerkanSipahi/app-decorators/tree/master/packages/babel-plugin-app-decorators-style-precompile"
+  },
+  "bugs": {
+    "url": "https://github.com/SerkanSipahi/app-decorators/issues"
+  },
+  "bin": {
+    "babel": "./node_modules/.bin/babel"
+  },
+  "scripts": {
+    "prepublish": "npm run clean && babel src -d lib --source-maps && rm -f lib/index.test.js",
+    "test": "npm run clean && babel src --out-dir lib --source-maps && node lib/index.test.js",
+    "compile": "npm run clean && babel src --out-dir lib --watch --source-maps",
+    "inspect": "node --inspect --debug-brk lib/index.test.js",
+    "clean": "rm -rf lib"
+  },
+  "keywords": [
+    "parse",
+    "syle",
+    "decorator"
+  ],
+  "dependencies": {
+    "assert-diff": "1.2.0",
+    "babel-cli": "6.24.1",
+    "core-js": "2.4.1",
+    "postcss-parse-atrule-events": "0.8.233",
+    "babel-plugin-syntax-function-bind": "6.13.0",
+    "babel-plugin-syntax-decorators": "6.13.0",
+    "babel-plugin-transform-function-bind": "6.22.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.24.1",
+    "should": "11.2.1"
+  }
+}
