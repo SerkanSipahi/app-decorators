@@ -23,60 +23,34 @@ let result = require('postcss-parse-atrule-events').parse('code');
 #### Example
 Input:
 ```css
-    @media rel('preload') {
-        @fetch load/my/styles2.css;
-        @fetch load/my/styles3.css;
-    }
     @media on('load') {
-        @fetch load/my111/styles2.css;
-        @fetch load/my111/styles3.css;
+        @fetch my/async/styles1.css;
+        @fetch my/async/styles1.css;
     }
-    .foo {
-        with: 200px;
-        height: 200px;
-    }
-    .bar {
-        color: red;
+    .my-critical-path-selector {
+        width: 100px;
+        height: 100px;
     }
 ```
 Output:
 ```js
 let output = [
-        {
-            type: "rel",
-            attachOn: "preload",
-            styles: "",
-            imports: [
-                "load/my/styles2.css",
-                "load/my/styles3.css"
-            ]
-            
-        },
-        {
-            type: "on",
-            attachOn: "load",
-            styles: "",
-            imports: [
-                "load/my111/styles2.css",
-                "load/my111/styles3.css"
-            ]
-            
-        },
-        {
-            type: "default",
-            attachOn: "immediately",
-            styles: `
-                .foo {
-                    with: 200px;
-                    height: 200px;
-                }
-                .bar {
-                    color: red;
-                }
-            `,
-            imports: []
-        }
-    ]
+     {
+         attachOn: "load",
+         imports: [
+             "my/async/styles1.css",
+             "my/async/styles1.css"
+         ],
+         styles: "",
+         type: "on",
+     },
+     {
+         attachOn: "immediately",
+         imports: [],
+         styles: ".my-critical-path-selector { width: 100px; height: 100px; }",
+         type: "default",
+     },
+ ];
 ```
 
 
