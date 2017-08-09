@@ -37,14 +37,27 @@ it('should throw error when String/Template -Literal concatenated by binary expr
 it('should not throw error when using interpolation vars', () => {
 
     let actual =`
-        let x = 'red';
-        @style(\`.color: \${x};\`)
-        class Foo {}`;
+    let x = 'red';
+    @style(\`.color: \${x};\`)
+    class Foo {}`;
 
     (() => { transformCode(actual) }).should.not.throw();
 });
 
-it('should create "attachOn: immediately" objects', () => {
+it('should not throw error when other decorator', () => {
+
+    let actual =`
+    @xzy(\`.color: red;\`)
+    class Foo {}`;
+
+    let expected =`
+    @xzy(\`.color: red;\`)
+    class Foo {}`;
+
+    clean(transformCode(actual)).should.be.equal(clean(expected));
+});
+
+it('should compile style literal to object literal', () => {
 
     let actual =`
     @style(\`
@@ -62,6 +75,8 @@ it('should create "attachOn: immediately" objects', () => {
             background-color: red;
         }
         
+        @fetch to/my/critical/path/file3.css;
+        
     \`)
     class Foo {}`;
 
@@ -69,7 +84,9 @@ it('should create "attachOn: immediately" objects', () => {
     @style([
         {
             attachOn:"immediately",
-            imports:[],
+            imports:[
+                "to/my/critical/path/file3.css"
+            ],
             styles:\`
                 .foo {
                     background-color:red;

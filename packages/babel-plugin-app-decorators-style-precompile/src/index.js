@@ -78,8 +78,8 @@ let precompile = (style, opts = {}) => parse(style, Object.assign({ optimize: tr
  */
 let createAst = function(vars = {}){
 
-    let importsTpl = "";
     let getImports = imports => {
+        let importsTpl = "";
         for(let imp of imports) importsTpl += `"${imp}", `;
         return importsTpl;
     };
