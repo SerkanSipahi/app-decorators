@@ -1,7 +1,7 @@
 {
   "name": "postcss-parse-atrule-events",
   "description": "postcss plugin for parsing atrule events",
-  "version": "0.8.233",
+  "version": "0.8.234",
   "author": "Serkan Sipahi <serkan.sipahi@yahoo.de>",
   "main": "lib/index.js",
   "license": "MIT",
@@ -35,6 +35,7 @@
     "cssnano": "3.10.0",
     "postcss": "6.0.8",
     "postcss-nested": "2.0.4",
+    "postcss-normalize": "4.0.0",
     "regex-css-media-query": "1.0.0",
     "should": "11.2.1"
   }
