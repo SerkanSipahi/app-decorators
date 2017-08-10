@@ -457,6 +457,51 @@ it('match action types', () => {
 
 });
 
+it('should work correctly with optimize (mini integration)', () => {
+    let styles = `
+        .foo {
+            background-color: red;
+        }
+        
+        @media on('load') {
+            @fetch to/my/src/file.css;
+        }
+        @media on('load') {
+            @fetch to/my/src/file2.css;
+        }
+        .bar {
+            background-color: red;
+        }
+        
+        @fetch to/my/critical/path/file3.css;`.r();
+
+    let result = parse(styles, { optimize: true });
+
+    result[0].styles = result[0].styles.cs();
+    assert.deepEqual(result[0], {
+        attachOn: 'immediately',
+        imports: [
+            "to/my/critical/path/file3.css"
+        ],
+        styles: "" +
+            ".foo { background-color: red; } " +
+            ".bar { background-color: red; }",
+        type: "default",
+    });
+
+    result[1].styles = result[1].styles.cs();
+    assert.deepEqual(result[1], {
+        attachOn: 'load',
+        imports: [
+            "to/my/src/file.css",
+            "to/my/src/file2.css"
+        ],
+        styles: "",
+        type: "on",
+    });
+
+});
+
 it.skip('match fetch types', () => {
 
     /**
