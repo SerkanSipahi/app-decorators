@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/SerkanSipahi/app-decorators/tree/master/packages/postcss-parse-atrule-event"
+    "url": "https://github.com/SerkanSipahi/app-decorators/tree/master/packages/postcss-parse-atrule-events"
   },
   "bugs": {
     "url": "https://github.com/SerkanSipahi/app-decorators/issues"
