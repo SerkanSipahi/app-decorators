@@ -12,13 +12,10 @@
   "bugs": {
     "url": "https://github.com/SerkanSipahi/app-decorators/issues"
   },
-  "bin": {
-    "babel": "./node_modules/.bin/babel"
-  },
   "scripts": {
-    "prepublish": "npm run clean && babel src -d lib --source-maps && rm -f lib/index.test.js",
-    "test": "npm run clean && babel src --out-dir lib --source-maps && node lib/index.test.js",
-    "compile": "npm run clean && babel src --out-dir lib --watch --source-maps",
+    "prepublish": "npm run clean && ./node_modules/.bin/babel src -d lib --source-maps && rm -f lib/index.test.js",
+    "test": "npm run clean && ./node_modules/.bin/babel src --out-dir lib --source-maps && node lib/index.test.js",
+    "compile": "npm run clean && ./node_modules/.bin/babel src --out-dir lib --watch --source-maps",
     "inspect": "node --inspect --debug-brk lib/index.test.js",
     "clean": "rm -rf lib"
   },

@@ -29,6 +29,7 @@
   "dependencies": {
     "app-decorators": "0.8.237",
     "babel-preset-app-decorators": "0.8.237",
+    "babel-preset-es2015": "6.24.1",
     "express": "4.15.3",
     "systemjs": "0.20.15",
     "todomvc-app-css": "2.1.0",
