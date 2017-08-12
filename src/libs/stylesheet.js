@@ -256,9 +256,7 @@ class Stylesheet {
 
         // @TODO: was tun wenn action (also route erreicht ist)
         // @TODO: was tun wenn mediaMatch (erreicht)
-        // @TODO: wenn für eine componente der style geladen worden ist, braucht es nicht mehr geladen werden
 
-        // @TODO: funktion auflösen
         if(this._isAlreadyDone(this._attachOn)){
             this._runProcess(styles, imports);
             return;
@@ -439,14 +437,15 @@ class Stylesheet {
      */
     _createLinkRelPreloadNode(href){
 
-        let linkElement = this._createElement('link');
+        let element = this._createElement('div');
+        element.innerHTML =
+        '<link rel="preload" ' +
+            'as="style" ' +
+            'href="'+href+'" ' +
+            'onload="this.rel=\'stylesheet\'"' +
+        '>';
 
-        linkElement.rel    = 'preload';
-        linkElement.as     = 'style';
-        linkElement.href   = href;
-        linkElement.onload = "this.rel='stylesheet'";
-
-        return linkElement;
+        return element.querySelector('link');
     }
 
     /**

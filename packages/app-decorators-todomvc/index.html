@@ -4,8 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>App-Decorators • TodoMVC</title>
-    <link rel="stylesheet" href="./node_modules/todomvc-common/base.css">
-    <link rel="stylesheet" href="./node_modules/todomvc-app-css/index.css">
 </head>
 <body>
     <app-todomvc></app-todomvc>
@@ -17,10 +15,8 @@
         </p>
         <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
     </footer>
-    <script src="./node_modules/systemjs/dist/system.js"></script>
-    <script src="./node_modules/app-decorators/bootstrap.js"></script>
-    <script src="./node_modules/app-decorators/jspm.config.js"></script>
-    <script src="./node_modules/app-decorators/runtime.js"></script>
+    <!-- auch die scripts async laden mit rel=preload, und als fallback async flag -->
+    <script src="./runtime.js"></script>
     <!-- enable <script bundle> when using "jspm bundle" and target "appname" name is "not" equal src "appname" -->
     <!-- jspm bundle lib/app - app-decorators dist/src/bundle.js -->
     <!-- <script src="./lib/bundle.js"></script> -->

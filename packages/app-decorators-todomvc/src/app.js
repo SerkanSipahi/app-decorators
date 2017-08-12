@@ -1,9 +1,15 @@
-import { component, view, on, action } from 'app-decorators';
+import { component, view, on, action, style } from 'app-decorators';
 import { addClass, removeClass, show, hide, text, click } from './dom';
 
 import './todo-new';
 import './todo-list';
 
+@style(`
+    @media on('load'){
+        @fetch ./node_modules/todomvc-app-css/index.css;
+    }
+    @fetch ./node_modules/todomvc-common/base.css;
+`)
 @view(`
     <section class="todoapp">
         <header class="header">

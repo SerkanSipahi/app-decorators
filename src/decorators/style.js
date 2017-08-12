@@ -14,7 +14,7 @@ let getTypeof = value => Object.prototype.toString.call(value).slice(8,-1);
  */
 let getHandler = (type, element) => {
 
-    if(type === "on") {
+    if(/on|default/.test(type)) {
         return new Eventhandler({ element });
     } else if(type === "action") {
         return Router.create({

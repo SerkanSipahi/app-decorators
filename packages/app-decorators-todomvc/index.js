@@ -1,5 +1,7 @@
+let compression = require('compression');
 let express = require('express');
 let app = express();
+app.use(compression());
 
 let [,,type, number] = process.argv;
 let port = 3000;

@@ -6,8 +6,8 @@ import { storage } from "../../src/libs/random-storage";
 import sinon from 'sinon';
 
 // init special innerHTML for test
-String.prototype.removeGutter = function(){
-    return this.replace(/[\t\n\r]+/gm, '');
+String.prototype.cs = function(){
+    return this.replace(/[\t\n\r ]+/gm, '');
 };
 
 describe('@style decorator', async () => {
@@ -88,9 +88,9 @@ describe('@style decorator', async () => {
         let expectedHTML =
         '<com-style-basic rendered="true">' +
             '<style class="style-order-0">' +
-                'com-style-basic .foo {' +
-                    ' color: blue ' +
-                '}' +
+                'com-style-basic .foo { ' +
+                    'color: blue' +
+                ' }' +
             '</style>' +
             '<div class="foo">Hello World</div>' +
         '</com-style-basic>';
@@ -99,16 +99,16 @@ describe('@style decorator', async () => {
          * Test
          */
 
-        element.outerHTML.should.be.equal(expectedHTML);
+        element.outerHTML.cs().should.be.equal(expectedHTML.cs());
 
         $('#test-style-order').append(element);
-        should($('#test-style-order com-style-basic').get(0).outerHTML).be.equal(expectedHTML);
+        should($('#test-style-order com-style-basic').get(0).outerHTML.cs()).be.equal(expectedHTML.cs());
 
         $('#test-style-order').remove('com-style-basic');
-        should($('#test-style-order com-style-basic').get(0).outerHTML).be.equal(expectedHTML);
+        should($('#test-style-order com-style-basic').get(0).outerHTML.cs()).be.equal(expectedHTML.cs());
 
         $('#test-style-order').append(element);
-        should($('#test-style-order com-style-basic').get(0).outerHTML).be.equal(expectedHTML);
+        should($('#test-style-order com-style-basic').get(0).outerHTML.cs()).be.equal(expectedHTML.cs());
 
     });
 
@@ -184,7 +184,6 @@ describe('@style decorator', async () => {
         element.outerHTML.should.be.equal(expectedHTML);
 
     });
-
 
     it('should create style element in order of pass array styles and link-rel', done => {
 
@@ -274,45 +273,45 @@ describe('@style decorator', async () => {
          * com-once-style
          */
         let style1 = Style.create();
-        style1.outerHTML.should.be.equal('' +
+        style1.outerHTML.cs().should.be.equal(('' +
         '<com-once-style rendered="true">' +
             '<style class="style-order-0">.foo { color: blue }</style>' +
             '<div class="foo">Hello World</div>' +
-        '</com-once-style>');
+        '</com-once-style>').cs());
 
         let style2 = Style.create();
-        style2.outerHTML.should.be.equal('' +
+        style2.outerHTML.cs().should.be.equal(('' +
         '<com-once-style rendered="true">' +
             '<div class="foo">Hello World</div>' +
-        '</com-once-style>');
+        '</com-once-style>').cs());
 
         let style3 = Style.create();
-        style3.outerHTML.should.be.equal('' +
+        style3.outerHTML.cs().should.be.equal(('' +
         '<com-once-style rendered="true">' +
             '<div class="foo">Hello World</div>' +
-        '</com-once-style>');
+        '</com-once-style>').cs());
 
         /**
          * com-once-style2
          */
         let style2_1 = Style2.create();
-        style2_1.outerHTML.should.be.equal('' +
+        style2_1.outerHTML.cs().should.be.equal(('' +
         '<com-once-style2 rendered="true">' +
             '<style class="style-order-0">.baz { color: red }</style>' +
             '<div class="foo">Hello Mars</div>' +
-        '</com-once-style2>');
+        '</com-once-style2>').cs());
 
         let style2_2 = Style2.create();
-        style2_2.outerHTML.should.be.equal('' +
+        style2_2.outerHTML.cs().should.be.equal(('' +
         '<com-once-style2 rendered="true">' +
             '<div class="foo">Hello Mars</div>' +
-        '</com-once-style2>');
+        '</com-once-style2>').cs());
 
         let style2_3 = Style2.create();
-        style2_3.outerHTML.should.be.equal('' +
+        style2_3.outerHTML.cs().should.be.equal(('' +
         '<com-once-style2 rendered="true">' +
             '<div class="foo">Hello Mars</div>' +
-        '</com-once-style2>');
+        '</com-once-style2>').cs());
 
     });
 
