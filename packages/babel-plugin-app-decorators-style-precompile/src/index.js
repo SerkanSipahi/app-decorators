@@ -23,11 +23,11 @@ let getDecorator = function(decoratorName) {
 
 /**
  * getStyle
- * @returns {{error: null, style: null}}
+ * @returns {{style: null}}
  */
 let getStyle = function(){
 
-    let statement = { error: null, style: null };
+    let statement = { style: null, error: null };
 
     let args = this.expression.arguments;
     if(!args.length) {
@@ -39,11 +39,12 @@ let getStyle = function(){
     } else if(t.isTemplateLiteral(args[0])){
         let [{ quasis: [{ value: { raw } }] }] = args;
         statement.style = raw;
+    } else if(t.isArrayExpression(args[0])) {
+        statement.style = args[0];
     } else {
         statement.error = `
-            Please use StringLiteral ("foo") or TemplateLiteral (\`bar\`). Do not use
-            something like this: "hello" + "World".
-        `;
+        Please use StringLiteral ("foo") or TemplateLiteral (\`bar\`). Do not use
+        something like this: "hello" + "World".`;
     }
 
     return statement;
@@ -108,11 +109,12 @@ function plugin () {
                     return;
                 }
 
-                let { error, style } = component::getStyle();
-                if(error){
+                let { style, error } = component::getStyle();
+                if (error) {
                     throw new Error(error);
                 }
-                if(!style){
+
+                if(typeof style !== "string"){
                     return;
                 }
 

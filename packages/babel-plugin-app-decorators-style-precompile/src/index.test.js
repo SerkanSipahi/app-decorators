@@ -23,12 +23,12 @@ function transformCode(code, options = {}){
 it('should throw error when String/Template -Literal concatenated by binary expression', () => {
 
     let actualStringLiteral =`
-            @style(".foo { background-color: " + "red;")
-            class Foo {}`;
+    @style(".foo { background-color: " + "red;")
+    class Foo {}`;
 
     let actualTemplateLiteral =`
-            @style(\`.foo { background-color: \` + \`red;\`)
-            class Foo {}`;
+    @style(\`.foo { background-color: \` + \`red;\`)
+    class Foo {}`;
 
     (() => { transformCode(actualStringLiteral) }).should.throw();
     (() => { transformCode(actualTemplateLiteral) }).should.throw();
@@ -54,6 +54,20 @@ it('should not throw error when other decorator', () => {
     @xzy(\`.color: red;\`)
     class Foo {}`;
 
+    clean(transformCode(actual)).should.be.equal(clean(expected));
+});
+
+it('should not throw error when passed array object', () => {
+
+    let actual =`
+    @style([{a:1, b: 2}])
+    class Foo {}`;
+
+    let expected =`
+    @style([{a:1, b: 2}])
+    class Foo {}`;
+
+    (() => { transformCode(actual) }).should.not.throw();
     clean(transformCode(actual)).should.be.equal(clean(expected));
 });
 
