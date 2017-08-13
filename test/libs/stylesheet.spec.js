@@ -279,7 +279,7 @@ describe('Class Stylesheet ', () => {
             '</div>');
 
             // when this not happend then onload event will not fired
-            document.body.append(stylesheet._appendTo);
+            document.body.append(element);
 
         });
 
@@ -307,7 +307,7 @@ describe('Class Stylesheet ', () => {
             '</div>');
 
             // when this not happend then onload event will not fired
-            document.body.append(stylesheet._appendTo);
+            document.body.append(element);
 
         });
 

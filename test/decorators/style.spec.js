@@ -6,14 +6,13 @@ import { storage } from "../../src/libs/random-storage";
 import sinon from 'sinon';
 
 // init special innerHTML for test
-String.prototype.cs = function(){
-    return this.replace(/[\t\n\r ]+/gm, '');
-};
+String.prototype.cs = function(){return this.replace(/[\t\n\r ]+/gm, '');};
+String.prototype.nlte = function(){ return this.replace(/[\t\r\n ]+/g, '').trim() };
 
 describe('@style decorator', async () => {
 
     await bootstrapPolyfills;
-    let { component, view, style } = await System.import('app-decorators');
+    let { component, view, style, on } = await System.import('app-decorators');
 
     beforeEach(() =>
         $('body').append('<div id="test-style-order"></div>')
@@ -68,6 +67,152 @@ describe('@style decorator', async () => {
         createdCallback[0].restore();
         attachedCallback[0].restore();
         detachedCallback[0].restore();
+    });
+
+
+    it('should contain stylesheets in element', () => {
+
+        @style(`
+            @media on('load') {
+                @fetch load/my/styles1.css;
+                @fetch load/my/styles2.css;
+            }
+            style-collection-string {
+                width: 100px;
+                height: 100px;
+            }
+            .foo {
+                color: red;
+            }
+        `)
+        @view(`
+            <div class="foo">Hello World</div>
+        `)
+        @component({
+            name: 'style-collection-string',
+        })
+        class Style {
+        }
+
+        let element = Style.create();
+
+        // should have correct length
+        element.$stylesheets.should.be.have.length(2);
+
+        // should have correct properties (0)
+        element.$stylesheets[0]._styles = element.$stylesheets[0]._styles.nlte();
+        element.$stylesheets[0]._attachOn.should.equal("immediately");
+        element.$stylesheets[0]._imports.should.containDeep([]);
+        element.$stylesheets[0]._styles.should.equal(
+            "style-collection-string{width:100px;height:100px;}" +
+            ".foo{color:red;}"
+        );
+        element.$stylesheets[0]._type.should.equal("default");
+
+        // should have correct properties (1)
+        element.$stylesheets[1]._attachOn.should.equal("load");
+        element.$stylesheets[1]._imports.should.containDeep(["load/my/styles1.css", "load/my/styles2.css"]);
+        element.$stylesheets[1]._styles.should.equal("");
+        element.$stylesheets[1]._type.should.equal("on");
+    });
+
+    it('should contain stylesheets once stylesheet when external resources', () => {
+
+        @style(`
+            @media on('load') {
+                @fetch load/my/styles1.css;
+                @fetch load/my/styles2.css;
+            }
+            style-collection-string {
+                width: 100px;
+                height: 100px;
+            }
+            .foo {
+                color: red;
+            }
+        `)
+        @view(`
+            <div class="foo">Hello World</div>
+        `)
+        @component({
+            name: 'style-sheet-once',
+        })
+        class Style {
+        }
+
+        let element = Style.create();
+        let element2 = Style.create();
+
+        // shoul create only once stylesheet per component
+        should(element.querySelectorAll('link').length).be.equal(2);
+        should(element2.querySelectorAll('link').length).be.equal(0);
+
+    });
+
+    it('should render external resources', done => {
+
+        @style(`
+            @media on('load') {
+                @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css;
+                @fetch https://cdnjs.cloudflare.com/ajax/libs/sanitize.css/2.0.0/sanitize.min.css
+            }
+            style-collection-string {
+                width: 100px;
+                height: 100px;
+            }
+            .foo {
+                color: red;
+            }
+        `)
+        @view(`
+            <div class="foo">Hello World</div>
+        `)
+        @component({ name: 'style-external-resources' })
+        class Style {
+            @on('load:stylesheet') onLoadStylesheet(e){}
+        }
+
+        let element = Style.create();
+        let stylesheet = element.$stylesheets[0];
+
+        let href1 = "https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css";
+        let href2 = "https://cdnjs.cloudflare.com/ajax/libs/sanitize.css/2.0.0/sanitize.min.css";
+        let expected = `
+        <style-external-resources rendered="true">
+            <style class="style-order-0">
+                style-collection-string { 
+                    width: 100px; 
+                    height: 100px; 
+                } 
+                .foo { 
+                    color: red; 
+                }
+            </style>
+            {{%LINK%}}
+            <div class="foo">Hello World</div>
+        </style-external-resources>`.nlte();
+
+        setTimeout(() => {
+            if(stylesheet.supportRelPreload()){
+                //@TODO: remove inside of onload to helper functions
+                expected = expected.replace('{{%LINK%}}', `
+                <link rel="stylesheet" as="style" href="${href1}" onload="this.rel='stylesheet'; this.__event = new CustomEvent('load:stylesheet', { bubbles: true });this.dispatchEvent(this.__event)" class="style-order-1">
+                <link rel="stylesheet" as="style" href="${href2}" onload="this.rel='stylesheet'; this.__event = new CustomEvent('load:stylesheet', { bubbles: true });this.dispatchEvent(this.__event)" class="style-order-1">`
+                ).nlte();
+                element.outerHTML.nlte().should.be.equal(expected);
+                done();
+            } else {
+                expected = expected.replace('{{%LINK%}}', `
+                <link rel="stylesheet" href="${href1}" media="all" class="style-order-1">
+                <link rel="stylesheet" href="${href2}" media="all" class="style-order-1">`
+                ).nlte();
+                element.outerHTML.nlte().should.be.equal(expected);
+                done();
+            }
+        }, 500);
+
+        document.body.appendChild(element);
+
     });
 
     it('should create element with styles', () => {

@@ -442,7 +442,10 @@ class Stylesheet {
         '<link rel="preload" ' +
             'as="style" ' +
             'href="'+href+'" ' +
-            'onload="this.rel=\'stylesheet\'"' +
+            'onload="' +
+            'this.rel=\'stylesheet\';' +
+            'this.__event = new CustomEvent(\'load:stylesheet\', { bubbles: true });' +
+            'this.dispatchEvent(this.__event)"' +
         '>';
 
         return element.querySelector('link');
@@ -459,6 +462,7 @@ class Stylesheet {
 
         let self        = this;
         let linkElement = this._createElement('link');
+        let event       = new CustomEvent('load:stylesheet', { bubbles: true, detail: this });
 
         linkElement.rel    = 'stylesheet';
         linkElement.href   = href;
@@ -469,12 +473,14 @@ class Stylesheet {
             let self2 = this;
             if(!self._onLoadImports) {
                 self2.media=`${attachOn}`;
+                linkElement.dispatchEvent(event);
                 return;
             }
             self._onLoadImports(
                 function call(done){
                     self2.media=`${attachOn}`;
                     done ? done() : null;
+                    linkElement.dispatchEvent(event);
                 }, self2
             )
         };
@@ -538,6 +544,13 @@ class Stylesheet {
         if(order >=0){
             this._stylesElement.classList.add(`style-order-${order}`);
         }
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    supportRelPreload(){
+        return this._supportRelPreload();
     }
 
     /**
