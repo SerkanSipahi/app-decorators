@@ -2,7 +2,7 @@ import { Stylesheet } from '../libs/stylesheet';
 import { initCoreMap, initStyleMap } from '../datas/init-maps';
 import { storage } from '../libs/random-storage';
 import { Eventhandler } from '../libs/eventhandler';
-import { Router } from '../libs/router';
+import { Router } from '../apps/router';
 
 let getTypeof = value => Object.prototype.toString.call(value).slice(8,-1);
 
@@ -12,18 +12,40 @@ let getTypeof = value => Object.prototype.toString.call(value).slice(8,-1);
  * @param element {Element}
  * @returns {*}
  */
-let getHandler = (type, element) => {
+let getHandler = (style, element) => {
 
-    if(/on|default/.test(type)) {
+    let {type} = style;
+
+    if(type === "on" || type === "default") {
         return new Eventhandler({ element });
     } else if(type === "action") {
-        return Router.create({
+
+        style.attachOn += ` ${style.attachOn}`;
+        let router = Router.create({
             scope: element
         });
+        router.start();
+        return router;
     } else if(type === "mediaMatch") {
         // https://wicg.github.io/ResizeObserver/
-        return "mediaMatch";
+        return {
+            on: () => {},
+            off: () => {}
+        }
     }
+};
+
+/**
+ * @param style {object}
+ * @returns {object}
+ */
+let createEventHandlerValue = style => {
+
+    let eventName = style.attachOn.replace(/ /g, '-');
+    let eventValue = style.attachOn;
+    style.attachOn = `${eventName} ${eventValue}`;
+
+    return style;
 };
 
 /**
@@ -74,6 +96,14 @@ function style(styles, options = {}) {
             let styles = map.get('@style').get('stylesheets');
             for(let i = 0, len = styles.length; i < len; i++){
                 let style = styles[i];
+
+
+                // when no action name passed, then take the eventname
+                if(style.type === "action" && style.attachOn.split(' ').length === 1){
+                    style = createEventHandlerValue(style);
+                } else if(style.type === "mediaMatch"){
+                    style = createEventHandlerValue(style);
+                }
                 domNode.$stylesheets.push(new Stylesheet({
                     appendTo: domNode,
                     attachOn: style.attachOn,
@@ -82,7 +112,7 @@ function style(styles, options = {}) {
                     type: style.type,
                     order: i,
                     fallback: options.fallback,
-                    eventFactory: scope => getHandler(style.type, scope),
+                    eventFactory: element => getHandler(style, element),
                 }));
             }
 

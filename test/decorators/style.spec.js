@@ -1,7 +1,9 @@
 import $ from 'jquery';
+import _ from 'underscore';
 import { bootstrapPolyfills } from '../../src/bootstrap';
 import { delay } from '../../src/helpers/delay';
 import { storage } from "../../src/libs/random-storage";
+import '../../src/helpers/jquery.click-and-wait';
 
 import sinon from 'sinon';
 
@@ -149,7 +151,7 @@ describe('@style decorator', async () => {
 
     });
 
-    it('should render external resources', done => {
+    it('should render external resources (its failed when not comes quickly). So thats normal', async () => {
 
         @style(`
             @media on('load') {
@@ -192,26 +194,123 @@ describe('@style decorator', async () => {
             <div class="foo">Hello World</div>
         </style-external-resources>`.nlte();
 
-        setTimeout(() => {
-            if(stylesheet.supportRelPreload()){
-                //@TODO: remove inside of onload to helper functions
-                expected = expected.replace('{{%LINK%}}', `
+        document.body.appendChild(element);
+        await delay(1000);
+
+        if(stylesheet.supportRelPreload()){
+            //@TODO: remove inside of onload to helper functions
+            expected = expected.replace('{{%LINK%}}', `
                 <link rel="stylesheet" as="style" href="${href1}" onload="this.rel='stylesheet'; this.__event = new CustomEvent('load:stylesheet', { bubbles: true });this.dispatchEvent(this.__event)" class="style-order-1">
                 <link rel="stylesheet" as="style" href="${href2}" onload="this.rel='stylesheet'; this.__event = new CustomEvent('load:stylesheet', { bubbles: true });this.dispatchEvent(this.__event)" class="style-order-1">`
-                ).nlte();
-                element.outerHTML.nlte().should.be.equal(expected);
-                done();
-            } else {
-                expected = expected.replace('{{%LINK%}}', `
+            ).nlte();
+            element.outerHTML.nlte().should.be.equal(expected);
+        } else {
+            expected = expected.replace('{{%LINK%}}', `
                 <link rel="stylesheet" href="${href1}" media="all" class="style-order-1">
                 <link rel="stylesheet" href="${href2}" media="all" class="style-order-1">`
-                ).nlte();
-                element.outerHTML.nlte().should.be.equal(expected);
-                done();
-            }
-        }, 500);
+            ).nlte();
+            element.outerHTML.nlte().should.be.equal(expected);
+        }
 
+    });
+
+    it('should create correct eventValues when passed on, action or media-query', () => {
+        @style(`
+            @media on('click .foo') {
+                @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css;
+            }
+            @media on('click') {
+                @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/6.0.0/normalize.min.css;
+            }
+            @media action('/a/b/c.html'){
+                @fetch https://cdnjs.cloudflare.com/ajax/libs/sanitize.css/2.0.0/sanitize.min.css;
+            }
+            @media action('bar /a/b/c.html'){
+                @fetch https://cdnjs.cloudflare.com/ajax/libs/sanitize.css/2.0.0/sanitize.min.css;
+            }
+            @media only screen and (min-device-width:320px) and (max-device-width:639px) {
+                @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/6.0.0/normalize.min.css;
+            }
+            style-collection-string {
+                width: 100px;
+                height: 100px;
+            }
+            .foo {
+                color: red;
+            }
+        `)
+        @component({
+            name: 'com-style-eventvalues'
+        })
+        class Style {
+
+        }
+        let element = Style.create();
+        let stylesheets = element.$stylesheets;
+
+        // Test
+        stylesheets.should.be.length(6);
+
+        let onStyleConfig =_.where(stylesheets, {_type: "on"});
+        onStyleConfig[0]._attachOn.should.be.equal("click .foo");
+        onStyleConfig[1]._attachOn.should.be.equal("click");
+
+        let actionStyleConfig =_.where(stylesheets, {_type: "action"});
+        actionStyleConfig[0]._attachOn.should.be.equal("/a/b/c.html /a/b/c.html");
+        actionStyleConfig[1]._attachOn.should.be.equal("bar /a/b/c.html");
+
+        let mediaStyleConfig =_.where(stylesheets, {_type: "mediaMatch"});
+        mediaStyleConfig[0]._attachOn.should.be.equal(
+            "only-screen-and-(min-device-width:320px)-and-(max-device-width:639px)" + " " +
+            "only screen and (min-device-width:320px) and (max-device-width:639px)"
+        );
+
+    });
+
+    it('should create only once stylsheets no matter how often triggered (on, action)', async () => {
+
+        @style(`
+            @media on('click .foo') {
+                @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css;
+            }
+            @media action('/a/b/c.html'){
+                @fetch https://cdnjs.cloudflare.com/ajax/libs/sanitize.css/2.0.0/sanitize.min.css;
+            }
+            @media only screen and (min-device-width:320px) and (max-device-width:639px) {
+                @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/6.0.0/normalize.min.css;
+            }
+            style-collection-string {
+                width: 100px;
+                height: 100px;
+            }
+            .foo {
+                color: red;
+            }
+        `)
+        @view(`
+            <div class="foo">Hello World</div>
+            <a class="bar" href="/a/b/c.html">Huhuu</a>
+            <a class="baz" href="/a/b/d.html">Huhuu</a>
+        `)
+        @component({
+            name: 'com-style-action',
+        })
+        class Style {
+        }
+
+        let element = Style.create();
         document.body.appendChild(element);
+
+        $('.foo', element).clickAndWait(20);
+        $('.bar', element).clickAndWait(20);
+        $('.baz', element).clickAndWait(20);
+        $('.foo', element).clickAndWait(20);
+        $('.bar', element).clickAndWait(20);
+        $('.baz', element).clickAndWait(20);
+
+        await delay(100);
+
+        //console.log([element]);
 
     });
 

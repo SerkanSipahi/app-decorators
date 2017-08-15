@@ -267,6 +267,17 @@ class Stylesheet {
     }
 
     /**
+     * @param value
+     * @returns {*}
+     * @private
+     */
+    _getEventName(value = ""){
+
+        let collection = value.split(' ');
+        return collection[0];
+    }
+
+    /**
      * @param attachOn {string}
      * @param styles {string}
      * @param imports {Array}
@@ -278,7 +289,8 @@ class Stylesheet {
             this._processListener(styles, imports);
             // Remove listener after stylesheet is appended.
             // We dont want multiple style elements on multiple events
-            this._removeEvent ? this._eventListener.off(attachOn) : null;
+            let event = this._getEventName(attachOn);
+            this._removeEvent && this._eventListener.off(event);
         });
     }
 

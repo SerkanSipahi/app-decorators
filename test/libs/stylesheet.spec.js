@@ -138,6 +138,22 @@ describe('Class Stylesheet ', () => {
 
     });
 
+    describe('_getEventName' ,() => {
+
+        it('determine eventname by passed on string', () => {
+
+            let stylesheet = new Stylesheet(defaultOptions);
+
+            stylesheet._getEventName('load').should.be.equal("load");
+            stylesheet._getEventName('click .foo').should.be.equal("click");
+            stylesheet._getEventName('click click').should.be.equal("click");
+            stylesheet._getEventName('startpage /a/b/c.html').should.be.equal("startpage");
+            stylesheet._getEventName('/a/b/c.html /a/b/c.html').should.be.equal("/a/b/c.html");
+            stylesheet._getEventName('only-screen-(max-width:-500px) only screen (max-width: 500px)').should.be.equal("only-screen-(max-width:-500px)");
+
+        });
+    });
+
     describe('multiple events', () => {
 
         let element = null;
@@ -347,7 +363,7 @@ describe('Class Stylesheet ', () => {
             '</div>');
 
             // when this not happend then onload event will not fired
-            document.body.append(stylesheet._appendTo);
+            document.body.append(element);
 
         });
 

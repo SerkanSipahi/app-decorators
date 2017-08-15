@@ -1,4 +1,4 @@
-import { Router } from '../libs/router';
+import { Router } from '../apps/router';
 import { initCoreMap, initActionMap } from '../datas/init-maps';
 import { storage } from '../libs/random-storage';
 

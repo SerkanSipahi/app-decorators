@@ -33,7 +33,7 @@ let initActionMap = (storage, Class) => {
         map.set('@action', new Map([
             ["events", []],
             ["callbacksDefined", false],
-        ]))
+        ]));
     }
 };
 
