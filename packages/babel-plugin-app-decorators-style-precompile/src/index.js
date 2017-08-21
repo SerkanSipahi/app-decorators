@@ -72,27 +72,32 @@ let getOptions = function(){
 let precompile = (style, opts = {}) => parse(style, Object.assign({ optimize: true }, opts));
 
 /**
+ * @param collection {array}
+ * @returns {string}
+ */
+let arrayToString = collection => {
+    let importsTpl = "";
+    for(let imp of collection) importsTpl += `"${imp}", `;
+    return importsTpl;
+};
+
+/**
  * createAst
  * @this-param {string}
  * @param vars {object}
- * @returns {ast}
+ * @returns {object}
  */
 let createAst = function(vars = {}){
 
-    let getImports = imports => {
-        let importsTpl = "";
-        for(let imp of imports) importsTpl += `"${imp}", `;
-        return importsTpl;
-    };
-
     let styleTemplate = "";
     for(let styleObj of this){
-        let {attachOn, imports, styles, type} = styleObj;
+        let {attachOn, imports, styles, type, option} = styleObj;
         styleTemplate += `{
             attachOn: "${attachOn}",
-            imports: [${getImports(imports)}],
+            imports: [${arrayToString(imports)}],
             styles: ${styles && styles.length ? "`"+styles+"`" : '"'+styles+'"'},
             type: "${type}",
+            ${(option) ? "option: ["+arrayToString(option || [])+"]" : ""}
         },`;
     }
     return template(`[${styleTemplate}]`)();

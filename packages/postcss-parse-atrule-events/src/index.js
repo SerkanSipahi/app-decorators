@@ -1,13 +1,46 @@
 import * as compiler from 'postcss';
 import postcss from 'postcss';
 import nestedCss from 'postcss-nested';
-import matchMediaQuery from 'regex-css-media-query';
+import autoprefixer from 'autoprefixer';
+//import cssnano from 'cssnano';
 import values from 'core-js/library/fn/object/values';
 
-const IMMEDIATELY = "immediately";
-const DEFAUlT = "default";
-const MEDIA_MATCH = "mediaMatch";
-const IMPORT_REGEX = /fetch|stream/;
+const IMMEDIATELY         = "immediately";
+const DEFAUlT             = "default";
+const IMPORT_REGEX        = /fetch|stream/;
+const AT_RULE_REGEX       = /query|on|action|viewport/;
+const POSTCSS_BUBBLES     = AT_RULE_REGEX.toString().replace(/\//g, '').split('|');
+const OPTION_RADIUS_REGEX = new RegExp("" +
+    "(?:\\s+)?(?:near)?(?:\\s)?" +                                  // near         [optional]
+        "\\(" +                                                     // (            [required]
+            "(?:(\\s+)?(radius)(?:\\s+)?:(?:\\s+)?(\\w+)(\\s+)?)" + // radius: 30px [e.g.]
+        "\\)" +                                                     // )            [required]
+    "(?:\\s+)?(?:near)?(?:\\s)?",                                   // near         [optional]
+);
+
+/**
+ * @param v {string}
+ * @returns {{option: (*|[*,*]|null), rawPropQuery: (*|null), input: (string|null)}}
+ */
+let matchRadiusQueryRule = v => {
+    let matched = v.match(OPTION_RADIUS_REGEX) || [];
+    let [rawPropQuery,,prop,value] = matched;
+    return {
+        option: prop&&value && [prop, value] || null,
+        rawPropQuery: rawPropQuery || null,
+        input: matched.input || null,
+    }
+};
+
+/**
+ * @param v {string}
+ */
+let escapeAtRuleQueryVars = v => v.replace(/\{\{(.*?)\}\}/g, v => v.replace(/[{}]/g, v => `\\${v}`));
+
+/**
+ * @param v {string}
+ */
+let unescapeAtRuleQueryVars = v => v.replace(/[\\]/g, '');
 
 /**
  * create Config
@@ -15,11 +48,17 @@ const IMPORT_REGEX = /fetch|stream/;
  * @param styles {string}
  * @param type {string}
  * @param imports {Array}
- * @returns {{ attachOn: string, styles: string }}
+ * @param option {Array}
+ * @returns config {Array}
  */
-let createConfig = (attachOn, styles, type, imports) => ({
-    attachOn, styles: (styles ? `${styles} \n` : ''), type, imports,
-});
+let createConfig = (attachOn, styles, type, imports, option) => {
+    let config = Object.assign({},
+        {attachOn, type, imports},
+        {styles: (styles ? `${styles} \n` : '')},
+        (option ? {option} : {})
+    );
+    return config;
+};
 
 /**
  * Determine if node is on root layer
@@ -33,15 +72,13 @@ let createConfig = (attachOn, styles, type, imports) => ({
 let isRootNode = node => node.parent && /root/.test(node.parent.type);
 
 /**
- * push when config
+ * push config
  * @param container {Array}
  * @param config {object}
  */
 let push = (container, config) => {
 
-    if(!config){
-        return;
-    }
+    if(!config) return;
 
     if(!container.length){
         container.push(config);
@@ -126,6 +163,28 @@ let resolveMediaChildNodes = nodes => {
 };
 
 /**
+ * @param name {string}
+ * @returns {object}
+ */
+let createEventHandlerValue = params => {
+    let eventName = params.replace(/ /g, '-');
+    let eventValue = params;
+    params = `${eventName} ${eventValue}`;
+    return params;
+};
+
+let createEventHandlerNameByAtRule = (atRule, eventName) => {
+
+    if(atRule === "action" && eventName.split(' ').length === 1){
+        eventName = createEventHandlerValue(eventName);
+    } else if(/query|viewport/.test(atRule)){
+        eventName = createEventHandlerValue(eventName);
+    }
+
+    return eventName;
+};
+
+/**
  * Get at rule config
  * @param node {object}
  * @returns {object|null}
@@ -137,28 +196,35 @@ let getAtRuleConfig = node => {
     /**
      * if something on root layer that we can accept, then take it, e.g. fetch or stream.
      */
-    let mached = `${name}`.match(IMPORT_REGEX);
-    if(mached && parent.type === 'root') {
-        return createConfig(IMMEDIATELY, '', DEFAUlT, [params]);
+    let matched = `${name}`.match(IMPORT_REGEX);
+    if(matched && parent.type === 'root') {
+        return createConfig(IMMEDIATELY, '', DEFAUlT, [params], null);
     }
 
-    /**
-     * we also accept @media, so take it.
-     */
-    let isMediaQuery = name == "media" && matchMediaQuery().test(params);
-    let pattern = /(on|action|query)\(("|')?(.*?)("|')?\)/i;
-    let [,type,,attachOn] = params.match(pattern) || (isMediaQuery && [,MEDIA_MATCH,,params]) || [];
+    if(AT_RULE_REGEX.test(name) && nodes && nodes.length) {
 
-    if(type && attachOn && nodes && nodes.length) {
-        let [newNodes, imports ] = resolveMediaChildNodes(nodes);
-        return createConfig(attachOn, stringifyAstNodes(newNodes), type, imports);
+        let matched = {};
+        if(/action/.test(name)){
+            params = unescapeAtRuleQueryVars(params);
+        }
+        else if(/query|viewport/.test(name)){
+            matched = matchRadiusQueryRule(params);
+            params = matched.input ? matched.input.replace(matched.rawPropQuery, "") : params;
+        }
+
+        params = createEventHandlerNameByAtRule(name, params);
+
+        let [newNodes, imports] = resolveMediaChildNodes(nodes);
+        let config = createConfig(params, stringifyAstNodes(newNodes), name, imports, matched.option);
+
+        return config;
     }
 
     /**
      * if something like @import, @document, etc. so take it, but normal styles
      */
     if(parent.type === 'root') {
-        return createConfig(IMMEDIATELY, stringifyAstNodes([node]), DEFAUlT, []);
+        return createConfig(IMMEDIATELY, stringifyAstNodes([node]), DEFAUlT, [], null);
     }
 
     // Everything else can be skipped!
@@ -176,16 +242,14 @@ let getRuleConfig = node => {
         return null;
     }
 
-    return createConfig(IMMEDIATELY, stringifyAstNode(node), DEFAUlT, []);
+    return createConfig(IMMEDIATELY, stringifyAstNode(node), DEFAUlT, [], null);
 };
 
 /**
  * will check the grammar
- * @param container {Array}
- * @param config {object}
- * @param pushUniqueKey {string}
+ * @param eventRules {Array}
  */
-let grammarCheck = node => {
+let grammarCheck = eventRules => {
 
     // grammarCheck()
     // 1.) Wenn @fetch und parent @on dann passt
@@ -201,6 +265,13 @@ let grammarCheck = node => {
 };
 
 /**
+ * @param rule {Object}
+ */
+let getUniqueNameForOptimize = rule => (
+    `${rule.attachOn}::${rule.type}${rule.option && "::"+rule.option.join("-")}`
+);
+
+/**
  * optimize
  * @param eventRules {Array}
  */
@@ -208,7 +279,8 @@ let optimize = eventRules => {
 
     let optimizedRules = {};
     for(let rule of eventRules){
-        let uniqName = `${rule.attachOn}::${rule.type}`;
+
+        let uniqName = getUniqueNameForOptimize(rule);
         if(!optimizedRules[uniqName]){
             optimizedRules[uniqName] = {
                 attachOn: rule.attachOn,
@@ -223,6 +295,9 @@ let optimize = eventRules => {
         if(rule.styles){
             optimizedRules[uniqName].styles += rule.styles;
         }
+        if(rule.option){
+            optimizedRules[uniqName].option = rule.option;
+        }
     }
 
     return values(optimizedRules);
@@ -236,16 +311,21 @@ let optimize = eventRules => {
  */
 let parse = (styles, options = {}) => {
 
+    styles = escapeAtRuleQueryVars(styles);
+
+    if(typeof styles !== "string"){
+        throw new Error('Please styles as string!');
+    }
+
     let container = [];
-    let ast = compiler.parse(
-        // normalize nested css before converting to ast
-        postcss([nestedCss]).process(styles).content
-    );
+    // normalize nested css before converting to ast
+    let content = postcss([nestedCss({ bubble: POSTCSS_BUBBLES })/*, prefixer*/]).process(styles).content;
+    let ast = compiler.parse(content);
 
     // walk trough classic css selectors
     ast.walkRules(node => push(container, getRuleConfig(node)));
 
-    // walk trough @media rel('preload'), @media on(...)
+    // walk trough @media action('/my/{{foo}}/route.html'), @media on(...)
     ast.walkAtRules(node => push(container, getAtRuleConfig(node)));
 
     // combine/concat same attachOn´s
@@ -259,4 +339,9 @@ let parse = (styles, options = {}) => {
 
 export {
     parse,
+    matchRadiusQueryRule,
+    escapeAtRuleQueryVars,
+    unescapeAtRuleQueryVars,
+    createEventHandlerValue,
+    createEventHandlerNameByAtRule,
 }

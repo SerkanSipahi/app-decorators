@@ -79,14 +79,21 @@ it('should compile style literal to object literal', () => {
             background-color: red;
         }
         
-        @media on('load') {
+        @on load {
             @fetch to/my/src/file.css;
         }
-        @media on('load') {
+        @on load {
             @fetch to/my/src/file2.css;
         }
         .bar {
             background-color: red;
+        }
+        @query (radius: 400px) near (max-width:639px) and (orientation: portrait) {
+            @fetch load/my/styles11.css;
+            .foo {
+                color: red;
+            }
+            @fetch load/my/styles99.css;
         }
         
         @fetch to/my/critical/path/file3.css;
@@ -118,6 +125,16 @@ it('should compile style literal to object literal', () => {
             ],
             styles:"",
             type:"on"
+        },
+        {
+            attachOn:"(max-width:639px)-and-(orientation:-portrait) (max-width:639px) and (orientation: portrait)",
+            imports:[
+                "load/my/styles11.css",
+                "load/my/styles99.css"
+            ],
+            styles: \`.foo { color: red; }\`,
+            type:"query",
+            option: ["radius", "400px"]
         }
     ])
     class Foo {}`;

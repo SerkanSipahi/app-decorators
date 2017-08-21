@@ -1,10 +1,120 @@
 import assert from 'assert-diff';
-import { parse } from'./index';
 import { it } from './simple-it';
 import 'should';
 
+import {
+    parse,
+    matchRadiusQueryRule,
+    escapeAtRuleQueryVars,
+    unescapeAtRuleQueryVars,
+    createEventHandlerValue,
+    createEventHandlerNameByAtRule
+} from'./index';
+
 String.prototype.r = function() { return this.replace( /\s\s+/g, ' ') };
 String.prototype.cs = function(){ return this.replace(/[\r\n]+/g, '').trim() };
+
+it('should escape and unescape atrule query vars', () => {
+
+    // Test 1
+    let result = escapeAtRuleQueryVars("/a/{{value}}/c.html");
+    result.should.be.equal("/a/\\{\\{value\\}\\}/c.html");
+    unescapeAtRuleQueryVars(result).should.be.equal("/a/{{value}}/c.html");
+
+    // Test 2
+    result = escapeAtRuleQueryVars("/a/{{foo}}/{{bar}}/c.html");
+    result.should.be.equal("/a/\\{\\{foo\\}\\}/\\{\\{bar\\}\\}/c.html");
+    unescapeAtRuleQueryVars(result).should.be.equal("/a/{{foo}}/{{bar}}/c.html");
+});
+
+it('should match atrule query', () => {
+
+    let result = matchRadiusQueryRule('(radius: 31px) near (max-width:639px) and (orientation: portrait)');
+    assert.deepEqual(result, {
+        input: "(radius: 31px) near (max-width:639px) and (orientation: portrait)",
+        option: ["radius", "31px"],
+        rawPropQuery: "(radius: 31px) near ",
+    });
+
+    result = matchRadiusQueryRule('(max-width:639px) near (radius: 32px) ');
+    assert.deepEqual(result, {
+        input: "(max-width:639px) near (radius: 32px) ",
+        option: ["radius", "32px"],
+        rawPropQuery: " near (radius: 32px) ",
+    });
+
+    result = matchRadiusQueryRule('(radius: 33px) and (max-width:639px)');
+    assert.deepEqual(result, {
+        input: "(radius: 33px) and (max-width:639px)",
+        option: ["radius", "33px"],
+        rawPropQuery: "(radius: 33px) ",
+    });
+
+    result = matchRadiusQueryRule('com-footer near (radius: 34px)');
+    assert.deepEqual(result, {
+        input: "com-footer near (radius: 34px)",
+        option: ["radius", "34px"],
+        rawPropQuery: " near (radius: 34px)",
+    });
+
+    result = matchRadiusQueryRule('(radius: 35px)');
+    assert.deepEqual(result, {
+        input: "(radius: 35px)",
+        option: ["radius", "35px"],
+        rawPropQuery: "(radius: 35px)",
+    });
+
+    result = matchRadiusQueryRule('( radius : 36px   )  ');
+    assert.deepEqual(result, {
+        input: "( radius : 36px   )  ",
+        option: ["radius", "36px"],
+        rawPropQuery: "( radius : 36px   )  ",
+    });
+
+    result = matchRadiusQueryRule('   (radius :38px)');
+    assert.deepEqual(result, {
+        input: "   (radius :38px)",
+        option: ["radius", "38px"],
+        rawPropQuery: "   (radius :38px)",
+    });
+
+    result = matchRadiusQueryRule('(radius:39px)     ');
+    assert.deepEqual(result, {
+        input: "(radius:39px)     ",
+        option: ["radius", "39px"],
+        rawPropQuery: "(radius:39px)     ",
+    });
+
+    result = matchRadiusQueryRule('(max-width:639px) and (orientation: portrait)');
+    assert.deepEqual(result, {
+        input: null,
+        option: null,
+        rawPropQuery: null,
+    });
+});
+
+it('should create eventName by passed in createEventHandlerValue', () => {
+
+    createEventHandlerValue('hello').should.be.equal('hello hello');
+    createEventHandlerValue('.foo .bar .baz').should.be.equal('.foo-.bar-.baz .foo .bar .baz');
+
+});
+
+it('should create eventName by passed in createEventHandlerNameByAtRule', () => {
+
+    createEventHandlerNameByAtRule('query', "(max-width:639px) x").should.be.equal('(max-width:639px)-x (max-width:639px) x');
+    createEventHandlerNameByAtRule('query', "(max-width:639px)").should.be.equal('(max-width:639px) (max-width:639px)');
+
+    createEventHandlerNameByAtRule('viewport', "com-footer").should.be.equal('com-footer com-footer');
+    createEventHandlerNameByAtRule('viewport', "com-footer .foo").should.be.equal('com-footer-.foo com-footer .foo');
+
+    createEventHandlerNameByAtRule('on', "click").should.be.equal('click');
+    createEventHandlerNameByAtRule('on', "click .foo .bar .baz").should.be.equal('click .foo .bar .baz');
+
+    createEventHandlerNameByAtRule('action', "/a/b/c.html").should.be.equal('/a/b/c.html /a/b/c.html');
+    createEventHandlerNameByAtRule('action', "/a/{{foo}}/{{bar}}/c.html").should.be.equal('/a/{{foo}}/{{bar}}/c.html /a/{{foo}}/{{bar}}/c.html');
+
+});
 
 it('should create "attachOn: immediately" objects', () => {
 
@@ -62,7 +172,7 @@ it('should create "attachOn: immediately" objects', () => {
 it('should create "attachOn: on" with classes', () => {
 
     let styles =
-        "@media on('load') {"+
+        "@on load {"+
             `.foo {
                 color: violette;
                 .bar {
@@ -167,10 +277,345 @@ it('import', () => {
     });
 });
 
-it('should create "attachOn: mediaMatch" for type "media query"', () => {
+it('should create correct eventName by passed atrule', () => {
+
+    let styles = `
+        @query (max-width:639px) {
+            @fetch load/my/styles11.css;
+        }
+        @query (max-width:639px) and (orientation: portrait) {
+            @fetch load/my/styles11.css;
+        }
+        @query (radius: 30px) near (max-width:639px) and x {
+            @fetch load/my/styles11.css;
+        }
+        `.r();
+
+    let result = parse(styles);
+    result[0].attachOn.should.be.equal('(max-width:639px) (max-width:639px)');
+    result[1].attachOn.should.be.equal('(max-width:639px)-and-(orientation:-portrait) (max-width:639px) and (orientation: portrait)');
+    result[2].attachOn.should.be.equal('(max-width:639px)-and-x (max-width:639px) and x');
+
+    styles = `
+        @viewport com-footer {
+            @fetch load/my/styles8.css;
+        }
+        @viewport com-footer near (radius: 30px) {
+            @fetch load/my/styles8.css;
+        }
+        @viewport com-footer .bar .baz near (radius: 30px) {
+            @fetch load/my/styles8.css;
+        }
+        `.r();
+
+    result = parse(styles);
+    result[0].attachOn.should.be.equal('com-footer com-footer');
+    result[1].attachOn.should.be.equal('com-footer com-footer');
+    result[2].attachOn.should.be.equal('com-footer-.bar-.baz com-footer .bar .baz');
+
+    styles = `
+        @on click {
+            @fetch load/my/styles31.css;
+        }
+        @on click .foo .bar .baz {
+            @fetch load/my/styles31.css;
+        }
+        `.r();
+
+    result = parse(styles);
+    result[0].attachOn.should.be.equal('click');
+    result[1].attachOn.should.be.equal('click .foo .bar .baz');
+
+    styles = `
+        @action /a/b/c.html {
+            @fetch load/my/styles4.css;
+        }        
+        @action /a/{{foo}}/{{bar}}/c.html {
+            @fetch load/my/styles6.css;
+        }
+        @action someEvent /a/{{value}}/c.html {
+            @fetch load/my/styles5.css;
+        }
+        `.r();
+
+    result = parse(styles);
+    result[0].attachOn.should.be.equal('/a/b/c.html /a/b/c.html');
+    result[1].attachOn.should.be.equal('/a/{{foo}}/{{bar}}/c.html /a/{{foo}}/{{bar}}/c.html');
+
+});
+
+it('should with and without optimize between query, on action and viewport when radius near property', () => {
+
+    let styles = `
+        @query (max-width:639px) and (orientation: portrait) {
+            @fetch load/my/styles11.css;
+            @import load/my/styles12.css;
+        }
+        
+        @query (radius: 76px) near (max-width:639px) and (orientation: portrait) {
+            @fetch load/my/styles837.css;
+        }
+        @query (max-width:330px) and (orientation: portrait) near (radius: 31px) {
+            @fetch load/my/styles222.css;
+        }
+        @query (max-width:639px) and (orientation: portrait) near (radius: 76px) {
+            @fetch load/my/styles333.css;
+        }
+        
+        @on click .foo .bar .baz {
+            .lu {
+                color: red;
+                font: arial;
+            }
+            @fetch load/my/styles31.css;
+            @fetch load/my/styles21.css;
+            .laz {
+                width: 100px;
+            }
+        }
+        @action /a/b/c.html {
+            @fetch load/my/styles4.css;
+        }        
+        @action someEvent /a/{{value}}/c.html {
+            @fetch load/my/styles5.css;
+        }
+        @action /a/{{foo}}/{{bar}}/c.html {
+            @fetch load/my/styles6.css;
+        }
+        @action /a/{{foo}}/{{bar}}/c.html {
+            @fetch load/my/styles71.css;
+            @fetch load/my/styles72.js;
+        }
+        @viewport com-footer near (radius: 30px) {
+            @fetch load/my/styles8.css;
+        }
+        `.r();
+
+    let result = parse(styles);
+
+    // should have correct length
+    result.should.be.have.length(10);
+
+    /**
+     * Test without optimize
+     */
+    result[0].styles = result[0].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[0], {
+        attachOn:
+        "(max-width:639px)-and-(orientation:-portrait)"+ " "+
+        "(max-width:639px) and (orientation: portrait)",
+        imports: [
+            "load/my/styles11.css",
+        ],
+        styles: "@import load/my/styles12.css",
+        type: "query",
+    });
+
+    result[1].styles = result[1].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[1], {
+        attachOn:
+        "(max-width:639px)-and-(orientation:-portrait)"+ " "+
+        "(max-width:639px) and (orientation: portrait)",
+        imports: [
+            "load/my/styles837.css",
+        ],
+        styles: "",
+        option: ["radius", "76px"],
+        type: "query",
+    });
+
+    result[2].styles = result[2].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[2], {
+        attachOn:
+        "(max-width:330px)-and-(orientation:-portrait)"+ " "+
+        "(max-width:330px) and (orientation: portrait)",
+        imports: [
+            "load/my/styles222.css",
+        ],
+        styles: "",
+        option: ["radius", "31px"],
+        type: "query",
+    });
+
+    result[3].styles = result[3].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[3], {
+        attachOn:
+        "(max-width:639px)-and-(orientation:-portrait)"+ " "+
+        "(max-width:639px) and (orientation: portrait)",
+        imports: [
+            "load/my/styles333.css",
+        ],
+        styles: "",
+        option: ["radius", "76px"],
+        type: "query",
+    });
+
+    result[4].styles = result[4].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[4], {
+        attachOn: "click .foo .bar .baz",
+        imports: [
+            "load/my/styles31.css",
+            "load/my/styles21.css"
+        ],
+        styles: ".lu { color: red; font: arial; } .laz { width: 100px; }",
+        type: "on",
+    });
+
+    result[5].styles = result[5].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[5], {
+        attachOn: "/a/b/c.html /a/b/c.html",
+        imports: [
+            "load/my/styles4.css"
+        ],
+        styles: "",
+        type: "action",
+    });
+
+    result[6].styles = result[6].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[6], {
+        attachOn: "someEvent /a/{{value}}/c.html",
+        imports: [
+            "load/my/styles5.css"
+        ],
+        styles: "",
+        type: "action",
+    });
+
+    result[7].styles = result[7].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[7], {
+        attachOn: "/a/{{foo}}/{{bar}}/c.html /a/{{foo}}/{{bar}}/c.html",
+        imports: [
+            "load/my/styles6.css"
+        ],
+        styles: "",
+        type: "action",
+    });
+
+    result[8].styles = result[8].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[8], {
+        attachOn: "/a/{{foo}}/{{bar}}/c.html /a/{{foo}}/{{bar}}/c.html",
+        imports: [
+            "load/my/styles71.css",
+            "load/my/styles72.js",
+        ],
+        styles: "",
+        type: "action",
+    });
+
+    result[9].styles = result[9].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[9], {
+        attachOn: "com-footer com-footer",
+        imports: [
+            "load/my/styles8.css",
+        ],
+        styles: "",
+        type: "viewport",
+        option: ["radius", "30px"],
+    });
+
+    /**
+     * Test with optimize ( just for looking option tag )
+     */
+
+    result = parse(styles, {optimize: true});
+
+    result[0].styles = result[0].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[0], {
+        attachOn:
+        "(max-width:639px)-and-(orientation:-portrait)"+ " "+
+        "(max-width:639px) and (orientation: portrait)",
+        imports: ["load/my/styles11.css"],
+        styles: "@import load/my/styles12.css",
+        type: "query",
+    });
+
+    result[1].styles = result[1].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[1], {
+        attachOn:
+        "(max-width:639px)-and-(orientation:-portrait)"+ " "+
+        "(max-width:639px) and (orientation: portrait)",
+        imports: [
+            "load/my/styles837.css",
+            "load/my/styles333.css"
+        ],
+        styles: "",
+        option: ["radius", "76px"],
+        type: "query",
+    });
+
+    result[2].styles = result[2].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[2], {
+        attachOn:
+        "(max-width:330px)-and-(orientation:-portrait)"+ " "+
+        "(max-width:330px) and (orientation: portrait)",
+        imports: [
+            "load/my/styles222.css"
+        ],
+        styles: "",
+        option: ["radius", "31px"],
+        type: "query",
+    });
+
+    result[3].styles = result[3].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[3], {
+        attachOn: "click .foo .bar .baz",
+        imports: [
+            "load/my/styles31.css",
+            "load/my/styles21.css"
+        ],
+        styles: ".lu { color: red; font: arial; } .laz { width: 100px; }",
+        type: "on",
+    });
+
+    result[4].styles = result[4].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[4], {
+        attachOn: "/a/b/c.html /a/b/c.html",
+        imports: [
+            "load/my/styles4.css"
+        ],
+        styles: "",
+        type: "action",
+    });
+
+    result[5].styles = result[5].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[5], {
+        attachOn: "someEvent /a/{{value}}/c.html",
+        imports: [
+            "load/my/styles5.css"
+        ],
+        styles: "",
+        type: "action",
+    });
+
+    result[6].styles = result[6].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[6], {
+        attachOn: "/a/{{foo}}/{{bar}}/c.html /a/{{foo}}/{{bar}}/c.html",
+        imports: [
+            "load/my/styles6.css",
+            "load/my/styles71.css",
+            "load/my/styles72.js"
+        ],
+        styles: "",
+        type: "action",
+    });
+
+    result[7].styles = result[7].styles.cs(); // remove "new-lines"
+    assert.deepEqual(result[7], {
+        attachOn: "com-footer com-footer",
+        imports: [
+            "load/my/styles8.css"
+        ],
+        styles: "",
+        option: ["radius", "30px"],
+        type: "viewport",
+    });
+
+});
+
+it('should create "attachOn: query" for type "media query"', () => {
 
     let styles =
-        `@media only screen and (max-width:639px) and (orientation: portrait) {
+        `@query only screen and (max-width:639px) and (orientation: portrait) {
             @fetch load/my/styles3.css;
         }`.r();
 
@@ -183,20 +628,21 @@ it('should create "attachOn: mediaMatch" for type "media query"', () => {
     // Test 1
     result[0].styles = result[0].styles.cs(); // remove "new-lines"
     assert.deepEqual(result[0], {
-        attachOn: "only screen and (max-width:639px) and (orientation: portrait)",
+        attachOn:
+            "only-screen-and-(max-width:639px)-and-(orientation:-portrait)"+ " "+
+            "only screen and (max-width:639px) and (orientation: portrait)",
         imports: [
             "load/my/styles3.css",
         ],
         styles: "",
-        type: "mediaMatch",
+        type: "query",
     });
 });
-
 
 it('should create "attachOn: on" with classes and @fetch', () => {
 
     let styles =
-        "@media on('load') {"+
+        "@on load {"+
             `.a {
                 color: red;
             }
@@ -232,7 +678,7 @@ it('should create "attachOn: on" with classes and @fetch', () => {
 it('should create "attachOn: on" with classes and @import', () => {
 
     let styles =
-        "@media on('load') {"+
+        "@on load {"+
             `@import "load/my/styles1.css";
             .nut {
                 color: magento;
@@ -257,10 +703,10 @@ it('should create "attachOn: on" with classes and @import', () => {
 
 });
 
-it('should create "attachOn: xxx" with classes and @media print', () => {
+it('should create "attachOn: xxx" with classes and @print', () => {
 
     let styles =
-        "@media print {"+
+        "@query print {"+
             `.a {
                 color: yellow;
                 .b {
@@ -271,7 +717,7 @@ it('should create "attachOn: xxx" with classes and @media print', () => {
                 }
             }`.r()+
         "}"+
-        "@media (max-width: 1300px) {"+
+        "@query (max-width: 1300px) {"+
             `@fetch load/my/styles2.css;
              @fetch load/my/styles3.css;`.r()+
         "}";
@@ -284,22 +730,22 @@ it('should create "attachOn: xxx" with classes and @media print', () => {
     // Test 1
     result[0].styles = result[0].styles.cs(); // remove "new-lines"
     assert.deepEqual(result[0], {
-        attachOn: "print",
+        attachOn: "print print",
         imports: [],
         styles: ".a { color: yellow; } .a .b { color: b; } .a .c { color: c; }",
-        type: "mediaMatch",
+        type: "query",
     });
 
     // Test 2
     result[1].styles = result[1].styles.cs(); // remove "new-lines"
     assert.deepEqual(result[1], {
-        attachOn: "(max-width: 1300px)",
+        attachOn: "(max-width:-1300px) (max-width: 1300px)",
         imports: [
             "load/my/styles2.css",
             "load/my/styles3.css"
         ],
         styles: "",
-        type: "mediaMatch",
+        type: "query",
     });
 
 });
@@ -307,7 +753,7 @@ it('should create "attachOn: xxx" with classes and @media print', () => {
 it('should create "attachOn: myCustomEvent" with classes', () => {
 
     let styles =
-        "@media on('myCustomEvent') {"+
+        "@on myCustomEvent {"+
             `.baz {
                 width: 23px;
             }`.r()+
@@ -332,7 +778,7 @@ it('should create "attachOn: myCustomEvent" with classes', () => {
 it('should create "attachOn: on" with classes', () => {
 
     let styles =
-        "@media on('click .my-button') {"+
+        "@on click .my-button {"+
             `.foo {
                 color: blue;
             }`.r()+
@@ -361,11 +807,11 @@ it('should create "attachOn: action, load" when @media on and rel nested', () =>
             width: 300px;
             .faz {
                 right: 6px;
-                @media on('load') {
+                @on load {
                     height: 300px;
                 }
                 left: 3px;
-                @media action('/a/{{dyn}}/c.html') {
+                @action /a/{{dyn}}/c.html {
                     display: flex;
                 }
             }
@@ -386,6 +832,7 @@ it('should create "attachOn: action, load" when @media on and rel nested', () =>
     });
 
     // Test 2
+
     result[1].styles = result[1].styles.cs();
     assert.deepEqual(result[1], {
         attachOn: "immediately",
@@ -406,7 +853,7 @@ it('should create "attachOn: action, load" when @media on and rel nested', () =>
     // Test 4
     result[3].styles = result[3].styles.cs();
     assert.deepEqual(result[3], {
-        attachOn: "/a/{{dyn}}/c.html",
+        attachOn: "/a/{{dyn}}/c.html /a/{{dyn}}/c.html",
         imports: [],
         styles: ".laz .faz { display: flex }",
         type: "action",
@@ -416,7 +863,7 @@ it('should create "attachOn: action, load" when @media on and rel nested', () =>
 it('should match any @media expression', () => {
 
     let styles =
-        `@media on('click .foo[a="c"] #foo[a][c="d"][e="s"].c') {
+        `@on click .foo[a="c"] #foo[a][c="d"][e="s"].c {
             @fetch load/my/styles3.css;
         }`.r();
 
@@ -434,7 +881,7 @@ it('should match any @media expression', () => {
 it('match action types', () => {
 
     let styles =
-        `@media action('/this/{{value}}/path.html') {
+        `@action /this/{{value}}/path.html {
             @fetch load/my111/styles11.css;
             @fetch load/my111/styles22.css;
         }`.r();
@@ -446,7 +893,7 @@ it('match action types', () => {
 
     result[0].styles = result[0].styles.cs(); // remove "new-lines"
     assert.deepEqual(result[0], {
-        attachOn: '/this/{{value}}/path.html',
+        attachOn: '/this/{{value}}/path.html /this/{{value}}/path.html',
         imports: [
             "load/my111/styles11.css",
             "load/my111/styles22.css"
@@ -463,10 +910,10 @@ it('should work correctly with optimize (mini integration)', () => {
             background-color: red;
         }
         
-        @media on('load') {
+        @on load {
             @fetch to/my/src/file.css;
         }
-        @media on('load') {
+        @on load {
             @fetch to/my/src/file2.css;
         }
         .bar {
@@ -475,7 +922,7 @@ it('should work correctly with optimize (mini integration)', () => {
         
         @fetch to/my/critical/path/file3.css;`.r();
 
-    let result = parse(styles, { optimize: true });
+    let result = parse(styles, { optimize: true, minify: false, autoprefixer: [] });
 
     result[0].styles = result[0].styles.cs();
     assert.deepEqual(result[0], {
@@ -557,7 +1004,7 @@ it('integration test', () => {
         @fetch load/my111/styles1.css;
         @fetch load/my222/styles2.css;
         
-        @media on('load') {
+        @on load {
             .foo {
                 color: violette;
                 .bar {
@@ -573,7 +1020,7 @@ it('integration test', () => {
             }
         }
         
-        @media on('load') {
+        @on load {
             .a {
                 color: red;
             }
@@ -590,14 +1037,14 @@ it('integration test', () => {
         @fetch load/my123/styles222.css;
         @fetch load/my456/styles333.css;
         
-        @media on('load') {
+        @on load {
             @import load/my/styles1.css;
             .nut {
                 color: magento;
             }
         }
         
-        @media print {
+        @query print {
             .a {
                 color: yellow;
                 .b {
@@ -609,15 +1056,15 @@ it('integration test', () => {
             }
         }
         
-        @media action('/a/{{dyn/c.html}}') {
+        @action /a/{{dyn/c.html}} {
             @fetch load/my777/styles7.css;
         }
         
-        @media on('click .my-button') {
+        @on click .my-button {
             @fetch load/my98/styles98.css;
         }
         
-        @media on('myCustomEvent') {
+        @on myCustomEvent {
             .baz {
                 width: 23px;
             }
@@ -631,11 +1078,11 @@ it('integration test', () => {
             color: pink;
         }
 
-        @media (max-width: 360px) {
+        @query (max-width: 360px) {
             @fetch load/my/styles3.css;
         }
 
-        @media only screen and (min-device-width:320px) and (max-device-width:639px) {
+        @query only screen and (min-device-width:320px) and (max-device-width:639px) near (radius: 44px) {
             .lol {
                 color: yellow;
                 .b {
@@ -794,16 +1241,16 @@ it('integration test', () => {
     // Test 15
     result[14].styles = result[14].styles.cs();
     assert.deepEqual(result[14], {
-        attachOn: "print",
+        attachOn: "print print",
         imports: [],
         styles: ".a { color: yellow; } .a .b { color: b; } .a .c { color: c; }",
-        type: "mediaMatch",
+        type: "query",
     });
 
     // Test 16
     result[15].styles = result[15].styles.cs();
     assert.deepEqual(result[15], {
-        attachOn: "/a/{{dyn/c.html}}",
+        attachOn: "/a/{{dyn/c.html}} /a/{{dyn/c.html}}",
         imports: ["load/my777/styles7.css"],
         styles: "",
         type: "action",
@@ -830,20 +1277,23 @@ it('integration test', () => {
     // Test 19
     result[18].styles = result[18].styles.cs();
     assert.deepEqual(result[18], {
-        attachOn: "(max-width: 360px)",
+        attachOn: "(max-width:-360px) (max-width: 360px)",
         imports: ["load/my/styles3.css"],
         styles: "",
-        type: "mediaMatch",
+        type: "query",
     });
 
     // Test 20
     result[19].styles = result[19].styles.cs(); // remove "new-lines"
     assert.deepEqual(result[19], {
-            attachOn: "only screen and (min-device-width:320px) and (max-device-width:639px)",
-            imports: [],
-            styles: ".lol { color: yellow; } .lol .b { color: b; } .lol .c { color: c; }",
-            type: "mediaMatch",
-        });
+        attachOn:
+            "only-screen-and-(min-device-width:320px)-and-(max-device-width:639px)" + " " +
+            "only screen and (min-device-width:320px) and (max-device-width:639px)",
+        imports: [],
+        styles: ".lol { color: yellow; } .lol .b { color: b; } .lol .c { color: c; }",
+        type: "query",
+        option: ["radius", "44px"],
+    });
 
     /**
      *
@@ -899,8 +1349,8 @@ it('integration test', () => {
 
     result2[2].styles = result2[2].styles.cs();
     assert.deepEqual(result2[2], {
-        attachOn: "print",
-        type: "mediaMatch",
+        attachOn: "print print",
+        type: "query",
         imports: [],
         styles: ".a { color: yellow; } .a .b { color: b; } .a .c { color: c; }"
     });
@@ -908,7 +1358,7 @@ it('integration test', () => {
 
     result2[3].styles = result2[3].styles.cs();
     assert.deepEqual(result2[3], {
-        attachOn: "/a/{{dyn/c.html}}",
+        attachOn: "/a/{{dyn/c.html}} /a/{{dyn/c.html}}",
         type: "action",
         imports: ["load/my777/styles7.css"],
         styles: ""
@@ -932,18 +1382,21 @@ it('integration test', () => {
 
     result2[6].styles = result2[6].styles.cs();
     assert.deepEqual(result2[6], {
-        attachOn: "(max-width: 360px)",
-        type: "mediaMatch",
+        attachOn: "(max-width:-360px) (max-width: 360px)",
+        type: "query",
         imports: ["load/my/styles3.css"],
         styles: ""
     });
 
     result2[7].styles = result2[7].styles.cs();
     assert.deepEqual(result2[7], {
-        attachOn: "only screen and (min-device-width:320px) and (max-device-width:639px)",
-        type: "mediaMatch",
+        attachOn:
+            "only-screen-and-(min-device-width:320px)-and-(max-device-width:639px)" + " " +
+            "only screen and (min-device-width:320px) and (max-device-width:639px)" ,
+        type: "query",
         imports: [],
-        styles: ".lol { color: yellow; } .lol .b { color: b; } .lol .c { color: c; }"
+        styles: ".lol { color: yellow; } .lol .b { color: b; } .lol .c { color: c; }",
+        option: ["radius", "44px"],
     });
 
     it.skip('should test css minify as option', () => {
