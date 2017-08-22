@@ -2,6 +2,7 @@ module.exports = function (config) {
 
 	config.set({
 		basePath: './packages/app-decorators',
+
 		frameworks: [
 			'jspm',
 			'mocha',
@@ -26,7 +27,6 @@ module.exports = function (config) {
 			//'Opera',
 			//'FirefoxEnableWebComponents',
 		],
-		/*
 		customLaunchers: {
 		    FirefoxEnableWebComponents: {
 		        base: 'Firefox',
@@ -34,19 +34,14 @@ module.exports = function (config) {
 		            'dom.webcomponents.enabled': true
 		        }
 		    },
-			Chrome_travis_ci: {
-	          base: 'Chrome',
-	          flags: ['--no-sandbox']
-		  	},
 		},
-		*/
-		files: [{
-	        pattern: '**/*.js.map',
-	        included: false
-		}],
+		files: [
+			{pattern: '**/*.js.map', included: false},
+		],
 		client: {
 			mocha: {
-                opts: './mocha.opts'
+                opts: './mocha.opts',
+				timeout: 60000,
 			},
 		},
 		jspm: {
