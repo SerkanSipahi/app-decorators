@@ -1,7 +1,7 @@
 {
   "name": "babel-plugin-app-decorators-style-precompile",
   "description": "babel plugin for app-decorators style decorator",
-  "version": "0.8.240",
+  "version": "0.8.241",
   "author": "Serkan Sipahi <serkan.sipahi@yahoo.de>",
   "main": "lib/index.js",
   "license": "MIT",
@@ -32,7 +32,7 @@
     "babel-plugin-transform-es2015-modules-commonjs": "6.24.1",
     "babel-plugin-transform-function-bind": "6.22.0",
     "core-js": "2.4.1",
-    "postcss-parse-atrule-events": "0.8.240",
+    "postcss-parse-atrule-events": "0.8.241",
     "should": "11.2.1"
   }
 }
