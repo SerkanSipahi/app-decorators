@@ -214,60 +214,7 @@ describe('@style decorator', async () => {
 
     });
 
-    it('should create correct eventValues when passed on, action or media-query', () => {
-        @style(`
-            @media on('click .foo') {
-                @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css;
-            }
-            @media on('click') {
-                @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/6.0.0/normalize.min.css;
-            }
-            @media action('/a/b/c.html'){
-                @fetch https://cdnjs.cloudflare.com/ajax/libs/sanitize.css/2.0.0/sanitize.min.css;
-            }
-            @media action('bar /a/b/c.html'){
-                @fetch https://cdnjs.cloudflare.com/ajax/libs/sanitize.css/2.0.0/sanitize.min.css;
-            }
-            @media only screen and (min-device-width:320px) and (max-device-width:639px) {
-                @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/6.0.0/normalize.min.css;
-            }
-            style-collection-string {
-                width: 100px;
-                height: 100px;
-            }
-            .foo {
-                color: red;
-            }
-        `)
-        @component({
-            name: 'com-style-eventvalues'
-        })
-        class Style {
-
-        }
-        let element = Style.create();
-        let stylesheets = element.$stylesheets;
-
-        // Test
-        stylesheets.should.be.length(6);
-
-        let onStyleConfig =_.where(stylesheets, {_type: "on"});
-        onStyleConfig[0]._attachOn.should.be.equal("click .foo");
-        onStyleConfig[1]._attachOn.should.be.equal("click");
-
-        let actionStyleConfig =_.where(stylesheets, {_type: "action"});
-        actionStyleConfig[0]._attachOn.should.be.equal("/a/b/c.html /a/b/c.html");
-        actionStyleConfig[1]._attachOn.should.be.equal("bar /a/b/c.html");
-
-        let mediaStyleConfig =_.where(stylesheets, {_type: "mediaMatch"});
-        mediaStyleConfig[0]._attachOn.should.be.equal(
-            "only-screen-and-(min-device-width:320px)-and-(max-device-width:639px)" + " " +
-            "only screen and (min-device-width:320px) and (max-device-width:639px)"
-        );
-
-    });
-
-    it('should create only once stylsheets no matter how often triggered (on, action)', async () => {
+    it('should create only once stylesheets no matter how often triggered (on, action)', async () => {
 
         @style(`
             @on click .foo {
