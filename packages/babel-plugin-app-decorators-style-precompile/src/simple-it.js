@@ -6,7 +6,7 @@ it.only = (description, test) => its.push([description, test, true]);
 it.skip = description => console.log(`Skip: ${description}`);
 
 let testSuccLog = value => console.log(`Test Ok: ${value}`);
-let testFailLog = (value, e) => console.warn(`Failed in: ${value}, Message:`, e.stack, 'Actual: ', e.actual);
+let testFailLog = (value, e) => (`Failed in: ${value}, Message:`, e.stack, 'Actual: ', e.actual);
 
 it.run = () => {
 
@@ -20,7 +20,7 @@ it.run = () => {
             test();
             testSuccLog(description);
         } catch(e){
-            testFailLog(description, e);
+            throw new Error(testFailLog(description, e));
         }
     }
 };
