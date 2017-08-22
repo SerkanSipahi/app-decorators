@@ -325,13 +325,13 @@ let parse = (styles, options = {}) => {
     // walk trough classic css selectors
     ast.walkRules(node => push(container, getRuleConfig(node)));
 
-    // walk trough @media action('/my/{{foo}}/route.html'), @media on(...)
+    // walk trough @ action /my/{{foo}}/route.html, @on ...
     ast.walkAtRules(node => push(container, getAtRuleConfig(node)));
 
     // combine/concat same attachOn´s
     options.optimize ? container = optimize(container) : null;
 
-    // check in which constellation @media on() and @media rel() allowed
+    // check in which constellation @ allowed
     options.grammarCheck ? grammarCheck(container) : null;
 
     return container;

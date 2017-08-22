@@ -5,7 +5,7 @@ import './todo-new';
 import './todo-list';
 
 @style(`
-    @media on('load'){
+    @on load {
         @fetch ./node_modules/todomvc-app-css/index.css;
     }
     @fetch ./node_modules/todomvc-common/base.css;

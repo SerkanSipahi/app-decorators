@@ -23,7 +23,7 @@ let result = require('postcss-parse-atrule-events').parse('code');
 #### Example
 Input:
 ```css
-    @media on('load') {
+    @on load {
         @fetch my/async/styles1.css;
         @fetch my/async/styles1.css;
     }

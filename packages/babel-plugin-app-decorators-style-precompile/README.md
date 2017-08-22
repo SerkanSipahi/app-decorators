@@ -55,7 +55,7 @@ Input:
 ```js
 @view(`
     // this will be loaded async on load event
-    @media on('load') {
+    @on load {
         @fetch my/async/styles1.css;
         @fetch my/async/styles1.css;
     }

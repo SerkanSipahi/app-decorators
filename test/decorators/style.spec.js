@@ -75,7 +75,7 @@ describe('@style decorator', async () => {
     it('should contain stylesheets in element', () => {
 
         @style(`
-            @media on('load') {
+            @on load {
                 @fetch load/my/styles1.css;
                 @fetch load/my/styles2.css;
             }
@@ -121,7 +121,7 @@ describe('@style decorator', async () => {
     it('should contain stylesheets once stylesheet when external resources', () => {
 
         @style(`
-            @media on('load') {
+            @on load {
                 @fetch load/my/styles1.css;
                 @fetch load/my/styles2.css;
             }
@@ -154,7 +154,7 @@ describe('@style decorator', async () => {
     it('should render external resources (its failed when not comes quickly). So thats normal', async () => {
 
         @style(`
-            @media on('load') {
+            @on load {
                 @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css;
                 @fetch https://cdnjs.cloudflare.com/ajax/libs/sanitize.css/2.0.0/sanitize.min.css
             }
@@ -270,13 +270,13 @@ describe('@style decorator', async () => {
     it('should create only once stylsheets no matter how often triggered (on, action)', async () => {
 
         @style(`
-            @media on('click .foo') {
+            @on click .foo {
                 @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css;
             }
-            @media action('/a/b/c.html'){
+            @action /a/b/c.html{
                 @fetch https://cdnjs.cloudflare.com/ajax/libs/sanitize.css/2.0.0/sanitize.min.css;
             }
-            @media only screen and (min-device-width:320px) and (max-device-width:639px) {
+            @query only screen and (min-device-width:320px) and (max-device-width:639px) {
                 @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/6.0.0/normalize.min.css;
             }
             style-collection-string {

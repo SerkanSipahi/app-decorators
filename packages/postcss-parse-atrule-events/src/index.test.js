@@ -800,7 +800,7 @@ it('should create "attachOn: on" with classes', () => {
 
 });
 
-it('should create "attachOn: action, load" when @media on and rel nested', () => {
+it('should create "attachOn: action, load" when @ on and rel nested', () => {
 
     let styles =
         `.laz {
@@ -860,7 +860,7 @@ it('should create "attachOn: action, load" when @media on and rel nested', () =>
     });
 });
 
-it('should match any @media expression', () => {
+it('should match any @ expression', () => {
 
     let styles =
         `@on click .foo[a="c"] #foo[a][c="d"][e="s"].c {
