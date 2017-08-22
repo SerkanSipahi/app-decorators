@@ -24,14 +24,14 @@
     "parse atrule events"
   ],
   "dependencies": {
-    "assert-diff": "1.2.0",
+    "assert-diff": "1.2.2",
     "autoprefixer": "7.1.2",
-    "babel-cli": "6.24.1",
-    "babel-plugin-transform-es2015-modules-commonjs": "6.24.1",
-    "core-js": "2.4.1",
+    "babel-cli": "6.26.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.26.0",
+    "core-js": "2.5.0",
     "cssnano": "3.10.0",
-    "postcss": "6.0.8",
-    "postcss-nested": "2.0.4",
+    "postcss": "6.0.9",
+    "postcss-nested": "2.1.2",
     "postcss-normalize": "4.0.0",
     "regex-css-media-query": "1.0.0",
     "should": "11.2.1"
