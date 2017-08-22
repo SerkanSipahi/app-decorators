@@ -26,26 +26,13 @@ let getHandler = (style, element) => {
         });
         router.start();
         return router;
-    } else if(type === "mediaMatch") {
+    } else if(type === "query") {
         // https://wicg.github.io/ResizeObserver/
         return {
             on: () => {},
             off: () => {}
         }
     }
-};
-
-/**
- * @param style {object}
- * @returns {object}
- */
-let createEventHandlerValue = style => {
-
-    let eventName = style.attachOn.replace(/ /g, '-');
-    let eventValue = style.attachOn;
-    style.attachOn = `${eventName} ${eventValue}`;
-
-    return style;
 };
 
 /**
@@ -97,13 +84,6 @@ function style(styles, options = {}) {
             for(let i = 0, len = styles.length; i < len; i++){
                 let style = styles[i];
 
-
-                // when no action name passed, then take the eventname
-                if(style.type === "action" && style.attachOn.split(' ').length === 1){
-                    style = createEventHandlerValue(style);
-                } else if(style.type === "mediaMatch"){
-                    style = createEventHandlerValue(style);
-                }
                 domNode.$stylesheets.push(new Stylesheet({
                     appendTo: domNode,
                     attachOn: style.attachOn,
