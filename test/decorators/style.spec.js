@@ -217,14 +217,14 @@ describe('@style decorator', async () => {
     it('should create only once stylesheets no matter how often triggered (on, action)', async () => {
 
         @style(`
+            @on load {
+                @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/6.0.0/normalize.min.css;
+            }
             @on click .foo {
                 @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css;
             }
-            @action /a/b/c.html{
+            @action /a/b/{{value}}.html{
                 @fetch https://cdnjs.cloudflare.com/ajax/libs/sanitize.css/2.0.0/sanitize.min.css;
-            }
-            @query only screen and (min-device-width:320px) and (max-device-width:639px) {
-                @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/6.0.0/normalize.min.css;
             }
             style-collection-string {
                 width: 100px;
@@ -243,21 +243,29 @@ describe('@style decorator', async () => {
             name: 'com-style-action',
         })
         class Style {
+            @on('click .foo') onClickFoo(){
+                //console.log('xxx');
+            }
         }
 
         let element = Style.create();
         document.body.appendChild(element);
 
-        $('.foo', element).clickAndWait(20);
-        $('.bar', element).clickAndWait(20);
-        $('.baz', element).clickAndWait(20);
-        $('.foo', element).clickAndWait(20);
-        $('.bar', element).clickAndWait(20);
-        $('.baz', element).clickAndWait(20);
+        // round 1
+        $('.foo', element).clickAndWait(30);
+        $('.bar', element).clickAndWait(30);
+        $('.baz', element).clickAndWait(30);
+        // round 2
+        $('.foo', element).clickAndWait(30);
+        $('.bar', element).clickAndWait(30);
+        $('.baz', element).clickAndWait(30);
+        // round 3
+        $('.foo', element).clickAndWait(30);
+        $('.bar', element).clickAndWait(30);
+        $('.baz', element).clickAndWait(30);
 
-        await delay(100);
-
-        //console.log([element]);
+        await delay(50);
+        should(element.querySelectorAll('link').length).be.equal(3);
 
     });
 

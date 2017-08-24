@@ -74,9 +74,17 @@ function style(styles, options = {}) {
                 domNode.$stylesheets = [];
             }
 
-            // return if style/s node already created
+            // return if style/s node already created (createdCount > 0)
             // Note: avoid multiple style nodes per component creation!
-            if(map.get('@style').get('created')){
+
+            // Note: What we do when someone create nodes and not use it
+            // immediately without appending to document? The counter is e.g. 3!
+            // So after a while new nodes created and attached to
+            // document. Style.js will not created styles due createdCount is e.g 3
+            // due its never detached and createdCount never decremented.
+            let createdCount = map.get('@style').get('createdCount');
+            if(createdCount > 0){
+                map.get('@style').set('createdCount', ++createdCount);
                 return;
             }
 
@@ -96,7 +104,7 @@ function style(styles, options = {}) {
                 }));
             }
 
-            map.get('@style').set('created', true);
+            map.get('@style').set('createdCount', ++createdCount);
 
 		});
 
@@ -115,6 +123,9 @@ function style(styles, options = {}) {
             for(let stylesheet of domNode.$stylesheets){
                 stylesheet.destroy();
             }
+
+            let createdCount = map.get('@style').get('createdCount');
+            map.get('@style').set('createdCount', --createdCount);
         });
 
         map.get('@style').set('callbacksDefined', true);
