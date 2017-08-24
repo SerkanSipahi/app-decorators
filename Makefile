@@ -89,7 +89,11 @@ clean-package-compiled:
 	rm -rf packages/*/{lib,dist}; \
 	rm -rf packages/app-decorators/{build,dist,tmp,src,test,node_modules,jspm_packages};
 
+start-asset-css-server:
+	node test/fixture/server-styles-4000.js
+
 prepare-compile:
+	make start-asset-css-server & \
 	mkdir -p packages/app-decorators/tmp;
 	cp jspm.browser.js jspm.config.js packages/app-decorators/tmp; \
 	cd packages/app-decorators; \

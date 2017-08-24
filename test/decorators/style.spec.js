@@ -76,8 +76,8 @@ describe('@style decorator', async () => {
 
         @style(`
             @on load {
-                @fetch load/my/styles1.css;
-                @fetch load/my/styles2.css;
+                @fetch http://localhost:4000/styles/test-1.css;
+                @fetch http://localhost:4000/styles/test-2.css;
             }
             style-collection-string {
                 width: 100px;
@@ -113,7 +113,10 @@ describe('@style decorator', async () => {
 
         // should have correct properties (1)
         element.$stylesheets[1]._attachOn.should.equal("load");
-        element.$stylesheets[1]._imports.should.containDeep(["load/my/styles1.css", "load/my/styles2.css"]);
+        element.$stylesheets[1]._imports.should.containDeep([
+            "http://localhost:4000/styles/test-1.css",
+            "http://localhost:4000/styles/test-2.css"
+        ]);
         element.$stylesheets[1]._styles.should.equal("");
         element.$stylesheets[1]._type.should.equal("on");
     });
@@ -122,8 +125,8 @@ describe('@style decorator', async () => {
 
         @style(`
             @on load {
-                @fetch load/my/styles1.css;
-                @fetch load/my/styles2.css;
+                @fetch http://localhost:4000/styles/test-1.css;
+                @fetch http://localhost:4000/styles/test-2.css;
             }
             style-collection-string {
                 width: 100px;
@@ -151,12 +154,12 @@ describe('@style decorator', async () => {
 
     });
 
-    it('should render external resources (its failed when not comes quickly). So thats normal', async () => {
+    it('should render external resources (its failed when not comes quickly). So thats normal. Try again', async () => {
 
         @style(`
             @on load {
-                @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css;
-                @fetch https://cdnjs.cloudflare.com/ajax/libs/sanitize.css/2.0.0/sanitize.min.css
+                @fetch http://localhost:4000/styles/test-1.css;
+                @fetch http://localhost:4000/styles/test-2.css;
             }
             style-collection-string {
                 width: 100px;
@@ -171,14 +174,16 @@ describe('@style decorator', async () => {
         `)
         @component({ name: 'style-external-resources' })
         class Style {
-            @on('load:stylesheet') onLoadStylesheet(e){}
+            @on('load:stylesheet') onLoadStylesheet(e){
+                //console.log('load:stylesheet');
+            }
         }
 
         let element = Style.create();
         let stylesheet = element.$stylesheets[0];
 
-        let href1 = "https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css";
-        let href2 = "https://cdnjs.cloudflare.com/ajax/libs/sanitize.css/2.0.0/sanitize.min.css";
+        let href1 = "http://localhost:4000/styles/test-1.css";
+        let href2 = "http://localhost:4000/styles/test-2.css";
         let expected = `
         <style-external-resources rendered="true">
             <style class="style-order-0">
@@ -195,7 +200,7 @@ describe('@style decorator', async () => {
         </style-external-resources>`.nlte();
 
         document.body.appendChild(element);
-        await delay(1000);
+        await delay(500);
 
         if(stylesheet.supportRelPreload()){
             //@TODO: remove inside of onload to helper functions
@@ -218,13 +223,13 @@ describe('@style decorator', async () => {
 
         @style(`
             @on load {
-                @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/6.0.0/normalize.min.css;
+                @fetch http://localhost:4000/styles/test-1.css;
             }
             @on click .foo {
-                @fetch https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css;
+                @fetch http://localhost:4000/styles/test-2.css;
             }
             @action /a/b/{{value}}.html{
-                @fetch https://cdnjs.cloudflare.com/ajax/libs/sanitize.css/2.0.0/sanitize.min.css;
+                @fetch http://localhost:4000/styles/test-3.css;
             }
             style-collection-string {
                 width: 100px;

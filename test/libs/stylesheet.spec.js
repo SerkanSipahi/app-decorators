@@ -225,8 +225,8 @@ describe('Class Stylesheet ', () => {
         beforeEach(() => {
             element = document.createElement('div');
             element.innerHTML = '<figure>Foo</figure>';
-            importSrc = "https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css";
-            importSrc2 = "https://cdnjs.cloudflare.com/ajax/libs/sanitize.css/2.0.0/sanitize.min.css";
+            importSrc = "http://localhost:4000/styles/test-1.css";
+            importSrc2 = "http://localhost:4000/styles/test-2.css";
             sinon.spy(Stylesheet.prototype, "_runProcess");
         });
 
@@ -290,7 +290,7 @@ describe('Class Stylesheet ', () => {
             stylesheet._appendTo.outerHTML.should.be.equal(
             '<div>' +
                 // see for media="only x" hack => https://github.com/filamentgroup/loadCSS/blob/master/src/loadCSS.js#L25
-                '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" media="only x">' +
+                '<link rel="stylesheet" href="http://localhost:4000/styles/test-1.css" media="only x">' +
                 '<figure>Foo</figure>' +
             '</div>');
 
@@ -317,8 +317,8 @@ describe('Class Stylesheet ', () => {
             stylesheet._runProcess.callCount.should.be.equal(1);
             stylesheet._appendTo.outerHTML.should.be.equal(
             '<div>' +
-                '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" media="only x">' +
-                '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sanitize.css/2.0.0/sanitize.min.css" media="only x">' +
+                '<link rel="stylesheet" href="http://localhost:4000/styles/test-1.css" media="only x">' +
+                '<link rel="stylesheet" href="http://localhost:4000/styles/test-2.css" media="only x">' +
                 '<figure>Foo</figure>' +
             '</div>');
 
@@ -358,7 +358,7 @@ describe('Class Stylesheet ', () => {
             stylesheet._appendTo.outerHTML.should.be.equal(
             '<div>' +
                 // see for media="only x" hack => https://github.com/filamentgroup/loadCSS/blob/master/src/loadCSS.js#L25
-                '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" media="only x">' +
+                '<link rel="stylesheet" href="http://localhost:4000/styles/test-1.css" media="only x">' +
                 '<figure>Foo</figure>' +
             '</div>');
 
