@@ -479,7 +479,7 @@ describe('Class Stylesheet ', () => {
             '</div>');
         });
 
-        it('should create style element in order of pass array ', () => {
+        it('should create style element in order of pass array ', done => {
 
             sinon.stub(Stylesheet.prototype, '_supportRelPreload').callsFake(() => false);
 
