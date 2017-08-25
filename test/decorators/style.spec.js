@@ -270,6 +270,8 @@ describe('@style decorator', async () => {
         $('.baz', element).clickAndWait(30);
 
         await delay(50);
+
+        should(element.querySelectorAll('style').length).be.equal(1);
         should(element.querySelectorAll('link').length).be.equal(3);
 
     });
