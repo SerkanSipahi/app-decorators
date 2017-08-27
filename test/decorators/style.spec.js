@@ -276,7 +276,79 @@ describe('@style decorator', async () => {
 
     });
 
-    it('should create element with styles', () => {
+    it('should create once stylesheet on multiple appends to document and again once stylesheet when no once exists in document', async () => {
+
+        @style(`
+            @on foo {
+                @fetch http://localhost:4000/styles/test-1.css;
+                @fetch http://localhost:4000/styles/test-2.css;
+            }
+            .foo { color: red }
+        `)
+        @view(`<div class="foo">Hello World</div>`)
+        @component({
+            name: 'com-multiple-appends',
+        })
+        class Style {}
+
+        /**
+         * Test createdCount when its incremented
+         */
+        // first created element (element1) take the role of style and link
+        let element1 = Style.create();
+        document.body.appendChild(element1);
+        let fooEvent = new Event('foo');
+        element1.dispatchEvent(fooEvent);
+        await delay(20);
+
+        should(storage.get(Style).get('@style').get('referenceNodes').size).be.equal(1);
+        should(element1.querySelectorAll('style').length).be.equal(1);
+        should(element1.querySelectorAll('link').length).be.equal(2);
+
+        // create element2
+        let element2 = Style.create();
+        document.body.appendChild(element2);
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(2);
+        should(element2.querySelectorAll('style').length).be.equal(0);
+        should(element2.querySelectorAll('link').length).be.equal(0);
+
+        // create element3
+        let element3 = Style.create();
+        document.body.appendChild(element3);
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(3);
+        should(element3.querySelectorAll('style').length).be.equal(0);
+        should(element3.querySelectorAll('link').length).be.equal(0);
+
+        // remove element1, so they lost there style and link
+        $(element1).remove();
+        await delay(10);
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(2);
+        should(element1.querySelectorAll('style').length).be.equal(0);
+        should(element1.querySelectorAll('link').length).be.equal(0);
+
+        // element2, take the role of styles, see style and link
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(2);
+        should(element2.querySelectorAll('style').length).be.equal(1);
+        should(element2.querySelectorAll('link').length).be.equal(2);
+
+        // element3, nothing change
+        should(element3.querySelectorAll('style').length).be.equal(0);
+        should(element3.querySelectorAll('link').length).be.equal(0);
+
+        // remove element2, so they lost there style and link
+        $(element2).remove();
+        await delay(10);
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(1);
+        should(element2.querySelectorAll('style').length).be.equal(0);
+        should(element2.querySelectorAll('link').length).be.equal(0);
+
+        // element3, take the role of styles, see style and link
+        should(element3.querySelectorAll('style').length).be.equal(1);
+        should(element3.querySelectorAll('link').length).be.equal(2);
+
+    });
+
+    it('should create element with styles', async () => {
 
         @style('com-style-basic .foo { color: blue }')
         @view('<div class="foo">Hello World</div>')
@@ -301,6 +373,8 @@ describe('@style decorator', async () => {
             '<div class="foo">Hello World</div>' +
         '</com-style-basic>';
 
+        let expectedHTMLWhenRemoved = '<com-style-basic rendered="true"><div class="foo">HelloWorld</div></com-style-basic>';
+
         /**
          * Test
          */
@@ -310,10 +384,10 @@ describe('@style decorator', async () => {
         $('#test-style-order').append(element);
         should($('#test-style-order com-style-basic').get(0).outerHTML.cs()).be.equal(expectedHTML.cs());
 
-        $('#test-style-order').remove('com-style-basic');
-        should($('#test-style-order com-style-basic').get(0).outerHTML.cs()).be.equal(expectedHTML.cs());
+        $(element, '#test-style-order').remove(); await delay(1);
+        should($(element, '#test-style-order').get(0).outerHTML.cs()).be.equal(expectedHTMLWhenRemoved.cs());
 
-        $('#test-style-order').append(element);
+        $('#test-style-order').append(element); await delay(1);
         should($('#test-style-order com-style-basic').get(0).outerHTML.cs()).be.equal(expectedHTML.cs());
 
     });

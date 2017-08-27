@@ -345,22 +345,28 @@ describe('Class Stylesheet ', () => {
                     node.getAttribute("media").should.be.equal("all");
                 },
             });
-            stylesheet = new Stylesheet(options);
 
-            stylesheet.destroy();
-            element.dispatchEvent(new Event('bar'));
-            stylesheet._runProcess.callCount.should.be.equal(0);
-
-            stylesheet.reinit(element);
-            element.dispatchEvent(new Event('bar'));
-            stylesheet._runProcess.callCount.should.be.equal(1);
-
-            stylesheet._appendTo.outerHTML.should.be.equal(
+            let expectedHMLWhenDestroyed = '<div><figure>Foo</figure></div>';
+            let expectedHTML =
             '<div>' +
                 // see for media="only x" hack => https://github.com/filamentgroup/loadCSS/blob/master/src/loadCSS.js#L25
                 '<link rel="stylesheet" href="http://localhost:4000/styles/test-1.css" media="only x">' +
                 '<figure>Foo</figure>' +
-            '</div>');
+            '</div>';
+
+            stylesheet = new Stylesheet(options);
+            stylesheet._runProcess.callCount.should.be.equal(0);
+            element.dispatchEvent(new Event('bar'));
+            stylesheet._runProcess.callCount.should.be.equal(1);
+            element.outerHTML.should.be.equal(expectedHTML);
+
+            stylesheet.destroy();
+            element.outerHTML.should.be.equal(expectedHMLWhenDestroyed);
+
+            stylesheet.reinit(element);
+            element.dispatchEvent(new Event('bar'));
+            stylesheet._runProcess.callCount.should.be.equal(2);
+            element.outerHTML.should.be.equal(expectedHTML);
 
             // when this not happend then onload event will not fired
             document.body.append(element);

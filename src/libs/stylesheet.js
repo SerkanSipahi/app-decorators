@@ -103,6 +103,11 @@ class Stylesheet {
     };
 
     /**
+     * @type {boolean}
+     */
+    alreadyDone = false;
+
+    /**
      * _appendTo {Element}
      */
     set _appendTo(appendTo) {
@@ -162,6 +167,7 @@ class Stylesheet {
         removeEvent,
         onLoadImports,
         order,
+        alreadyDone,
         fallback} = {}){
 
         if(!appendTo){
@@ -171,6 +177,8 @@ class Stylesheet {
         if(!styles && !imports){
             throw new Error('Required: styles or imports');
         }
+
+        this.alreadyDone = alreadyDone;
 
         this._checkElement(appendTo);
         this._initRefs();
@@ -202,11 +210,10 @@ class Stylesheet {
         this._checkElement(element);
         this._initRefs();
         this._appendTo = element;
-        this._stylesElement = element.querySelector('style');
         this._initScope();
         this._eventListener = this._eventFactory(this._scope);
 
-        this._addEventListener(this._attachOn, this._styles, this._imports);
+        this._run(this._styles, this._imports);
     }
 
     /**
@@ -254,9 +261,6 @@ class Stylesheet {
      */
     _run(styles, imports){
 
-        // @TODO: was tun wenn action (also route erreicht ist)
-        // @TODO: was tun wenn mediaMatch (erreicht)
-
         if(this._isAlreadyDone(this._attachOn)){
             this._runProcess(styles, imports);
             return;
@@ -287,6 +291,7 @@ class Stylesheet {
 
         this._eventListener.on(attachOn, () => {
             this._processListener(styles, imports);
+            this.alreadyDone = true;
             // Remove listener after stylesheet is appended.
             // We dont want multiple style elements on multiple events
             let event = this._getEventName(attachOn);
@@ -300,18 +305,22 @@ class Stylesheet {
      */
     _isAlreadyDone(state){
 
+        if(this.alreadyDone){
+            return this.alreadyDone;
+        }
+
         // fire immediately no matter what status is reached
         if(this._attachOn === 'immediately') {
-            return true;
+            return this.alreadyDone = true;
         }
 
         // fire when load (complete) event already reached but we declared as DOMContentLoaded
         if(this._getDocumentReadyState() === 'complete' && state === 'DOMContentLoaded') {
-            return true;
+            return this.alreadyDone = true;
         }
 
         return (
-            this._getDocumentReadyState() === this._stateSettings[state]
+            this.alreadyDone = this._getDocumentReadyState() === this._stateSettings[state]
         );
     }
 
@@ -383,6 +392,12 @@ class Stylesheet {
         }
 
         this._eventListener.off(this._attachOn);
+
+        // remove rendered styles and link
+        let elements = this._appendTo.querySelectorAll('link,style');
+        for(let element of (elements.length && elements || [])){
+            element.parentElement.removeChild(element);
+        }
     }
 
     /**

@@ -84,7 +84,8 @@ let initStyleMap = (storage, Class) => {
         map.set('@style', new Map([
             ["stylesheets", null],
             ["callbacksDefined", false],
-            ["createdCount", 0],
+            ["referenceNodes", new Map()],
+            ["stylesheetStates", []],
         ]));
     }
 };

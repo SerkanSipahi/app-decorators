@@ -4,8 +4,6 @@ import { storage } from '../libs/random-storage';
 import { Eventhandler } from '../libs/eventhandler';
 import { Router } from '../apps/router';
 
-let getTypeof = value => Object.prototype.toString.call(value).slice(8,-1);
-
 /**
  *
  * @param type {string}
@@ -36,8 +34,60 @@ let getHandler = (style, element) => {
 };
 
 /**
+ * @param stylesheets {Array}
+ * @param stylesheetStates {Array}
+ */
+let syncStylesheetStates = (stylesheets, stylesheetStates) => {
+    stylesheetStates = [];
+    stylesheets.forEach(stylesheet => stylesheetStates.push(stylesheet.alreadyDone));
+    return stylesheetStates;
+};
+
+/**
+ * @param object {Object}
+ * @param key {string}
+ * @param value {*}
+ */
+let setPath = (object, key, value) => {
+    if(!(object[key] && object[key].length)){
+        object[key] = value;
+    }
+};
+
+/**
+ * @param Class {function}
+ * @param styles {Array}
+ * @param domNode {{$stylesheets: Array}}
+ * @param options {{fallback: Function}}
+ * @param stylesheetStates {Array}
+ * @returns {Element}
+ */
+let createStylesheet = (Class, styles, domNode, options, stylesheetStates) => {
+
+    setPath(domNode, '$stylesheets', []);
+
+    for(let i = 0, len = styles.length; i < len; i++){
+        let style = styles[i];
+        domNode.$stylesheets.push(new Stylesheet({
+            appendTo: domNode,
+            attachOn: style.attachOn,
+            imports: style.imports,
+            styles: style.styles,
+            type: style.type,
+            order: i,
+            alreadyDone: stylesheetStates[i],
+            fallback: options.fallback,
+            eventFactory: element => getHandler(style, element),
+        }));
+    }
+
+    return domNode;
+};
+
+/**
  * Style
  * @param  {string|Array} styles
+ * @param options {{fallback: Function}}
  * @return {Function}
  */
 function style(styles, options = {}) {
@@ -47,18 +97,12 @@ function style(styles, options = {}) {
         initCoreMap(storage, Class);
         initStyleMap(storage, Class);
 
-        if(getTypeof(styles) === 'String'){
-            styles = [{
-                styles: styles,
-                type: 'on',
-                attachOn: 'load',
-                imports: [],
-            }];
-        }
-
-
         let map = storage.get(Class);
-        map.get('@style').set('stylesheets', styles);
+        let styleMap = map.get('@style');
+
+        styleMap.set('stylesheets', styles);
+        let nodes = styleMap.get('referenceNodes');
+        let stylesheetStates = styleMap.get('stylesheetStates');
 
         /**
          * Its required when we use @style multiple times!
@@ -68,64 +112,39 @@ function style(styles, options = {}) {
             return;
         }
 
-        map.get('@callbacks').get('created').push(domNode => {
-
-            if(!(domNode.$stylesheets && domNode.$stylesheets.length)){
-                domNode.$stylesheets = [];
+        let createdAndAttached = domNode => {
+            if(!nodes.size) {
+                let stylesheetStates = styleMap.get('stylesheetStates');
+                createStylesheet(Class, styles, domNode, options, stylesheetStates);
             }
+            !nodes.has(domNode) && nodes.set(domNode, domNode);
+        };
 
-            // return if style/s node already created (createdCount > 0)
-            // Note: avoid multiple style nodes per component creation!
-
-            // Note: What we do when someone create nodes and not use it
-            // immediately without appending to document? The counter is e.g. 3!
-            // So after a while new nodes created and attached to
-            // document. Style.js will not created styles due createdCount is e.g 3
-            // due its never detached and createdCount never decremented.
-            let createdCount = map.get('@style').get('createdCount');
-            if(createdCount > 0){
-                map.get('@style').set('createdCount', ++createdCount);
-                return;
-            }
-
-            let styles = map.get('@style').get('stylesheets');
-            for(let i = 0, len = styles.length; i < len; i++){
-                let style = styles[i];
-
-                domNode.$stylesheets.push(new Stylesheet({
-                    appendTo: domNode,
-                    attachOn: style.attachOn,
-                    imports: style.imports,
-                    styles: style.styles,
-                    type: style.type,
-                    order: i,
-                    fallback: options.fallback,
-                    eventFactory: element => getHandler(style, element),
-                }));
-            }
-
-            map.get('@style').set('createdCount', ++createdCount);
-
-		});
-
-        map.get('@callbacks').get('attached').push(domNode => {
-
-            for(let stylesheet of domNode.$stylesheets){
-                if(stylesheet.initialized()){
-                    return null;
-                }
-                stylesheet.reinit(domNode);
-            }
-        });
-
+        map.get('@callbacks').get('created' ).push(createdAndAttached);
+        map.get('@callbacks').get('attached').push(createdAndAttached);
         map.get('@callbacks').get('detached').push(domNode => {
 
-            for(let stylesheet of domNode.$stylesheets){
-                stylesheet.destroy();
+            // cleanup
+            domNode.$stylesheets.forEach(stylesheet => stylesheet.destroy());
+
+            // remove detached node from referenceNodes
+            nodes.has(domNode) && nodes.delete(domNode);
+
+            if(!domNode.$stylesheets.length) {
+                return null;
             }
 
-            let createdCount = map.get('@style').get('createdCount');
-            map.get('@style').set('createdCount', --createdCount);
+            stylesheetStates = syncStylesheetStates(domNode.$stylesheets, stylesheetStates) || [];
+            let node = (nodes.values()).next().value;
+
+            // create fresh stylesheet
+            if(node) {
+                createStylesheet(Class, styles, node, options, stylesheetStates);
+            }
+
+            styleMap.set('stylesheetStates', stylesheetStates);
+            delete domNode.$stylesheets;
+
         });
 
         map.get('@style').set('callbacksDefined', true);
