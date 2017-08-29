@@ -24,6 +24,7 @@
     "parse atrule events"
   ],
   "dependencies": {
+    "app-decorators-simple-it": "0.8.242",
     "assert-diff": "1.2.2",
     "autoprefixer": "7.1.2",
     "babel-cli": "6.26.0",

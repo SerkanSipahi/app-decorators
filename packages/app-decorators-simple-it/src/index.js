@@ -1,3 +1,5 @@
+import assert from 'assert-diff';
+
 let its  = [];
 let only = false;
 

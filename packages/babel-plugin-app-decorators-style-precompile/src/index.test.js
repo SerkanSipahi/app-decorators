@@ -1,4 +1,4 @@
-import { it } from './simple-it';
+import { it } from 'app-decorators-simple-it';
 import { transform } from 'babel-core';
 import syntaxDecorator from 'babel-plugin-syntax-decorators';
 import syntaxFuncBind from 'babel-plugin-syntax-function-bind';

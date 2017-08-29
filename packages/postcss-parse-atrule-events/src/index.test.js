@@ -1,5 +1,5 @@
 import assert from 'assert-diff';
-import { it } from './simple-it';
+import { it } from 'app-decorators-simple-it';
 import 'should';
 
 import {

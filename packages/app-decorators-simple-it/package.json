@@ -1,0 +1,28 @@
+{
+  "name": "app-decorators-simple-it",
+  "version": "0.8.242",
+  "description": "Simple it tester",
+  "main": "lib/index.js",
+  "scripts": {
+    "prepublish": "npm run clean && ./node_modules/.bin/babel src -d lib",
+    "clean": "rm -rf lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SerkanSipahi/app-decorators/tree/master/packages/app-decorators-simple-it"
+  },
+  "keywords": [
+    "test",
+    "it",
+    "simple"
+  ],
+  "author": "Serkan Sipahi <serkan.sipahi@yahoo.de>",
+  "license": "MIT",
+  "dependencies": {
+    "assert-diff": "1.2.2",
+    "babel-cli": "6.26.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.26.0",
+    "core-js": "2.5.0",
+    "should": "11.2.1"
+  }
+}
