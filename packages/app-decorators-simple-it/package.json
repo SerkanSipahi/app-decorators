@@ -19,10 +19,6 @@
   "author": "Serkan Sipahi <serkan.sipahi@yahoo.de>",
   "license": "MIT",
   "dependencies": {
-    "assert-diff": "1.2.2",
-    "babel-cli": "6.26.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "6.26.0",
-    "core-js": "2.5.0",
-    "should": "11.2.1"
+    "babel-cli": "6.26.0"
   }
 }
