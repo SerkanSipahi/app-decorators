@@ -276,7 +276,7 @@ describe('@style decorator', async () => {
 
     });
 
-    it('should create once stylesheet on multiple appends to document and again once stylesheet when no once exists in document', async () => {
+    it('should create element 1,2,3 and then remove 1,2,3 + custom event that transfer event status to the next node', async () => {
 
         @style(`
             @on foo {
@@ -321,12 +321,12 @@ describe('@style decorator', async () => {
 
         // remove element1, so they lost there style and link
         $(element1).remove();
-        await delay(10);
+        await delay(20);
         should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(2);
         should(element1.querySelectorAll('style').length).be.equal(0);
         should(element1.querySelectorAll('link').length).be.equal(0);
 
-        // element2, take the role of styles, see style and link
+        // element2, takes the role of styles, see style and link
         should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(2);
         should(element2.querySelectorAll('style').length).be.equal(1);
         should(element2.querySelectorAll('link').length).be.equal(2);
@@ -337,14 +337,212 @@ describe('@style decorator', async () => {
 
         // remove element2, so they lost there style and link
         $(element2).remove();
-        await delay(10);
+        await delay(20);
         should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(1);
         should(element2.querySelectorAll('style').length).be.equal(0);
         should(element2.querySelectorAll('link').length).be.equal(0);
 
-        // element3, take the role of styles, see style and link
+        // element3, takes the role of styles, see style and link
         should(element3.querySelectorAll('style').length).be.equal(1);
         should(element3.querySelectorAll('link').length).be.equal(2);
+
+        // remove element2, so they lost there style and link
+        $(element3).remove();
+        await delay(20);
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(0);
+        should(element3.querySelectorAll('style').length).be.equal(0);
+        should(element3.querySelectorAll('link').length).be.equal(0);
+
+        // append element1 again to dom, they should take the role of style and link
+        document.body.appendChild(element1);
+        await delay(20);
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(1);
+        should(element1.querySelectorAll('style').length).be.equal(1);
+        should(element1.querySelectorAll('link').length).be.equal(2);
+
+        // append element2 again to dom, they doesnt takes the role of style and link
+        document.body.appendChild(element2);
+        await delay(20);
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(2);
+        // element1
+        should(element1.querySelectorAll('style').length).be.equal(1);
+        should(element1.querySelectorAll('link').length).be.equal(2);
+        // element2
+        should(element2.querySelectorAll('style').length).be.equal(0);
+        should(element2.querySelectorAll('link').length).be.equal(0);
+
+        $(element1).remove();
+        $(element2).remove();
+        await delay(20);
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(0);
+        // element1
+        should(element1.querySelectorAll('style').length).be.equal(0);
+        should(element1.querySelectorAll('link').length).be.equal(0);
+        // element2
+        should(element2.querySelectorAll('style').length).be.equal(0);
+        should(element2.querySelectorAll('link').length).be.equal(0);
+
+        // create fresh element
+        let element4 = Style.create();
+        document.body.appendChild(element4);
+        await delay(20);
+
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(1);
+
+        // element1
+        should(element1.querySelectorAll('style').length).be.equal(0);
+        should(element1.querySelectorAll('link').length).be.equal(0);
+        // element2
+        should(element2.querySelectorAll('style').length).be.equal(0);
+        should(element2.querySelectorAll('link').length).be.equal(0);
+
+        // element4
+        should(element4.querySelectorAll('style').length).be.equal(1);
+        should(element4.querySelectorAll('link').length).be.equal(2);
+
+    });
+
+    it('should create element 1,2,3 and then remove 3,2,1', async () => {
+
+        @style(`
+            @on foo {
+                @fetch http://localhost:4000/styles/test-1.css;
+                @fetch http://localhost:4000/styles/test-2.css;
+            }
+            .foo { color: red }
+        `)
+        @view(`<div class="foo">Hello World</div>`)
+        @component({
+            name: 'com-multiple-appends-a',
+        })
+        class Style {}
+
+        /**
+         * Test createdCount when its incremented
+         */
+        // first created element (element1) take the role of style and link
+        let element1 = Style.create();
+        document.body.appendChild(element1);
+        let fooEvent = new Event('foo');
+        element1.dispatchEvent(fooEvent);
+        await delay(20);
+
+        should(storage.get(Style).get('@style').get('referenceNodes').size).be.equal(1);
+        should(element1.querySelectorAll('style').length).be.equal(1);
+        should(element1.querySelectorAll('link').length).be.equal(2);
+
+        // create element2
+        let element2 = Style.create();
+        document.body.appendChild(element2);
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(2);
+        should(element2.querySelectorAll('style').length).be.equal(0);
+        should(element2.querySelectorAll('link').length).be.equal(0);
+        await delay(20);
+
+        // create element3
+        let element3 = Style.create();
+        document.body.appendChild(element3);
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(3);
+        should(element3.querySelectorAll('style').length).be.equal(0);
+        should(element3.querySelectorAll('link').length).be.equal(0);
+        await delay(20);
+
+        // remove 3
+        $(element3).remove();
+        await delay(20);
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(2);
+        // check status of 3,2,1
+        // element3
+        should(element3.querySelectorAll('style').length).be.equal(0);
+        should(element3.querySelectorAll('link').length).be.equal(0);
+        // element2
+        should(element2.querySelectorAll('style').length).be.equal(0);
+        should(element2.querySelectorAll('link').length).be.equal(0);
+        // element1
+        should(element1.querySelectorAll('style').length).be.equal(1);
+        should(element1.querySelectorAll('link').length).be.equal(2);
+
+        // remove 2
+        $(element2).remove();
+        await delay(20);
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(1);
+        // check status of 3,2,1
+        // element3
+        should(element3.querySelectorAll('style').length).be.equal(0);
+        should(element3.querySelectorAll('link').length).be.equal(0);
+        // element2
+        should(element2.querySelectorAll('style').length).be.equal(0);
+        should(element2.querySelectorAll('link').length).be.equal(0);
+        // element1
+        should(element1.querySelectorAll('style').length).be.equal(1);
+        should(element1.querySelectorAll('link').length).be.equal(2);
+
+        // remove 3
+        $(element1).remove();
+        await delay(20);
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(0);
+        // check status of 3,2,1
+        // element3
+        should(element3.querySelectorAll('style').length).be.equal(0);
+        should(element3.querySelectorAll('link').length).be.equal(0);
+        // element2
+        should(element2.querySelectorAll('style').length).be.equal(0);
+        should(element2.querySelectorAll('link').length).be.equal(0);
+        // element1
+        should(element1.querySelectorAll('style').length).be.equal(0);
+        should(element1.querySelectorAll('link').length).be.equal(0);
+
+        // add element 2 again
+        document.body.appendChild(element2);
+        await delay(20);
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(1);
+        // check status of 3,2,1
+        // element3
+        should(element3.querySelectorAll('style').length).be.equal(0);
+        should(element3.querySelectorAll('link').length).be.equal(0);
+        // element2
+        should(element2.querySelectorAll('style').length).be.equal(1);
+        should(element2.querySelectorAll('link').length).be.equal(2);
+        // element1
+        should(element1.querySelectorAll('style').length).be.equal(0);
+        should(element1.querySelectorAll('link').length).be.equal(0);
+
+        // remove element 2 again
+        $(element2).remove();
+        await delay(20);
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(0);
+        // check status of 3,2,1
+        // element3
+        should(element3.querySelectorAll('style').length).be.equal(0);
+        should(element3.querySelectorAll('link').length).be.equal(0);
+        // element2
+        should(element2.querySelectorAll('style').length).be.equal(0);
+        should(element2.querySelectorAll('link').length).be.equal(0);
+        // element1
+        should(element1.querySelectorAll('style').length).be.equal(0);
+        should(element1.querySelectorAll('link').length).be.equal(0);
+
+        let element4 = Style.create();
+        document.body.appendChild(element4);
+        document.body.appendChild(element1);
+        document.body.appendChild(element2);
+        document.body.appendChild(element3);
+
+        await delay(20);
+        should(storage.get(Style).get('@style').get('referenceNodes').size).have.equal(4);
+        // check status of 4, 3,2,1
+        // element4
+        should(element4.querySelectorAll('style').length).be.equal(1);
+        should(element4.querySelectorAll('link').length).be.equal(2);
+        // element3
+        should(element3.querySelectorAll('style').length).be.equal(0);
+        should(element3.querySelectorAll('link').length).be.equal(0);
+        // element2
+        should(element2.querySelectorAll('style').length).be.equal(0);
+        should(element2.querySelectorAll('link').length).be.equal(0);
+        // element1
+        should(element1.querySelectorAll('style').length).be.equal(0);
+        should(element1.querySelectorAll('link').length).be.equal(0);
 
     });
 
