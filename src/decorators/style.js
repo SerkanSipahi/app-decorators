@@ -64,8 +64,6 @@ let setPath = (object, key, value) => {
  */
 let createStylesheet = (Class, styles, domNode, options, stylesheetStates) => {
 
-    setPath(domNode, '$stylesheets', []);
-
     for(let i = 0, len = styles.length; i < len; i++){
         let style = styles[i];
         domNode.$stylesheets.push(new Stylesheet({
@@ -113,6 +111,7 @@ function style(styles, options = {}) {
         }
 
         let createdAndAttached = domNode => {
+            setPath(domNode, '$stylesheets', []);
             if(!nodes.size) {
                 let stylesheetStates = styleMap.get('stylesheetStates');
                 createStylesheet(Class, styles, domNode, options, stylesheetStates);
