@@ -162,23 +162,22 @@ document.body.appendChild(item);
 * [View](./docs/libs/view.md)
 * [Stylesheet](./docs/libs/stylesheet.md)
 
-## Tests
+## Tests and Contributors guidelines
 ```
-// 1.0) init
-make install
-npm run lerna-bootstrap
+// init
+npm install --global lerna
 
-// 1.1) optional: watch test
+// install and test packages
+npm run lerna-bootstrap
+make lerna-test
+
+// install and compile for browser tests
+make install
 make compile
 
-// 3.1) browser test
+// browser tests
 make test
-
-// 3.2) packages test
-make lerna-test
 ```
-
-## Source
 
 app-decorators and its [packages](https://github.com/SerkanSipahi/app-decorators/tree/master/packages) are distributed as a [monorepo](https://github.com/babel/babel/blob/master/doc/design/monorepo.md).
 
