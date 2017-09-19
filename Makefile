@@ -65,7 +65,7 @@ lerna-clean:
 	command -v lerna >/dev/null && lerna clean --yes;
 
 lerna-test:
-	lerna run test --ignore={babel-preset-app-decorators,app-decorators,app-decorators-todomvc,app-decorators-cli-deps}
+	lerna run test --ignore={babel-preset-app-decorators,app-decorators,app-decorators-todomvc,app-decorators-cli-deps,app-decorators-simple-it}
 
 lerna-bootstrap:
 	make fix-nested-node_modules; \
