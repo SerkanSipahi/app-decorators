@@ -1,6 +1,6 @@
 {
   "name": "app-decorators-todomvc",
-  "version": "0.8.242",
+  "version": "0.8.243",
   "description": "Todomvc with app-decorators",
   "repository": {
     "type": "git",
@@ -27,8 +27,8 @@
     "webapp"
   ],
   "dependencies": {
-    "app-decorators": "0.8.242",
-    "babel-preset-app-decorators": "0.8.242",
+    "app-decorators": "0.8.243",
+    "babel-preset-app-decorators": "0.8.243",
     "babel-preset-es2015": "6.24.1",
     "compression": "1.7.0",
     "express": "4.15.4",
