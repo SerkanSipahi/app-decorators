@@ -2,8 +2,8 @@
 
 #### Quickstart with app-decorators-cli
 ```sh
-appdec create --name my-module
-appdec run --name my-module --watch --server
+appdec create --name mymodule
+appdec run --name mymodule --watch --server
 ```
 
 See [`app-decorators-cli`](https://github.com/SerkanSipahi/app-decorators-cli)(Beta)

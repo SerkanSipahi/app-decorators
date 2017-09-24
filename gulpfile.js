@@ -1,7 +1,7 @@
-import gulp from 'gulp';
-import sourcemaps from 'gulp-sourcemaps';
-import babel from 'gulp-babel';
-import changed from 'gulp-changed';
+const gulp = require('gulp');
+const sourcemaps = require('gulp-sourcemaps');
+const babel = require('gulp-babel');
+const changed = require('gulp-changed');
 
 gulp.task('compile:src', () => {
 	return gulp.src('src/**/*.js')
