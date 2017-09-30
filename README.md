@@ -43,6 +43,32 @@ See [`app-decorators-cli`](https://github.com/SerkanSipahi/app-decorators-cli)(B
 import { component, view, on, action, style } from 'app-decorators';
 
 @style(`
+    
+    /**
+     * These atrule (@) events will be loaded asynchronous (non blocking)
+     */
+    
+    // will be loaded on load event
+    @on load {
+        @fetch path/to/on/load.css;
+    }
+    
+    // will be loaded when clicked .up class
+    @on click .up {
+        @fetch path/to/on/click/up.css;
+    }
+    
+    // will be loaded when click .down class
+    @on click .down {
+        @fetch path/to/on/click/down.css;
+    }
+    
+    // will be loaded when url changed
+    @action hello/my/friend.html {
+        @fetch path/to/on/some/route/action.css;
+    }
+
+    // critical path (inline css will appear immediately)
     my-box h3 {
         font-size: 14px;
     }
@@ -60,6 +86,7 @@ import { component, view, on, action, style } from 'app-decorators';
     <div>
         <a href="?state=reset">clear count</a>
         <a href="?state=destroy">destroy</a>
+        <a href="hello/my/friend.html">destroy</a>
     </div>
 `)
 @component({
