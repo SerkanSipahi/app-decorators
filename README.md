@@ -48,27 +48,27 @@ import { component, view, on, action, style } from 'app-decorators';
      * These atrule (@) events will be loaded asynchronous (non blocking)
      */
     
-    // will be loaded on load event
+    /** will be loaded on load event **/
     @on load {
         @fetch path/to/on/load.css;
     }
     
-    // will be loaded when clicked .up class
+    /** will be loaded when clicked .up class **/
     @on click .up {
         @fetch path/to/on/click/up.css;
     }
     
-    // will be loaded when click .down class
+    /** will be loaded when click .down class **/
     @on click .down {
         @fetch path/to/on/click/down.css;
     }
     
-    // will be loaded when url changed
+    /** will be loaded when url changed **/
     @action hello/my/friend.html {
         @fetch path/to/on/some/route/action.css;
     }
 
-    // critical path (inline css will appear immediately)
+    /** critical path (inline css will appear immediately) **/
     my-box h3 {
         font-size: 14px;
     }
