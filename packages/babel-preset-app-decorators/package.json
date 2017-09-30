@@ -23,6 +23,7 @@
   "homepage": "https://github.com/SerkanSipahi/babel-preset-app-decorators#readme",
   "dependencies": {
     "babel-plugin-app-decorators-component": "0.8.244",
+    "babel-plugin-app-decorators-element-to-function": "0.8.244",
     "babel-plugin-app-decorators-component-register": "0.8.244",
     "babel-plugin-app-decorators-style-precompile": "0.8.244",
     "babel-plugin-app-decorators-view-precompile": "0.8.244",

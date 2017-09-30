@@ -1,0 +1,23 @@
+{
+  "name": "app-decorators-element-to-function",
+  "description": "babel plugin for app-decorators to extends an HTMLElement in IE and Safari",
+  "version": "0.8.244",
+  "author": "Serkan Sipahi <serkan.sipahi@yahoo.de>",
+  "main": "index.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SerkanSipahi/app-decorators/tree/master/packages/app-decorators-element-to-function"
+  },
+  "bugs": {
+    "url": "https://github.com/SerkanSipahi/app-decorators/issues"
+  },
+  "scripts": {
+    "prepublish": "echo 'nothing to prepublish!'",
+    "test": "echo 'no tests!'"
+  },
+  "keywords": [
+    "polyfill",
+    "fix"
+  ]
+}

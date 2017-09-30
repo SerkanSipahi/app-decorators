@@ -1,0 +1,35 @@
+{
+  "name": "babel-plugin-app-decorators-element-to-function",
+  "description": "babel plugin for app-decorators to extends an HTMLElement in IE and Safari",
+  "version": "0.8.244",
+  "author": "Serkan Sipahi <serkan.sipahi@yahoo.de>",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SerkanSipahi/app-decorators/tree/master/packages/babel-plugin-app-decorators-element-to-function"
+  },
+  "bugs": {
+    "url": "https://github.com/SerkanSipahi/app-decorators/issues"
+  },
+  "scripts": {
+    "prepublish": "npm run clean && ./node_modules/.bin/babel src -d lib",
+    "compile": "npm run srcDir && npm run testDir",
+    "test": "npm run clean && npm run compile && node tmp/test/index.js",
+    "inspect": "npm run compile && node --inspect --debug-brk tmp/test/index.js",
+    "srcDir": "./node_modules/.bin/babel src --out-dir tmp/src --source-maps",
+    "testDir": "./node_modules/.bin/babel test --out-dir tmp/test --source-maps",
+    "clean": "rm -rf lib tmp"
+  },
+  "keywords": [
+    "parse",
+    "syle",
+    "decorator"
+  ],
+  "dependencies": {
+    "app-decorators-simple-it": "0.8.244",
+    "babel-cli": "6.26.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.26.0",
+    "should": "13.0.1"
+  }
+}

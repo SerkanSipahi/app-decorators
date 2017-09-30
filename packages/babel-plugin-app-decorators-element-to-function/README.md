@@ -2,14 +2,14 @@
 Babel Plugin for auto generating code
 
 <p>
-    <a href="https://david-dm.org/SerkanSipahi/app-decorators?path=packages/app-decorators-element-to-function"><img src="https://david-dm.org/SerkanSipahi/david.svg" alt="Dependency Status"></a>
-    <a href="https://david-dm.org/SerkanSipahi/app-decorators?path=packages/app-decorators-element-to-function&type=dev"><img src="https://david-dm.org/SerkanSipahi/david/dev-status.svg" alt="devDependency Status"></a>
+    <a href="https://david-dm.org/SerkanSipahi/app-decorators?path=packages/babel-plugin-app-decorators-element-to-function"><img src="https://david-dm.org/SerkanSipahi/david.svg" alt="Dependency Status"></a>
+    <a href="https://david-dm.org/SerkanSipahi/app-decorators?path=packages/babel-plugin-app-decorators-element-to-function&type=dev"><img src="https://david-dm.org/SerkanSipahi/david/dev-status.svg" alt="devDependency Status"></a>
 </p>
 
 ### Installation
 
 ```sh
-$ npm install app-decorators-element-to-function --save
+$ npm install babel-plugin-app-decorators-element-to-function --save
 ```
 
 ### Usage
@@ -50,36 +50,16 @@ require('babel').transform('code', {
 see also: https://github.com/babel/babel/issues/1548
 
 #### Example 1
-code:
+input:
 ```js
 class Foo extends HTMLImageElement {
     
 }
 ```
 
-`app-decorators-helper/element-to-function.js`;
+output:
 ```js
-let elementToFunction = Element => {
-    if(typeof Element === 'function'){
-        return Element;
-    }
-    
-    let _Element = function(){};
-    _Element.prototype = Element.prototype;
-    return _Element;
-    
-};
-
-export {
-    elementToFunction as default
-}
-
-```
-
-
-transformed:
-```js
-import _elementToFunc from 'app-decorators-helper/element-to-function';
+import _elementToFunc from 'app-decorators-element-to-function';
 
 class Foo extends _elementToFunc(HTMLImageElement) {
 
@@ -90,6 +70,6 @@ class Foo extends _elementToFunc(HTMLImageElement) {
 ```bash
 git clone https://github.com/SerkanSipahi/app-decorators.git
 cd app-decorators/packages/app-decorators-element-to-function
-make install
-make test
+npm install
+npm run test
 ```
