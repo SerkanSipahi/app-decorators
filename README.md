@@ -10,11 +10,6 @@ See [`app-decorators-cli`](https://github.com/SerkanSipahi/app-decorators-cli)(B
 
 ---
 
-#### Why app-decorators?
-- compiler first
-    - do at compile time and not at runtime
-    - write less, do more
-
 #### Runtime package
 
 | Package | Version | Dependencies | DevDependencies |
