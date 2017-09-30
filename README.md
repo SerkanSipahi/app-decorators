@@ -10,11 +10,6 @@ See [`app-decorators-cli`](https://github.com/SerkanSipahi/app-decorators-cli)(B
 
 ---
 
-#### Why app-decorators?
-- compiler first
-- bar
-- baz
-
 #### Runtime package
 
 | Package | Version | Dependencies | DevDependencies |
