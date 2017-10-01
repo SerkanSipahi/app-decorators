@@ -101,6 +101,7 @@ describe('@component', () => {
     it('should wrap element with _elementToFunc when its set by option', () => {
 
         let actual =`
+            import x from 'x';
             class Foo {}
             @component({
                extends: 'progress'
@@ -113,6 +114,7 @@ describe('@component', () => {
 
         let expected =`
             import _elementToFunc from 'app-decorators/src/libs/element-to-function';
+            import x from 'x';
             class Foo {}
             @component({
                extends: 'progress'

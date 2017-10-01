@@ -128,8 +128,45 @@ let getProgram = node => {
 let plugin = ({types: t}) => {
 
     return {
+        pre(){
+            this.cache = new Map();
+        },
+        post(){
+            this.cache.clear();
+        },
         visitor: {
+            Program(path, { opts } = state) {
 
+                // shim elementToFunction
+                if(!opts.elementToFunc){
+                    return;
+                }
+
+                let programBody = path.node.body;
+                let importSrcPath = "app-decorators/src/libs/element-to-function";
+
+                // return when import for elementToFunc already exists
+                for(let node of programBody) {
+                    if(node.type !== "ImportDeclaration") continue;
+                    if(node.source.value === importSrcPath) return;
+                }
+
+                let name = this.cache.get("elementToFunc");
+                if(!name){
+                    name = path.scope.generateUidIdentifier("elementToFunc").name;
+                    this.cache.set("elementToFunc", name);
+                }
+
+                // create import statement for elementToFunc
+                let importDeclaration = t.importDeclaration(
+                    [t.importDefaultSpecifier(t.identifier(name))],
+                    t.stringLiteral(importSrcPath)
+                );
+
+                // add import statement for elementToFunc
+                programBody.unshift(importDeclaration);
+
+            },
             /**
              * ClassDeclaration
              * @param node {object}
@@ -171,27 +208,10 @@ let plugin = ({types: t}) => {
                  */
 
                 // replace extends identifier with "elementToFunc"
-                let importSrcPath = "app-decorators/src/libs/element-to-function";
-                let name = "_elementToFunc";
+                let name = this.cache.get("elementToFunc");
 
                 let callExpressionNode = t.callExpression(t.identifier(name), [t.identifier(element)]);
                 path.node.superClass = callExpressionNode;
-
-                // create import statement for elementToFunc
-                let importDeclaration = t.importDeclaration(
-                    [t.importDefaultSpecifier(t.identifier(name))],
-                    t.stringLiteral(importSrcPath)
-                );
-
-                // return when import for elementToFunc already exists
-                let program = getProgram(path);
-                for(let node of program.node.body) {
-                    if(node.type !== "ImportDeclaration") continue;
-                    if(node.source.value === importSrcPath) return;
-                }
-
-                // add import statement for elementToFunc
-                program.node.body.unshift(importDeclaration);
 
             },
         },
