@@ -1,6 +1,6 @@
 {
   "name": "app-decorators-simple-it",
-  "version": "0.8.247",
+  "version": "0.8.248",
   "description": "Simple it tester",
   "main": "lib/index.js",
   "scripts": {
