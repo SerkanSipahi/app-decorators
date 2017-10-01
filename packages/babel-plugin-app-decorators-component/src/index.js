@@ -157,19 +157,22 @@ let plugin = ({types: t}) => {
                 let element = getElementClassByName(superClass, elements);
                 node::addSuperClass(element, t);
 
-                if(/div/.test(superClass)){
-                    return;
+                if(!/div/.test(superClass)){
+                    node::addStaticGetterProperty('extends', superClass, t);
                 }
-
-                node::addStaticGetterProperty('extends', superClass, t);
 
                 // shim elementToFunction
                 if(!options.elementToFunc){
                     return;
                 }
 
+                /**
+                 * Begin for elementToFunc shim
+                 */
+
                 // replace extends identifier with "elementToFunc"
-                let {name} = path.scope.generateUidIdentifier("elementToFunc");
+                let importSrcPath = "app-decorators/src/libs/element-to-function";
+                let name = "_elementToFunc";
 
                 let callExpressionNode = t.callExpression(t.identifier(name), [t.identifier(element)]);
                 path.node.superClass = callExpressionNode;
@@ -177,11 +180,17 @@ let plugin = ({types: t}) => {
                 // create import statement for elementToFunc
                 let importDeclaration = t.importDeclaration(
                     [t.importDefaultSpecifier(t.identifier(name))],
-                    t.stringLiteral("app-decorators/src/libs/element-to-function")
+                    t.stringLiteral(importSrcPath)
                 );
 
-                // add import statement to program body
+                // return when import for elementToFunc already exists
                 let program = getProgram(path);
+                for(let node of program.node.body) {
+                    if(node.type !== "ImportDeclaration") continue;
+                    if(node.source.value === importSrcPath) return;
+                }
+
+                // add import statement for elementToFunc
                 program.node.body.unshift(importDeclaration);
 
             },

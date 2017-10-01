@@ -107,6 +107,8 @@ describe('@component', () => {
             })
             class Bar {
             }
+            class Kick {}
+            @component()
             class Baz {}`;
 
         let expected =`
@@ -122,7 +124,11 @@ describe('@component', () => {
                }
             
             }
-            class Baz {}`;
+            class Kick {}
+            @component()
+            class Baz extends _elementToFunc(HTMLDivElement) {
+                static $$componentName = 'Baz';
+            }`;
 
         let generated = transformCode(actual, { elementToFunc: true });
         assert.equal(trim(generated.code), trim(expected));
