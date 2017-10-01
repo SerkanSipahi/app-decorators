@@ -1,5 +1,6 @@
 // Bootstrap
 import './bootstrap';
+import elementToFunction from './libs/element-to-function'
 
 // Libraries
 export { Register } from './libs/customelement';
@@ -9,6 +10,7 @@ export { Stylesheet } from './libs/stylesheet';
 export { Router } from './apps/router';
 export { Pubsub } from './apps/pubsub';
 export { storage } from './libs/random-storage';
+export default elementToFunction;
 
 // Decorators
 export { component } from './decorators/component';
