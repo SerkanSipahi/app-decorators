@@ -93,6 +93,7 @@ start-asset-css-server:
 	node test/fixture/server-styles-4000.js
 
 prepare-compile:
+	rm -rf packages/app-decorators/{lib,src,test,tmp};
 	make start-asset-css-server & \
 	mkdir -p packages/app-decorators/tmp;
 	cp jspm.browser.js jspm.config.js packages/app-decorators/tmp; \
