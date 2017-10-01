@@ -34,7 +34,7 @@ let plugin = () => {
             // create import statement for elementToFunc
             let importDeclaration = t.importDeclaration(
                 [t.importDefaultSpecifier(t.identifier(name))],
-                t.stringLiteral("app-decorators-element-to-function")
+                t.stringLiteral("app-decorators/src/libs/element-to-function")
             );
 
             // add import statement to program body

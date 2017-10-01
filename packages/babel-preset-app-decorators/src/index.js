@@ -1,5 +1,4 @@
 import transformAppDecComponent from "babel-plugin-app-decorators-component";
-import transformAppDecComponentElementToFunc from "babel-plugin-app-decorators-element-to-function";
 import transformAppDecComponentRegister from 'babel-plugin-app-decorators-component-register';
 import transformAppDecViewPrecompiler from 'babel-plugin-app-decorators-view-precompile';
 import transformAppDecStylePrecompiler from 'babel-plugin-app-decorators-style-precompile';
@@ -9,8 +8,9 @@ import transformFunctionBind from "babel-plugin-transform-function-bind";
 
 export default {
     plugins: [
-        transformAppDecComponent,
-        transformAppDecComponentElementToFunc,
+        [transformAppDecComponent, {
+            "elementToFunc": true,
+        }],
         [transformAppDecComponentRegister, {
             "storage_pointer": '@component',
             "imports": [

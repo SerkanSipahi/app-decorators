@@ -73,8 +73,9 @@ class Helloworld {
 ```
 transformed:
 ```js
+import _elementToFunc from 'app-decorators-element-to-function';
 @component()
-class Helloworld extend HTMLElement {
+class Helloworld extends _elementToFunc(HTMLElement) {
 
 }
 ```
@@ -92,10 +93,11 @@ class Helloworld {
 
 transformed:
 ```js
+import _elementToFunc from 'app-decorators-element-to-function';
 @component({
    extends: 'img'
 })
-class Helloworld extends HTMLImageElement {
+class Helloworld extends _elementToFunc(HTMLImageElement) {
     static get extends() {
         return 'img';
     }

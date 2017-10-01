@@ -1,3 +1,5 @@
+This repository is deprecated. Its merged into: [app-decorators/packages/babel-plugin-app-decorators-component](https://github.com/SerkanSipahi/app-decorators/tree/master/packages/babel-plugin-app-decorators-component)
+---
 ## babel-plugin-app-decorators-element-to-function
 Babel Plugin for auto generating code
 

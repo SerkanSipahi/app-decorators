@@ -34,7 +34,7 @@ it('should modify superClass when its an HTML Element and add import statement (
 
     let actual =`class Foo extends HTMLElement {}`;
     let expected =`
-    import _elementToFunc from "app-decorators-element-to-function";
+    import _elementToFunc from "app-decorators/src/libs/element-to-function";
     class Foo extends _elementToFunc(HTMLElement) {}`;
 
     clean(transformCode(actual)).should.be.equal(clean(expected));
@@ -48,7 +48,7 @@ it('should modify superClass when its an HTML Element and add import statement (
     class Foo extends HTMLElement {}`;
 
     let expected =`
-    import _elementToFunc from 'app-decorators-element-to-function';
+    import _elementToFunc from 'app-decorators/src/libs/element-to-function';
     
     import x from 'x';
     class Foo extends _elementToFunc(HTMLElement) {}`;

@@ -1,54 +1,6 @@
 import { elements } from './elements';
 
 /**
- * defaultOptions
- * @type {{
- *     customElements: boolean,
- *     independent   : boolean
- * }}
- */
-let defaultOptions = {
-
-    /**
-     * possible values: false, "v0", "v1"
-     * customElements {boolean|string}
-     */
-    customElements: false,
-
-    /**
-     * on true : @component (nothing changed)
-     * on false: @component convert to
-     * _component(options){
-     *     ...code...
-     *     depend on customElements = v0, v1
-     *     ...code...
-     * }
-     * independent {boolean}
-     */
-    independent: true,
-
-    /**
-     * Safari´s and IE´s native Element-Class it not a function.
-     * We have to map them to a function otherwise it throw an error.
-     *
-     * if (typeof HTMLElement === 'object'){
-     *     let _Element = function(){};
-     *     _Element.prototype = HTMLElement.prototype;
-     *     HTMLElement = _Element;
-     * }
-     *
-     * Foo extends HTMLElement {
-     *     ..code..
-     * }
-     *
-     */
-    polypill: ['elementClassToFunction'],
-
-
-
-};
-
-/**
  * getDecorator
  * @param decoratorName
  * @returns {object|null}
@@ -154,6 +106,20 @@ let addStaticGetterProperty = function(type, superClass, t) {
 };
 
 /**
+ * getProgram
+ * @param node
+ * @returns {*}
+ */
+let getProgram = node => {
+    while(node.parent){
+        node = node.findParent(node => node);
+        if(node.key === "program"){
+            return node;
+        }
+    }
+};
+
+/**
  * plugin
  * @astexplorer: https://astexplorer.net (useful for building plugin)
  * @param t {types}
@@ -169,9 +135,10 @@ let plugin = ({types: t}) => {
              * @param node {object}
              * @param opts {object}
              */
-            ClassDeclaration({ node } = path, { opts } = state) {
+            ClassDeclaration(path, { opts } = state) {
 
-                let options = Object.assign({}, defaultOptions, opts);
+                let options = opts || {};
+                let { node } = path;
 
                 let component = node::getDecorator('component');
                 if(!component){
@@ -195,6 +162,28 @@ let plugin = ({types: t}) => {
                 }
 
                 node::addStaticGetterProperty('extends', superClass, t);
+
+                // shim elementToFunction
+                if(!options.elementToFunc){
+                    return;
+                }
+
+                // replace extends identifier with "elementToFunc"
+                let {name} = path.scope.generateUidIdentifier("elementToFunc");
+
+                let callExpressionNode = t.callExpression(t.identifier(name), [t.identifier(element)]);
+                path.node.superClass = callExpressionNode;
+
+                // create import statement for elementToFunc
+                let importDeclaration = t.importDeclaration(
+                    [t.importDefaultSpecifier(t.identifier(name))],
+                    t.stringLiteral("app-decorators/src/libs/element-to-function")
+                );
+
+                // add import statement to program body
+                let program = getProgram(path);
+                program.node.body.unshift(importDeclaration);
+
             },
         },
     };

@@ -7,14 +7,12 @@ function trim(str) {
     return str.replace(/^\s+|\s+/gm, '');
 }
 
-function transformCode(code){
+function transformCode(code, options = {}){
 
+    // transform code
     let generated = transform(code, {
         plugins: [
-            [appDecoratorComponent, {
-                customElements: 'v0',
-                independent: false,
-            }],
+            [appDecoratorComponent, options],
             syntaxDecorator
         ]
 
@@ -96,6 +94,37 @@ describe('@component', () => {
             class Baz {}`;
 
         let generated = transformCode(actual);
+        assert.equal(trim(generated.code), trim(expected));
+
+    });
+
+    it('should wrap element with _elementToFunc when its set by option', () => {
+
+        let actual =`
+            class Foo {}
+            @component({
+               extends: 'progress'
+            })
+            class Bar {
+            }
+            class Baz {}`;
+
+        let expected =`
+            import _elementToFunc from 'app-decorators/src/libs/element-to-function';
+            class Foo {}
+            @component({
+               extends: 'progress'
+            })
+            class Bar extends _elementToFunc(HTMLProgressElement) {
+               static $$componentName = 'Bar';
+               static get extends() {
+                  return 'progress';
+               }
+            
+            }
+            class Baz {}`;
+
+        let generated = transformCode(actual, { elementToFunc: true });
         assert.equal(trim(generated.code), trim(expected));
 
     });

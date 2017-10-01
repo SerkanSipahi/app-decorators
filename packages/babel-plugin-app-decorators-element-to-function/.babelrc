@@ -1,7 +1,5 @@
 {
     "plugins": [
-        "transform-es2015-modules-commonjs",
-        "transform-function-bind",
-        "syntax-function-bind"
+        "transform-es2015-modules-commonjs"
     ]
 }
