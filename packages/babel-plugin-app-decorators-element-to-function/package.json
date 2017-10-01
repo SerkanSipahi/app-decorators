@@ -1,7 +1,7 @@
 {
   "name": "babel-plugin-app-decorators-element-to-function",
   "description": "babel plugin for app-decorators to extends an HTMLElement in IE and Safari",
-  "version": "0.8.245",
+  "version": "0.8.247",
   "author": "Serkan Sipahi <serkan.sipahi@yahoo.de>",
   "main": "lib/index.js",
   "license": "MIT",
@@ -27,8 +27,8 @@
     "decorator"
   ],
   "dependencies": {
+    "app-decorators-simple-it": "0.8.247",
     "babel-cli": "6.26.0",
-    "app-decorators-simple-it": "0.8.245",
     "babel-plugin-transform-es2015-modules-commonjs": "6.26.0",
     "should": "13.0.1"
   }
