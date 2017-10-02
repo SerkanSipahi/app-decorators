@@ -248,7 +248,7 @@ class View {
 	 * @param  {string} templateName
 	 * @param  {boolean} force
 	 * @param  {boolean} renderedFlag
-	 * @return {this}
+	 * @return {View}
 	 */
 	render(passedVars = {}, { templateName = 'base', force = false, renderedFlag = true } = {}){
 
@@ -384,9 +384,9 @@ class View {
 
 	/**
 	 * getAttribute
-	 * @param  {domNode} domNode
+	 * @param  {HTMLElement} domNode
 	 * @param  {String} value
-	 * @return {Any}
+	 * @return {string}
 	 */
 	getAttribute(domNode, value){
 

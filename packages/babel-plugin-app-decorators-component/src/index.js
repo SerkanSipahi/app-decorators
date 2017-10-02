@@ -121,7 +121,8 @@ let getProgram = node => {
 
 /**
  * plugin
- * @astexplorer: https://astexplorer.net (useful for building plugin)
+ * @astexplorer:
+ *  - https://astexplorer.net/#/gist/844e84f3b94e1b4b3a4e1e30b9abc8d2/934cc82a41d787ba43ec9413a570be7639b305b4
  * @param t {types}
  * @returns {{visitor: {ClassDeclaration: (function(*=))}}}
  */

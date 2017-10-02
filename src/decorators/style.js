@@ -6,7 +6,7 @@ import { Router } from '../apps/router';
 
 /**
  *
- * @param type {string}
+ * @param style {Object}
  * @param element {Element}
  * @returns {*}
  */
@@ -60,13 +60,13 @@ let setPath = (object, key, value) => {
  * @param domNode {{$stylesheets: Array}}
  * @param options {{fallback: Function}}
  * @param stylesheetStates {Array}
- * @returns {Element}
+ * @returns domNode {Element}
  */
 let createStylesheet = (Class, styles, domNode, options, stylesheetStates) => {
 
     for(let i = 0, len = styles.length; i < len; i++){
         let style = styles[i];
-        domNode.$stylesheets.push(new Stylesheet({
+        let stylesheet = new Stylesheet({
             appendTo: domNode,
             attachOn: style.attachOn,
             imports: style.imports,
@@ -76,7 +76,9 @@ let createStylesheet = (Class, styles, domNode, options, stylesheetStates) => {
             alreadyDone: stylesheetStates[i],
             fallback: options.fallback,
             eventFactory: element => getHandler(style, element),
-        }));
+        });
+
+        domNode.$stylesheets.push(stylesheet);
     }
 
     return domNode;
@@ -98,8 +100,15 @@ function style(styles, options = {}) {
         let map = storage.get(Class);
         let styleMap = map.get('@style');
 
+        // Stylesheets holds the styles (ast) that
+        // are passed by the @style decorator
         styleMap.set('stylesheets', styles);
+
+        // referenceNodes holds the current created domNodes (customElements)
         let nodes = styleMap.get('referenceNodes');
+
+        // stylesheetStates holds the event state (event reached or not)
+        // of each style-ast in styles object
         let stylesheetStates = styleMap.get('stylesheetStates');
 
         /**
@@ -112,7 +121,9 @@ function style(styles, options = {}) {
 
         let createdAndAttached = domNode => {
             setPath(domNode, '$stylesheets', []);
+            // create stylesheet node when no referenceNodes (customelement) exists
             if(!nodes.size) {
+                // default state of each style-ast is false (undefined)
                 let stylesheetStates = styleMap.get('stylesheetStates');
                 createStylesheet(Class, styles, domNode, options, stylesheetStates);
             }
@@ -129,19 +140,24 @@ function style(styles, options = {}) {
             // remove detached node from referenceNodes
             nodes.has(domNode) && nodes.delete(domNode);
 
+            // not each domNode has $stylesheets, so return when no once found.
             if(!domNode.$stylesheets.length) {
                 return null;
             }
 
             stylesheetStates = syncStylesheetStates(domNode.$stylesheets, stylesheetStates) || [];
+
+            // when elements detached from document.body, we need a new node that take the role of $stylesheet
             let node = (nodes.values()).next().value;
 
-            // create fresh stylesheet
+            // when node is valid, create fresh stylesheet
             if(node) {
                 createStylesheet(Class, styles, node, options, stylesheetStates);
             }
 
+            // save the stylesheetStates
             styleMap.set('stylesheetStates', stylesheetStates);
+            //cleanup
             delete domNode.$stylesheets;
 
         });

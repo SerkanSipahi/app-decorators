@@ -103,6 +103,7 @@ class Stylesheet {
     };
 
     /**
+     * Holds the value of whether the registered event (attachOn) is reached or not.
      * @type {boolean}
      */
     alreadyDone = false;
@@ -153,9 +154,17 @@ class Stylesheet {
     };
 
     /**
-     * @param config {object}
+     * @param appendTo {Element}
      * @param styles {string}
      * @param attachOn {string}
+     * @param imports {Array}
+     * @param type {string}
+     * @param eventFactory {Function}
+     * @param removeEvent {Boolean}
+     * @param onLoadImports {Function}
+     * @param order {number}
+     * @param alreadyDone {Boolean}
+     * @param fallback {Boolean}
      */
     init({
         appendTo,
@@ -292,6 +301,7 @@ class Stylesheet {
         this._eventListener.on(attachOn, () => {
             this._processListener(styles, imports);
             this.alreadyDone = true;
+            // event reached
             // Remove listener after stylesheet is appended.
             // We dont want multiple style elements on multiple events
             let event = this._getEventName(attachOn);
