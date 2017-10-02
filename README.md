@@ -56,23 +56,16 @@ import { component, view, on, action, style } from 'app-decorators';
     @on click .up {
         @fetch path/to/on/click/up.css;
     }
-    
-    /** will be loaded when click .down class **/
-    @on click .down {
-        @fetch path/to/on/click/down.css;
-    }
-    
+
     /** will be loaded when url changed **/
     @action hello/my/friend.html {
         @fetch path/to/on/some/route/action.css;
     }
 
     /** critical path (inline css will appear immediately) **/
-    my-box h3 {
-        font-size: 14px;
-    }
     my-box div {
-        border: 1px solid gray;
+        width: 100px;
+        height: 100px;
     }
 `)
 @view(`
