@@ -2,6 +2,16 @@
 
 #### Quickstart with app-decorators-cli
 ```sh
+# For Mac
+npm install appdec-cli-osx --global
+
+# For Windows
+npm install appdec-cli-win --global
+
+# For Linux
+npm install appdec-cli-linux --global
+
+# then
 appdec create --name mymodule
 appdec run --name mymodule --watch --server
 ```
@@ -10,13 +20,18 @@ See [`app-decorators-cli`](https://github.com/SerkanSipahi/app-decorators-cli)(B
 
 ---
 
+#### Why app-decorators?
+- compiler first
+    - do at compile time and not at runtime
+    - write less, do more
+
 #### Runtime package
 
 | Package | Version | Dependencies | DevDependencies |
 |--------|-------|------------|------------|
 | [`app-decorators`](https://github.com/SerkanSipahi/app-decorators) | [![npm](https://img.shields.io/npm/v/app-decorators.svg?maxAge=2592000)](https://www.npmjs.com/package/app-decorators) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg)](https://david-dm.org/SerkanSipahi/app-decorators) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?type=dev)](https://david-dm.org/SerkanSipahi/app-decorators?type=dev) |
 
-#### core packages
+#### Core packages
 
 | Package | Version | Dependencies | DevDependencies |
 |--------|-------|------------|------------|
@@ -27,7 +42,15 @@ See [`app-decorators-cli`](https://github.com/SerkanSipahi/app-decorators-cli)(B
 | [`postcss-parse-atrule-events`](/packages/postcss-parse-atrule-events) | [![npm](https://img.shields.io/npm/v/postcss-parse-atrule-events.svg?maxAge=2592000)](https://www.npmjs.com/package/postcss-parse-atrule-events) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/postcss-parse-atrule-events)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/postcss-parse-atrule-events) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/postcss-parse-atrule-events&type=dev)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/postcss-parse-atrule-events&type=dev) |
 | [`preset-app-decorators`](/packages/babel-preset-app-decorators) | [![npm](https://img.shields.io/npm/v/babel-preset-app-decorators.svg?maxAge=2592000)](https://www.npmjs.com/package/babel-preset-app-decorators) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/babel-preset-app-decorators)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/babel-preset-app-decorators) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?path=packages/babel-preset-app-decorators&type=dev)](https://david-dm.org/SerkanSipahi/app-decorators?path=packages/babel-preset-app-decorators&type=dev) |
 
-#### todomvc
+#### Command line tools (Cli) for Mac, Linux or Windows
+
+| Package | Version | Dependencies | DevDependencies |
+|--------|-------|------------|------------|
+| [`appdec-cli-osx`](https://github.com/SerkanSipahi/app-decorators-cli) | [![npm](https://img.shields.io/npm/v/appdec-cli-osx.svg?maxAge=2592000)](https://www.npmjs.com/package/appdec-cli-osx) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators-cli.svg?path=bin/osx)](https://david-dm.org/SerkanSipahi/app-decorators-cli?path=bin/osx) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators-cli.svg?path=bin/osx&type=dev)](https://david-dm.org/SerkanSipahi/app-decorators-cli?path=bin/osx&type=dev) |
+| [`appdec-cli-win`](https://github.com/SerkanSipahi/app-decorators-cli) | [![npm](https://img.shields.io/npm/v/appdec-cli-win.svg?maxAge=2592000)](https://www.npmjs.com/package/appdec-cli-win) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators-cli.svg?path=bin/win)](https://david-dm.org/SerkanSipahi/app-decorators-cli?path=bin/win) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators-cli.svg?path=bin/win&type=dev)](https://david-dm.org/SerkanSipahi/app-decorators-cli?path=bin/win&type=dev) |
+| [`appdec-cli-linux`](https://github.com/SerkanSipahi/app-decorators-cli) | [![npm](https://img.shields.io/npm/v/appdec-cli-linux.svg?maxAge=2592000)](https://www.npmjs.com/package/appdec-cli-linux) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators-cli.svg?path=bin/linux)](https://david-dm.org/SerkanSipahi/app-decorators-cli?path=bin/linux) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators-cli.svg?path=bin/linux&type=dev)](https://david-dm.org/SerkanSipahi/app-decorators-cli?path=bin/linux&type=dev) |
+
+#### Todomvc
 
 | Package | Version | Dependencies | DevDependencies |
 |--------|-------|------------|------------|
