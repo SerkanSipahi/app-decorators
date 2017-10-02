@@ -186,6 +186,25 @@ document.body.appendChild(item);
 </body>
 ```
 
+## Browser Support
+
+| Tables                      | Version                         |
+| --------------------------- |:-------------------------------:|
+| Chrome                      | latest stable                   |
+| Edge                        | latest stable                   |
+| Firefox                     | latest stable                   |
+| Opera                       | latest                          |
+| Safari MacOS                | >=  9                           |
+| IE                          | >= 11                           |
+| --------------------------- |:-------------------------------:|
+| iOS Safari                  | >= 10.0.0                       |
+| iOS Chrome                  | >= 61.0.0                       |
+| iOS Firefox                 | not tested                      |
+| --------------------------- |:-------------------------------:|
+| Android Browser             | not tested                      |
+| Android Chrome              | not tested                      |
+| Android Firefox             | not tested                      |
+
 ## Documentation
 
 ##### Decorators
