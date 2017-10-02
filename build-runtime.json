@@ -16,7 +16,8 @@
     "app-decorators": "app-decorators/src/index",
     "app-decorators/src/bootstrap": "app-decorators/src/bootstrap",
     "app-decorators/src/libs/customelement": "app-decorators/src/libs/customelement",
-    "app-decorators/src/libs/random-storage": "app-decorators/src/libs/random-storage"
+    "app-decorators/src/libs/random-storage": "app-decorators/src/libs/random-storage",
+    "app-decorators/src/libs/element-to-function": "app-decorators/src/libs/element-to-function"
   },
   "packages": {
     "packages": {
