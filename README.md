@@ -42,10 +42,7 @@ See [`app-decorators-cli`](https://github.com/SerkanSipahi/app-decorators-cli)(B
 import { component, view, on, action, style } from 'app-decorators';
 
 @style(`
-    
-    /**
-     * These atrule (@) events will be loaded asynchronous (non blocking)
-     */
+    /** These atrule (@) events will be loaded asynchronous (non blocking) **/
     
     /** will be loaded on load event **/
     @on load {
