@@ -1,7 +1,7 @@
 {
   "name": "app-decorators-element-to-function",
   "description": "babel plugin for app-decorators to extends an HTMLElement in IE and Safari",
-  "version": "0.8.249",
+  "version": "0.8.250",
   "author": "Serkan Sipahi <serkan.sipahi@yahoo.de>",
   "main": "index.js",
   "license": "MIT",
