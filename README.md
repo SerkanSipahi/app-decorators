@@ -195,7 +195,7 @@ document.body.appendChild(item);
 | iOS Safari                  | >= 10.0.0                       |
 | iOS Chrome                  | >= 58.0.0                       |
 | iOS Firefox                 | >= 55.0.0                       |
-| --------------------------- |:-------------------------------:|
+|                             |                                 |
 | Android Chrome              | >= 58.0.0                       |
 | Android Firefox             | >= 55.0.0                       |
 
