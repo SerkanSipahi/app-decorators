@@ -17,14 +17,14 @@ module.exports = function (config) {
 			'karma-should',
 			'karma-jspm',
 			'karma-safari-launcher',
-			//'karma-opera-launcher',
+			'karma-opera-launcher',
 	    ],
 		browsers: [
 			'Chrome',
 			'ChromeCanary',
 			'Firefox',
 			'Safari',
-			//'Opera',
+			'Opera',
 			//'FirefoxEnableWebComponents',
 		],
 		customLaunchers: {
