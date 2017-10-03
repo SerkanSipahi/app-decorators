@@ -188,17 +188,16 @@ document.body.appendChild(item);
 | Chrome                      | latest stable                   |
 | Edge                        | latest stable                   |
 | Firefox                     | latest stable                   |
-| Opera                       | latest                          |
+| Opera                       | latest stable                   |
 | Safari MacOS                | >=  9                           |
 | IE                          | >= 11                           |
 | --------------------------- |:-------------------------------:|
 | iOS Safari                  | >= 10.0.0                       |
-| iOS Chrome                  | >= 61.0.0                       |
-| iOS Firefox                 | not tested                      |
+| iOS Chrome                  | >= 58.0.0                       |
+| iOS Firefox                 | >= 55.0.0                       |
 | --------------------------- |:-------------------------------:|
-| Android Browser             | not tested                      |
-| Android Chrome              | not tested                      |
-| Android Firefox             | not tested                      |
+| Android Chrome              | >= 58.0.0                       |
+| Android Firefox             | >= 55.0.0                       |
 
 ## Documentation
 
