@@ -191,7 +191,7 @@ document.body.appendChild(item);
 | Opera                       | latest stable                   |
 | Safari MacOS                | >=  9                           |
 | IE                          | >= 11                           |
-| --------------------------- |:-------------------------------:|
+|                             |                                 |
 | iOS Safari                  | >= 10.0.0                       |
 | iOS Chrome                  | >= 58.0.0                       |
 | iOS Firefox                 | >= 55.0.0                       |
