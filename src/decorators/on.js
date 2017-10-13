@@ -68,14 +68,15 @@ function on(eventDomain, listenerElement = 'local') {
 
 		map.get('@callbacks').get('attached').push(domNode => {
 
-			let initialized = false;
-			Object.values(domNode.$eventHandler).forEach(eventHandler => {
+			let eventHandlerLength = 0;
+			let $eventHandler = Object.values(domNode.$eventHandler);
+			$eventHandler.forEach(eventHandler => {
 				if(eventHandler.initialized()){
-					initialized = true;
+                    eventHandlerLength++
 				}
 			});
 
-			if(initialized){
+			if(eventHandlerLength === $eventHandler.length){
 				return;
 			}
 
