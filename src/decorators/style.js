@@ -145,6 +145,23 @@ function style(styles, options = {}) {
                 return null;
             }
 
+            // stylesheetStates (attachOn) are the event state (reached or not reached) of each
+            // array object (styles, imports, ...) that are passed by style decorator.
+            // The state of an array object is required ...
+            // [
+            //   {
+            //      attachOn: 'load',
+            //      type: 'on',
+            //      imports: ["a.css", "b.css", "c.css"],
+            //      styles: '.baz {color: green;}',
+            //   },
+            //   {
+            //      attachOn: 'immediately',
+            //      type: 'lala',
+            //      imports: [],
+            //      styles: '.laz {color: green;}',
+            //   }
+            // ]
             stylesheetStates = syncStylesheetStates(domNode.$stylesheets, stylesheetStates) || [];
 
             // when elements detached from document.body, we need a new node that take the role of $stylesheet
