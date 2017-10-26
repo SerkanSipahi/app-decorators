@@ -1703,15 +1703,15 @@ describe('Class Router', async () => {
 			router.on('Route3 #hash-{{id}}', spy_handler);
 
 			// trigger events by clicking
-			await $('.index', element).clickAndWait(20);                   // +1 (Index)
-			await $('.some-path-url', element).clickAndWait(20);           // +1 (SomePathURL)
-			await $('.not-registered-url', element).clickAndWait(20);      // +0
-			await $('.some-path-url', element).clickAndWait(20);           // +1 (SomePathURL)
-			await $('.some-dynamic-path', element).clickAndWait(20);       // +1 (SomeDynamicURL)
-			await $('.some-mixed-path', element).clickAndWait(20);         // +3 (Route1, Route2, Route3)
-			await $('.some-partial-mixed-path', element).clickAndWait(20); // +1 (Route1)
+			await $('.index', element).clickAndWait(100);                   // +1 (Index)
+			await $('.some-path-url', element).clickAndWait(100);           // +1 (SomePathURL)
+			await $('.not-registered-url', element).clickAndWait(100);      // +0
+			await $('.some-path-url', element).clickAndWait(100);           // +1 (SomePathURL)
+			await $('.some-dynamic-path', element).clickAndWait(100);       // +1 (SomeDynamicURL)
+			await $('.some-mixed-path', element).clickAndWait(100);         // +3 (Route1, Route2, Route3)
+			await $('.some-partial-mixed-path', element).clickAndWait(100); // +1 (Route1)
 
-			await delay(20);
+			await delay(50);
 
 			// callcount
 			spy_handler.callCount.should.be.equal(8);
