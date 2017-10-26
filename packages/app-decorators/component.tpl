@@ -1,10 +1,28 @@
-import { action, component, on, view } from "app-decorators";
+import { action, component, on, view, style } from "app-decorators";
 
+@style(`
+    @on load {
+        @fetch foo.css;
+    }
+    @on click .bar {
+        @fetch bar.css;
+    }
+    @action /some/path.html {
+        @fetch baz.css;
+    }
+    .critical-path-css {
+        width: 100px;
+        height: 100px;
+    }
+`)
 @view(`
-    <div class="foo">Click Foo</div>
-    <a href="/some/path.html">Click Link A</a>
-    <a href="?a=b&c=d">Click Link B</a>
-    <a href="#hey=ho">Click Link C</a>
+    <div class="critical-path-css">
+        <div class="foo">On load Foo</div>
+        <div class="bar">Click Bar</div>
+        <a href="/some/path.html">Click Link A</a>
+        <a href="?a=b&c=d">Click Link B</a>
+        <a href="#hey=ho">Click Link C</a>
+    </div>
 `)
 @component()
 class {{name}} {
@@ -17,7 +35,7 @@ class {{name}} {
         console.log('attached', this);
     }
 
-    @on('click .foo') onClickFoo(ev) {
+    @on('click .bar') onClickFoo(ev) {
         console.log('clicked foo', ev);
     }
 
