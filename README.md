@@ -26,7 +26,7 @@ See [`app-decorators-cli`](https://github.com/SerkanSipahi/app-decorators-cli)(B
 |--------|-------|------------|------------|
 | [`app-decorators`](https://github.com/SerkanSipahi/app-decorators) | [![npm](https://img.shields.io/npm/v/app-decorators.svg?maxAge=2592000)](https://www.npmjs.com/package/app-decorators) | [![Dependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg)](https://david-dm.org/SerkanSipahi/app-decorators) | [![DevDependency Status](https://david-dm.org/SerkanSipahi/app-decorators.svg?type=dev)](https://david-dm.org/SerkanSipahi/app-decorators?type=dev) |
 
-#### Core packages
+#### Core compiler packages
 
 | Package | Version | Dependencies | DevDependencies |
 |--------|-------|------------|------------|
