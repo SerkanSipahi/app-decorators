@@ -111,7 +111,7 @@ let Register = {
 		Class.create = function(vars) {
 
 			if(arguments.length > 1){
-				throw new Error('Its not allowd to pass more than one argument');
+				throw new Error('Its not allowed to pass more than one argument');
 			}
 
 			let classof = Register._classof(vars);
