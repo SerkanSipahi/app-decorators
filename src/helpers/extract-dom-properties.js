@@ -3,7 +3,7 @@ let classof = value => {
 };
 
 /**
- * Excract domnode attributes
+ * Extract domnode attributes
  * @param  {HTMLElement} domNode
  * @param  {Regex} expression
  * @param  {Boolean} removeDomAttributes
