@@ -226,7 +226,9 @@ make lerna-test
 
 // install and compile for browser tests
 make install
-make compile
+make compile // required for node css fixture server
+maek test
+```
 
 // browser tests
 make test
