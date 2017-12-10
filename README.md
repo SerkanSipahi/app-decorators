@@ -20,6 +20,12 @@ See [`app-decorators-cli`](https://github.com/SerkanSipahi/app-decorators-cli)(B
 
 ---
 
+#### Why app-decorators?
+- compiler first
+- do computation at compile time and not at runtime
+- write less, do more
+- and more (coming soon)
+
 #### Runtime package
 
 | Package | Version | Dependencies | DevDependencies |
@@ -230,8 +236,37 @@ make compile // required for node css fixture server
 make test // and run this in separate window
 ```
 
-// browser tests
+## Contributors guidelines (currently internal info)
+build new binary on new version 
+
+## Contributors guidelines (currently internal info)
+```
+// init
+npm install --global lerna
+
+// lerna-bootstrap for packages
+npm run lerna-bootstrap
+
+// or make install for acceptance tests
+make install
+
+// browser test
 make test
+
+// packages test
+make lerna-test
+
+// clean packages
+make lerna-clean
+make clean
+git checkout package.json
+git checkout jspm.config.js
+
+// when publish
+- *1 update in package.json version
+- update babel-preset-app-decorators to same in *1
+- packages/app-decorators-todomvc update preset
+
 ```
 
 app-decorators and its [packages](https://github.com/SerkanSipahi/app-decorators/tree/master/packages) are distributed as a [monorepo](https://github.com/babel/babel/blob/master/doc/design/monorepo.md).
