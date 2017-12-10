@@ -1,7 +1,7 @@
 {
   "name": "babel-plugin-app-decorators-style-precompile",
   "description": "babel plugin for app-decorators style decorator",
-  "version": "0.8.250",
+  "version": "0.8.251",
   "author": "Serkan Sipahi <serkan.sipahi@yahoo.de>",
   "main": "lib/index.js",
   "license": "MIT",
@@ -25,7 +25,7 @@
     "decorator"
   ],
   "dependencies": {
-    "app-decorators-simple-it": "0.8.250",
+    "app-decorators-simple-it": "0.8.251",
     "assert-diff": "1.2.4",
     "babel-cli": "6.26.0",
     "babel-plugin-syntax-decorators": "6.13.0",
@@ -33,7 +33,7 @@
     "babel-plugin-transform-es2015-modules-commonjs": "6.26.0",
     "babel-plugin-transform-function-bind": "6.22.0",
     "core-js": "2.5.2",
-    "postcss-parse-atrule-events": "0.8.250",
+    "postcss-parse-atrule-events": "0.8.251",
     "should": "13.1.3"
   }
 }
