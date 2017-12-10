@@ -30,9 +30,9 @@
     "app-decorators": "0.8.250",
     "babel-preset-app-decorators": "0.8.250",
     "babel-preset-es2015": "6.24.1",
-    "compression": "1.7.0",
-    "express": "4.15.4",
-    "systemjs": "0.20.18",
+    "compression": "1.7.1",
+    "express": "4.16.2",
+    "systemjs": "0.20.19",
     "todomvc-app-css": "2.1.0",
     "todomvc-common": "1.0.4"
   },
@@ -40,12 +40,12 @@
     "babel-cli": "6.26.0",
     "gulp": "3.9.1",
     "gulp-babel": "6.1.2",
-    "gulp-changed": "3.1.0",
+    "gulp-changed": "3.1.1",
     "gulp-concat": "2.6.1",
     "gulp-replace": "0.6.1",
     "gulp-sourcemaps": "2.6.1",
-    "jspm": "0.17.0-beta.45",
-    "uglify-es": "3.1.1"
+    "jspm": "0.17.0-beta.47",
+    "uglify-es": "3.2.1"
   },
   "jspm": {
     "dependencies": {

@@ -13,7 +13,7 @@
     "url": "https://github.com/SerkanSipahi/app-decorators/issues"
   },
   "scripts": {
-    "postinstall": "npm install named-js-regexp@1.3.3 core-js@2.5.1 webcomponents.js@0.7.24 handlebars@4.0.10 extend@3.0.1 dom4@1.8.5",
+    "postinstall": "npm install named-js-regexp@1.3.3 core-js@2.5.2 webcomponents.js@0.7.24 handlebars@4.0.11 extend@3.0.1 dom4@1.8.5",
     "test": "echo test"
   },
   "keywords": [
@@ -38,6 +38,6 @@
     "babel-preset-es2015": "6.24.1"
   },
   "devDependencies": {
-    "babel-preset-env": "1.6.0"
+    "babel-preset-env": "1.6.1"
   }
 }

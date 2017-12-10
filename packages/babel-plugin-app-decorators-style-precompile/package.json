@@ -26,14 +26,14 @@
   ],
   "dependencies": {
     "app-decorators-simple-it": "0.8.250",
-    "assert-diff": "1.2.3",
+    "assert-diff": "1.2.4",
     "babel-cli": "6.26.0",
     "babel-plugin-syntax-decorators": "6.13.0",
     "babel-plugin-syntax-function-bind": "6.13.0",
     "babel-plugin-transform-es2015-modules-commonjs": "6.26.0",
     "babel-plugin-transform-function-bind": "6.22.0",
-    "core-js": "2.5.1",
+    "core-js": "2.5.2",
     "postcss-parse-atrule-events": "0.8.250",
-    "should": "13.0.1"
+    "should": "13.1.3"
   }
 }
