@@ -1,6 +1,8 @@
 import { Stylesheet } from '../../src/libs/stylesheet';
 import { Eventhandler } from '../../src/libs/eventhandler';
 import sinon from 'sinon';
+import { delay } from '../../src/helpers/delay';
+import $ from 'jquery';
 
 // init special innerHTML for test
 String.prototype.removeGutter = function(){
@@ -454,34 +456,41 @@ describe('Class Stylesheet ', () => {
             container.forEach(stylesheet => stylesheet.destroy());
         });
 
-        it('should add style firstly then imports in array order', () => {
+        it('should add style firstly then imports in array order', async () => {
 
             sinon.stub(Stylesheet.prototype, '_supportRelPreload').callsFake(() => false);
 
-            let options = Object.assign({}, defaultOptions, {
+            let config = Object.assign({}, defaultOptions, {
                 appendTo: element,
                 attachOn: 'foo',
                 type: 'on',
                 order: 0,
                 imports: [
-                    "a.css",
-                    "b.css",
-                    "c.css",
+                    "http://localhost:4000/styles/test-1.css",
+                    "http://localhost:4000/styles/test-2.css",
+                    "http://localhost:4000/styles/test-1.css",
                 ],
                 styles:
                 '.baz {' +
                     'color: green;' +
                 '}',
             });
-            stylesheet = new Stylesheet(options);
+
+            stylesheet = new Stylesheet(config);
+            // its needed to append body otherwise it will not load the styles
+            // and rel="stylesheet" cant take the status of media="all" instead of media="only x".
+            // "only x" is a hack, that allow us to load the css in no blocking mode.
+            document.body.appendChild(element);
             element.dispatchEvent(new Event('foo'));
+
+            await delay(100);
 
             element.outerHTML.should.be.equal(
             '<div>' +
                 '<style class="style-order-0">.baz {color: green;}</style>' +
-                '<link rel="stylesheet" href="a.css" media="only x" class="style-order-0">' +
-                '<link rel="stylesheet" href="b.css" media="only x" class="style-order-0">' +
-                '<link rel="stylesheet" href="c.css" media="only x" class="style-order-0">' +
+                '<link rel="stylesheet" href="http://localhost:4000/styles/test-1.css" media="all" class="style-order-0">' +
+                '<link rel="stylesheet" href="http://localhost:4000/styles/test-2.css" media="all" class="style-order-0">' +
+                '<link rel="stylesheet" href="http://localhost:4000/styles/test-1.css" media="all" class="style-order-0">' +
             '</div>');
         });
 
