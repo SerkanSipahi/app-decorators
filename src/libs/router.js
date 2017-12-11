@@ -520,13 +520,16 @@ class Router {
 	 */
 	_bindInternalCoreEvents(){
 
+		// When an event.action triggered e.g. a "click a" <a href="..>
+		// This also trigger internal in _onAction an urlchange event
 		this.scope.on(this.event.action, ::this._onAction);
+
+		// When back or forward button is in use
+		// This also trigger internal in _onAction an urlchange event
 		this.globalScope.on(this.event.popstate, event => {
 
-			/**
-			 * if back/forward button in use, we have to check in which
-			 * route scope we are
-			 */
+			//if back/forward button in use, we have to check in which
+			//route scope we are
 			if(!(this._inPopstateScope(event))){
 				return;
 			}
