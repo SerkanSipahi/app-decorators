@@ -21,8 +21,7 @@ See [`app-decorators-cli`](https://github.com/SerkanSipahi/app-decorators-cli)(B
 ---
 
 #### Why app-decorators?
-- compiler first
-- do computation at compile time and not at runtime
+- compiler first [AOT-Compiler](https://en.wikipedia.org/wiki/Ahead-of-time_compilation), do computation at compile time and not at runtime
 - write less, do more
 - and more (coming soon)
 
