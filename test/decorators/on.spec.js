@@ -3,8 +3,6 @@ import { isFirefox } from '../../src/helpers/browser-detect';
 import { delay } from '../../src/helpers/delay';
 import '../../src/helpers/string';
 
-import sinon from 'sinon';
-
 describe('@on decorator', async () => {
 
 	await bootstrapPolyfills;

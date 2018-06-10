@@ -7,8 +7,6 @@ import $ from 'jquery';
 import '../../src/helpers/jquery.click-and-wait';
 import '../../src/helpers/history.back-forward-and-wait';
 
-import sinon from 'sinon';
-
 describe('Class Router', async () => {
 
 	await bootstrapPolyfills;

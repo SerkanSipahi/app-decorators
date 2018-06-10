@@ -1,8 +1,6 @@
 import { Stylesheet } from '../../src/libs/stylesheet';
 import { Eventhandler } from '../../src/libs/eventhandler';
-import sinon from 'sinon';
 import { delay } from '../../src/helpers/delay';
-import $ from 'jquery';
 
 // init special innerHTML for test
 String.prototype.removeGutter = function(){

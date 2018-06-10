@@ -1,11 +1,8 @@
 import $ from 'jquery';
-import _ from 'underscore';
 import { bootstrapPolyfills } from '../../src/bootstrap';
 import { delay } from '../../src/helpers/delay';
 import { storage } from "../../src/libs/random-storage";
 import '../../src/helpers/jquery.click-and-wait';
-
-import sinon from 'sinon';
 
 // init special innerHTML for test
 String.prototype.cs = function(){return this.replace(/[\t\n\r ]+/gm, '');};

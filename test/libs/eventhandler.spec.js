@@ -1,7 +1,5 @@
 import { Eventhandler } from '../../src/libs/eventhandler';
 
-import sinon from 'sinon';
-
 describe('Eventhandler Class', () => {
 
 	describe('Eventhandler.prepareEventDomain', () => {

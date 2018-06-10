@@ -1,9 +1,7 @@
 import { bootstrapPolyfills } from '../../src/bootstrap';
 import { delay } from '../../src/helpers/delay';
 
-import sinon from 'sinon';
-
-describe('Register', async () => {
+describe('Register customelement', async () => {
 
 	await bootstrapPolyfills;
 	let { Register } = await System.import('src/libs/customelement');
