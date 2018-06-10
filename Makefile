@@ -26,7 +26,7 @@ compile: prepare-compile gulp-compile-watch
 publish: lerna-publish
 
 node_modules:
-	npm install
+	npm install --no-package-lock
 
 jspm-install-packages:
 	$(jspm) install
@@ -69,7 +69,7 @@ lerna-test:
 
 lerna-bootstrap:
 	make fix-nested-node_modules; \
-	lerna bootstrap --ignore={app-decorators-cli-deps,app-decorators}; \
+	lerna bootstrap --ignore={app-decorators-cli-deps,app-decorators} -- --no-package-lock; \
 	make fix-nested-node_modules;
 
 bundle-runtime:
