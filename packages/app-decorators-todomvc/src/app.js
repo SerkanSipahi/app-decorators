@@ -38,7 +38,6 @@ import './todo-list';
 class Todomvc {
 
     @on('count [is="todo-list"]') onListCount({ params }){
-
         let $ = ::this.querySelector;
         let { count, left } = params;
 
@@ -49,23 +48,17 @@ class Todomvc {
         } else {
             $('footer')::hide();
         }
-
     }
 
     @on('change .toggle-all') toggleAll(){
-
         this.querySelector('ul[is="todo-list"]').toggle();
-
     }
 
     @on('click .clear-completed') clearCompleted(){
-
         this.querySelector('[is="todo-list"]').clear();
-
     }
 
     @action('/filter-{{type}}') filterItems({ params, target }){
-
         /**
          * set filter
          */

@@ -32,10 +32,10 @@ describe('@view decorator', async () => {
 		`)
 		@component()
 		class serkan {
+			created(){}
 			@view.bind n = 'Hello';
 			@view.bind p = 'World';
 		}
-
 
 		it('should call customElements hooks in right order', async () => {
 

@@ -111,6 +111,10 @@ let addListener = function(eventName, callback){
 
 };
 
+let $ = function(query) {
+    return document.querySelectorAll(query)
+};
+
 export {
     hasClass,
     addClass,

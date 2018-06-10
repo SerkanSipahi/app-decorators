@@ -310,11 +310,13 @@ class Stylesheet {
     }
 
     /**
+     *
      * @returns {boolean}
      * @private
      */
     _isAlreadyDone(state){
 
+        // when the an event e.g. click, foo, bar is already fulfilled.
         if(this.alreadyDone){
             return this.alreadyDone;
         }

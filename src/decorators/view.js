@@ -11,7 +11,7 @@ import { HandlebarsRuntime } from '../libs/dependencies';
 /**
  * Register View
  * @param  {String} template
- * @param  {Object<templateName, renderedFlag} templateName
+ * @param  {Object} options
  * @return {Function}
  */
 function view(template, options = {}) {

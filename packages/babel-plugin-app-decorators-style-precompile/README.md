@@ -57,7 +57,7 @@ Input:
     // this will be loaded async on load event
     @on load {
         @fetch my/async/styles1.css;
-        @fetch my/async/styles1.css;
+        @fetch my/async/styles2.css;
     }
     // this applied immediately
     .my-critical-path-selector {

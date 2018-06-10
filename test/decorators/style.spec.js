@@ -248,10 +248,13 @@ describe('@style decorator', async () => {
             name: 'com-style-action',
         })
         class Style {
-            @on('click .foo') onClickFoo(){
-                //console.log('xxx');
+            @on('click .foo') onClickFoo(e){
+            }
+            @on('load:stylesheet') onLoadStylesheet(e){
             }
         }
+
+        // Style.stub('onClickFoo', () => console.log('stubed'));
 
         let element = Style.create();
         document.body.appendChild(element);
@@ -289,7 +292,11 @@ describe('@style decorator', async () => {
         @component({
             name: 'com-multiple-appends',
         })
-        class Style {}
+        class Style {
+            // @fetch('/my/cool/endpoint/{{id}}', { type: 'get' }) getProducts({ response }) {
+            //
+            // }
+        }
 
         /**
          * Test createdCount when its incremented

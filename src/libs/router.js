@@ -59,6 +59,13 @@ class Router {
 		cache: {},
 	};
 
+    /**
+	 * _autoStart
+     * @type {boolean}
+     * @private
+     */
+	_autoStart = false;
+
 	/**
 	 * _uid
 	 * @type {string}
@@ -78,8 +85,11 @@ class Router {
 	 */
 	constructor(config = {}){
 
-		this.event = config.event;
-		this.mode = config.mode;
+		let { event, mode, autostart } = config;
+
+		this.event      = event;
+		this.mode       = mode;
+		this._autoStart = typeof autostart === 'boolean' ? autostart : this._autoStart;
 
 		this.init(config);
 	}
@@ -94,6 +104,10 @@ class Router {
 		this._bindInternalCoreEvents();
 		this._initRoutes();
 		this._createUid();
+
+		if(this._autoStart){
+			this.start();
+		}
 	}
 
 	/**
@@ -260,8 +274,11 @@ class Router {
 		let [ name, route ] = type.split(' ');
 		let promise = this.addRouteListener(name, route, handler);
 
-		return promise;
+		if(this._autoStart){
+			this.start();
+		}
 
+		return promise;
 	}
 
 	/**
@@ -1235,7 +1252,7 @@ class Router {
 
 	/**
 	 * start
-	 * @return {undefined}
+	 * @return {Router}
 	 */
 	start(){
 

@@ -371,7 +371,7 @@ describe('class View', () => {
 					foo: 'Thats',
 					bar: 'nice'
 				},
-				template: '<div class="foo">{{foo}}</div><hole></hole><div class="bar">{{bar}}</div>',
+				template: '<div class="foo">{{foo}}</div><slot type="blackhole"></slot><div class="bar">{{bar}}</div>',
 			});
 
 			view.render(null, { renderedFlag: false });

@@ -22,10 +22,9 @@ function on(eventDomain, listenerElement = 'local') {
 		initCoreMap(storage, Class);
 		initOnMap(storage, Class);
 
-		let map = storage.get(Class);
-
+		let mapClassOn = storage.get(Class);
 		let handler = value;
-		let eventsMap = map.get('@on').get('events');
+		let eventsMap = mapClassOn.get('@on').get('events');
 
 		if(listenerElement === 'local'){
 			eventsMap.get('local').push([
@@ -43,21 +42,21 @@ function on(eventDomain, listenerElement = 'local') {
 		 * but registerOnCreatedCallback can only call once because we want only Create
 		 * one Eventhandler
 		 */
-		if(map.get('@on').get('callbacksDefined')){
+		if(mapClassOn.get('@on').get('callbacksDefined')){
 			return;
 		}
 
-		map.get('@callbacks').get('created').push(domNode => {
+		mapClassOn.get('@callbacks').get('created').push(domNode => {
 
-			// register local (domNode) events
-			let eventsLocal = map.get('@on').get('events').get('local');
+			// register local (domNode) events e.g. thats depends on element click mousemove, etc
+			let eventsLocal = mapClassOn.get('@on').get('events').get('local');
 			if(eventsLocal.length){
 				let eventHandler = on.helper.createLocalEventHandler(eventsLocal, domNode);
 				namespace.create(domNode, '$eventHandler.local', eventHandler);
 			}
 
-			// register custom events
-			let eventsContext = map.get('@on').get('events').get('context');
+			// register custom events e.g. thats depend on e.g. window onresize, onwheel, etc
+			let eventsContext = mapClassOn.get('@on').get('events').get('context');
 			if(eventsContext.length){
 				on.helper.createCustomEventHandler(eventsContext, domNode, (eventHandler, name) => {
 					namespace.create(domNode, `$eventHandler.${name}`, eventHandler);
@@ -66,8 +65,10 @@ function on(eventDomain, listenerElement = 'local') {
 
 		});
 
-		map.get('@callbacks').get('attached').push(domNode => {
+		mapClassOn.get('@callbacks').get('attached').push(domNode => {
 
+			// this behavior ensures that when the domNode is
+			// attached, detached, attached
 			let eventHandlerLength = 0;
 			let $eventHandler = Object.values(domNode.$eventHandler);
 			$eventHandler.forEach(eventHandler => {
@@ -88,7 +89,7 @@ function on(eventDomain, listenerElement = 'local') {
 				 * @see: https://jsperf.com/new-class-vs-singleton
 				 */
 				eventHandler.reinit({
-					events:  map.get('@on').get('events').get(name),
+					events:  mapClassOn.get('@on').get('events').get(name),
 					element: domNode,
 					bind: domNode,
 				});
@@ -96,14 +97,14 @@ function on(eventDomain, listenerElement = 'local') {
 
 		});
 
-		map.get('@callbacks').get('detached').push(domNode => {
+		mapClassOn.get('@callbacks').get('detached').push(domNode => {
 
 			Object.values(domNode.$eventHandler).forEach(eventHandler => {
 				eventHandler.destroy();
 			});
 		});
 
-		map.get('@on').set('callbacksDefined', true);
+		mapClassOn.get('@on').set('callbacksDefined', true);
 
 	}
 }

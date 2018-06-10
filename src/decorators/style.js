@@ -14,11 +14,12 @@ let getHandler = (style, element) => {
 
     let {type} = style;
 
+    // default state is immediately
     if(type === "on" || type === "default") {
         return new Eventhandler({ element });
     } else if(type === "action") {
 
-        style.attachOn += ` ${style.attachOn}`;
+        //style.attachOn += ` ${style.attachOn}`;
         let router = Router.create({
             scope: element
         });
@@ -27,8 +28,8 @@ let getHandler = (style, element) => {
     } else if(type === "query") {
         // https://wicg.github.io/ResizeObserver/
         return {
-            on: () => {},
-            off: () => {}
+            on:  () => {},
+            off: () => {},
         }
     }
 };
