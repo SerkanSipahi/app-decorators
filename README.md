@@ -226,7 +226,7 @@ document.body.appendChild(item);
 npm install --global lerna
 
 // install and test packages
-npm run lerna-bootstrap
+make lerna-bootstrap
 make lerna-test
 
 // install and compile for browser tests
@@ -244,7 +244,7 @@ build new binary on new version
 npm install --global lerna
 
 // lerna-bootstrap for packages
-npm run lerna-bootstrap
+make lerna-bootstrap
 
 // or make install for acceptance tests
 make install
