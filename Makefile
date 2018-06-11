@@ -19,7 +19,7 @@ default:
 	@echo "   lerna-npm-install-save-dev module=app-decorators"
 	@echo ""
 
-install: node_modules jspm-install-packages prepare-compile gulp-compile
+install: jspm-install-packages prepare-compile gulp-compile
 
 compile: prepare-compile gulp-compile-watch
 
@@ -65,12 +65,10 @@ lerna-clean:
 	command -v lerna >/dev/null && lerna clean --yes;
 
 lerna-test:
-	lerna run test --ignore={babel-preset-app-decorators,app-decorators,app-decorators-todomvc,app-decorators-cli-deps,app-decorators-simple-it}
+	lerna run test
 
 lerna-bootstrap:
-	make fix-nested-node_modules; \
-	lerna bootstrap --ignore={app-decorators-cli-deps,app-decorators} -- --no-package-lock; \
-	make fix-nested-node_modules;
+	lerna bootstrap -- --no-package-lock;
 
 bundle-runtime:
 	$(jspm) bundle app-decorators packages/app-decorators/runtime.js \
@@ -93,15 +91,10 @@ start-asset-css-server:
 	node test/fixture/server-styles-4000.js
 
 prepare-compile:
-	rm -rf packages/app-decorators/{lib,src,test,tmp};
-	make start-asset-css-server & \
-	mkdir -p packages/app-decorators/tmp;
+	rm -rf packages/app-decorators/{lib,src,test,tmp}; \
+	mkdir -p packages/app-decorators/tmp; \
 	cp jspm.browser.js jspm.config.js packages/app-decorators/tmp; \
-	cd packages/app-decorators; \
-	ln -sf ../../jspm_packages jspm_packages; \
-	ln -sf ../../node_modules node_modules; \
-	cd ../../; \
-	make fix-nested-node_modules;
+	make start-asset-css-server;
 
 fix-nested-node_modules:
 	rm -rf packages/app-decorators/node_modules/node_modules;

@@ -5,7 +5,8 @@
   "main": "lib/index.js",
   "scripts": {
     "prepublish": "npm run clean && ./node_modules/.bin/babel src -d lib",
-    "clean": "rm -rf lib"
+    "clean": "rm -rf lib",
+	"test": "echo 'no tests required'"
   },
   "repository": {
     "type": "git",

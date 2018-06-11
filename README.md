@@ -244,10 +244,14 @@ build new binary on new version
 npm install --global lerna
 
 // lerna-bootstrap for packages
-make lerna-bootstrap
+lerna bootstrap -- --no-package-lock
 
 // or make install for acceptance tests
-make install
+cd packages/app-decorators
+jspm install
+cd ../..
+make prepare-compile // ignore the :4000 error
+make gulp-compile
 
 // browser test
 make test
@@ -258,7 +262,7 @@ make lerna-test
 // clean packages
 make lerna-clean
 make clean
-git checkout package.json
+git checkout packages/app-decorators/package.json
 git checkout jspm.config.js
 
 // when publish

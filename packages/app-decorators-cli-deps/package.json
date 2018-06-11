@@ -4,5 +4,9 @@
   "description": "app-decorators-cli-deps",
   "author": "Serkan Sipahi",
   "license": "MIT",
-  "homepage": "https://github.com/SerkanSipahi/app-decorators-todomvc#readme"
+  "homepage": "https://github.com/SerkanSipahi/app-decorators-todomvc#readme",
+  "scripts": {
+	"prepublish": "echo 'no prepublish required'",
+	"test": "echo 'no tests required'"
+  }
 }

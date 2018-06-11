@@ -18,7 +18,7 @@
   },
   "scripts": {
     "prepublish": "make compile",
-    "test": "make test"
+    "test": "echo 'no tests required'"
   },
   "homepage": "https://github.com/SerkanSipahi/babel-preset-app-decorators#readme",
   "dependencies": {

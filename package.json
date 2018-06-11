@@ -1,5 +1,5 @@
 {
-  "name": "app-decorators",
+  "name": "app-decorators-core",
   "version": "0.8.252",
   "description": "Collection of useful ES7 Decorators, writtin in ES6, that can be used for building webapps",
   "main": "lib/index.js",
@@ -13,17 +13,8 @@
     "url": "https://github.com/SerkanSipahi/app-decorators/issues"
   },
   "homepage": "https://github.com/SerkanSipahi/app-decorators#readme",
-  "bin": {
-    "karma": "./node_modules/.bin/karma",
-    "lerna": "./node_modules/.bin/lerna"
-  },
   "scripts": {
-    "lerna-bootstrap": "npm run lerna-bootstrap:1 && npm run lerna-bootstrap:2 && npm run lerna-bootstrap:3",
-    "lerna-bootstrap:1": "npm run fix-nested-node_modules",
-    "lerna-bootstrap:2": "lerna bootstrap",
-    "lerna-bootstrap:3": "npm run fix-nested-node_modules",
-    "test": "karma start",
-    "fix-nested-node_modules": "rm -rf jspm_packages/jspm_packages node_modules/node_modules"
+	"test": "echo 'no tests required'"
   },
   "keywords": [
     "es6",
@@ -84,17 +75,5 @@
     "sinon": "5.1.1",
     "underscore": "1.9.1",
     "webcomponents.js": "0.7.24"
-  },
-  "jspm": {
-    "name": "app-decorators",
-    "dependencies": {
-      "babel-polyfill": "npm:babel-polyfill@6.26.0",
-      "handlebars": "npm:handlebars@4.0.10",
-      "jquery": "npm:jquery@2.2.0",
-      "should": "npm:should@11.2.1",
-      "sinon": "npm:sinon@3.3.0",
-      "text-encoding": "npm:text-encoding@0.6.4",
-      "underscore": "npm:underscore@1.8.3"
-    }
   }
 }
